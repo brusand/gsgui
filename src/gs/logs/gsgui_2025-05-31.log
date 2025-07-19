@@ -1,0 +1,1756 @@
+[2025-05-31 00:05:13] Processus mis à jour pour bruno: have-a-drink-vote-100-left-0H:4M - executing
+[2025-05-31 00:05:13] Traitement de vote pour Have A Drink
+[2025-05-31 00:05:13] Have A Drink get vote panel
+[2025-05-31 00:05:13] Processus associé: have-a-drink-vote-100-left-0H:4M
+[2025-05-31 00:05:13] Récupération des données de vote pour Have A Drink (URL: have-a-drink, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 00:05:14] Récupération réussie: 200 images pour Have A Drink
+[2025-05-31 00:05:14] Voting fetching ...
+[2025-05-31 00:05:14] Have A Drink voting 100 images
+[2025-05-31 00:05:15] Have A Drink voted successfully
+[2025-05-31 00:05:15] Processus supprimé pour bruno: have-a-drink-vote-100-left-0H:4M - success
+[2025-05-31 00:05:15] Processus mis à jour pour bruno: have-a-drink-vote-100-left-0H:4M - success
+[2025-05-31 00:05:15] Processus have-a-drink-vote-100-left-0H:4M terminé avec succès (profil: bruno)
+[2025-05-31 00:05:18] Challenges fetching ...
+[2025-05-31 00:05:18] Challenges fetched successfully for bruno!
+[2025-05-31 00:06:02] Processus mis à jour pour bruno: have-a-drink-vote-50-left-0H:3M - executing
+[2025-05-31 00:06:02] Traitement de vote pour Have A Drink
+[2025-05-31 00:06:02] Have A Drink get vote panel
+[2025-05-31 00:06:02] Processus associé: have-a-drink-vote-50-left-0H:3M
+[2025-05-31 00:06:02] Récupération des données de vote pour Have A Drink (URL: have-a-drink, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 00:06:02] Récupération réussie: 200 images pour Have A Drink
+[2025-05-31 00:06:02] Voting fetching ...
+[2025-05-31 00:06:02] Have A Drink voting 50 images
+[2025-05-31 00:06:03] Have A Drink voted successfully
+[2025-05-31 00:06:03] Processus supprimé pour bruno: have-a-drink-vote-50-left-0H:3M - success
+[2025-05-31 00:06:03] Processus mis à jour pour bruno: have-a-drink-vote-50-left-0H:3M - success
+[2025-05-31 00:06:03] Processus have-a-drink-vote-50-left-0H:3M terminé avec succès (profil: bruno)
+[2025-05-31 00:06:06] Challenges fetching ...
+[2025-05-31 00:06:06] Challenges fetched successfully for bruno!
+[2025-05-31 00:07:04] Processus mis à jour pour bruno: have-a-drink-vote-50-left-0H:2M - executing
+[2025-05-31 00:07:04] Traitement de vote pour Have A Drink
+[2025-05-31 00:07:04] Have A Drink get vote panel
+[2025-05-31 00:07:04] Processus associé: have-a-drink-vote-50-left-0H:2M
+[2025-05-31 00:07:04] Récupération des données de vote pour Have A Drink (URL: have-a-drink, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 00:07:05] Récupération réussie: 200 images pour Have A Drink
+[2025-05-31 00:07:05] Voting fetching ...
+[2025-05-31 00:07:05] Have A Drink voting 50 images
+[2025-05-31 00:07:05] Have A Drink voted successfully
+[2025-05-31 00:07:05] Processus supprimé pour bruno: have-a-drink-vote-50-left-0H:2M - success
+[2025-05-31 00:07:05] Processus mis à jour pour bruno: have-a-drink-vote-50-left-0H:2M - success
+[2025-05-31 00:07:05] Processus have-a-drink-vote-50-left-0H:2M terminé avec succès (profil: bruno)
+[2025-05-31 00:07:08] Challenges fetching ...
+[2025-05-31 00:07:08] Challenges fetched successfully for bruno!
+[2025-05-31 00:08:08] Processus mis à jour pour bruno: have-a-drink-vote-50-left-0H:1M - executing
+[2025-05-31 00:08:08] Traitement de vote pour Have A Drink
+[2025-05-31 00:08:08] Have A Drink get vote panel
+[2025-05-31 00:08:08] Processus associé: have-a-drink-vote-50-left-0H:1M
+[2025-05-31 00:08:08] Récupération des données de vote pour Have A Drink (URL: have-a-drink, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 00:08:09] Récupération réussie: 200 images pour Have A Drink
+[2025-05-31 00:08:09] Voting fetching ...
+[2025-05-31 00:08:09] Have A Drink voting 50 images
+[2025-05-31 00:08:09] Have A Drink voted successfully
+[2025-05-31 00:08:09] Processus supprimé pour bruno: have-a-drink-vote-50-left-0H:1M - success
+[2025-05-31 00:08:09] Processus mis à jour pour bruno: have-a-drink-vote-50-left-0H:1M - success
+[2025-05-31 00:08:09] Processus have-a-drink-vote-50-left-0H:1M terminé avec succès (profil: bruno)
+[2025-05-31 00:08:13] Challenges fetching ...
+[2025-05-31 00:08:13] Challenges fetched successfully for bruno!
+[2025-05-31 09:53:15] Refreshing challenges...
+[2025-05-31 09:53:16] Fetching challenges...
+[2025-05-31 09:53:17] Challenges fetching ...
+[2025-05-31 09:53:17] Challenges fetched successfully for bruno!
+[2025-05-31 09:53:38] Refreshing challenges...
+[2025-05-31 09:53:38] Fetching challenges...
+[2025-05-31 09:53:39] Challenges fetching ...
+[2025-05-31 09:53:39] Challenges fetched successfully for bruno!
+[2025-05-31 09:53:41] Sélection de tous les challenges
+
+[2025-05-31 09:53:44] Love And Romance get vote panel
+[2025-05-31 09:53:44] What Is Patriotism? get vote panel
+[2025-05-31 09:53:44] Photo of the Week! get vote panel
+[2025-05-31 09:53:44] Exits & Entrances get vote panel
+[2025-05-31 09:53:44] Traveling Portraits get vote panel
+[2025-05-31 09:53:44] Filling challenges: {100581, 100617, 100588, 100620, 101235, 100568, 100635}
+Filled Love And Romance with strategy end4
+Filled What Is Patriotism? with strategy end4
+Filled Photo of the Week! with strategy end4
+Filled Exits & Entrances with strategy end4
+Filled Traveling Portraits with strategy end4
+
+[2025-05-31 09:53:44] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 09:53:44] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 09:53:44] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 09:53:44] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 09:53:44] Récupération des données de vote pour Traveling Portraits (URL: traveling-portraits1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 09:53:44] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 09:53:44] Voting fetching ...
+[2025-05-31 09:53:44] What Is Patriotism? voting 100 images
+[2025-05-31 09:53:44] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 09:53:44] Voting fetching ...
+[2025-05-31 09:53:44] Photo of the Week! voting 100 images
+[2025-05-31 09:53:44] Récupération réussie: 200 images pour Traveling Portraits
+[2025-05-31 09:53:44] Voting fetching ...
+[2025-05-31 09:53:44] Traveling Portraits voting 100 images
+[2025-05-31 09:53:44] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 09:53:44] Voting fetching ...
+[2025-05-31 09:53:44] Love And Romance voting 100 images
+[2025-05-31 09:53:44] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 09:53:44] Voting fetching ...
+[2025-05-31 09:53:44] Exits & Entrances voting 100 images
+[2025-05-31 09:53:45] Photo of the Week! voted successfully
+[2025-05-31 09:53:47] Traveling Portraits voted successfully
+[2025-05-31 09:53:49] What Is Patriotism? voted successfully
+[2025-05-31 09:53:51] Love And Romance voted successfully
+[2025-05-31 09:53:53] Exits & Entrances voted successfully
+[2025-05-31 09:53:56] Challenges fetching ...
+[2025-05-31 09:53:56] Challenges fetched successfully for bruno!
+[2025-05-31 09:53:56] Challenges fetching ...
+[2025-05-31 09:53:56] Challenges fetched successfully for bruno!
+[2025-05-31 09:53:56] Challenges fetching ...
+[2025-05-31 09:53:56] Challenges fetched successfully for bruno!
+[2025-05-31 09:53:56] Challenges fetching ...
+[2025-05-31 09:53:56] Challenges fetched successfully for bruno!
+[2025-05-31 09:53:56] Challenges fetching ...
+[2025-05-31 09:53:56] Challenges fetched successfully for bruno!
+[2025-05-31 10:45:38] Désélection de tous les challenges
+
+[2025-05-31 10:45:40] Refreshing challenges...
+[2025-05-31 10:45:40] Fetching challenges...
+[2025-05-31 10:45:40] Challenges fetching ...
+[2025-05-31 10:45:40] Lancement automatique des stratégies de fin pour 4 nouveaux challenges...
+[2025-05-31 10:45:40] Nouveau challenge détecté pour bruno: Favorite Animal
+[2025-05-31 10:45:40] Nouveau challenge détecté pour bruno: Weird Photos
+[2025-05-31 10:45:40] Nouveau challenge détecté pour bruno: Cultural Cuisines
+[2025-05-31 10:45:40] Nouveau challenge détecté pour bruno: Lucky Shot
+[2025-05-31 10:45:40] Challenges fetched successfully for bruno!
+[2025-05-31 10:46:13] Weird Photos get vote panel
+[2025-05-31 10:46:13] Filling challenges: {100619}
+Filled Weird Photos with strategy end4
+
+[2025-05-31 10:46:13] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 10:46:14] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 10:46:14] Voting fetching ...
+[2025-05-31 10:46:14] Weird Photos voting 100 images
+[2025-05-31 10:46:14] Weird Photos voted successfully
+[2025-05-31 10:46:17] Challenges fetching ...
+[2025-05-31 10:46:17] Challenges fetched successfully for bruno!
+[2025-05-31 10:46:54] Photo of the Week! get vote panel
+[2025-05-31 10:46:54] Filling challenges: {101235}
+Filled Photo of the Week! with strategy end4
+
+[2025-05-31 10:46:54] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 10:46:55] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 10:46:55] Voting fetching ...
+[2025-05-31 10:46:55] Photo of the Week! voting 100 images
+[2025-05-31 10:46:56] Photo of the Week! voted successfully
+[2025-05-31 10:46:58] Challenges fetching ...
+[2025-05-31 10:46:58] Challenges fetched successfully for bruno!
+[2025-05-31 13:19:55] Sélection de tous les challenges
+
+[2025-05-31 13:19:59] Weird Photos get vote panel
+[2025-05-31 13:19:59] What Is Patriotism? get vote panel
+[2025-05-31 13:19:59] Exits & Entrances get vote panel
+[2025-05-31 13:19:59] Traveling Portraits get vote panel
+[2025-05-31 13:19:59] Love And Romance get vote panel
+[2025-05-31 13:19:59] Cultural Cuisines get vote panel
+[2025-05-31 13:19:59] Favorite Animal get vote panel
+[2025-05-31 13:19:59] Lucky Shot get vote panel
+[2025-05-31 13:19:59] Photo of the Week! get vote panel
+[2025-05-31 13:19:59] Filling challenges: {100619, 100620, 100568, 100635, 100581, 100582, 100584, 100586, 101235}
+Filled Weird Photos with strategy end4
+Filled What Is Patriotism? with strategy end4
+Filled Exits & Entrances with strategy end4
+Filled Traveling Portraits with strategy end4
+Filled Love And Romance with strategy end4
+Filled Cultural Cuisines with strategy end4
+Filled Favorite Animal with strategy end4
+Filled Lucky Shot with strategy end4
+Filled Photo of the Week! with strategy end4
+
+[2025-05-31 13:19:59] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour Traveling Portraits (URL: traveling-portraits1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 13:19:59] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 13:19:59] Voting fetching ...
+[2025-05-31 13:19:59] What Is Patriotism? voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Cultural Cuisines voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Lucky Shot voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Traveling Portraits
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Traveling Portraits voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Love And Romance voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Photo of the Week! voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Weird Photos voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Favorite Animal voting 100 images
+[2025-05-31 13:20:00] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 13:20:00] Voting fetching ...
+[2025-05-31 13:20:00] Exits & Entrances voting 100 images
+[2025-05-31 13:20:01] What Is Patriotism? voted successfully
+[2025-05-31 13:20:03] Photo of the Week! voted successfully
+[2025-05-31 13:20:05] Traveling Portraits voted successfully
+[2025-05-31 13:20:07] Cultural Cuisines voted successfully
+[2025-05-31 13:20:09] Love And Romance voted successfully
+[2025-05-31 13:20:11] Favorite Animal voted successfully
+[2025-05-31 13:20:13] Weird Photos voted successfully
+[2025-05-31 13:20:15] Lucky Shot voted successfully
+[2025-05-31 13:20:17] Exits & Entrances voted successfully
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Weird Photos
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: weird-photos15-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: weird-photos15
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: weird-photos15-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: weird-photos15
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: weird-photos15-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: weird-photos15-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: weird-photos15
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: weird-photos15-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: weird-photos15
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: weird-photos15-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: weird-photos15-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: weird-photos15-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour What Is Patriotism?
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: what-is-patriotism-1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: what-is-patriotism-1
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: what-is-patriotism-1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: what-is-patriotism-1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: what-is-patriotism-1
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: what-is-patriotism-1
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: what-is-patriotism-1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: what-is-patriotism-1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: what-is-patriotism-1-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: what-is-patriotism-1-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: what-is-patriotism-1-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: what-is-patriotism-1-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Exits & Entrances
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: exits-entrances1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: exits-entrances1
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: exits-entrances1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: exits-entrances1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: exits-entrances1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: exits-entrances1-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: exits-entrances1
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: exits-entrances1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: exits-entrances1-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: exits-entrances1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: exits-entrances1-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: exits-entrances1-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Traveling Portraits
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: traveling-portraits1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: traveling-portraits1
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: traveling-portraits1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: traveling-portraits1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: traveling-portraits1-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: traveling-portraits1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: traveling-portraits1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: traveling-portraits1-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: traveling-portraits1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: traveling-portraits1-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: traveling-portraits1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: traveling-portraits1-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Love And Romance
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: love-and-romance1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: love-and-romance1
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: love-and-romance1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: love-and-romance1
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: love-and-romance1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: love-and-romance1-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: love-and-romance1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: love-and-romance1-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: love-and-romance1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: love-and-romance1-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: love-and-romance1
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: love-and-romance1-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Cultural Cuisines
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: cultural-cuisines-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: cultural-cuisines
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: cultural-cuisines-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: cultural-cuisines
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: cultural-cuisines-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: cultural-cuisines-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: cultural-cuisines
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: cultural-cuisines-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: cultural-cuisines-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: cultural-cuisines
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: cultural-cuisines-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: cultural-cuisines-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Favorite Animal
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: favorite-animal-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: favorite-animal
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: favorite-animal-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: favorite-animal-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: favorite-animal
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: favorite-animal-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: favorite-animal
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: favorite-animal
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: favorite-animal-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: favorite-animal-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: favorite-animal-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: favorite-animal-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Lucky Shot
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: lucky-shot22-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: lucky-shot22
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: lucky-shot22-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: lucky-shot22-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: lucky-shot22
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: lucky-shot22
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: lucky-shot22-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: lucky-shot22-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: lucky-shot22-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: lucky-shot22
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: lucky-shot22-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: lucky-shot22-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Lancement de la stratégie end4 pour Photo of the Week!
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: photo-of-the-week-298-vote-100-left-0H:4M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: photo-of-the-week-298
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: photo-of-the-week-298-vote-50-left-0H:3M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: photo-of-the-week-298
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: photo-of-the-week-298-vote-100-left-0H:4M - waiting
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: photo-of-the-week-298-vote-50-left-0H:2M - Statut: init
+[2025-05-31 13:20:19] Nouveau processus ajouté pour bruno: photo-of-the-week-298-vote-50-left-0H:1M - Statut: init
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: photo-of-the-week-298
+[2025-05-31 13:20:19] Traitement du challenge pour bruno: photo-of-the-week-298
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: photo-of-the-week-298-vote-50-left-0H:3M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: photo-of-the-week-298-vote-50-left-0H:2M - waiting
+[2025-05-31 13:20:19] Processus mis à jour pour bruno: photo-of-the-week-298-vote-50-left-0H:1M - waiting
+[2025-05-31 13:20:19] Application des stratégies pour les challenges sélectionnés:
+- Weird Photos avec stratégie end4
+- What Is Patriotism? avec stratégie end4
+- Exits & Entrances avec stratégie end4
+- Traveling Portraits avec stratégie end4
+- Love And Romance avec stratégie end4
+- Cultural Cuisines avec stratégie end4
+- Favorite Animal avec stratégie end4
+- Lucky Shot avec stratégie end4
+- Photo of the Week! avec stratégie end4
+
+[2025-05-31 13:20:20] Challenges fetching ...
+[2025-05-31 13:20:20] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:20] Challenges fetching ...
+[2025-05-31 13:20:20] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:20] Challenges fetching ...
+[2025-05-31 13:20:20] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:20] Challenges fetching ...
+[2025-05-31 13:20:20] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:20] Challenges fetching ...
+[2025-05-31 13:20:21] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:21] Challenges fetching ...
+[2025-05-31 13:20:21] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:21] Challenges fetching ...
+[2025-05-31 13:20:21] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:21] Challenges fetching ...
+[2025-05-31 13:20:21] Challenges fetched successfully for bruno!
+[2025-05-31 13:20:21] Challenges fetching ...
+[2025-05-31 13:20:21] Challenges fetched successfully for bruno!
+[2025-05-31 16:27:52] Refreshing challenges...
+[2025-05-31 16:27:52] Fetching challenges...
+[2025-05-31 16:34:04] Refreshing challenges...
+[2025-05-31 16:34:04] Fetching challenges...
+[2025-05-31 16:48:29] Désélection de tous les challenges
+
+[2025-05-31 16:48:31] Refreshing challenges...
+[2025-05-31 16:48:31] Fetching challenges...
+[2025-05-31 16:48:34] Challenges fetching ...
+[2025-05-31 16:48:34] Challenges fetched successfully for bruno!
+[2025-05-31 16:51:06] Refreshing challenges...
+[2025-05-31 16:51:06] Fetching challenges...
+[2025-05-31 16:51:09] Challenges fetching ...
+[2025-05-31 16:51:09] Challenges fetched successfully for bruno!
+[2025-05-31 16:52:00] Lucky Shot get vote panel
+[2025-05-31 16:52:00] Filling challenges: {100586}
+Filled Lucky Shot with strategy end4
+
+[2025-05-31 16:52:00] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 16:52:03] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 16:52:03] Voting fetching ...
+[2025-05-31 16:52:03] Lucky Shot voting 100 images
+[2025-05-31 16:52:05] Lucky Shot voted successfully
+[2025-05-31 16:52:10] Challenges fetching ...
+[2025-05-31 16:52:10] Challenges fetched successfully for bruno!
+[2025-05-31 17:56:00] Fetching challenges...
+[2025-05-31 17:56:04] Challenges fetching ...
+[2025-05-31 17:56:04] Challenges fetched successfully for bruno!
+[2025-05-31 17:56:15] Refreshing challenges...
+[2025-05-31 17:56:15] Fetching challenges...
+[2025-05-31 17:56:17] Challenges fetching ...
+[2025-05-31 17:56:17] Challenges fetched successfully for bruno!
+[2025-05-31 17:56:57] Fetching challenges...
+[2025-05-31 17:56:58] Challenges fetching ...
+[2025-05-31 17:56:58] Lancement automatique des stratégies de fin pour 9 nouveaux challenges...
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Weird Photos
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Cultural Cuisines
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Lucky Shot
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Exits & Entrances
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Traveling Portraits
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Love And Romance
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: What Is Patriotism?
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Favorite Animal
+[2025-05-31 17:56:58] Nouveau challenge détecté pour bruno: Photo of the Week!
+[2025-05-31 17:56:58] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:14] Exits & Entrances get vote panel
+[2025-05-31 17:57:24] Filling challenges: {100568}
+Filled Exits & Entrances with strategy end4
+
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:24] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:25] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 17:57:25] Voting fetching ...
+[2025-05-31 17:57:25] Exits & Entrances voting 10 images
+[2025-05-31 17:57:26] Exits & Entrances voted successfully
+[2025-05-31 17:57:28] Exits & Entrances voted successfully
+[2025-05-31 17:57:30] Exits & Entrances voted successfully
+[2025-05-31 17:57:32] Exits & Entrances voted successfully
+[2025-05-31 17:57:34] Exits & Entrances voted successfully
+[2025-05-31 17:57:36] Exits & Entrances voted successfully
+[2025-05-31 17:57:38] Exits & Entrances voted successfully
+[2025-05-31 17:57:40] Exits & Entrances voted successfully
+[2025-05-31 17:57:42] Exits & Entrances voted successfully
+[2025-05-31 17:57:44] Exits & Entrances voted successfully
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:57:47] Challenges fetching ...
+[2025-05-31 17:57:47] Challenges fetched successfully for bruno!
+[2025-05-31 17:59:45] Erreur lors du rafraîchissement API, utilisation du cache: HTTPSConnectionPool(host='api.gurushots.com', port=443): Read timed out. (read timeout=None)
+[2025-05-31 17:59:56] Erreur lors du rafraîchissement API, utilisation du cache: HTTPSConnectionPool(host='api.gurushots.com', port=443): Read timed out. (read timeout=None)
+[2025-05-31 17:59:56] Erreur lors du rafraîchissement API, utilisation du cache: HTTPSConnectionPool(host='api.gurushots.com', port=443): Read timed out. (read timeout=None)
+[2025-05-31 17:59:59] Erreur lors du rafraîchissement API, utilisation du cache: HTTPSConnectionPool(host='api.gurushots.com', port=443): Read timed out. (read timeout=None)
+[2025-05-31 19:15:04] Refreshing challenges...
+[2025-05-31 19:15:04] Fetching challenges...
+[2025-05-31 19:15:06] Challenges fetching ...
+[2025-05-31 19:15:06] Challenges fetched successfully for bruno!
+[2025-05-31 19:15:46] Fetching challenges...
+[2025-05-31 19:15:48] Challenges fetching ...
+[2025-05-31 19:15:48] Lancement automatique des stratégies de fin pour 9 nouveaux challenges...
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Weird Photos
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Cultural Cuisines
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Lucky Shot
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Exits & Entrances
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Traveling Portraits
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Love And Romance
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: What Is Patriotism?
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Favorite Animal
+[2025-05-31 19:15:48] Nouveau challenge détecté pour bruno: Photo of the Week!
+[2025-05-31 19:15:48] Challenges fetched successfully for bruno!
+[2025-05-31 21:53:28] Refreshing challenges...
+[2025-05-31 21:53:28] Fetching challenges...
+[2025-05-31 21:53:29] Challenges fetching ...
+[2025-05-31 21:53:29] Lancement automatique des stratégies de fin pour 1 nouveaux challenges...
+[2025-05-31 21:53:29] Nouveau challenge détecté pour bruno: 3 Hours
+[2025-05-31 21:53:29] Challenges fetched successfully for bruno!
+[2025-05-31 21:53:43] 3 Hours get vote panel
+[2025-05-31 21:53:53] Filling challenges: {101724}
+Filled 3 Hours with strategy end4
+
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:53] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:55] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 21:53:55] Voting fetching ...
+[2025-05-31 21:53:55] 3 Hours voting 10 images
+[2025-05-31 21:53:56] 3 Hours voted successfully
+[2025-05-31 21:53:58] 3 Hours voted successfully
+[2025-05-31 21:54:00] 3 Hours voted successfully
+[2025-05-31 21:54:02] 3 Hours voted successfully
+[2025-05-31 21:54:04] 3 Hours voted successfully
+[2025-05-31 21:54:06] 3 Hours voted successfully
+[2025-05-31 21:54:08] 3 Hours voted successfully
+[2025-05-31 21:54:10] 3 Hours voted successfully
+[2025-05-31 21:54:12] 3 Hours voted successfully
+[2025-05-31 21:54:14] 3 Hours voted successfully
+[2025-05-31 21:54:16] Lancement de la stratégie end4 pour 3 Hours
+[2025-05-31 21:54:16] Nouveau processus ajouté pour bruno: 3-hours126-vote-100-left-0H:4M - Statut: init
+[2025-05-31 21:54:16] Nouveau processus ajouté pour bruno: 3-hours126-vote-50-left-0H:3M - Statut: init
+[2025-05-31 21:54:16] Traitement du challenge pour bruno: 3-hours126
+[2025-05-31 21:54:16] Traitement du challenge pour bruno: 3-hours126
+[2025-05-31 21:54:16] Nouveau processus ajouté pour bruno: 3-hours126-vote-50-left-0H:2M - Statut: init
+[2025-05-31 21:54:16] Processus mis à jour pour bruno: 3-hours126-vote-100-left-0H:4M - waiting
+[2025-05-31 21:54:16] Traitement du challenge pour bruno: 3-hours126
+[2025-05-31 21:54:16] Nouveau processus ajouté pour bruno: 3-hours126-vote-50-left-0H:1M - Statut: init
+[2025-05-31 21:54:16] Traitement du challenge pour bruno: 3-hours126
+[2025-05-31 21:54:16] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:3M - waiting
+[2025-05-31 21:54:16] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:2M - waiting
+[2025-05-31 21:54:16] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:1M - waiting
+[2025-05-31 21:54:16] Application des stratégies pour les challenges sélectionnés:
+- 3 Hours avec stratégie end4
+
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:17] Challenges fetching ...
+[2025-05-31 21:54:17] Challenges fetched successfully for bruno!
+[2025-05-31 21:54:51] Love And Romance get vote panel
+[2025-05-31 21:55:01] Filling challenges: {100581}
+Filled Love And Romance with strategy end4
+
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:01] Récupération des données de vote pour Love And Romance (URL: love-and-romance1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:02] Récupération réussie: 200 images pour Love And Romance
+[2025-05-31 21:55:02] Voting fetching ...
+[2025-05-31 21:55:02] Love And Romance voting 10 images
+[2025-05-31 21:55:03] Love And Romance voted successfully
+[2025-05-31 21:55:05] Love And Romance voted successfully
+[2025-05-31 21:55:07] Love And Romance voted successfully
+[2025-05-31 21:55:09] Love And Romance voted successfully
+[2025-05-31 21:55:11] Love And Romance voted successfully
+[2025-05-31 21:55:13] Love And Romance voted successfully
+[2025-05-31 21:55:15] Love And Romance voted successfully
+[2025-05-31 21:55:17] Love And Romance voted successfully
+[2025-05-31 21:55:19] Love And Romance voted successfully
+[2025-05-31 21:55:21] Love And Romance voted successfully
+[2025-05-31 21:55:24] Challenges fetching ...
+[2025-05-31 21:55:24] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:24] Challenges fetching ...
+[2025-05-31 21:55:24] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:24] Challenges fetching ...
+[2025-05-31 21:55:24] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:24] Challenges fetching ...
+[2025-05-31 21:55:24] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:24] Challenges fetching ...
+[2025-05-31 21:55:24] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:24] Challenges fetching ...
+[2025-05-31 21:55:24] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:25] Challenges fetching ...
+[2025-05-31 21:55:25] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:25] Challenges fetching ...
+[2025-05-31 21:55:25] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:25] Challenges fetching ...
+[2025-05-31 21:55:25] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:25] Challenges fetching ...
+[2025-05-31 21:55:25] Challenges fetched successfully for bruno!
+[2025-05-31 21:55:38] Favorite Animal get vote panel
+[2025-05-31 21:55:48] Filling challenges: {100584}
+Filled Favorite Animal with strategy end4
+
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:48] Récupération des données de vote pour Favorite Animal (URL: favorite-animal, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:49] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:49] Voting fetching ...
+[2025-05-31 21:55:49] Favorite Animal voting 10 images
+[2025-05-31 21:55:50] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:50] Voting fetching ...
+[2025-05-31 21:55:50] Favorite Animal voting 10 images
+[2025-05-31 21:55:50] Récupération réussie: 200 images pour Favorite Animal
+[2025-05-31 21:55:50] Voting fetching ...
+[2025-05-31 21:55:50] Favorite Animal voting 10 images
+[2025-05-31 21:55:50] Favorite Animal voted successfully
+[2025-05-31 21:55:52] Favorite Animal voted successfully
+[2025-05-31 21:55:54] Favorite Animal voted successfully
+[2025-05-31 21:55:56] Favorite Animal voted successfully
+[2025-05-31 21:55:58] Favorite Animal voted successfully
+[2025-05-31 21:56:00] Favorite Animal voted successfully
+[2025-05-31 21:56:02] Favorite Animal voted successfully
+[2025-05-31 21:56:04] Favorite Animal voted successfully
+[2025-05-31 21:56:06] Favorite Animal voted successfully
+[2025-05-31 21:56:08] Favorite Animal voted successfully
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 21:56:12] Challenges fetching ...
+[2025-05-31 21:56:12] Challenges fetched successfully for bruno!
+[2025-05-31 22:04:14] Challenges en cours de traitement:
+- Processus: weird-photos15-vote-100-left-0H:4M: waiting
+- Processus: weird-photos15-vote-50-left-0H:3M: waiting
+- Processus: weird-photos15-vote-50-left-0H:2M: waiting
+- Processus: weird-photos15-vote-50-left-0H:1M: waiting
+- Processus: what-is-patriotism-1-vote-100-left-0H:4M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:3M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:2M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:1M: waiting
+- Processus: exits-entrances1-vote-100-left-0H:4M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:3M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:2M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:1M: waiting
+- Processus: traveling-portraits1-vote-100-left-0H:4M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:3M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:2M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:1M: waiting
+- Processus: love-and-romance1-vote-100-left-0H:4M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:3M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:2M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:1M: waiting
+- Processus: cultural-cuisines-vote-100-left-0H:4M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:3M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:2M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:1M: waiting
+- Processus: favorite-animal-vote-100-left-0H:4M: waiting
+- Processus: favorite-animal-vote-50-left-0H:3M: waiting
+- Processus: favorite-animal-vote-50-left-0H:2M: waiting
+- Processus: favorite-animal-vote-50-left-0H:1M: waiting
+- Processus: lucky-shot22-vote-100-left-0H:4M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:3M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:2M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:1M: waiting
+- Processus: photo-of-the-week-298-vote-100-left-0H:4M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:3M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:2M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:1M: waiting
+- Processus: 3-hours126-vote-100-left-0H:4M: waiting
+- Processus: 3-hours126-vote-50-left-0H:3M: waiting
+- Processus: 3-hours126-vote-50-left-0H:2M: waiting
+- Processus: 3-hours126-vote-50-left-0H:1M: waiting
+
+[2025-05-31 22:04:14] process id  : , weird-photos15-vote-100-left-0H:4M, status, waiting, cmde,  --cha weird-photos15 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , weird-photos15-vote-50-left-0H:3M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , weird-photos15-vote-50-left-0H:2M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , weird-photos15-vote-50-left-0H:1M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , what-is-patriotism-1-vote-100-left-0H:4M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , what-is-patriotism-1-vote-50-left-0H:3M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , what-is-patriotism-1-vote-50-left-0H:2M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , what-is-patriotism-1-vote-50-left-0H:1M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , exits-entrances1-vote-100-left-0H:4M, status, waiting, cmde,  --cha exits-entrances1 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , exits-entrances1-vote-50-left-0H:3M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , exits-entrances1-vote-50-left-0H:2M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , exits-entrances1-vote-50-left-0H:1M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , traveling-portraits1-vote-100-left-0H:4M, status, waiting, cmde,  --cha traveling-portraits1 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , traveling-portraits1-vote-50-left-0H:3M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , traveling-portraits1-vote-50-left-0H:2M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , traveling-portraits1-vote-50-left-0H:1M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , love-and-romance1-vote-100-left-0H:4M, status, waiting, cmde,  --cha love-and-romance1 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , love-and-romance1-vote-50-left-0H:3M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , love-and-romance1-vote-50-left-0H:2M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , love-and-romance1-vote-50-left-0H:1M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , cultural-cuisines-vote-100-left-0H:4M, status, waiting, cmde,  --cha cultural-cuisines vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , cultural-cuisines-vote-50-left-0H:3M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , cultural-cuisines-vote-50-left-0H:2M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , cultural-cuisines-vote-50-left-0H:1M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , favorite-animal-vote-100-left-0H:4M, status, waiting, cmde,  --cha favorite-animal vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , favorite-animal-vote-50-left-0H:3M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , favorite-animal-vote-50-left-0H:2M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , favorite-animal-vote-50-left-0H:1M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , lucky-shot22-vote-100-left-0H:4M, status, waiting, cmde,  --cha lucky-shot22 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , lucky-shot22-vote-50-left-0H:3M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , lucky-shot22-vote-50-left-0H:2M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , lucky-shot22-vote-50-left-0H:1M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , photo-of-the-week-298-vote-100-left-0H:4M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , photo-of-the-week-298-vote-50-left-0H:3M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , photo-of-the-week-298-vote-50-left-0H:2M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , photo-of-the-week-298-vote-50-left-0H:1M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:1
+[2025-05-31 22:04:14] process id  : , 3-hours126-vote-100-left-0H:4M, status, waiting, cmde,  --cha 3-hours126 vote 100 --left 0:4
+[2025-05-31 22:04:14] process id  : , 3-hours126-vote-50-left-0H:3M, status, waiting, cmde,  --cha 3-hours126 vote 50 --left 0:3
+[2025-05-31 22:04:14] process id  : , 3-hours126-vote-50-left-0H:2M, status, waiting, cmde,  --cha 3-hours126 vote 50 --left 0:2
+[2025-05-31 22:04:14] process id  : , 3-hours126-vote-50-left-0H:1M, status, waiting, cmde,  --cha 3-hours126 vote 50 --left 0:1
+[2025-05-31 22:20:46] Refreshing challenges...
+[2025-05-31 22:20:46] Fetching challenges...
+[2025-05-31 22:20:48] Challenges fetching ...
+[2025-05-31 22:20:48] Challenges fetched successfully for bruno!
+[2025-05-31 22:22:27] Challenges en cours de traitement:
+- Processus: weird-photos15-vote-100-left-0H:4M: waiting
+- Processus: weird-photos15-vote-50-left-0H:3M: waiting
+- Processus: weird-photos15-vote-50-left-0H:2M: waiting
+- Processus: weird-photos15-vote-50-left-0H:1M: waiting
+- Processus: what-is-patriotism-1-vote-100-left-0H:4M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:3M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:2M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:1M: waiting
+- Processus: exits-entrances1-vote-100-left-0H:4M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:3M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:2M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:1M: waiting
+- Processus: traveling-portraits1-vote-100-left-0H:4M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:3M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:2M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:1M: waiting
+- Processus: love-and-romance1-vote-100-left-0H:4M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:3M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:2M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:1M: waiting
+- Processus: cultural-cuisines-vote-100-left-0H:4M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:3M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:2M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:1M: waiting
+- Processus: favorite-animal-vote-100-left-0H:4M: waiting
+- Processus: favorite-animal-vote-50-left-0H:3M: waiting
+- Processus: favorite-animal-vote-50-left-0H:2M: waiting
+- Processus: favorite-animal-vote-50-left-0H:1M: waiting
+- Processus: lucky-shot22-vote-100-left-0H:4M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:3M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:2M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:1M: waiting
+- Processus: photo-of-the-week-298-vote-100-left-0H:4M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:3M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:2M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:1M: waiting
+- Processus: 3-hours126-vote-100-left-0H:4M: waiting
+- Processus: 3-hours126-vote-50-left-0H:3M: waiting
+- Processus: 3-hours126-vote-50-left-0H:2M: waiting
+- Processus: 3-hours126-vote-50-left-0H:1M: waiting
+
+[2025-05-31 22:22:27] process id  : , weird-photos15-vote-100-left-0H:4M, status, waiting, cmde,  --cha weird-photos15 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , weird-photos15-vote-50-left-0H:3M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , weird-photos15-vote-50-left-0H:2M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , weird-photos15-vote-50-left-0H:1M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , what-is-patriotism-1-vote-100-left-0H:4M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , what-is-patriotism-1-vote-50-left-0H:3M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , what-is-patriotism-1-vote-50-left-0H:2M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , what-is-patriotism-1-vote-50-left-0H:1M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , exits-entrances1-vote-100-left-0H:4M, status, waiting, cmde,  --cha exits-entrances1 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , exits-entrances1-vote-50-left-0H:3M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , exits-entrances1-vote-50-left-0H:2M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , exits-entrances1-vote-50-left-0H:1M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , traveling-portraits1-vote-100-left-0H:4M, status, waiting, cmde,  --cha traveling-portraits1 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , traveling-portraits1-vote-50-left-0H:3M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , traveling-portraits1-vote-50-left-0H:2M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , traveling-portraits1-vote-50-left-0H:1M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , love-and-romance1-vote-100-left-0H:4M, status, waiting, cmde,  --cha love-and-romance1 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , love-and-romance1-vote-50-left-0H:3M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , love-and-romance1-vote-50-left-0H:2M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , love-and-romance1-vote-50-left-0H:1M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , cultural-cuisines-vote-100-left-0H:4M, status, waiting, cmde,  --cha cultural-cuisines vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , cultural-cuisines-vote-50-left-0H:3M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , cultural-cuisines-vote-50-left-0H:2M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , cultural-cuisines-vote-50-left-0H:1M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , favorite-animal-vote-100-left-0H:4M, status, waiting, cmde,  --cha favorite-animal vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , favorite-animal-vote-50-left-0H:3M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , favorite-animal-vote-50-left-0H:2M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , favorite-animal-vote-50-left-0H:1M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , lucky-shot22-vote-100-left-0H:4M, status, waiting, cmde,  --cha lucky-shot22 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , lucky-shot22-vote-50-left-0H:3M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , lucky-shot22-vote-50-left-0H:2M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , lucky-shot22-vote-50-left-0H:1M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , photo-of-the-week-298-vote-100-left-0H:4M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , photo-of-the-week-298-vote-50-left-0H:3M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , photo-of-the-week-298-vote-50-left-0H:2M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , photo-of-the-week-298-vote-50-left-0H:1M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:1
+[2025-05-31 22:22:27] process id  : , 3-hours126-vote-100-left-0H:4M, status, waiting, cmde,  --cha 3-hours126 vote 100 --left 0:4
+[2025-05-31 22:22:27] process id  : , 3-hours126-vote-50-left-0H:3M, status, waiting, cmde,  --cha 3-hours126 vote 50 --left 0:3
+[2025-05-31 22:22:27] process id  : , 3-hours126-vote-50-left-0H:2M, status, waiting, cmde,  --cha 3-hours126 vote 50 --left 0:2
+[2025-05-31 22:22:27] process id  : , 3-hours126-vote-50-left-0H:1M, status, waiting, cmde,  --cha 3-hours126 vote 50 --left 0:1
+[2025-05-31 22:30:11] Processus mis à jour pour bruno: 3-hours126-vote-100-left-0H:4M - executing
+[2025-05-31 22:30:11] Traitement de vote pour 3 Hours
+[2025-05-31 22:30:11] 3 Hours get vote panel
+[2025-05-31 22:30:11] Processus associé: 3-hours126-vote-100-left-0H:4M
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:30:22] Voting fetching ...
+[2025-05-31 22:30:22] 3 Hours voting 10 images
+[2025-05-31 22:30:23] 3 Hours voted successfully
+[2025-05-31 22:30:23] Processus supprimé pour bruno: 3-hours126-vote-100-left-0H:4M - success
+[2025-05-31 22:30:23] Processus mis à jour pour bruno: 3-hours126-vote-100-left-0H:4M - success
+[2025-05-31 22:30:23] Processus 3-hours126-vote-100-left-0H:4M terminé avec succès (profil: bruno)
+[2025-05-31 22:30:25] 3 Hours voted successfully
+[2025-05-31 22:30:27] 3 Hours voted successfully
+[2025-05-31 22:30:29] 3 Hours voted successfully
+[2025-05-31 22:30:31] 3 Hours voted successfully
+[2025-05-31 22:30:33] 3 Hours voted successfully
+[2025-05-31 22:30:35] 3 Hours voted successfully
+[2025-05-31 22:30:37] 3 Hours voted successfully
+[2025-05-31 22:30:39] 3 Hours voted successfully
+[2025-05-31 22:30:41] 3 Hours voted successfully
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:44] Challenges fetched successfully for bruno!
+[2025-05-31 22:30:44] Challenges fetching ...
+[2025-05-31 22:30:45] Challenges fetched successfully for bruno!
+[2025-05-31 22:31:16] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:3M - executing
+[2025-05-31 22:31:16] Traitement de vote pour 3 Hours
+[2025-05-31 22:31:16] 3 Hours get vote panel
+[2025-05-31 22:31:16] Processus associé: 3-hours126-vote-50-left-0H:3M
+[2025-05-31 22:31:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:31:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:31:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:31:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:31:21] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:31:21] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:31:21] Voting fetching ...
+[2025-05-31 22:31:21] 3 Hours voting 10 images
+[2025-05-31 22:31:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:31:22] Voting fetching ...
+[2025-05-31 22:31:22] 3 Hours voting 10 images
+[2025-05-31 22:31:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:31:22] Voting fetching ...
+[2025-05-31 22:31:22] 3 Hours voting 10 images
+[2025-05-31 22:31:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:31:22] Voting fetching ...
+[2025-05-31 22:31:22] 3 Hours voting 10 images
+[2025-05-31 22:31:22] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:31:22] Voting fetching ...
+[2025-05-31 22:31:22] 3 Hours voting 10 images
+[2025-05-31 22:31:22] 3 Hours voted successfully
+[2025-05-31 22:31:22] Processus supprimé pour bruno: 3-hours126-vote-50-left-0H:3M - success
+[2025-05-31 22:31:22] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:3M - success
+[2025-05-31 22:31:22] Processus 3-hours126-vote-50-left-0H:3M terminé avec succès (profil: bruno)
+[2025-05-31 22:31:24] 3 Hours voted successfully
+[2025-05-31 22:31:26] 3 Hours voted successfully
+[2025-05-31 22:31:28] 3 Hours voted successfully
+[2025-05-31 22:31:30] 3 Hours voted successfully
+[2025-05-31 22:31:33] Challenges fetching ...
+[2025-05-31 22:31:33] Challenges fetched successfully for bruno!
+[2025-05-31 22:31:33] Challenges fetching ...
+[2025-05-31 22:31:33] Challenges fetched successfully for bruno!
+[2025-05-31 22:31:33] Challenges fetching ...
+[2025-05-31 22:31:33] Challenges fetched successfully for bruno!
+[2025-05-31 22:31:34] Challenges fetching ...
+[2025-05-31 22:31:34] Challenges fetched successfully for bruno!
+[2025-05-31 22:31:34] Challenges fetching ...
+[2025-05-31 22:31:34] Challenges fetched successfully for bruno!
+[2025-05-31 22:32:04] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:2M - executing
+[2025-05-31 22:32:04] Traitement de vote pour 3 Hours
+[2025-05-31 22:32:04] 3 Hours get vote panel
+[2025-05-31 22:32:04] Processus associé: 3-hours126-vote-50-left-0H:2M
+[2025-05-31 22:32:09] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:32:09] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:32:09] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:32:09] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:32:09] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:32:10] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:32:10] Voting fetching ...
+[2025-05-31 22:32:10] 3 Hours voting 10 images
+[2025-05-31 22:32:10] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:32:10] Voting fetching ...
+[2025-05-31 22:32:10] 3 Hours voting 10 images
+[2025-05-31 22:32:10] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:32:10] Voting fetching ...
+[2025-05-31 22:32:10] 3 Hours voting 10 images
+[2025-05-31 22:32:10] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:32:10] Voting fetching ...
+[2025-05-31 22:32:10] 3 Hours voting 10 images
+[2025-05-31 22:32:10] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:32:10] Voting fetching ...
+[2025-05-31 22:32:10] 3 Hours voting 10 images
+[2025-05-31 22:32:11] 3 Hours voted successfully
+[2025-05-31 22:32:11] Processus supprimé pour bruno: 3-hours126-vote-50-left-0H:2M - success
+[2025-05-31 22:32:11] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:2M - success
+[2025-05-31 22:32:11] Processus 3-hours126-vote-50-left-0H:2M terminé avec succès (profil: bruno)
+[2025-05-31 22:32:13] 3 Hours voted successfully
+[2025-05-31 22:32:15] 3 Hours voted successfully
+[2025-05-31 22:32:17] 3 Hours voted successfully
+[2025-05-31 22:32:19] 3 Hours voted successfully
+[2025-05-31 22:32:22] Challenges fetching ...
+[2025-05-31 22:32:22] Challenges fetched successfully for bruno!
+[2025-05-31 22:32:22] Challenges fetching ...
+[2025-05-31 22:32:22] Challenges fetched successfully for bruno!
+[2025-05-31 22:32:22] Challenges fetching ...
+[2025-05-31 22:32:22] Challenges fetched successfully for bruno!
+[2025-05-31 22:32:22] Challenges fetching ...
+[2025-05-31 22:32:22] Challenges fetched successfully for bruno!
+[2025-05-31 22:32:22] Challenges fetching ...
+[2025-05-31 22:32:22] Challenges fetched successfully for bruno!
+[2025-05-31 22:33:08] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:1M - executing
+[2025-05-31 22:33:08] Traitement de vote pour 3 Hours
+[2025-05-31 22:33:08] 3 Hours get vote panel
+[2025-05-31 22:33:08] Processus associé: 3-hours126-vote-50-left-0H:1M
+[2025-05-31 22:33:13] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:33:13] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:33:13] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:33:13] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:33:13] Récupération des données de vote pour 3 Hours (URL: 3-hours126, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 22:33:14] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:33:14] Voting fetching ...
+[2025-05-31 22:33:14] 3 Hours voting 10 images
+[2025-05-31 22:33:14] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:33:14] Voting fetching ...
+[2025-05-31 22:33:14] 3 Hours voting 10 images
+[2025-05-31 22:33:14] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:33:14] Voting fetching ...
+[2025-05-31 22:33:14] 3 Hours voting 10 images
+[2025-05-31 22:33:14] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:33:14] Voting fetching ...
+[2025-05-31 22:33:14] 3 Hours voting 10 images
+[2025-05-31 22:33:14] Récupération réussie: 200 images pour 3 Hours
+[2025-05-31 22:33:14] Voting fetching ...
+[2025-05-31 22:33:14] 3 Hours voting 10 images
+[2025-05-31 22:33:15] 3 Hours voted successfully
+[2025-05-31 22:33:15] Processus supprimé pour bruno: 3-hours126-vote-50-left-0H:1M - success
+[2025-05-31 22:33:15] Processus mis à jour pour bruno: 3-hours126-vote-50-left-0H:1M - success
+[2025-05-31 22:33:15] Processus 3-hours126-vote-50-left-0H:1M terminé avec succès (profil: bruno)
+[2025-05-31 22:33:17] 3 Hours voted successfully
+[2025-05-31 22:33:19] 3 Hours voted successfully
+[2025-05-31 22:33:21] 3 Hours voted successfully
+[2025-05-31 22:33:23] 3 Hours voted successfully
+[2025-05-31 22:33:27] Challenges fetching ...
+[2025-05-31 22:33:27] Challenges fetched successfully for bruno!
+[2025-05-31 22:33:27] Challenges fetching ...
+[2025-05-31 22:33:27] Challenges fetched successfully for bruno!
+[2025-05-31 22:33:27] Challenges fetching ...
+[2025-05-31 22:33:27] Challenges fetched successfully for bruno!
+[2025-05-31 22:33:28] Challenges fetching ...
+[2025-05-31 22:33:28] Challenges fetched successfully for bruno!
+[2025-05-31 22:33:28] Challenges fetching ...
+[2025-05-31 22:33:28] Challenges fetched successfully for bruno!
+[2025-05-31 23:05:55] Fetching challenges...
+[2025-05-31 23:05:57] Challenges fetching ...
+[2025-05-31 23:05:57] Lancement automatique des stratégies de fin pour 15 nouveaux challenges...
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: So Cliché
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Exits & Entrances
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Downwards Perspective
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Guru of The Week
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: What Is Patriotism?
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Split Screen
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Photo of the Week!
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Screen Stars - Timeless Waterscapes
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Photographer of the Week
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Dramatic Lighting
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Favorite Animal
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Lucky Shot
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Love And Romance
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Still Life
+[2025-05-31 23:05:57] Nouveau challenge détecté pour pascale: Landscape Photographer of the Year
+[2025-05-31 23:05:57] Challenges fetched successfully for pascale!
+[2025-05-31 23:06:20] Lancement de la stratégie end4 pour Favorite Animal
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: favorite-animal-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: favorite-animal-vote-100-left-0H:4M - waiting
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:3M - waiting
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:1M - waiting
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:2M - waiting
+[2025-05-31 23:06:20] Lancement de la stratégie end4 pour Love And Romance
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: love-and-romance1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: love-and-romance1-vote-100-left-0H:4M - waiting
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:3M - waiting
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:06:20] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:1M - waiting
+[2025-05-31 23:06:20] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:06:20] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:2M - waiting
+[2025-05-31 23:06:20] Application des stratégies pour les challenges sélectionnés:
+- Favorite Animal avec stratégie end4
+- Love And Romance avec stratégie end4
+
+[2025-05-31 23:07:09] Lancement de la stratégie end4 pour Favorite Animal
+[2025-05-31 23:07:09] Commande  --cha favorite-animal vote 100 --left 0:4 existe déjà pour pascale
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: favorite-animal-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:07:09] Commande  --cha favorite-animal vote 50 --left 0:3 existe déjà pour pascale
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:07:09] Commande  --cha favorite-animal vote 50 --left 0:2 existe déjà pour pascale
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:07:09] Commande  --cha favorite-animal vote 50 --left 0:1 existe déjà pour pascale
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: favorite-animal-vote-100-left-0H:4M - waiting
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:3M - waiting
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:2M - waiting
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:1M - waiting
+[2025-05-31 23:07:09] Lancement de la stratégie end4 pour What Is Patriotism?
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: what-is-patriotism-1-vote-100-left-0H:4M - waiting
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: what-is-patriotism-1-vote-50-left-0H:3M - waiting
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: what-is-patriotism-1-vote-50-left-0H:2M - waiting
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: what-is-patriotism-1-vote-50-left-0H:1M - waiting
+[2025-05-31 23:07:09] Lancement de la stratégie end4 pour Love And Romance
+[2025-05-31 23:07:09] Commande  --cha love-and-romance1 vote 100 --left 0:4 existe déjà pour pascale
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: love-and-romance1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:07:09] Commande  --cha love-and-romance1 vote 50 --left 0:3 existe déjà pour pascale
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:07:09] Commande  --cha love-and-romance1 vote 50 --left 0:2 existe déjà pour pascale
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:07:09] Commande  --cha love-and-romance1 vote 50 --left 0:1 existe déjà pour pascale
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: love-and-romance1-vote-100-left-0H:4M - waiting
+[2025-05-31 23:07:09] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:3M - waiting
+[2025-05-31 23:07:09] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:2M - waiting
+[2025-05-31 23:07:09] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:1M - waiting
+[2025-05-31 23:07:10] Application des stratégies pour les challenges sélectionnés:
+- Favorite Animal avec stratégie end4
+- What Is Patriotism? avec stratégie end4
+- Love And Romance avec stratégie end4
+
+[2025-05-31 23:08:05] Lancement de la stratégie end4 pour Favorite Animal
+[2025-05-31 23:08:05] Commande  --cha favorite-animal vote 100 --left 0:4 existe déjà pour pascale
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: favorite-animal-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:08:05] Commande  --cha favorite-animal vote 50 --left 0:3 existe déjà pour pascale
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:08:05] Commande  --cha favorite-animal vote 50 --left 0:2 existe déjà pour pascale
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: favorite-animal-vote-100-left-0H:4M - waiting
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:08:05] Commande  --cha favorite-animal vote 50 --left 0:1 existe déjà pour pascale
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:3M - waiting
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:2M - waiting
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:1M - waiting
+[2025-05-31 23:08:05] Lancement de la stratégie end4 pour Lucky Shot
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: lucky-shot22-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: lucky-shot22
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: lucky-shot22-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: lucky-shot22
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: lucky-shot22-vote-100-left-0H:4M - waiting
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: lucky-shot22-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: lucky-shot22-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: lucky-shot22
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: lucky-shot22
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: lucky-shot22-vote-50-left-0H:3M - waiting
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: lucky-shot22-vote-50-left-0H:2M - waiting
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: lucky-shot22-vote-50-left-0H:1M - waiting
+[2025-05-31 23:08:05] Lancement de la stratégie end4 pour What Is Patriotism?
+[2025-05-31 23:08:05] Commande  --cha what-is-patriotism-1 vote 100 --left 0:4 existe déjà pour pascale
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:08:05] Commande  --cha what-is-patriotism-1 vote 50 --left 0:3 existe déjà pour pascale
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: what-is-patriotism-1-vote-100-left-0H:4M - waiting
+[2025-05-31 23:08:05] Commande  --cha what-is-patriotism-1 vote 50 --left 0:1 existe déjà pour pascale
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:08:05] Commande  --cha what-is-patriotism-1 vote 50 --left 0:2 existe déjà pour pascale
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: what-is-patriotism-1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: what-is-patriotism-1-vote-50-left-0H:3M - waiting
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: what-is-patriotism-1
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: what-is-patriotism-1-vote-50-left-0H:1M - waiting
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: what-is-patriotism-1-vote-50-left-0H:2M - waiting
+[2025-05-31 23:08:05] Lancement de la stratégie end4 pour Love And Romance
+[2025-05-31 23:08:05] Commande  --cha love-and-romance1 vote 100 --left 0:4 existe déjà pour pascale
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: love-and-romance1-vote-100-left-0H:4M - Statut: init
+[2025-05-31 23:08:05] Commande  --cha love-and-romance1 vote 50 --left 0:3 existe déjà pour pascale
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:3M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: love-and-romance1-vote-100-left-0H:4M - waiting
+[2025-05-31 23:08:05] Commande  --cha love-and-romance1 vote 50 --left 0:2 existe déjà pour pascale
+[2025-05-31 23:08:05] Commande  --cha love-and-romance1 vote 50 --left 0:1 existe déjà pour pascale
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:2M - Statut: init
+[2025-05-31 23:08:05] Nouveau processus ajouté pour pascale: love-and-romance1-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:08:05] Traitement du challenge pour pascale: love-and-romance1
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:3M - waiting
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:2M - waiting
+[2025-05-31 23:08:05] Processus mis à jour pour pascale: love-and-romance1-vote-50-left-0H:1M - waiting
+[2025-05-31 23:08:05] Application des stratégies pour les challenges sélectionnés:
+- Favorite Animal avec stratégie end4
+- Lucky Shot avec stratégie end4
+- What Is Patriotism? avec stratégie end4
+- Love And Romance avec stratégie end4
+
+[2025-05-31 23:08:12] Challenges en cours de traitement:
+- Processus: favorite-animal-vote-100-left-0H:4M: waiting
+- Processus: favorite-animal-vote-50-left-0H:3M: waiting
+- Processus: favorite-animal-vote-50-left-0H:1M: waiting
+- Processus: favorite-animal-vote-50-left-0H:2M: waiting
+- Processus: love-and-romance1-vote-100-left-0H:4M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:3M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:1M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:2M: waiting
+- Processus: what-is-patriotism-1-vote-100-left-0H:4M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:3M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:2M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:1M: waiting
+- Processus: lucky-shot22-vote-100-left-0H:4M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:3M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:2M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:1M: waiting
+
+[2025-05-31 23:08:12] process id  : , favorite-animal-vote-100-left-0H:4M, status, waiting, cmde,  --cha favorite-animal vote 100 --left 0:4
+[2025-05-31 23:08:12] process id  : , favorite-animal-vote-50-left-0H:3M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:3
+[2025-05-31 23:08:12] process id  : , favorite-animal-vote-50-left-0H:1M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:1
+[2025-05-31 23:08:12] process id  : , favorite-animal-vote-50-left-0H:2M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:2
+[2025-05-31 23:08:12] process id  : , love-and-romance1-vote-100-left-0H:4M, status, waiting, cmde,  --cha love-and-romance1 vote 100 --left 0:4
+[2025-05-31 23:08:12] process id  : , love-and-romance1-vote-50-left-0H:3M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:3
+[2025-05-31 23:08:12] process id  : , love-and-romance1-vote-50-left-0H:1M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:1
+[2025-05-31 23:08:12] process id  : , love-and-romance1-vote-50-left-0H:2M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:2
+[2025-05-31 23:08:12] process id  : , what-is-patriotism-1-vote-100-left-0H:4M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 100 --left 0:4
+[2025-05-31 23:08:12] process id  : , what-is-patriotism-1-vote-50-left-0H:3M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:3
+[2025-05-31 23:08:12] process id  : , what-is-patriotism-1-vote-50-left-0H:2M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:2
+[2025-05-31 23:08:12] process id  : , what-is-patriotism-1-vote-50-left-0H:1M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:1
+[2025-05-31 23:08:12] process id  : , lucky-shot22-vote-100-left-0H:4M, status, waiting, cmde,  --cha lucky-shot22 vote 100 --left 0:4
+[2025-05-31 23:08:12] process id  : , lucky-shot22-vote-50-left-0H:3M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:3
+[2025-05-31 23:08:12] process id  : , lucky-shot22-vote-50-left-0H:2M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:2
+[2025-05-31 23:08:12] process id  : , lucky-shot22-vote-50-left-0H:1M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:1
+[2025-05-31 23:08:52] Refreshing challenges...
+[2025-05-31 23:08:52] Fetching challenges...
+[2025-05-31 23:08:53] Challenges fetching ...
+[2025-05-31 23:08:53] Challenges fetched successfully for bruno!
+[2025-05-31 23:09:06] Challenges en cours de traitement:
+- Processus: weird-photos15-vote-100-left-0H:4M: waiting
+- Processus: weird-photos15-vote-50-left-0H:3M: waiting
+- Processus: weird-photos15-vote-50-left-0H:2M: waiting
+- Processus: weird-photos15-vote-50-left-0H:1M: waiting
+- Processus: what-is-patriotism-1-vote-100-left-0H:4M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:3M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:2M: waiting
+- Processus: what-is-patriotism-1-vote-50-left-0H:1M: waiting
+- Processus: exits-entrances1-vote-100-left-0H:4M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:3M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:2M: waiting
+- Processus: exits-entrances1-vote-50-left-0H:1M: waiting
+- Processus: traveling-portraits1-vote-100-left-0H:4M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:3M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:2M: waiting
+- Processus: traveling-portraits1-vote-50-left-0H:1M: waiting
+- Processus: love-and-romance1-vote-100-left-0H:4M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:3M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:2M: waiting
+- Processus: love-and-romance1-vote-50-left-0H:1M: waiting
+- Processus: cultural-cuisines-vote-100-left-0H:4M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:3M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:2M: waiting
+- Processus: cultural-cuisines-vote-50-left-0H:1M: waiting
+- Processus: favorite-animal-vote-100-left-0H:4M: waiting
+- Processus: favorite-animal-vote-50-left-0H:3M: waiting
+- Processus: favorite-animal-vote-50-left-0H:2M: waiting
+- Processus: favorite-animal-vote-50-left-0H:1M: waiting
+- Processus: lucky-shot22-vote-100-left-0H:4M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:3M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:2M: waiting
+- Processus: lucky-shot22-vote-50-left-0H:1M: waiting
+- Processus: photo-of-the-week-298-vote-100-left-0H:4M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:3M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:2M: waiting
+- Processus: photo-of-the-week-298-vote-50-left-0H:1M: waiting
+
+[2025-05-31 23:09:06] process id  : , weird-photos15-vote-100-left-0H:4M, status, waiting, cmde,  --cha weird-photos15 vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , weird-photos15-vote-50-left-0H:3M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , weird-photos15-vote-50-left-0H:2M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , weird-photos15-vote-50-left-0H:1M, status, waiting, cmde,  --cha weird-photos15 vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , what-is-patriotism-1-vote-100-left-0H:4M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , what-is-patriotism-1-vote-50-left-0H:3M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , what-is-patriotism-1-vote-50-left-0H:2M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , what-is-patriotism-1-vote-50-left-0H:1M, status, waiting, cmde,  --cha what-is-patriotism-1 vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , exits-entrances1-vote-100-left-0H:4M, status, waiting, cmde,  --cha exits-entrances1 vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , exits-entrances1-vote-50-left-0H:3M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , exits-entrances1-vote-50-left-0H:2M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , exits-entrances1-vote-50-left-0H:1M, status, waiting, cmde,  --cha exits-entrances1 vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , traveling-portraits1-vote-100-left-0H:4M, status, waiting, cmde,  --cha traveling-portraits1 vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , traveling-portraits1-vote-50-left-0H:3M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , traveling-portraits1-vote-50-left-0H:2M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , traveling-portraits1-vote-50-left-0H:1M, status, waiting, cmde,  --cha traveling-portraits1 vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , love-and-romance1-vote-100-left-0H:4M, status, waiting, cmde,  --cha love-and-romance1 vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , love-and-romance1-vote-50-left-0H:3M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , love-and-romance1-vote-50-left-0H:2M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , love-and-romance1-vote-50-left-0H:1M, status, waiting, cmde,  --cha love-and-romance1 vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , cultural-cuisines-vote-100-left-0H:4M, status, waiting, cmde,  --cha cultural-cuisines vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , cultural-cuisines-vote-50-left-0H:3M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , cultural-cuisines-vote-50-left-0H:2M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , cultural-cuisines-vote-50-left-0H:1M, status, waiting, cmde,  --cha cultural-cuisines vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , favorite-animal-vote-100-left-0H:4M, status, waiting, cmde,  --cha favorite-animal vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , favorite-animal-vote-50-left-0H:3M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , favorite-animal-vote-50-left-0H:2M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , favorite-animal-vote-50-left-0H:1M, status, waiting, cmde,  --cha favorite-animal vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , lucky-shot22-vote-100-left-0H:4M, status, waiting, cmde,  --cha lucky-shot22 vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , lucky-shot22-vote-50-left-0H:3M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , lucky-shot22-vote-50-left-0H:2M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , lucky-shot22-vote-50-left-0H:1M, status, waiting, cmde,  --cha lucky-shot22 vote 50 --left 0:1
+[2025-05-31 23:09:06] process id  : , photo-of-the-week-298-vote-100-left-0H:4M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 100 --left 0:4
+[2025-05-31 23:09:06] process id  : , photo-of-the-week-298-vote-50-left-0H:3M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:3
+[2025-05-31 23:09:06] process id  : , photo-of-the-week-298-vote-50-left-0H:2M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:2
+[2025-05-31 23:09:06] process id  : , photo-of-the-week-298-vote-50-left-0H:1M, status, waiting, cmde,  --cha photo-of-the-week-298 vote 50 --left 0:1
+[2025-05-31 23:09:40] Photo of the Week! get vote panel
+[2025-05-31 23:09:50] Cultural Cuisines get vote panel
+[2025-05-31 23:10:00] Exits & Entrances get vote panel
+[2025-05-31 23:10:10] Lucky Shot get vote panel
+[2025-05-31 23:10:20] Weird Photos get vote panel
+[2025-05-31 23:10:30] What Is Patriotism? get vote panel
+[2025-05-31 23:10:40] Filling challenges: {101235, 100582, 100568, 100586, 100619, 100620}
+Filled Photo of the Week! with strategy end4
+Filled Cultural Cuisines with strategy end4
+Filled Exits & Entrances with strategy end4
+Filled Lucky Shot with strategy end4
+Filled Weird Photos with strategy end4
+Filled What Is Patriotism? with strategy end4
+
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Cultural Cuisines (URL: cultural-cuisines, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Exits & Entrances (URL: exits-entrances1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Lucky Shot (URL: lucky-shot22, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour Weird Photos (URL: weird-photos15, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:40] Récupération des données de vote pour What Is Patriotism? (URL: what-is-patriotism-1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Photo of the Week! voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] Weird Photos voting 10 images
+[2025-05-31 23:10:42] Récupération réussie: 200 images pour What Is Patriotism?
+[2025-05-31 23:10:42] Voting fetching ...
+[2025-05-31 23:10:42] What Is Patriotism? voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Cultural Cuisines
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Cultural Cuisines voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Weird Photos voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Weird Photos
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Weird Photos voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Lucky Shot
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Lucky Shot voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:43] Récupération réussie: 200 images pour Exits & Entrances
+[2025-05-31 23:10:43] Voting fetching ...
+[2025-05-31 23:10:43] Exits & Entrances voting 10 images
+[2025-05-31 23:10:44] Photo of the Week! voted successfully
+[2025-05-31 23:10:46] Photo of the Week! voted successfully
+[2025-05-31 23:10:48] Photo of the Week! voted successfully
+[2025-05-31 23:10:50] Cultural Cuisines voted successfully
+[2025-05-31 23:10:52] What Is Patriotism? voted successfully
+[2025-05-31 23:10:54] Photo of the Week! voted successfully
+[2025-05-31 23:10:56] Cultural Cuisines voted successfully
+[2025-05-31 23:10:58] Photo of the Week! voted successfully
+[2025-05-31 23:11:00] Photo of the Week! voted successfully
+[2025-05-31 23:11:02] Cultural Cuisines voted successfully
+[2025-05-31 23:11:04] Cultural Cuisines voted successfully
+[2025-05-31 23:11:06] What Is Patriotism? voted successfully
+[2025-05-31 23:11:08] Photo of the Week! voted successfully
+[2025-05-31 23:11:10] Photo of the Week! voted successfully
+[2025-05-31 23:11:12] What Is Patriotism? voted successfully
+[2025-05-31 23:11:14] Weird Photos voted successfully
+[2025-05-31 23:11:16] What Is Patriotism? voted successfully
+[2025-05-31 23:11:18] What Is Patriotism? voted successfully
+[2025-05-31 23:11:20] Exits & Entrances voted successfully
+[2025-05-31 23:11:22] Weird Photos voted successfully
+[2025-05-31 23:11:24] What Is Patriotism? voted successfully
+[2025-05-31 23:11:26] Weird Photos voted successfully
+[2025-05-31 23:11:28] Weird Photos voted successfully
+[2025-05-31 23:11:30] Lucky Shot voted successfully
+[2025-05-31 23:11:32] Exits & Entrances voted successfully
+[2025-05-31 23:11:34] What Is Patriotism? voted successfully
+[2025-05-31 23:11:36] Lucky Shot voted successfully
+[2025-05-31 23:11:38] Exits & Entrances voted successfully
+[2025-05-31 23:11:40] Cultural Cuisines voted successfully
+[2025-05-31 23:11:42] Weird Photos voted successfully
+[2025-05-31 23:11:44] Weird Photos voted successfully
+[2025-05-31 23:11:46] Cultural Cuisines voted successfully
+[2025-05-31 23:11:48] Photo of the Week! voted successfully
+[2025-05-31 23:11:50] Lucky Shot voted successfully
+[2025-05-31 23:11:52] Weird Photos voted successfully
+[2025-05-31 23:11:54] Exits & Entrances voted successfully
+[2025-05-31 23:11:56] Cultural Cuisines voted successfully
+[2025-05-31 23:11:58] What Is Patriotism? voted successfully
+[2025-05-31 23:12:00] What Is Patriotism? voted successfully
+[2025-05-31 23:12:02] Photo of the Week! voted successfully
+[2025-05-31 23:12:04] Cultural Cuisines voted successfully
+[2025-05-31 23:12:06] Cultural Cuisines voted successfully
+[2025-05-31 23:12:08] Cultural Cuisines voted successfully
+[2025-05-31 23:12:10] What Is Patriotism? voted successfully
+[2025-05-31 23:12:12] Lucky Shot voted successfully
+[2025-05-31 23:12:14] Lucky Shot voted successfully
+[2025-05-31 23:12:16] Weird Photos voted successfully
+[2025-05-31 23:12:18] Weird Photos voted successfully
+[2025-05-31 23:12:20] Weird Photos voted successfully
+[2025-05-31 23:12:22] Exits & Entrances voted successfully
+[2025-05-31 23:12:24] Lucky Shot voted successfully
+[2025-05-31 23:12:26] Lucky Shot voted successfully
+[2025-05-31 23:12:28] Exits & Entrances voted successfully
+[2025-05-31 23:12:30] Exits & Entrances voted successfully
+[2025-05-31 23:12:32] Lucky Shot voted successfully
+[2025-05-31 23:12:34] Exits & Entrances voted successfully
+[2025-05-31 23:12:36] Exits & Entrances voted successfully
+[2025-05-31 23:12:38] Exits & Entrances voted successfully
+[2025-05-31 23:12:40] Lucky Shot voted successfully
+[2025-05-31 23:12:42] Lucky Shot voted successfully
+[2025-05-31 23:57:31] Processus supprimé pour pascale: favorite-animal-vote-100-left-0H:4M - stopped
+[2025-05-31 23:57:31] Processus mis à jour pour pascale: favorite-animal-vote-100-left-0H:4M - stopped
+[2025-05-31 23:57:31] Processus supprimé pour pascale: favorite-animal-vote-50-left-0H:3M - stopped
+[2025-05-31 23:57:31] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:3M - stopped
+[2025-05-31 23:57:31] Processus supprimé pour pascale: favorite-animal-vote-50-left-0H:1M - stopped
+[2025-05-31 23:57:31] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:1M - stopped
+[2025-05-31 23:57:31] Processus supprimé pour pascale: favorite-animal-vote-50-left-0H:2M - stopped
+[2025-05-31 23:57:31] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:2M - stopped
+[2025-05-31 23:57:31] Arrêt des stratégies pour les challenges sélectionnés:
+- Arrêt et suppression du processus pour Favorite Animal
+- Arrêt et suppression du processus pour Favorite Animal
+- Arrêt et suppression du processus pour Favorite Animal
+- Arrêt et suppression du processus pour Favorite Animal
+
+[2025-05-31 23:57:36] Stratégie de Favorite Animal mise à jour: end2
+[2025-05-31 23:57:36] Stratégie enregistrée pour pascale: favorite-animal = end2
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-50-left-0H:2M: profil pascale ou processus non disponible
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-50-left-0H:1M: profil pascale ou processus non disponible
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-50-left-0H:2M: profil pascale ou processus non disponible
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-50-left-0H:3M: profil pascale ou processus non disponible
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-50-left-0H:3M: profil pascale ou processus non disponible
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-100-left-0H:4M: profil pascale ou processus non disponible
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-50-left-0H:3M: profil pascale ou processus non disponible
+[2025-05-31 23:57:36] Arrêt du processus favorite-animal-vote-50-left-0H:1M: profil pascale ou processus non disponible
+[2025-05-31 23:57:37] Arrêt du processus favorite-animal-vote-100-left-0H:4M: profil pascale ou processus non disponible
+[2025-05-31 23:57:37] Arrêt du processus favorite-animal-vote-50-left-0H:1M: profil pascale ou processus non disponible
+[2025-05-31 23:57:37] Arrêt du processus favorite-animal-vote-100-left-0H:4M: profil pascale ou processus non disponible
+[2025-05-31 23:57:37] Arrêt du processus favorite-animal-vote-50-left-0H:2M: profil pascale ou processus non disponible
+[2025-05-31 23:57:48] Lancement de la stratégie end2 pour Favorite Animal
+[2025-05-31 23:57:48] Nouveau processus ajouté pour pascale: favorite-animal-vote-100-left-0H:2M - Statut: init
+[2025-05-31 23:57:48] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:57:48] Nouveau processus ajouté pour pascale: favorite-animal-vote-50-left-0H:1M - Statut: init
+[2025-05-31 23:57:48] Processus mis à jour pour pascale: favorite-animal-vote-100-left-0H:2M - waiting
+[2025-05-31 23:57:48] Traitement du challenge pour pascale: favorite-animal
+[2025-05-31 23:57:48] Processus mis à jour pour pascale: favorite-animal-vote-50-left-0H:1M - waiting
+[2025-05-31 23:57:48] Stratégie chargée depuis gsgui.ini pour pascale/Favorite Animal: end2
+[2025-05-31 23:57:48] Application des stratégies pour les challenges sélectionnés:
+- Favorite Animal avec stratégie end2
+
+[2025-05-31 23:59:15] Refreshing challenges...
+[2025-05-31 23:59:15] Fetching challenges...
+[2025-05-31 23:59:16] Challenges fetching ...
+[2025-05-31 23:59:16] Stratégie chargée depuis gsgui.ini pour pascale/Favorite Animal: end2
+[2025-05-31 23:59:16] Challenges fetched successfully for pascale!
+[2025-05-31 23:59:16] Stratégie chargée depuis gsgui.ini pour pascale/Favorite Animal: end2

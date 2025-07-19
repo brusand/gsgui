@@ -1,0 +1,136 @@
+[2025-05-29 19:46:28] Fetching challenges...
+[2025-05-29 19:46:30] Challenges fetching ...
+[2025-05-29 19:46:30] Lancement automatique des stratégies de fin pour 16 nouveaux challenges...
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Busy Life
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Babies & Toddlers
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Green Grass
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Kids in Black & White
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Snaps From Behind
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Guru of The Week
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Landscape Photographer of the Year
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: 12 Hours
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Photographer of the Week
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Photo of the Week!
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Dramatic Lighting
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Colorful Rainbows
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Chic Outfits
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Your Snow Shots
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Your Perfect Shot
+[2025-05-29 19:46:30] Nouveau challenge détecté pour pascale: Still Life
+[2025-05-29 19:46:30] Challenges fetched successfully for pascale!
+[2025-05-29 23:09:29] Refreshing challenges...
+[2025-05-29 23:09:29] Fetching challenges...
+[2025-05-29 23:09:30] Challenges fetching ...
+[2025-05-29 23:09:30] Challenges fetched successfully for pascale!
+[2025-05-29 23:09:50] Sélection de tous les challenges
+
+[2025-05-29 23:09:56] Colorful Rainbows get vote panel
+[2025-05-29 23:09:56] Your Snow Shots get vote panel
+[2025-05-29 23:09:56] Landscape Photographer of the Year get vote panel
+[2025-05-29 23:09:56] Snaps From Behind get vote panel
+[2025-05-29 23:09:56] Photo of the Week! get vote panel
+[2025-05-29 23:09:56] Photographer of the Week get vote panel
+[2025-05-29 23:09:56] Guru of The Week get vote panel
+[2025-05-29 23:09:56] Kids in Black & White get vote panel
+[2025-05-29 23:09:56] Still Life get vote panel
+[2025-05-29 23:09:56] Chic Outfits get vote panel
+[2025-05-29 23:09:56] Dramatic Lighting get vote panel
+[2025-05-29 23:09:56] Green Grass get vote panel
+[2025-05-29 23:09:56] Filling challenges: {100642, 100569, 100780, 100588, 101235, 101111, 101112, 100633, 101466, 100573, 101789, 100639}
+Filled Colorful Rainbows with strategy end18
+Filled Your Snow Shots with strategy end18
+Filled Landscape Photographer of the Year with strategy end18
+Filled Snaps From Behind with strategy end18
+Filled Photo of the Week! with strategy end18
+Filled Photographer of the Week with strategy end18
+Filled Guru of The Week with strategy end18
+Filled Kids in Black & White with strategy end18
+Filled Still Life with strategy end18
+Filled Chic Outfits with strategy end18
+Filled Dramatic Lighting with strategy end18
+Filled Green Grass with strategy end18
+
+[2025-05-29 23:09:56] Récupération des données de vote pour Colorful Rainbows (URL: colorful-rainbows1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Your Snow Shots (URL: your-snow-shots2, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Landscape Photographer of the Year (URL: landscape-photographer-of-the-year4, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Snaps From Behind (URL: snaps-from-behind, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-298, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Photographer of the Week (URL: photographer-of-the-week209, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Guru of The Week (URL: guru-of-the-week35, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Kids in Black & White (URL: kids-in-black-white1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Still Life (URL: still-life5, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Chic Outfits (URL: chic-outfits1, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Dramatic Lighting (URL: dramatic-lighting11, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:56] Récupération des données de vote pour Green Grass (URL: green-grass, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-05-29 23:09:57] Récupération réussie: 200 images pour Chic Outfits
+[2025-05-29 23:09:57] Voting fetching ...
+[2025-05-29 23:09:57] Chic Outfits voting 100 images
+[2025-05-29 23:09:57] Récupération réussie: 200 images pour Colorful Rainbows
+[2025-05-29 23:09:57] Voting fetching ...
+[2025-05-29 23:09:57] Colorful Rainbows voting 100 images
+[2025-05-29 23:09:57] Récupération réussie: 200 images pour Photo of the Week!
+[2025-05-29 23:09:57] Voting fetching ...
+[2025-05-29 23:09:57] Photo of the Week! voting 100 images
+[2025-05-29 23:09:57] Récupération réussie: 200 images pour Your Snow Shots
+[2025-05-29 23:09:57] Voting fetching ...
+[2025-05-29 23:09:57] Your Snow Shots voting 100 images
+[2025-05-29 23:09:57] Récupération réussie: 200 images pour Dramatic Lighting
+[2025-05-29 23:09:57] Voting fetching ...
+[2025-05-29 23:09:57] Dramatic Lighting voting 100 images
+[2025-05-29 23:09:57] Récupération réussie: 200 images pour Guru of The Week
+[2025-05-29 23:09:57] Voting fetching ...
+[2025-05-29 23:09:57] Guru of The Week voting 100 images
+[2025-05-29 23:09:57] Récupération réussie: 200 images pour Kids in Black & White
+[2025-05-29 23:09:57] Voting fetching ...
+[2025-05-29 23:09:57] Kids in Black & White voting 100 images
+[2025-05-29 23:09:58] Récupération réussie: 200 images pour Snaps From Behind
+[2025-05-29 23:09:58] Voting fetching ...
+[2025-05-29 23:09:58] Snaps From Behind voting 100 images
+[2025-05-29 23:09:58] Récupération réussie: 200 images pour Green Grass
+[2025-05-29 23:09:58] Voting fetching ...
+[2025-05-29 23:09:58] Green Grass voting 100 images
+[2025-05-29 23:09:58] Récupération réussie: 200 images pour Photographer of the Week
+[2025-05-29 23:09:58] Voting fetching ...
+[2025-05-29 23:09:58] Photographer of the Week voting 100 images
+[2025-05-29 23:09:58] Récupération réussie: 200 images pour Still Life
+[2025-05-29 23:09:58] Voting fetching ...
+[2025-05-29 23:09:58] Still Life voting 100 images
+[2025-05-29 23:09:58] Récupération réussie: 200 images pour Landscape Photographer of the Year
+[2025-05-29 23:09:58] Voting fetching ...
+[2025-05-29 23:09:58] Landscape Photographer of the Year voting 100 images
+[2025-05-29 23:09:59] Chic Outfits voted successfully
+[2025-05-29 23:10:01] Your Snow Shots voted successfully
+[2025-05-29 23:10:03] Colorful Rainbows voted successfully
+[2025-05-29 23:10:05] Guru of The Week voted successfully
+[2025-05-29 23:10:07] Photo of the Week! voted successfully
+[2025-05-29 23:10:09] Kids in Black & White voted successfully
+[2025-05-29 23:10:11] Photographer of the Week voted successfully
+[2025-05-29 23:10:13] Still Life voted successfully
+[2025-05-29 23:10:15] Dramatic Lighting voted successfully
+[2025-05-29 23:10:17] Snaps From Behind voted successfully
+[2025-05-29 23:10:19] Landscape Photographer of the Year voted successfully
+[2025-05-29 23:10:21] Green Grass voted successfully
+[2025-05-29 23:10:24] Challenges fetching ...
+[2025-05-29 23:10:24] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:24] Challenges fetching ...
+[2025-05-29 23:10:24] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:24] Challenges fetching ...
+[2025-05-29 23:10:24] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:24] Challenges fetching ...
+[2025-05-29 23:10:24] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:24] Challenges fetching ...
+[2025-05-29 23:10:24] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:24] Challenges fetching ...
+[2025-05-29 23:10:25] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:25] Challenges fetching ...
+[2025-05-29 23:10:25] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:25] Challenges fetching ...
+[2025-05-29 23:10:25] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:25] Challenges fetching ...
+[2025-05-29 23:10:25] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:25] Challenges fetching ...
+[2025-05-29 23:10:25] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:25] Challenges fetching ...
+[2025-05-29 23:10:25] Challenges fetched successfully for pascale!
+[2025-05-29 23:10:26] Challenges fetching ...
+[2025-05-29 23:10:26] Challenges fetched successfully for pascale!

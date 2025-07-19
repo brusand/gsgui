@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+      "filesystem": {
+          "command": "npx",
+          "args": [
+              "-y",
+              "@modelcontextprotocol/server-filesystem",
+              "/Users/bruno/"
+          ]
+      },
+      "gitmcp": {
+          "command": "npx",
+          "args": [
+              "mcp-remote",
+              "https://gitmcp.io/brusand/gsgui"
+          ]
+      }
+  }
+}

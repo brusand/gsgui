@@ -1,0 +1,548 @@
+[2025-06-15 09:20:17] Refreshing challenges...
+[2025-06-15 09:20:17] Fetching challenges...
+[2025-06-15 09:20:18] Challenges fetching ...
+[2025-06-15 09:20:18] Lancement automatique des stratégies de fin pour 1 nouveaux challenges...
+[2025-06-15 09:20:18] Nouveau challenge détecté pour bruno: Evoking Nostalgia
+[2025-06-15 09:20:18] Challenges fetched successfully for bruno!
+[2025-06-15 09:20:21] Désélection de tous les challenges
+
+[2025-06-15 09:20:27] Sélection de tous les challenges
+
+[2025-06-15 09:20:30] 500 Guru's Picks get vote panel
+[2025-06-15 09:20:30] Evoking Nostalgia get vote panel
+[2025-06-15 09:20:30] Dramatic Lighting get vote panel
+[2025-06-15 09:20:30] Photo of the Week! get vote panel
+[2025-06-15 09:20:30] Filling challenges: {102473, 101620, 101789, 102238}
+Filled 500 Guru's Picks with strategy end4
+Filled Evoking Nostalgia with strategy end4
+Filled Dramatic Lighting with strategy end4
+Filled Photo of the Week! with strategy end4
+
+[2025-06-15 09:20:30] Récupération des données de vote pour 500 Guru's Picks (URL: 500-guru-s-picks79, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 09:20:30] Récupération des données de vote pour Evoking Nostalgia (URL: evoking-nostalgia, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 09:20:30] Récupération des données de vote pour Dramatic Lighting (URL: dramatic-lighting11, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 09:20:30] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-300, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 09:20:31] Récupération réussie: 200 images pour Photo of the Week!
+[2025-06-15 09:20:31] Voting fetching ...
+[2025-06-15 09:20:31] Photo of the Week! voting 35 images
+[2025-06-15 09:20:34] Photo of the Week! voting 35 images
+[2025-06-15 09:20:34] Récupération réussie: 200 images pour Evoking Nostalgia
+[2025-06-15 09:20:34] Voting fetching ...
+[2025-06-15 09:20:34] Evoking Nostalgia voting 35 images
+[2025-06-15 09:20:37] Evoking Nostalgia voting 35 images
+[2025-06-15 09:20:37] Récupération réussie: 200 images pour 500 Guru's Picks
+[2025-06-15 09:20:37] Voting fetching ...
+[2025-06-15 09:20:37] 500 Guru's Picks voting 35 images
+[2025-06-15 09:20:40] 500 Guru's Picks voting 35 images
+[2025-06-15 09:20:40] Récupération réussie: 200 images pour Dramatic Lighting
+[2025-06-15 09:20:40] Voting fetching ...
+[2025-06-15 09:20:40] Dramatic Lighting voting 35 images
+[2025-06-15 09:20:43] Dramatic Lighting voting 35 images
+[2025-06-15 09:20:43] Photo of the Week! voted successfully
+[2025-06-15 09:20:45] Evoking Nostalgia voted successfully
+[2025-06-15 09:20:47] Evoking Nostalgia voted successfully
+[2025-06-15 09:20:49] 500 Guru's Picks voted successfully
+[2025-06-15 09:20:51] 500 Guru's Picks voted successfully
+[2025-06-15 09:20:53] Photo of the Week! voted successfully
+[2025-06-15 09:20:55] Dramatic Lighting voted successfully
+[2025-06-15 09:20:57] Dramatic Lighting voted successfully
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 09:21:00] Challenges fetching ...
+[2025-06-15 09:21:00] Challenges fetched successfully for bruno!
+[2025-06-15 10:17:23] Désélection de tous les challenges
+
+[2025-06-15 10:17:24] Refreshing challenges...
+[2025-06-15 10:17:24] Fetching challenges...
+[2025-06-15 10:17:24] Challenges fetching ...
+[2025-06-15 10:17:24] Lancement automatique des stratégies de fin pour 3 nouveaux challenges...
+[2025-06-15 10:17:24] Nouveau challenge détecté pour bruno: Wooden Structures
+[2025-06-15 10:17:24] Nouveau challenge détecté pour bruno: Military Forces
+[2025-06-15 10:17:24] Nouveau challenge détecté pour bruno: Seated
+[2025-06-15 10:17:24] Challenges fetched successfully for bruno!
+[2025-06-15 10:17:29] Seated get vote panel
+[2025-06-15 10:17:29] Filling challenges: {103018}
+Filled Seated with strategy end4
+
+[2025-06-15 10:17:29] Récupération des données de vote pour Seated (URL: seated224, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:17:29] Récupération réussie: 20 images pour Seated
+[2025-06-15 10:17:29] Voting fetching ...
+[2025-06-15 10:17:29] Seated voting 20 images
+[2025-06-15 10:17:32] Seated voting 20 images
+[2025-06-15 10:17:33] Seated voted successfully
+[2025-06-15 10:17:35] Seated voted successfully
+[2025-06-15 10:17:38] Challenges fetching ...
+[2025-06-15 10:17:38] Challenges fetched successfully for bruno!
+[2025-06-15 10:17:38] Challenges fetching ...
+[2025-06-15 10:17:38] Challenges fetched successfully for bruno!
+[2025-06-15 10:17:41] Lancement de la stratégie end4 pour Seated
+[2025-06-15 10:17:42] Nouveau processus ajouté pour bruno: seated224-vote-70-left-0H:4M - Statut: init
+[2025-06-15 10:17:42] Traitement du challenge pour bruno: seated224
+[2025-06-15 10:17:42] Nouveau processus ajouté pour bruno: seated224-vote-20-left-0H:3M - Statut: init
+[2025-06-15 10:17:42] Traitement du challenge pour bruno: seated224
+[2025-06-15 10:17:42] Nouveau processus ajouté pour bruno: seated224-vote-20-left-0H:2M - Statut: init
+[2025-06-15 10:17:42] Traitement du challenge pour bruno: seated224
+[2025-06-15 10:17:42] Nouveau processus ajouté pour bruno: seated224-vote-20-left-0H:1M - Statut: init
+[2025-06-15 10:17:42] Processus mis à jour pour bruno: seated224-vote-70-left-0H:4M - waiting
+[2025-06-15 10:17:42] Traitement du challenge pour bruno: seated224
+[2025-06-15 10:17:42] Processus mis à jour pour bruno: seated224-vote-20-left-0H:3M - waiting
+[2025-06-15 10:17:42] Processus mis à jour pour bruno: seated224-vote-20-left-0H:2M - waiting
+[2025-06-15 10:17:42] Processus mis à jour pour bruno: seated224-vote-20-left-0H:1M - waiting
+[2025-06-15 10:17:42] Application des stratégies pour les challenges sélectionnés:
+- Seated avec stratégie end4
+
+[2025-06-15 10:18:26] 500 Guru's Picks get vote panel
+[2025-06-15 10:18:26] Evoking Nostalgia get vote panel
+[2025-06-15 10:18:26] Wooden Structures get vote panel
+[2025-06-15 10:18:26] Dramatic Lighting get vote panel
+[2025-06-15 10:18:26] Photo of the Week! get vote panel
+[2025-06-15 10:18:26] Military Forces get vote panel
+[2025-06-15 10:18:26] Filling challenges: {102473, 101620, 101624, 101789, 102238, 101631}
+Filled 500 Guru's Picks with strategy end4
+Filled Evoking Nostalgia with strategy end4
+Filled Wooden Structures with strategy end4
+Filled Dramatic Lighting with strategy end4
+Filled Photo of the Week! with strategy end4
+Filled Military Forces with strategy end4
+
+[2025-06-15 10:18:26] Récupération des données de vote pour 500 Guru's Picks (URL: 500-guru-s-picks79, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:18:26] Récupération des données de vote pour Evoking Nostalgia (URL: evoking-nostalgia, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:18:26] Récupération des données de vote pour Wooden Structures (URL: wooden-structures, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:18:26] Récupération des données de vote pour Dramatic Lighting (URL: dramatic-lighting11, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:18:26] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-300, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:18:26] Récupération des données de vote pour Military Forces (URL: military-forces23, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:18:27] Récupération réussie: 200 images pour Military Forces
+[2025-06-15 10:18:27] Voting fetching ...
+[2025-06-15 10:18:27] Military Forces voting 35 images
+[2025-06-15 10:18:30] Military Forces voting 35 images
+[2025-06-15 10:18:30] Récupération réussie: 200 images pour Photo of the Week!
+[2025-06-15 10:18:30] Voting fetching ...
+[2025-06-15 10:18:30] Photo of the Week! voting 35 images
+[2025-06-15 10:18:33] Photo of the Week! voting 35 images
+[2025-06-15 10:18:33] Récupération réussie: 200 images pour Evoking Nostalgia
+[2025-06-15 10:18:33] Voting fetching ...
+[2025-06-15 10:18:33] Evoking Nostalgia voting 35 images
+[2025-06-15 10:18:36] Evoking Nostalgia voting 35 images
+[2025-06-15 10:18:36] Récupération réussie: 200 images pour Wooden Structures
+[2025-06-15 10:18:36] Voting fetching ...
+[2025-06-15 10:18:36] Wooden Structures voting 35 images
+[2025-06-15 10:18:39] Wooden Structures voting 35 images
+[2025-06-15 10:18:39] Récupération réussie: 200 images pour 500 Guru's Picks
+[2025-06-15 10:18:39] Voting fetching ...
+[2025-06-15 10:18:39] 500 Guru's Picks voting 35 images
+[2025-06-15 10:18:42] 500 Guru's Picks voting 35 images
+[2025-06-15 10:18:42] Récupération réussie: 200 images pour Dramatic Lighting
+[2025-06-15 10:18:42] Voting fetching ...
+[2025-06-15 10:18:42] Dramatic Lighting voting 35 images
+[2025-06-15 10:18:45] Dramatic Lighting voting 35 images
+[2025-06-15 10:18:46] Military Forces voted successfully
+[2025-06-15 10:18:48] Wooden Structures voted successfully
+[2025-06-15 10:18:50] Military Forces voted successfully
+[2025-06-15 10:18:52] Evoking Nostalgia voted successfully
+[2025-06-15 10:18:54] 500 Guru's Picks voted successfully
+[2025-06-15 10:18:56] Wooden Structures voted successfully
+[2025-06-15 10:18:58] Dramatic Lighting voted successfully
+[2025-06-15 10:19:00] Photo of the Week! voted successfully
+[2025-06-15 10:19:02] Photo of the Week! voted successfully
+[2025-06-15 10:19:04] Evoking Nostalgia voted successfully
+[2025-06-15 10:19:06] Dramatic Lighting voted successfully
+[2025-06-15 10:19:08] 500 Guru's Picks voted successfully
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:19:11] Challenges fetching ...
+[2025-06-15 10:19:11] Challenges fetched successfully for bruno!
+[2025-06-15 10:27:42] Processus mis à jour pour bruno: seated224-vote-70-left-0H:4M - executing
+[2025-06-15 10:27:42] Traitement de vote pour Seated
+[2025-06-15 10:27:42] Seated get vote panel
+[2025-06-15 10:27:42] Processus associé: seated224-vote-70-left-0H:4M
+[2025-06-15 10:27:42] Récupération des données de vote pour Seated (URL: seated224, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:27:43] Récupération réussie: 20 images pour Seated
+[2025-06-15 10:27:43] Voting fetching ...
+[2025-06-15 10:27:43] Seated voting 20 images
+[2025-06-15 10:27:46] Seated voting 20 images
+[2025-06-15 10:27:50] Seated voted successfully
+[2025-06-15 10:27:50] Processus supprimé pour bruno: seated224-vote-70-left-0H:4M - success
+[2025-06-15 10:27:50] Processus mis à jour pour bruno: seated224-vote-70-left-0H:4M - success
+[2025-06-15 10:27:50] Processus seated224-vote-70-left-0H:4M terminé avec succès (profil: bruno)
+[2025-06-15 10:27:52] Seated voted successfully
+[2025-06-15 10:27:54] Challenges fetching ...
+[2025-06-15 10:27:54] Challenges fetched successfully for bruno!
+[2025-06-15 10:27:55] Challenges fetching ...
+[2025-06-15 10:27:55] Challenges fetched successfully for bruno!
+[2025-06-15 10:28:39] Processus mis à jour pour bruno: seated224-vote-20-left-0H:3M - executing
+[2025-06-15 10:28:39] Traitement de vote pour Seated
+[2025-06-15 10:28:39] Seated get vote panel
+[2025-06-15 10:28:39] Processus associé: seated224-vote-20-left-0H:3M
+[2025-06-15 10:28:39] Récupération des données de vote pour Seated (URL: seated224, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:28:40] Récupération réussie: 20 images pour Seated
+[2025-06-15 10:28:40] Voting fetching ...
+[2025-06-15 10:28:40] Seated voting 20 images
+[2025-06-15 10:28:43] Seated voting 20 images
+[2025-06-15 10:28:43] Seated voted successfully
+[2025-06-15 10:28:43] Processus supprimé pour bruno: seated224-vote-20-left-0H:3M - success
+[2025-06-15 10:28:43] Processus mis à jour pour bruno: seated224-vote-20-left-0H:3M - success
+[2025-06-15 10:28:43] Processus seated224-vote-20-left-0H:3M terminé avec succès (profil: bruno)
+[2025-06-15 10:28:45] Seated voted successfully
+[2025-06-15 10:28:48] Challenges fetching ...
+[2025-06-15 10:28:48] Challenges fetched successfully for bruno!
+[2025-06-15 10:28:48] Challenges fetching ...
+[2025-06-15 10:28:48] Challenges fetched successfully for bruno!
+[2025-06-15 10:29:43] Processus mis à jour pour bruno: seated224-vote-20-left-0H:2M - executing
+[2025-06-15 10:29:43] Traitement de vote pour Seated
+[2025-06-15 10:29:43] Seated get vote panel
+[2025-06-15 10:29:43] Processus associé: seated224-vote-20-left-0H:2M
+[2025-06-15 10:29:43] Récupération des données de vote pour Seated (URL: seated224, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:29:43] Récupération réussie: 20 images pour Seated
+[2025-06-15 10:29:43] Voting fetching ...
+[2025-06-15 10:29:43] Seated voting 20 images
+[2025-06-15 10:29:46] Seated voting 20 images
+[2025-06-15 10:29:47] Seated voted successfully
+[2025-06-15 10:29:47] Processus supprimé pour bruno: seated224-vote-20-left-0H:2M - success
+[2025-06-15 10:29:47] Processus mis à jour pour bruno: seated224-vote-20-left-0H:2M - success
+[2025-06-15 10:29:47] Processus seated224-vote-20-left-0H:2M terminé avec succès (profil: bruno)
+[2025-06-15 10:29:49] Seated voted successfully
+[2025-06-15 10:29:52] Challenges fetching ...
+[2025-06-15 10:29:52] Challenges fetched successfully for bruno!
+[2025-06-15 10:29:52] Challenges fetching ...
+[2025-06-15 10:29:52] Challenges fetched successfully for bruno!
+[2025-06-15 10:30:30] Processus mis à jour pour bruno: seated224-vote-20-left-0H:1M - executing
+[2025-06-15 10:30:30] Traitement de vote pour Seated
+[2025-06-15 10:30:30] Seated get vote panel
+[2025-06-15 10:30:30] Processus associé: seated224-vote-20-left-0H:1M
+[2025-06-15 10:30:30] Récupération des données de vote pour Seated (URL: seated224, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 10:30:30] Récupération réussie: 20 images pour Seated
+[2025-06-15 10:30:30] Voting fetching ...
+[2025-06-15 10:30:30] Seated voting 20 images
+[2025-06-15 10:30:33] Seated voting 20 images
+[2025-06-15 10:30:34] Seated voted successfully
+[2025-06-15 10:30:34] Processus supprimé pour bruno: seated224-vote-20-left-0H:1M - success
+[2025-06-15 10:30:34] Processus mis à jour pour bruno: seated224-vote-20-left-0H:1M - success
+[2025-06-15 10:30:34] Processus seated224-vote-20-left-0H:1M terminé avec succès (profil: bruno)
+[2025-06-15 10:30:36] Seated voted successfully
+[2025-06-15 10:30:39] Challenges fetching ...
+[2025-06-15 10:30:39] Challenges fetched successfully for bruno!
+[2025-06-15 10:30:39] Challenges fetching ...
+[2025-06-15 10:30:39] Challenges fetched successfully for bruno!
+[2025-06-15 13:13:57] Désélection de tous les challenges
+
+[2025-06-15 13:13:58] Refreshing challenges...
+[2025-06-15 13:13:58] Fetching challenges...
+[2025-06-15 13:14:00] Challenges fetching ...
+[2025-06-15 13:14:00] Lancement automatique des stratégies de fin pour 4 nouveaux challenges...
+[2025-06-15 13:14:00] Nouveau challenge détecté pour pascale: Facebook Limelight
+[2025-06-15 13:14:00] Nouveau challenge détecté pour pascale: Wooden Structures
+[2025-06-15 13:14:00] Nouveau challenge détecté pour pascale: Scary Animals
+[2025-06-15 13:14:00] Nouveau challenge détecté pour pascale: Soothing Seaside
+[2025-06-15 13:14:00] Challenges fetched successfully for pascale!
+[2025-06-15 16:42:24] Désélection de tous les challenges
+
+[2025-06-15 16:42:25] Refreshing challenges...
+[2025-06-15 16:42:25] Fetching challenges...
+[2025-06-15 16:42:26] Challenges fetching ...
+[2025-06-15 16:42:26] Challenges fetched successfully for bruno!
+[2025-06-15 16:42:34] Lancement de la stratégie end4 pour Evoking Nostalgia
+[2025-06-15 16:42:34] Nouveau processus ajouté pour bruno: evoking-nostalgia-vote-70-left-0H:4M - Statut: init
+[2025-06-15 16:42:34] Traitement du challenge pour bruno: evoking-nostalgia
+[2025-06-15 16:42:34] Nouveau processus ajouté pour bruno: evoking-nostalgia-vote-20-left-0H:3M - Statut: init
+[2025-06-15 16:42:34] Traitement du challenge pour bruno: evoking-nostalgia
+[2025-06-15 16:42:34] Nouveau processus ajouté pour bruno: evoking-nostalgia-vote-20-left-0H:2M - Statut: init
+[2025-06-15 16:42:34] Processus mis à jour pour bruno: evoking-nostalgia-vote-70-left-0H:4M - waiting
+[2025-06-15 16:42:34] Traitement du challenge pour bruno: evoking-nostalgia
+[2025-06-15 16:42:34] Nouveau processus ajouté pour bruno: evoking-nostalgia-vote-20-left-0H:1M - Statut: init
+[2025-06-15 16:42:34] Traitement du challenge pour bruno: evoking-nostalgia
+[2025-06-15 16:42:34] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:3M - waiting
+[2025-06-15 16:42:34] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:2M - waiting
+[2025-06-15 16:42:34] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:1M - waiting
+[2025-06-15 16:42:34] Application des stratégies pour les challenges sélectionnés:
+- Evoking Nostalgia avec stratégie end4
+
+[2025-06-15 20:55:09] Processus mis à jour pour bruno: evoking-nostalgia-vote-70-left-0H:4M - executing
+[2025-06-15 20:55:09] Traitement de vote pour Evoking Nostalgia
+[2025-06-15 20:55:09] Evoking Nostalgia get vote panel
+[2025-06-15 20:55:09] Processus associé: evoking-nostalgia-vote-70-left-0H:4M
+[2025-06-15 20:55:09] Récupération des données de vote pour Evoking Nostalgia (URL: evoking-nostalgia, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 20:55:10] Récupération réussie: 200 images pour Evoking Nostalgia
+[2025-06-15 20:55:10] Voting fetching ...
+[2025-06-15 20:55:10] Evoking Nostalgia voting 70 images
+[2025-06-15 20:55:13] Evoking Nostalgia voting 70 images
+[2025-06-15 20:55:14] Evoking Nostalgia voted successfully
+[2025-06-15 20:55:14] Processus supprimé pour bruno: evoking-nostalgia-vote-70-left-0H:4M - success
+[2025-06-15 20:55:14] Processus mis à jour pour bruno: evoking-nostalgia-vote-70-left-0H:4M - success
+[2025-06-15 20:55:14] Processus evoking-nostalgia-vote-70-left-0H:4M terminé avec succès (profil: bruno)
+[2025-06-15 20:55:19] Evoking Nostalgia voted successfully
+[2025-06-15 20:55:21] Challenges fetching ...
+[2025-06-15 20:55:22] Challenges fetched successfully for bruno!
+[2025-06-15 20:55:22] Challenges fetching ...
+[2025-06-15 20:55:22] Challenges fetched successfully for bruno!
+[2025-06-15 20:56:15] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:3M - executing
+[2025-06-15 20:56:15] Traitement de vote pour Evoking Nostalgia
+[2025-06-15 20:56:15] Evoking Nostalgia get vote panel
+[2025-06-15 20:56:15] Processus associé: evoking-nostalgia-vote-20-left-0H:3M
+[2025-06-15 20:56:15] Récupération des données de vote pour Evoking Nostalgia (URL: evoking-nostalgia, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 20:56:16] Récupération réussie: 200 images pour Evoking Nostalgia
+[2025-06-15 20:56:16] Voting fetching ...
+[2025-06-15 20:56:16] Evoking Nostalgia voting 20 images
+[2025-06-15 20:56:19] Evoking Nostalgia voting 20 images
+[2025-06-15 20:56:20] Evoking Nostalgia voted successfully
+[2025-06-15 20:56:20] Processus supprimé pour bruno: evoking-nostalgia-vote-20-left-0H:3M - success
+[2025-06-15 20:56:20] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:3M - success
+[2025-06-15 20:56:20] Processus evoking-nostalgia-vote-20-left-0H:3M terminé avec succès (profil: bruno)
+[2025-06-15 20:56:24] Evoking Nostalgia voted successfully
+[2025-06-15 20:56:27] Challenges fetching ...
+[2025-06-15 20:56:27] Challenges fetched successfully for bruno!
+[2025-06-15 20:56:27] Challenges fetching ...
+[2025-06-15 20:56:27] Challenges fetched successfully for bruno!
+[2025-06-15 20:57:01] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:2M - executing
+[2025-06-15 20:57:01] Traitement de vote pour Evoking Nostalgia
+[2025-06-15 20:57:01] Evoking Nostalgia get vote panel
+[2025-06-15 20:57:01] Processus associé: evoking-nostalgia-vote-20-left-0H:2M
+[2025-06-15 20:57:01] Récupération des données de vote pour Evoking Nostalgia (URL: evoking-nostalgia, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 20:57:02] Récupération réussie: 200 images pour Evoking Nostalgia
+[2025-06-15 20:57:02] Voting fetching ...
+[2025-06-15 20:57:02] Evoking Nostalgia voting 20 images
+[2025-06-15 20:57:05] Evoking Nostalgia voting 20 images
+[2025-06-15 20:57:06] Evoking Nostalgia voted successfully
+[2025-06-15 20:57:06] Processus supprimé pour bruno: evoking-nostalgia-vote-20-left-0H:2M - success
+[2025-06-15 20:57:06] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:2M - success
+[2025-06-15 20:57:06] Processus evoking-nostalgia-vote-20-left-0H:2M terminé avec succès (profil: bruno)
+[2025-06-15 20:57:08] Evoking Nostalgia voted successfully
+[2025-06-15 20:57:11] Challenges fetching ...
+[2025-06-15 20:57:11] Challenges fetched successfully for bruno!
+[2025-06-15 20:57:11] Challenges fetching ...
+[2025-06-15 20:57:11] Challenges fetched successfully for bruno!
+[2025-06-15 20:58:10] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:1M - executing
+[2025-06-15 20:58:10] Traitement de vote pour Evoking Nostalgia
+[2025-06-15 20:58:10] Evoking Nostalgia get vote panel
+[2025-06-15 20:58:10] Processus associé: evoking-nostalgia-vote-20-left-0H:1M
+[2025-06-15 20:58:10] Récupération des données de vote pour Evoking Nostalgia (URL: evoking-nostalgia, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 20:58:11] Récupération réussie: 200 images pour Evoking Nostalgia
+[2025-06-15 20:58:11] Voting fetching ...
+[2025-06-15 20:58:11] Evoking Nostalgia voting 20 images
+[2025-06-15 20:58:14] Evoking Nostalgia voting 20 images
+[2025-06-15 20:58:15] Evoking Nostalgia voted successfully
+[2025-06-15 20:58:15] Processus supprimé pour bruno: evoking-nostalgia-vote-20-left-0H:1M - success
+[2025-06-15 20:58:15] Processus mis à jour pour bruno: evoking-nostalgia-vote-20-left-0H:1M - success
+[2025-06-15 20:58:15] Processus evoking-nostalgia-vote-20-left-0H:1M terminé avec succès (profil: bruno)
+[2025-06-15 20:58:17] Evoking Nostalgia voted successfully
+[2025-06-15 20:58:19] Challenges fetching ...
+[2025-06-15 20:58:19] Challenges fetched successfully for bruno!
+[2025-06-15 20:58:20] Challenges fetching ...
+[2025-06-15 20:58:20] Challenges fetched successfully for bruno!
+[2025-06-15 22:44:20] Refreshing challenges...
+[2025-06-15 22:44:20] Fetching challenges...
+[2025-06-15 22:44:21] Challenges fetching ...
+[2025-06-15 22:44:21] Challenges fetched successfully for bruno!
+[2025-06-15 22:44:24] Sélection de tous les challenges
+
+[2025-06-15 22:44:27] 500 Guru's Picks get vote panel
+[2025-06-15 22:44:27] Wooden Structures get vote panel
+[2025-06-15 22:44:27] Dramatic Lighting get vote panel
+[2025-06-15 22:44:27] Photo of the Week! get vote panel
+[2025-06-15 22:44:27] Military Forces get vote panel
+[2025-06-15 22:44:27] Filling challenges: {102473, 101624, 101789, 102238, 101631}
+Filled 500 Guru's Picks with strategy end4
+Filled Wooden Structures with strategy end4
+Filled Dramatic Lighting with strategy end4
+Filled Photo of the Week! with strategy end4
+Filled Military Forces with strategy end4
+
+[2025-06-15 22:44:27] Récupération des données de vote pour 500 Guru's Picks (URL: 500-guru-s-picks79, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 22:44:27] Récupération des données de vote pour Wooden Structures (URL: wooden-structures, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 22:44:27] Récupération des données de vote pour Dramatic Lighting (URL: dramatic-lighting11, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 22:44:27] Récupération des données de vote pour Photo of the Week! (URL: photo-of-the-week-300, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 22:44:27] Récupération des données de vote pour Military Forces (URL: military-forces23, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777'})
+[2025-06-15 22:44:27] Récupération réussie: 200 images pour Military Forces
+[2025-06-15 22:44:27] Voting fetching ...
+[2025-06-15 22:44:27] Military Forces voting 35 images
+[2025-06-15 22:44:30] Military Forces voting 35 images
+[2025-06-15 22:44:30] Récupération réussie: 200 images pour Photo of the Week!
+[2025-06-15 22:44:30] Voting fetching ...
+[2025-06-15 22:44:30] Photo of the Week! voting 35 images
+[2025-06-15 22:44:33] Photo of the Week! voting 35 images
+[2025-06-15 22:44:34] Récupération réussie: 200 images pour Wooden Structures
+[2025-06-15 22:44:34] Voting fetching ...
+[2025-06-15 22:44:34] Wooden Structures voting 35 images
+[2025-06-15 22:44:37] Wooden Structures voting 35 images
+[2025-06-15 22:44:37] Récupération réussie: 200 images pour 500 Guru's Picks
+[2025-06-15 22:44:37] Voting fetching ...
+[2025-06-15 22:44:37] 500 Guru's Picks voting 35 images
+[2025-06-15 22:44:40] 500 Guru's Picks voting 35 images
+[2025-06-15 22:44:40] Récupération réussie: 200 images pour Dramatic Lighting
+[2025-06-15 22:44:40] Voting fetching ...
+[2025-06-15 22:44:40] Dramatic Lighting voting 35 images
+[2025-06-15 22:44:43] Dramatic Lighting voting 35 images
+[2025-06-15 22:44:43] Military Forces voted successfully
+[2025-06-15 22:44:45] Military Forces voted successfully
+[2025-06-15 22:44:47] Photo of the Week! voted successfully
+[2025-06-15 22:44:49] 500 Guru's Picks voted successfully
+[2025-06-15 22:44:51] 500 Guru's Picks voted successfully
+[2025-06-15 22:44:53] Photo of the Week! voted successfully
+[2025-06-15 22:44:55] Wooden Structures voted successfully
+[2025-06-15 22:44:57] Dramatic Lighting voted successfully
+[2025-06-15 22:44:59] Wooden Structures voted successfully
+[2025-06-15 22:45:01] Dramatic Lighting voted successfully
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 22:45:04] Challenges fetching ...
+[2025-06-15 22:45:04] Challenges fetched successfully for bruno!
+[2025-06-15 23:54:26] Refreshing challenges...
+[2025-06-15 23:54:26] Fetching challenges...
+[2025-06-15 23:54:28] Challenges fetching ...
+[2025-06-15 23:54:28] Lancement automatique des stratégies de fin pour 5 nouveaux challenges...
+[2025-06-15 23:54:28] Nouveau challenge détecté pour pascale: Top Photographer
+[2025-06-15 23:54:28] Nouveau challenge détecté pour pascale: Guru of The Week
+[2025-06-15 23:54:28] Nouveau challenge détecté pour pascale: Colorful & Minimalist
+[2025-06-15 23:54:28] Nouveau challenge détecté pour pascale: Two wheels
+[2025-06-15 23:54:28] Nouveau challenge détecté pour pascale: Feathers VS Fur
+[2025-06-15 23:54:28] Challenges fetched successfully for pascale!
+[2025-06-15 23:54:49] Refreshing challenges...
+[2025-06-15 23:54:49] Fetching challenges...
+[2025-06-15 23:54:50] Challenges fetching ...
+[2025-06-15 23:54:50] Challenges fetched successfully for pascale!
+[2025-06-15 23:55:28] Two wheels get vote panel
+[2025-06-15 23:55:28] Guru of The Week get vote panel
+[2025-06-15 23:55:28] Feathers VS Fur get vote panel
+[2025-06-15 23:55:28] Top Photographer get vote panel
+[2025-06-15 23:55:28] Colorful & Minimalist get vote panel
+[2025-06-15 23:55:28] Filling challenges: {101664, 102539, 101680, 101681, 101629}
+Filled Two wheels with strategy end4
+Filled Guru of The Week with strategy end4
+Filled Feathers VS Fur with strategy end4
+Filled Top Photographer with strategy end4
+Filled Colorful & Minimalist with strategy end4
+
+[2025-06-15 23:55:28] Récupération des données de vote pour Two wheels (URL: two-wheels27, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-06-15 23:55:28] Récupération des données de vote pour Guru of The Week (URL: guru-of-the-week38, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-06-15 23:55:28] Récupération des données de vote pour Feathers VS Fur (URL: feathers-vs-fur46, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-06-15 23:55:28] Récupération des données de vote pour Top Photographer (URL: top-photographer34, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-06-15 23:55:28] Récupération des données de vote pour Colorful & Minimalist (URL: colorful-minimalist, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-06-15 23:55:29] Récupération réussie: 200 images pour Two wheels
+[2025-06-15 23:55:29] Voting fetching ...
+[2025-06-15 23:55:29] Two wheels voting 35 images
+[2025-06-15 23:55:32] Two wheels voting 35 images
+[2025-06-15 23:55:32] Récupération réussie: 200 images pour Feathers VS Fur
+[2025-06-15 23:55:32] Voting fetching ...
+[2025-06-15 23:55:32] Feathers VS Fur voting 35 images
+[2025-06-15 23:55:35] Feathers VS Fur voting 35 images
+[2025-06-15 23:55:35] Récupération réussie: 200 images pour Guru of The Week
+[2025-06-15 23:55:35] Voting fetching ...
+[2025-06-15 23:55:35] Guru of The Week voting 35 images
+[2025-06-15 23:55:38] Guru of The Week voting 35 images
+[2025-06-15 23:55:38] Récupération réussie: 200 images pour Top Photographer
+[2025-06-15 23:55:38] Voting fetching ...
+[2025-06-15 23:55:38] Top Photographer voting 35 images
+[2025-06-15 23:55:41] Top Photographer voting 35 images
+[2025-06-15 23:55:41] Récupération réussie: 200 images pour Colorful & Minimalist
+[2025-06-15 23:55:41] Voting fetching ...
+[2025-06-15 23:55:41] Colorful & Minimalist voting 35 images
+[2025-06-15 23:55:44] Colorful & Minimalist voting 35 images
+[2025-06-15 23:55:45] Colorful & Minimalist voted successfully
+[2025-06-15 23:55:47] Top Photographer voted successfully
+[2025-06-15 23:55:49] Feathers VS Fur voted successfully
+[2025-06-15 23:55:51] Guru of The Week voted successfully
+[2025-06-15 23:55:53] Top Photographer voted successfully
+[2025-06-15 23:55:55] Guru of The Week voted successfully
+[2025-06-15 23:55:57] Colorful & Minimalist voted successfully
+[2025-06-15 23:55:59] Feathers VS Fur voted successfully
+[2025-06-15 23:56:01] Two wheels voted successfully
+[2025-06-15 23:56:03] Two wheels voted successfully
+[2025-06-15 23:56:06] Challenges fetching ...
+[2025-06-15 23:56:06] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:07] Challenges fetching ...
+[2025-06-15 23:56:07] Challenges fetched successfully for pascale!
+[2025-06-15 23:56:37] Refreshing challenges...
+[2025-06-15 23:56:37] Fetching challenges...
+[2025-06-15 23:56:38] Challenges fetching ...
+[2025-06-15 23:56:38] Challenges fetched successfully for pascale!
+[2025-06-15 23:57:02] Guru of The Week get vote panel
+[2025-06-15 23:57:02] Top Photographer get vote panel
+[2025-06-15 23:57:02] Filling challenges: {102539, 101681}
+Filled Guru of The Week with strategy end4
+Filled Top Photographer with strategy end4
+
+[2025-06-15 23:57:03] Récupération des données de vote pour Guru of The Week (URL: guru-of-the-week38, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-06-15 23:57:03] Récupération des données de vote pour Top Photographer (URL: top-photographer34, HEADER:{'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:39.0) Gecko/20100101 Firefox/39.0', 'x-api-version': '8', 'x-env': 'WEB', 'X-requested-with': 'XMLHttpRequest', 'X-token': 'f96bbe3a7e7f833329e7129767a69abbfa6dfce3152e3c2a311eb49d89b5c3bb2b12b66b402f03dce682b8b2b6a005cd'})
+[2025-06-15 23:57:03] Récupération réussie: 200 images pour Guru of The Week
+[2025-06-15 23:57:03] Voting fetching ...
+[2025-06-15 23:57:03] Guru of The Week voting 35 images
+[2025-06-15 23:57:06] Guru of The Week voting 35 images
+[2025-06-15 23:57:06] Récupération réussie: 200 images pour Top Photographer
+[2025-06-15 23:57:06] Voting fetching ...
+[2025-06-15 23:57:06] Top Photographer voting 35 images
+[2025-06-15 23:57:09] Top Photographer voting 35 images
+[2025-06-15 23:57:10] Guru of The Week voted successfully
+[2025-06-15 23:57:12] Guru of The Week voted successfully
+[2025-06-15 23:57:14] Top Photographer voted successfully
+[2025-06-15 23:57:16] Top Photographer voted successfully
+[2025-06-15 23:57:19] Challenges fetching ...
+[2025-06-15 23:57:19] Challenges fetched successfully for pascale!
+[2025-06-15 23:57:20] Challenges fetching ...
+[2025-06-15 23:57:20] Challenges fetched successfully for pascale!
+[2025-06-15 23:57:20] Challenges fetching ...
+[2025-06-15 23:57:20] Challenges fetched successfully for pascale!
+[2025-06-15 23:57:20] Challenges fetching ...
+[2025-06-15 23:57:20] Challenges fetched successfully for pascale!
