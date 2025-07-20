@@ -10,7 +10,10 @@
       "Bash(find:*)",
       "Bash(rm:*)",
       "Bash(sed:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "mcp__filesystem__move_file"
     ]
   },
   "enableAllProjectMcpServers": false,
