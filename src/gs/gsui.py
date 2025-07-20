@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout, QWidget,
                                QListWidget, QListWidgetItem, QCheckBox, QLabel,
                                QComboBox, QPushButton, QFrame, QTextEdit, QSplitter, QApplication, QTableWidget,
                                QHeaderView, QTableWidgetItem, QDialog, QDialogButtonBox, QTabWidget,
-                               QInputDialog, QMessageBox)
+                               QInputDialog, QMessageBox, QGridLayout)
 from PySide6.QtCore import Qt, QTimer, QObject, Signal, Slot, QMetaObject, Q_ARG
 import aiohttp
 from datetime import datetime, timedelta, time
@@ -1113,7 +1113,8 @@ class MultiProfileWindow(QMainWindow):
     def init_tabbed_ui(self):
         """Initialise l'interface à onglets"""
         self.setWindowTitle("GuruShots GUI - Multi-Profil")
-        self.setGeometry(100, 100, 1400, 900)
+        self.setGeometry(100, 100, 1600, 900)
+        self.setMaximumWidth(1600)  # Fixer la largeur maximale
         
         # Widget central avec onglets
         central_widget = QWidget()
@@ -1463,8 +1464,11 @@ class ProfileTab(QWidget):
         self.create_results_panel(layout)
     
     def create_toolbar(self, parent_layout):
-        """Crée la barre d'outils pour ce profil"""
-        toolbar = QHBoxLayout()
+        """Crée la barre d'outils pour ce profil avec boutons sur plusieurs lignes"""
+        # Conteneur principal pour la toolbar
+        toolbar_container = QWidget()
+        toolbar_layout = QVBoxLayout()
+        toolbar_container.setLayout(toolbar_layout)
         
         # Style des boutons
         button_style = """
@@ -1476,6 +1480,7 @@ class ProfileTab(QWidget):
                 border-radius: 4px;
                 font-weight: bold;
                 min-width: 80px;
+                max-width: 120px;
             }
             QPushButton:hover {
                 background-color: #2980b9;
@@ -1485,22 +1490,25 @@ class ProfileTab(QWidget):
             }
         """
         
+        # Première ligne - Actions principales
+        row1 = QHBoxLayout()
+        
         # Bouton Refresh
         refresh_button = QPushButton("🔄 Refresh")
         refresh_button.setStyleSheet(button_style)
         refresh_button.clicked.connect(self.fetch_challenges)
-        toolbar.addWidget(refresh_button)
+        row1.addWidget(refresh_button)
         
         # Boutons de sélection
         all_button = QPushButton("✅ All")
         all_button.setStyleSheet(button_style)
         all_button.clicked.connect(self.sel_all)
-        toolbar.addWidget(all_button)
+        row1.addWidget(all_button)
         
         none_button = QPushButton("❌ None")
         none_button.setStyleSheet(button_style)
         none_button.clicked.connect(self.sel_none)
-        toolbar.addWidget(none_button)
+        row1.addWidget(none_button)
         
         # Auto refresh
         self.auto_refresh_button = QPushButton("🔄 Auto: ON")
@@ -1508,94 +1516,23 @@ class ProfileTab(QWidget):
         self.auto_refresh_button.setCheckable(True)
         self.auto_refresh_button.setChecked(True)
         self.auto_refresh_button.clicked.connect(self.toggle_auto_refresh)
-        toolbar.addWidget(self.auto_refresh_button)
+        row1.addWidget(self.auto_refresh_button)
         
         # Actions principales
         fill_button = QPushButton("🗳️ Fill")
         fill_button.setStyleSheet(button_style.replace('#3498db', '#27ae60').replace('#2980b9', '#229954').replace('#21618c', '#1e8449'))
         fill_button.clicked.connect(self.fill_selected_challenges)
-        toolbar.addWidget(fill_button)
+        row1.addWidget(fill_button)
         
         strategy_button = QPushButton("📅 Stratégie")
         strategy_button.setStyleSheet(button_style.replace('#3498db', '#e67e22').replace('#2980b9', '#d68910').replace('#21618c', '#b7670f'))
         strategy_button.clicked.connect(self.fin_selected_challenges)
-        toolbar.addWidget(strategy_button)
+        row1.addWidget(strategy_button)
         
         turbo_button = QPushButton("🚀 Turbo")
         turbo_button.setStyleSheet(button_style.replace('#3498db', '#f39c12').replace('#2980b9', '#e67e22').replace('#21618c', '#d35400'))
         turbo_button.clicked.connect(self.turbo_selected_challenges)
-        toolbar.addWidget(turbo_button)
-        
-        # Actions d'arrêt
-        stop_button = QPushButton("🛑 Stop")
-        stop_button.setStyleSheet(button_style.replace('#3498db', '#e74c3c').replace('#2980b9', '#cb4335').replace('#21618c', '#a93226'))
-        stop_button.clicked.connect(self.stop_selected_strategies)
-        toolbar.addWidget(stop_button)
-        
-        # Bouton debug turbo (temporaire)
-        debug_button = QPushButton("🔍 Debug Turbo")
-        debug_button.setStyleSheet(button_style.replace('#3498db', '#95a5a6').replace('#2980b9', '#7f8c8d').replace('#21618c', '#6c7b7d'))
-        debug_button.clicked.connect(self.debug_turbo_data)
-        toolbar.addWidget(debug_button)
-        
-        stop_all_button = QPushButton("🚫 Stop All")
-        stop_all_button.setStyleSheet(button_style.replace('#3498db', '#e74c3c').replace('#2980b9', '#cb4335').replace('#21618c', '#a93226'))
-        stop_all_button.clicked.connect(self.stop_all_strategies)
-        toolbar.addWidget(stop_all_button)
-        
-        # Test job pour ce profil
-        test_button = QPushButton("🧪 Test")
-        test_button.setStyleSheet(button_style.replace('#3498db', '#9b59b6').replace('#2980b9', '#8e44ad').replace('#21618c', '#7d3c98'))
-        test_button.clicked.connect(self.test_create_job)
-        toolbar.addWidget(test_button)
-        
-        # Liste des stratégies en cours
-        list_strategies_button = QPushButton("📋 Stratégies")
-        list_strategies_button.setStyleSheet(button_style.replace('#3498db', '#8e44ad').replace('#2980b9', '#7d3c98').replace('#21618c', '#6c3483'))
-        list_strategies_button.clicked.connect(self.list_active_strategies)
-        toolbar.addWidget(list_strategies_button)
-        
-        # Debug button
-        debug_button = QPushButton("🔍 Debug")
-        debug_button.setStyleSheet(button_style.replace('#3498db', '#34495e').replace('#2980b9', '#2c3e50').replace('#21618c', '#1b2631'))
-        debug_button.clicked.connect(self.debug_fetch)
-        toolbar.addWidget(debug_button)
-        
-        # Force API button
-        force_api_button = QPushButton("🌐 API Only")
-        force_api_button.setStyleSheet(button_style.replace('#3498db', '#f39c12').replace('#2980b9', '#e67e22').replace('#21618c', '#d35400'))
-        force_api_button.clicked.connect(self.api_only_mode)
-        toolbar.addWidget(force_api_button)
-        
-        # Turbo History Stats button
-        turbo_stats_button = QPushButton("📊 Stats Turbo")
-        turbo_stats_button.setStyleSheet(button_style.replace('#3498db', '#9b59b6').replace('#2980b9', '#8e44ad').replace('#21618c', '#7d3c98'))
-        turbo_stats_button.clicked.connect(self.show_turbo_history_stats)
-        toolbar.addWidget(turbo_stats_button)
-        
-        # Export CSV button
-        export_csv_button = QPushButton("📤 Export CSV")
-        export_csv_button.setStyleSheet(button_style.replace('#3498db', '#16a085').replace('#2980b9', '#138d75').replace('#21618c', '#117a65'))
-        export_csv_button.clicked.connect(self.export_turbo_history_csv)
-        toolbar.addWidget(export_csv_button)
-        
-        # Eval Turbo button
-        eval_turbo_button = QPushButton("🎯 Eval Turbo")
-        eval_turbo_button.setStyleSheet(button_style.replace('#3498db', '#e74c3c').replace('#2980b9', '#c0392b').replace('#21618c', '#a93226'))
-        eval_turbo_button.clicked.connect(self.evaluate_turbo_algorithms)
-        toolbar.addWidget(eval_turbo_button)
-        
-        # Fix History button  
-        fix_history_button = QPushButton("🔧 Fix History")
-        fix_history_button.setStyleSheet(button_style.replace('#3498db', '#f39c12').replace('#2980b9', '#e67e22').replace('#21618c', '#d35400'))
-        fix_history_button.clicked.connect(self.fix_and_reconstruct_history)
-        toolbar.addWidget(fix_history_button)
-        
-        # Demo History button
-        demo_history_button = QPushButton("🧪 Démo")
-        demo_history_button.setStyleSheet(button_style.replace('#3498db', '#95a5a6').replace('#2980b9', '#7f8c8d').replace('#21618c', '#6c7b7b'))
-        demo_history_button.clicked.connect(self.create_demo_turbo_history)
-        toolbar.addWidget(demo_history_button)
+        row1.addWidget(turbo_button)
         
         # Auto-optimize toggle button
         auto_optimize_enabled = self.config['players'][self.player].get('auto_optimize_turbo', True)
@@ -1606,13 +1543,95 @@ class ProfileTab(QWidget):
         self.auto_optimize_button.setCheckable(True)
         self.auto_optimize_button.setChecked(auto_optimize_enabled)
         self.auto_optimize_button.clicked.connect(self.toggle_auto_optimize)
-        toolbar.addWidget(self.auto_optimize_button)
+        row1.addWidget(self.auto_optimize_button)
         
-        toolbar.addStretch()
+        row1.addStretch()
+        toolbar_layout.addLayout(row1)
         
-        toolbar_widget = QWidget()
-        toolbar_widget.setLayout(toolbar)
-        parent_layout.addWidget(toolbar_widget)
+        # Deuxième ligne - Actions d'arrêt et gestion
+        row2 = QHBoxLayout()
+        
+        # Actions d'arrêt
+        stop_button = QPushButton("🛑 Stop")
+        stop_button.setStyleSheet(button_style.replace('#3498db', '#e74c3c').replace('#2980b9', '#cb4335').replace('#21618c', '#a93226'))
+        stop_button.clicked.connect(self.stop_selected_strategies)
+        row2.addWidget(stop_button)
+        
+        stop_all_button = QPushButton("🚫 Stop All")
+        stop_all_button.setStyleSheet(button_style.replace('#3498db', '#e74c3c').replace('#2980b9', '#cb4335').replace('#21618c', '#a93226'))
+        stop_all_button.clicked.connect(self.stop_all_strategies)
+        row2.addWidget(stop_all_button)
+        
+        # Liste des stratégies en cours
+        list_strategies_button = QPushButton("📋 Stratégies")
+        list_strategies_button.setStyleSheet(button_style.replace('#3498db', '#8e44ad').replace('#2980b9', '#7d3c98').replace('#21618c', '#6c3483'))
+        list_strategies_button.clicked.connect(self.list_active_strategies)
+        row2.addWidget(list_strategies_button)
+        
+        # Test job pour ce profil
+        test_button = QPushButton("🧪 Test")
+        test_button.setStyleSheet(button_style.replace('#3498db', '#9b59b6').replace('#2980b9', '#8e44ad').replace('#21618c', '#7d3c98'))
+        test_button.clicked.connect(self.test_create_job)
+        row2.addWidget(test_button)
+        
+        # Turbo History Stats button
+        turbo_stats_button = QPushButton("📊 Stats Turbo")
+        turbo_stats_button.setStyleSheet(button_style.replace('#3498db', '#9b59b6').replace('#2980b9', '#8e44ad').replace('#21618c', '#7d3c98'))
+        turbo_stats_button.clicked.connect(self.show_turbo_history_stats)
+        row2.addWidget(turbo_stats_button)
+        
+        # Export CSV button
+        export_csv_button = QPushButton("📤 Export CSV")
+        export_csv_button.setStyleSheet(button_style.replace('#3498db', '#16a085').replace('#2980b9', '#138d75').replace('#21618c', '#117a65'))
+        export_csv_button.clicked.connect(self.export_turbo_history_csv)
+        row2.addWidget(export_csv_button)
+        
+        # Eval Turbo button
+        eval_turbo_button = QPushButton("🎯 Eval Turbo")
+        eval_turbo_button.setStyleSheet(button_style.replace('#3498db', '#e74c3c').replace('#2980b9', '#c0392b').replace('#21618c', '#a93226'))
+        eval_turbo_button.clicked.connect(self.evaluate_turbo_algorithms)
+        row2.addWidget(eval_turbo_button)
+        
+        row2.addStretch()
+        toolbar_layout.addLayout(row2)
+        
+        # Troisième ligne - Outils de debug et maintenance
+        row3 = QHBoxLayout()
+        
+        # Bouton debug turbo
+        debug_turbo_button = QPushButton("🔍 Debug Turbo")
+        debug_turbo_button.setStyleSheet(button_style.replace('#3498db', '#95a5a6').replace('#2980b9', '#7f8c8d').replace('#21618c', '#6c7b7d'))
+        debug_turbo_button.clicked.connect(self.debug_turbo_data)
+        row3.addWidget(debug_turbo_button)
+        
+        # Debug button
+        debug_button = QPushButton("🔍 Debug")
+        debug_button.setStyleSheet(button_style.replace('#3498db', '#34495e').replace('#2980b9', '#2c3e50').replace('#21618c', '#1b2631'))
+        debug_button.clicked.connect(self.debug_fetch)
+        row3.addWidget(debug_button)
+        
+        # Force API button
+        force_api_button = QPushButton("🌐 API Only")
+        force_api_button.setStyleSheet(button_style.replace('#3498db', '#f39c12').replace('#2980b9', '#e67e22').replace('#21618c', '#d35400'))
+        force_api_button.clicked.connect(self.api_only_mode)
+        row3.addWidget(force_api_button)
+        
+        # Fix History button  
+        fix_history_button = QPushButton("🔧 Fix History")
+        fix_history_button.setStyleSheet(button_style.replace('#3498db', '#f39c12').replace('#2980b9', '#e67e22').replace('#21618c', '#d35400'))
+        fix_history_button.clicked.connect(self.fix_and_reconstruct_history)
+        row3.addWidget(fix_history_button)
+        
+        # Demo History button
+        demo_history_button = QPushButton("🧪 Démo")
+        demo_history_button.setStyleSheet(button_style.replace('#3498db', '#95a5a6').replace('#2980b9', '#7f8c8d').replace('#21618c', '#6c7b7b'))
+        demo_history_button.clicked.connect(self.create_demo_turbo_history)
+        row3.addWidget(demo_history_button)
+        
+        row3.addStretch()
+        toolbar_layout.addLayout(row3)
+        
+        parent_layout.addWidget(toolbar_container)
     
     def create_challenges_table(self, parent_layout):
         """Crée le tableau des challenges pour ce profil"""
