@@ -18,23 +18,39 @@ from app.schemas.challenge import (
 )
 from app.services.gurushots_api import GuruShotsAPI, ChallengeData
 from app.websockets.connection_manager import connection_manager
+from app.models.file_based_models import User, Challenge
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 
-# Dependency pour obtenir le token utilisateur
-async def get_user_token(user_token: str = Query(..., description="GuruShots user token")) -> str:
-    """Récupère et valide le token utilisateur"""
+# Dependency pour obtenir l'utilisateur
+async def get_current_user(user_token: str = Query(..., description="GuruShots user token")) -> User:
+    """Récupère et valide l'utilisateur par son token"""
     if not user_token:
         raise HTTPException(status_code=400, detail="User token is required")
-    return user_token
+    
+    # Chercher l'utilisateur par token
+    user = User.get_by_token(user_token)
+    if not user:
+        # Si l'utilisateur n'existe pas, on pourrait le créer automatiquement
+        # ou retourner une erreur. Pour l'instant, créons-le automatiquement
+        user_id = user_token[:10]  # Utiliser une partie du token comme ID
+        user = User.create(
+            user_id=user_id,
+            username=f"user_{user_id}",
+            xtoken=user_token
+        )
+        if not user:
+            raise HTTPException(status_code=500, detail="Could not create user")
+    
+    return user
 
 
 @router.get("/", response_model=ChallengeListResponse)
 async def get_challenges(
-    user_token: str = Depends(get_user_token),
+    current_user: User = Depends(get_current_user),
     page: int = Query(1, ge=1),
     per_page: int = Query(100, ge=1, le=500)
 ):
@@ -43,42 +59,74 @@ async def get_challenges(
     Équivalent de fetch_challenges() dans gsui.py
     """
     try:
-        logger.info(f"🔍 Fetching challenges for user token: {user_token[:20]}...")
+        logger.info(f"🔍 Fetching challenges for user: {current_user.username}")
         
         # Créer le client API
-        api_client = GuruShotsAPI(user_token)
+        api_client = GuruShotsAPI(current_user.xtoken)
         
-        # Récupérer les challenges
+        # Récupérer les challenges depuis l'API
         challenges_data = await api_client.get_challenges()
         
-        # Convertir en format API response
+        # Récupérer les challenges sauvegardés pour cet utilisateur
+        saved_challenges = current_user.get_challenges()
+        
+        # Convertir en format API response et sauvegarder
         challenges = []
         for challenge_data in challenges_data:
+            # Créer le modèle Challenge
+            challenge = Challenge.create_from_api_data(
+                user_id=current_user.id,
+                api_challenge_data={
+                    'id': challenge_data.id,
+                    'title': challenge_data.title,
+                    'url': challenge_data.url,
+                    'end_time': challenge_data.end_time,
+                    'time_left': challenge_data.time_left,
+                    'votes': challenge_data.votes,
+                    'rank': challenge_data.rank,
+                    'level': challenge_data.level,
+                    'exposure': challenge_data.exposure,
+                    'gps': challenge_data.gps
+                }
+            )
+            
+            # Récupérer les infos sauvegardées si elles existent
+            saved_info = saved_challenges.get(challenge.id, {})
+            if saved_info:
+                challenge.selected_strategy = saved_info.get('strategy_name')
+                challenge.status = saved_info.get('status', 'active')
+            else:
+                challenge.status = 'active'
+            
+            # Sauvegarder/mettre à jour le challenge
+            challenge.save()
+            
+            # Convertir en ChallengeResponse
             challenge_response = ChallengeResponse(
-                id=challenge_data.id,
-                title=challenge_data.title,
-                url=challenge_data.url,
-                end_time=challenge_data.end_time,
-                time_left_days=challenge_data.time_left.get("days", 0),
-                time_left_hours=challenge_data.time_left.get("hours", 0),
-                time_left_minutes=challenge_data.time_left.get("minutes", 0),
-                time_left_seconds=challenge_data.time_left.get("seconds", 0),
-                votes=challenge_data.votes,
-                rank=challenge_data.rank,
-                level=challenge_data.level,
-                exposure=challenge_data.exposure,
-                gps=challenge_data.gps,
-                selected_strategy=None,
-                status="active",
-                turbo_status="",
-                current_process_id=None,
-                created_at=datetime.now(),
-                updated_at=datetime.now(),
-                user_id=user_token[:10]  # Utiliser une partie du token comme user_id temporaire
+                id=challenge.id,
+                title=challenge.title,
+                url=challenge.url,
+                end_time=challenge.end_time,
+                time_left_days=challenge.time_left_days,
+                time_left_hours=challenge.time_left_hours,
+                time_left_minutes=challenge.time_left_minutes,
+                time_left_seconds=challenge.time_left_seconds,
+                votes=challenge.votes,
+                rank=challenge.rank,
+                level=challenge.level,
+                exposure=challenge.exposure,
+                gps=challenge.gps,
+                selected_strategy=challenge.selected_strategy,
+                status=challenge.status,
+                turbo_status=challenge.turbo_status,
+                current_process_id=challenge.current_process_id,
+                created_at=datetime.fromisoformat(challenge.created_at or datetime.now().isoformat()),
+                updated_at=datetime.fromisoformat(challenge.updated_at or datetime.now().isoformat()),
+                user_id=challenge.user_id
             )
             challenges.append(challenge_response)
         
-        # Pagination simple (TODO: améliorer avec une vraie pagination)
+        # Pagination simple
         start_idx = (page - 1) * per_page
         end_idx = start_idx + per_page
         paginated_challenges = challenges[start_idx:end_idx]
@@ -92,10 +140,9 @@ async def get_challenges(
         
         logger.info(f"✅ Successfully returned {len(paginated_challenges)} challenges")
         
-        # Notifier via WebSocket (si utilisateur connecté)
-        user_id = user_token[:10]  # Utiliser une partie du token comme user_id
+        # Notifier via WebSocket
         await connection_manager.notify_challenge_update(
-            user_id, 
+            current_user.id, 
             {"challenges_count": len(challenges)}
         )
         
@@ -109,7 +156,7 @@ async def get_challenges(
 @router.post("/vote-panel", response_model=VotePanelResponse)
 async def get_vote_panel(
     request: VotePanelRequest,
-    user_token: str = Depends(get_user_token)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Récupère le panel de vote pour un challenge
@@ -119,7 +166,7 @@ async def get_vote_panel(
         logger.info(f"🗳️ Getting vote panel for: {request.challenge_url}")
         
         # Créer le client API
-        api_client = GuruShotsAPI(user_token)
+        api_client = GuruShotsAPI(current_user.xtoken)
         
         # Récupérer le panel de vote
         vote_panel = await api_client.get_vote_panel(request.challenge_url, request.limit)
@@ -142,7 +189,7 @@ async def get_vote_panel(
 @router.post("/vote", response_model=VoteResponse)
 async def submit_votes(
     request: VoteRequest,
-    user_token: str = Depends(get_user_token)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Soumet des votes pour un challenge
@@ -152,7 +199,7 @@ async def submit_votes(
         logger.info(f"🗳️ Submitting {len(request.vote_tokens)} votes for challenge {request.challenge_id}")
         
         # Créer le client API
-        api_client = GuruShotsAPI(user_token)
+        api_client = GuruShotsAPI(current_user.xtoken)
         
         # Soumettre les votes
         vote_result = await api_client.submit_votes(request.challenge_id, request.vote_tokens)
@@ -164,9 +211,8 @@ async def submit_votes(
         )
         
         # Notifier via WebSocket
-        user_id = user_token[:10]
         await connection_manager.notify_vote_executed(
-            user_id,
+            current_user.id,
             request.challenge_id,
             len(request.vote_tokens),
             vote_result.success
@@ -183,7 +229,7 @@ async def submit_votes(
 @router.post("/simple-vote", response_model=VoteResponse)
 async def execute_simple_vote(
     request: SimpleVoteRequest,
-    user_token: str = Depends(get_user_token)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Exécute un vote simple (récupère le panel et vote automatiquement)
@@ -193,7 +239,7 @@ async def execute_simple_vote(
         logger.info(f"🚀 Executing simple vote: {request.vote_count} votes for {request.challenge_url}")
         
         # Créer le client API
-        api_client = GuruShotsAPI(user_token)
+        api_client = GuruShotsAPI(current_user.xtoken)
         
         # Exécuter le vote simple
         vote_result = await api_client.execute_simple_vote(request.challenge_url, request.vote_count)
@@ -205,10 +251,9 @@ async def execute_simple_vote(
         )
         
         # Notifier via WebSocket
-        user_id = user_token[:10]
         challenge_id = request.challenge_url.split('/')[-1] if '/' in request.challenge_url else "unknown"
         await connection_manager.notify_vote_executed(
-            user_id,
+            current_user.id,
             challenge_id,
             request.vote_count,
             vote_result.success
@@ -225,7 +270,7 @@ async def execute_simple_vote(
 @router.get("/{challenge_id}")
 async def get_challenge(
     challenge_id: str,
-    user_token: str = Depends(get_user_token)
+    current_user: User = Depends(get_current_user)
 ):
     """Récupère les détails d'un challenge spécifique"""
     try:
@@ -243,7 +288,7 @@ async def get_challenge(
 @router.put("/{challenge_id}")
 async def update_challenge(
     challenge_id: str,
-    user_token: str = Depends(get_user_token)
+    current_user: User = Depends(get_current_user)
 ):
     """Met à jour un challenge (stratégie, statut, etc.)"""
     try:
@@ -260,7 +305,7 @@ async def update_challenge(
 @router.delete("/{challenge_id}")
 async def delete_challenge(
     challenge_id: str,
-    user_token: str = Depends(get_user_token)
+    current_user: User = Depends(get_current_user)
 ):
     """Supprime un challenge (annule les stratégies associées)"""
     try:

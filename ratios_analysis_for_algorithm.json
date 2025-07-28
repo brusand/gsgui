@@ -1,0 +1,873 @@
+{
+  "metadata": {
+    "total_entries": 1276,
+    "unique_ratios": 24,
+    "ratio_range": [
+      0.0,
+      3.0
+    ],
+    "significant_entries": 44
+  },
+  "position_effects": [
+    {
+      "ratio": 0.6,
+      "p1_cases": "10",
+      "p2_cases": "9",
+      "p1_win_rate": 0.0,
+      "p2_win_rate": 44.4,
+      "position_effect": 44.4,
+      "better_position": "Photo2",
+      "votes_diff": 264.656,
+      "rank_diff": -7.5330000000000155
+    },
+    {
+      "ratio": 1.7,
+      "p1_cases": "17",
+      "p2_cases": "5",
+      "p1_win_rate": 58.8,
+      "p2_win_rate": 20.0,
+      "position_effect": 38.8,
+      "better_position": "Photo1",
+      "votes_diff": 103.447,
+      "rank_diff": 20.081999999999994
+    },
+    {
+      "ratio": 0.7,
+      "p1_cases": "21",
+      "p2_cases": "21",
+      "p1_win_rate": 23.799999999999997,
+      "p2_win_rate": 61.9,
+      "position_effect": 38.1,
+      "better_position": "Photo2",
+      "votes_diff": -322.524,
+      "rank_diff": -97.714
+    },
+    {
+      "ratio": 2.3,
+      "p1_cases": "6",
+      "p2_cases": "5",
+      "p1_win_rate": 66.7,
+      "p2_win_rate": 100.0,
+      "position_effect": 33.3,
+      "better_position": "Photo2",
+      "votes_diff": -661.5330000000001,
+      "rank_diff": 74.93300000000005
+    },
+    {
+      "ratio": 1.1,
+      "p1_cases": "14",
+      "p2_cases": "17",
+      "p1_win_rate": 50.0,
+      "p2_win_rate": 70.6,
+      "position_effect": 20.599999999999994,
+      "better_position": "Photo2",
+      "votes_diff": 24.638999999999896,
+      "rank_diff": 80.63900000000001
+    },
+    {
+      "ratio": 1.6,
+      "p1_cases": "29",
+      "p2_cases": "31",
+      "p1_win_rate": 51.7,
+      "p2_win_rate": 71.0,
+      "position_effect": 19.299999999999994,
+      "better_position": "Photo2",
+      "votes_diff": 0.09600000000000364,
+      "rank_diff": 44.627999999999986
+    },
+    {
+      "ratio": 0.9,
+      "p1_cases": "11",
+      "p2_cases": "14",
+      "p1_win_rate": 45.5,
+      "p2_win_rate": 64.3,
+      "position_effect": 18.8,
+      "better_position": "Photo2",
+      "votes_diff": -63.23400000000004,
+      "rank_diff": 306.552
+    },
+    {
+      "ratio": 2.1,
+      "p1_cases": "7",
+      "p2_cases": "10",
+      "p1_win_rate": 57.099999999999994,
+      "p2_win_rate": 40.0,
+      "position_effect": 17.099999999999994,
+      "better_position": "Photo1",
+      "votes_diff": 339.457,
+      "rank_diff": -65.37100000000001
+    },
+    {
+      "ratio": 2.2,
+      "p1_cases": "10",
+      "p2_cases": "9",
+      "p1_win_rate": 60.0,
+      "p2_win_rate": 44.4,
+      "position_effect": 15.599999999999998,
+      "better_position": "Photo1",
+      "votes_diff": -60.843999999999994,
+      "rank_diff": -105.75599999999997
+    },
+    {
+      "ratio": 1.8,
+      "p1_cases": "38",
+      "p2_cases": "19",
+      "p1_win_rate": 50.0,
+      "p2_win_rate": 36.8,
+      "position_effect": 13.200000000000001,
+      "better_position": "Photo1",
+      "votes_diff": -73.5,
+      "rank_diff": -114.21100000000001
+    },
+    {
+      "ratio": 1.4,
+      "p1_cases": "80",
+      "p2_cases": "107",
+      "p1_win_rate": 50.0,
+      "p2_win_rate": 61.7,
+      "position_effect": 11.7,
+      "better_position": "Photo2",
+      "votes_diff": 34.26999999999998,
+      "rank_diff": -63.021000000000015
+    },
+    {
+      "ratio": 1.0,
+      "p1_cases": "26",
+      "p2_cases": "30",
+      "p1_win_rate": 38.5,
+      "p2_win_rate": 50.0,
+      "position_effect": 11.5,
+      "better_position": "Photo2",
+      "votes_diff": -64.16899999999998,
+      "rank_diff": 127.344
+    },
+    {
+      "ratio": 1.9,
+      "p1_cases": "6",
+      "p2_cases": "7",
+      "p1_win_rate": 33.300000000000004,
+      "p2_win_rate": 42.9,
+      "position_effect": 9.599999999999998,
+      "better_position": "Photo2",
+      "votes_diff": -201.90400000000005,
+      "rank_diff": 67.09599999999995
+    },
+    {
+      "ratio": 2.0,
+      "p1_cases": "7",
+      "p2_cases": "5",
+      "p1_win_rate": 71.39999999999999,
+      "p2_win_rate": 80.0,
+      "position_effect": 8.600000000000009,
+      "better_position": "Photo2",
+      "votes_diff": -99.82899999999998,
+      "rank_diff": 86.17100000000005
+    },
+    {
+      "ratio": 1.2,
+      "p1_cases": "22",
+      "p2_cases": "40",
+      "p1_win_rate": 50.0,
+      "p2_win_rate": 42.5,
+      "position_effect": 7.500000000000001,
+      "better_position": "Photo1",
+      "votes_diff": 142.50700000000006,
+      "rank_diff": 0.30700000000001637
+    },
+    {
+      "ratio": 0.8,
+      "p1_cases": "36",
+      "p2_cases": "40",
+      "p1_win_rate": 44.4,
+      "p2_win_rate": 50.0,
+      "position_effect": 5.6,
+      "better_position": "Photo2",
+      "votes_diff": -34.825000000000045,
+      "rank_diff": 30.253000000000043
+    },
+    {
+      "ratio": 1.5,
+      "p1_cases": "529",
+      "p2_cases": "589",
+      "p1_win_rate": 51.0,
+      "p2_win_rate": 54.50000000000001,
+      "position_effect": 3.500000000000003,
+      "better_position": "Photo2",
+      "votes_diff": 18.787999999999897,
+      "rank_diff": -11.675999999999988
+    },
+    {
+      "ratio": 1.3,
+      "p1_cases": "310",
+      "p2_cases": "253",
+      "p1_win_rate": 51.9,
+      "p2_win_rate": 53.800000000000004,
+      "position_effect": 1.9000000000000017,
+      "better_position": "Photo2",
+      "votes_diff": -12.952999999999975,
+      "rank_diff": 14.267999999999972
+    },
+    {
+      "ratio": 0.0,
+      "p1_cases": "76",
+      "p2_cases": "53",
+      "p1_win_rate": 5.3,
+      "p2_win_rate": 5.7,
+      "position_effect": 0.40000000000000036,
+      "better_position": "Photo2",
+      "votes_diff": 0.0,
+      "rank_diff": 0.0
+    }
+  ],
+  "safe_ratios": {
+    "photo1": [
+      {
+        "ratio": 2.2,
+        "win_rate": 0.6,
+        "cases": 10
+      }
+    ],
+    "photo2": [
+      {
+        "ratio": 0.7,
+        "win_rate": 0.619,
+        "cases": 21
+      },
+      {
+        "ratio": 0.9,
+        "win_rate": 0.643,
+        "cases": 14
+      },
+      {
+        "ratio": 1.1,
+        "win_rate": 0.706,
+        "cases": 17
+      },
+      {
+        "ratio": 1.4,
+        "win_rate": 0.617,
+        "cases": 107
+      },
+      {
+        "ratio": 1.6,
+        "win_rate": 0.71,
+        "cases": 31
+      }
+    ]
+  },
+  "risky_ratios": {
+    "photo1": [
+      {
+        "ratio": 0.0,
+        "win_rate": 0.053,
+        "cases": 76
+      },
+      {
+        "ratio": 0.6,
+        "win_rate": 0.0,
+        "cases": 10
+      },
+      {
+        "ratio": 0.7,
+        "win_rate": 0.238,
+        "cases": 21
+      },
+      {
+        "ratio": 1.0,
+        "win_rate": 0.385,
+        "cases": 26
+      }
+    ],
+    "photo2": [
+      {
+        "ratio": 0.0,
+        "win_rate": 0.057,
+        "cases": 53
+      },
+      {
+        "ratio": 1.8,
+        "win_rate": 0.368,
+        "cases": 19
+      },
+      {
+        "ratio": 2.1,
+        "win_rate": 0.4,
+        "cases": 10
+      }
+    ]
+  },
+  "complete_analysis": [
+    {
+      "ratio": 0.0,
+      "position": "Photo1",
+      "cases": 76,
+      "wins": 4,
+      "win_rate": 0.053,
+      "votes_mean": 0.0,
+      "votes_median": 0.0,
+      "votes_std": 0.0,
+      "rank_mean": 999.0,
+      "rank_median": 999.0,
+      "rank_std": 0.0
+    },
+    {
+      "ratio": 0.0,
+      "position": "Photo2",
+      "cases": 53,
+      "wins": 3,
+      "win_rate": 0.057,
+      "votes_mean": 0.0,
+      "votes_median": 0.0,
+      "votes_std": 0.0,
+      "rank_mean": 999.0,
+      "rank_median": 999.0,
+      "rank_std": 0.0
+    },
+    {
+      "ratio": 0.4,
+      "position": "Photo1",
+      "cases": 3,
+      "wins": 2,
+      "win_rate": 0.667,
+      "votes_mean": 824.667,
+      "votes_median": 441.0,
+      "votes_std": 664.53,
+      "rank_mean": 899.0,
+      "rank_median": 358.0,
+      "rank_std": 937.039
+    },
+    {
+      "ratio": 0.5,
+      "position": "Photo1",
+      "cases": 7,
+      "wins": 2,
+      "win_rate": 0.286,
+      "votes_mean": 214.286,
+      "votes_median": 238.0,
+      "votes_std": 61.927,
+      "rank_mean": 243.857,
+      "rank_median": 217.0,
+      "rank_std": 158.214
+    },
+    {
+      "ratio": 0.6,
+      "position": "Photo1",
+      "cases": 10,
+      "wins": 0,
+      "win_rate": 0.0,
+      "votes_mean": 690.1,
+      "votes_median": 497.0,
+      "votes_std": 550.8,
+      "rank_mean": 457.8,
+      "rank_median": 445.0,
+      "rank_std": 252.908
+    },
+    {
+      "ratio": 0.6,
+      "position": "Photo2",
+      "cases": 9,
+      "wins": 4,
+      "win_rate": 0.444,
+      "votes_mean": 425.444,
+      "votes_median": 293.0,
+      "votes_std": 263.72,
+      "rank_mean": 465.333,
+      "rank_median": 417.0,
+      "rank_std": 408.326
+    },
+    {
+      "ratio": 0.7,
+      "position": "Photo1",
+      "cases": 21,
+      "wins": 5,
+      "win_rate": 0.238,
+      "votes_mean": 227.0,
+      "votes_median": 164.0,
+      "votes_std": 188.118,
+      "rank_mean": 397.286,
+      "rank_median": 413.0,
+      "rank_std": 239.169
+    },
+    {
+      "ratio": 0.7,
+      "position": "Photo2",
+      "cases": 21,
+      "wins": 13,
+      "win_rate": 0.619,
+      "votes_mean": 549.524,
+      "votes_median": 327.0,
+      "votes_std": 482.194,
+      "rank_mean": 495.0,
+      "rank_median": 496.0,
+      "rank_std": 276.537
+    },
+    {
+      "ratio": 0.8,
+      "position": "Photo1",
+      "cases": 36,
+      "wins": 16,
+      "win_rate": 0.444,
+      "votes_mean": 482.25,
+      "votes_median": 303.0,
+      "votes_std": 469.284,
+      "rank_mean": 560.028,
+      "rank_median": 572.5,
+      "rank_std": 359.381
+    },
+    {
+      "ratio": 0.8,
+      "position": "Photo2",
+      "cases": 40,
+      "wins": 20,
+      "win_rate": 0.5,
+      "votes_mean": 517.075,
+      "votes_median": 359.5,
+      "votes_std": 383.505,
+      "rank_mean": 529.775,
+      "rank_median": 493.0,
+      "rank_std": 381.177
+    },
+    {
+      "ratio": 0.9,
+      "position": "Photo1",
+      "cases": 11,
+      "wins": 5,
+      "win_rate": 0.455,
+      "votes_mean": 557.909,
+      "votes_median": 496.0,
+      "votes_std": 281.296,
+      "rank_mean": 494.909,
+      "rank_median": 360.0,
+      "rank_std": 401.976
+    },
+    {
+      "ratio": 0.9,
+      "position": "Photo2",
+      "cases": 14,
+      "wins": 9,
+      "win_rate": 0.643,
+      "votes_mean": 621.143,
+      "votes_median": 600.0,
+      "votes_std": 195.856,
+      "rank_mean": 188.357,
+      "rank_median": 175.0,
+      "rank_std": 119.915
+    },
+    {
+      "ratio": 1.0,
+      "position": "Photo1",
+      "cases": 26,
+      "wins": 10,
+      "win_rate": 0.385,
+      "votes_mean": 614.731,
+      "votes_median": 399.5,
+      "votes_std": 518.767,
+      "rank_mean": 513.077,
+      "rank_median": 505.5,
+      "rank_std": 357.17
+    },
+    {
+      "ratio": 1.0,
+      "position": "Photo2",
+      "cases": 30,
+      "wins": 15,
+      "win_rate": 0.5,
+      "votes_mean": 678.9,
+      "votes_median": 484.0,
+      "votes_std": 546.347,
+      "rank_mean": 385.733,
+      "rank_median": 403.0,
+      "rank_std": 261.231
+    },
+    {
+      "ratio": 1.1,
+      "position": "Photo1",
+      "cases": 14,
+      "wins": 7,
+      "win_rate": 0.5,
+      "votes_mean": 929.286,
+      "votes_median": 663.0,
+      "votes_std": 947.868,
+      "rank_mean": 360.286,
+      "rank_median": 286.0,
+      "rank_std": 253.052
+    },
+    {
+      "ratio": 1.1,
+      "position": "Photo2",
+      "cases": 17,
+      "wins": 12,
+      "win_rate": 0.706,
+      "votes_mean": 904.647,
+      "votes_median": 877.0,
+      "votes_std": 511.289,
+      "rank_mean": 279.647,
+      "rank_median": 244.0,
+      "rank_std": 201.733
+    },
+    {
+      "ratio": 1.2,
+      "position": "Photo1",
+      "cases": 22,
+      "wins": 11,
+      "win_rate": 0.5,
+      "votes_mean": 777.182,
+      "votes_median": 386.0,
+      "votes_std": 603.361,
+      "rank_mean": 438.182,
+      "rank_median": 441.0,
+      "rank_std": 278.835
+    },
+    {
+      "ratio": 1.2,
+      "position": "Photo2",
+      "cases": 40,
+      "wins": 17,
+      "win_rate": 0.425,
+      "votes_mean": 634.675,
+      "votes_median": 467.0,
+      "votes_std": 499.883,
+      "rank_mean": 437.875,
+      "rank_median": 447.5,
+      "rank_std": 207.409
+    },
+    {
+      "ratio": 1.3,
+      "position": "Photo1",
+      "cases": 310,
+      "wins": 161,
+      "win_rate": 0.519,
+      "votes_mean": 814.094,
+      "votes_median": 532.0,
+      "votes_std": 667.318,
+      "rank_mean": 415.126,
+      "rank_median": 356.0,
+      "rank_std": 282.237
+    },
+    {
+      "ratio": 1.3,
+      "position": "Photo2",
+      "cases": 253,
+      "wins": 136,
+      "win_rate": 0.538,
+      "votes_mean": 827.047,
+      "votes_median": 575.0,
+      "votes_std": 683.31,
+      "rank_mean": 400.858,
+      "rank_median": 345.0,
+      "rank_std": 273.43
+    },
+    {
+      "ratio": 1.4,
+      "position": "Photo1",
+      "cases": 80,
+      "wins": 40,
+      "win_rate": 0.5,
+      "votes_mean": 812.438,
+      "votes_median": 778.0,
+      "votes_std": 547.204,
+      "rank_mean": 315.512,
+      "rank_median": 236.0,
+      "rank_std": 221.314
+    },
+    {
+      "ratio": 1.4,
+      "position": "Photo2",
+      "cases": 107,
+      "wins": 66,
+      "win_rate": 0.617,
+      "votes_mean": 778.168,
+      "votes_median": 688.0,
+      "votes_std": 628.633,
+      "rank_mean": 378.533,
+      "rank_median": 318.0,
+      "rank_std": 281.824
+    },
+    {
+      "ratio": 1.5,
+      "position": "Photo1",
+      "cases": 529,
+      "wins": 270,
+      "win_rate": 0.51,
+      "votes_mean": 867.435,
+      "votes_median": 748.0,
+      "votes_std": 661.509,
+      "rank_mean": 368.552,
+      "rank_median": 314.0,
+      "rank_std": 283.018
+    },
+    {
+      "ratio": 1.5,
+      "position": "Photo2",
+      "cases": 589,
+      "wins": 321,
+      "win_rate": 0.545,
+      "votes_mean": 848.647,
+      "votes_median": 689.0,
+      "votes_std": 634.972,
+      "rank_mean": 380.228,
+      "rank_median": 350.0,
+      "rank_std": 270.847
+    },
+    {
+      "ratio": 1.6,
+      "position": "Photo1",
+      "cases": 29,
+      "wins": 15,
+      "win_rate": 0.517,
+      "votes_mean": 884.483,
+      "votes_median": 500.0,
+      "votes_std": 861.641,
+      "rank_mean": 367.241,
+      "rank_median": 327.0,
+      "rank_std": 271.827
+    },
+    {
+      "ratio": 1.6,
+      "position": "Photo2",
+      "cases": 31,
+      "wins": 22,
+      "win_rate": 0.71,
+      "votes_mean": 884.387,
+      "votes_median": 927.0,
+      "votes_std": 581.845,
+      "rank_mean": 322.613,
+      "rank_median": 294.0,
+      "rank_std": 234.349
+    },
+    {
+      "ratio": 1.7,
+      "position": "Photo1",
+      "cases": 17,
+      "wins": 10,
+      "win_rate": 0.588,
+      "votes_mean": 420.647,
+      "votes_median": 303.0,
+      "votes_std": 228.882,
+      "rank_mean": 302.882,
+      "rank_median": 266.0,
+      "rank_std": 126.793
+    },
+    {
+      "ratio": 1.7,
+      "position": "Photo2",
+      "cases": 5,
+      "wins": 1,
+      "win_rate": 0.2,
+      "votes_mean": 317.2,
+      "votes_median": 316.0,
+      "votes_std": 230.255,
+      "rank_mean": 282.8,
+      "rank_median": 175.0,
+      "rank_std": 414.387
+    },
+    {
+      "ratio": 1.8,
+      "position": "Photo1",
+      "cases": 38,
+      "wins": 19,
+      "win_rate": 0.5,
+      "votes_mean": 755.711,
+      "votes_median": 600.0,
+      "votes_std": 564.778,
+      "rank_mean": 422.0,
+      "rank_median": 391.5,
+      "rank_std": 269.048
+    },
+    {
+      "ratio": 1.8,
+      "position": "Photo2",
+      "cases": 19,
+      "wins": 7,
+      "win_rate": 0.368,
+      "votes_mean": 829.211,
+      "votes_median": 391.0,
+      "votes_std": 731.969,
+      "rank_mean": 536.211,
+      "rank_median": 405.0,
+      "rank_std": 359.771
+    },
+    {
+      "ratio": 1.9,
+      "position": "Photo1",
+      "cases": 6,
+      "wins": 2,
+      "win_rate": 0.333,
+      "votes_mean": 319.667,
+      "votes_median": 333.0,
+      "votes_std": 176.505,
+      "rank_mean": 504.667,
+      "rank_median": 509.0,
+      "rank_std": 38.161
+    },
+    {
+      "ratio": 1.9,
+      "position": "Photo2",
+      "cases": 7,
+      "wins": 3,
+      "win_rate": 0.429,
+      "votes_mean": 521.571,
+      "votes_median": 243.0,
+      "votes_std": 527.847,
+      "rank_mean": 437.571,
+      "rank_median": 490.0,
+      "rank_std": 91.069
+    },
+    {
+      "ratio": 2.0,
+      "position": "Photo1",
+      "cases": 7,
+      "wins": 5,
+      "win_rate": 0.714,
+      "votes_mean": 182.571,
+      "votes_median": 130.0,
+      "votes_std": 72.463,
+      "rank_mean": 612.571,
+      "rank_median": 564.0,
+      "rank_std": 515.534
+    },
+    {
+      "ratio": 2.0,
+      "position": "Photo2",
+      "cases": 5,
+      "wins": 4,
+      "win_rate": 0.8,
+      "votes_mean": 282.4,
+      "votes_median": 340.0,
+      "votes_std": 123.3,
+      "rank_mean": 526.4,
+      "rank_median": 522.0,
+      "rank_std": 173.425
+    },
+    {
+      "ratio": 2.1,
+      "position": "Photo1",
+      "cases": 7,
+      "wins": 4,
+      "win_rate": 0.571,
+      "votes_mean": 742.857,
+      "votes_median": 729.0,
+      "votes_std": 386.784,
+      "rank_mean": 235.429,
+      "rank_median": 21.0,
+      "rank_std": 384.035
+    },
+    {
+      "ratio": 2.1,
+      "position": "Photo2",
+      "cases": 10,
+      "wins": 4,
+      "win_rate": 0.4,
+      "votes_mean": 403.4,
+      "votes_median": 386.0,
+      "votes_std": 168.644,
+      "rank_mean": 300.8,
+      "rank_median": 411.0,
+      "rank_std": 162.826
+    },
+    {
+      "ratio": 2.2,
+      "position": "Photo1",
+      "cases": 10,
+      "wins": 6,
+      "win_rate": 0.6,
+      "votes_mean": 405.6,
+      "votes_median": 456.0,
+      "votes_std": 200.467,
+      "rank_mean": 350.8,
+      "rank_median": 362.0,
+      "rank_std": 143.684
+    },
+    {
+      "ratio": 2.2,
+      "position": "Photo2",
+      "cases": 9,
+      "wins": 4,
+      "win_rate": 0.444,
+      "votes_mean": 466.444,
+      "votes_median": 406.0,
+      "votes_std": 215.461,
+      "rank_mean": 456.556,
+      "rank_median": 574.0,
+      "rank_std": 225.147
+    },
+    {
+      "ratio": 2.3,
+      "position": "Photo1",
+      "cases": 6,
+      "wins": 4,
+      "win_rate": 0.667,
+      "votes_mean": 266.667,
+      "votes_median": 269.0,
+      "votes_std": 86.331,
+      "rank_mean": 421.333,
+      "rank_median": 361.0,
+      "rank_std": 101.313
+    },
+    {
+      "ratio": 2.3,
+      "position": "Photo2",
+      "cases": 5,
+      "wins": 5,
+      "win_rate": 1.0,
+      "votes_mean": 928.2,
+      "votes_median": 919.0,
+      "votes_std": 173.301,
+      "rank_mean": 346.4,
+      "rank_median": 369.0,
+      "rank_std": 139.118
+    },
+    {
+      "ratio": 2.4,
+      "position": "Photo1",
+      "cases": 7,
+      "wins": 2,
+      "win_rate": 0.286,
+      "votes_mean": 641.714,
+      "votes_median": 639.0,
+      "votes_std": 300.533,
+      "rank_mean": 175.286,
+      "rank_median": 36.0,
+      "rank_std": 263.92
+    },
+    {
+      "ratio": 2.4,
+      "position": "Photo2",
+      "cases": 4,
+      "wins": 4,
+      "win_rate": 1.0,
+      "votes_mean": 668.0,
+      "votes_median": 668.0,
+      "votes_std": 117.779,
+      "rank_mean": 521.0,
+      "rank_median": 521.0,
+      "rank_std": 48.497
+    },
+    {
+      "ratio": 2.5,
+      "position": "Photo1",
+      "cases": 4,
+      "wins": 2,
+      "win_rate": 0.5,
+      "votes_mean": 165.5,
+      "votes_median": 165.5,
+      "votes_std": 75.633,
+      "rank_mean": 378.5,
+      "rank_median": 378.5,
+      "rank_std": 2.887
+    },
+    {
+      "ratio": 2.5,
+      "position": "Photo2",
+      "cases": 4,
+      "wins": 2,
+      "win_rate": 0.5,
+      "votes_mean": 193.0,
+      "votes_median": 193.0,
+      "votes_std": 13.856,
+      "rank_mean": 182.0,
+      "rank_median": 182.0,
+      "rank_std": 41.569
+    }
+  ]
+}

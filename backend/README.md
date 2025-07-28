@@ -134,23 +134,30 @@ pytest tests/
 pytest --cov=app tests/
 ```
 
-### Base de données
+### Persistance des données
+
+Le backend utilise un système de persistance basé sur fichiers `.ini` pour assurer la compatibilité avec le code original `gsui.py`:
 
 ```bash
-# Migrations avec Alembic (TODO)
-alembic revision --autogenerate -m "Initial migration"
-alembic upgrade head
+# Tester la persistance fichier
+python test_file_persistence.py
+
+# Structure des fichiers de données
+data/
+├── gsgui.ini      # Profils utilisateurs, challenges, historique turbo
+└── strategies.ini # Configuration des stratégies
 ```
 
 ## 🔧 Configuration
 
 Principales variables d'environnement dans `.env`:
 
-- `DATABASE_URL` - URL PostgreSQL
-- `REDIS_URL` - URL Redis
-- `SECRET_KEY` - Clé de chiffrement
+- `SECRET_KEY` - Clé de chiffrement  
 - `GURUSHOTS_API_BASE` - Base URL API GuruShots
 - `DEBUG` - Mode debug
+- `LOG_LEVEL` - Niveau de logging
+
+**Note**: Les variables `DATABASE_URL` et `REDIS_URL` ne sont plus nécessaires car le backend utilise la persistance fichier.
 
 ## 📊 Monitoring
 
@@ -167,19 +174,25 @@ Les logs sont configurés avec le module `logging` standard Python.
 
 ## 🚦 Prochaines étapes
 
-### Phase actuelle ✅
+### Phase 1 - Backend Foundation ✅
 - [x] Structure backend FastAPI
-- [x] Extraction logique gsui.py
+- [x] Extraction logique gsui.py  
 - [x] API endpoints challenges
 - [x] WebSocket temps réel
 - [x] Strategy Scheduler
+- [x] **Persistance fichier .ini (compatible gsui.py)**
+- [x] **Tests de validation complets**
 
-### Phase suivante 🔄
-- [ ] Algorithmes Turbo
-- [ ] Base de données PostgreSQL
-- [ ] Tests unitaires
-- [ ] Client desktop (migration gsui.py)
+### Phase 2 - Client Migration 🔄  
+- [ ] Adapter gsui.py pour utiliser le backend API
+- [ ] Migration progressive des fonctionnalités
+- [ ] Tests d'intégration backend/frontend
+- [ ] Algorithmes Turbo (extraction depuis gsui.py)
+
+### Phase 3 - Expansion Mobile 📋
 - [ ] Client mobile Flutter
+- [ ] Synchronisation multi-plateforme
+- [ ] Notifications push
 
 ### À venir 📋
 - [ ] Authentification JWT

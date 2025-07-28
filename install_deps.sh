@@ -9,7 +9,7 @@ pip install aiohttp
 pip install configobj
 pip install qasync
 pip install browser-cookie3
-
+pip install uvicorn
 echo ""
 echo "✅ Installation terminée!"
 echo ""

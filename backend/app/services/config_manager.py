@@ -1,0 +1,451 @@
+"""
+Configuration Manager Service - Persistance fichier .ini comme dans gsui.py
+Remplace la base de données pour les plateformes sans BD
+"""
+
+import os
+import logging
+from datetime import datetime
+from typing import Dict, Any, List, Optional
+from configobj import ConfigObj
+from threading import Lock
+import uuid
+
+logger = logging.getLogger(__name__)
+
+
+class ConfigManager:
+    """
+    Gestionnaire de configuration utilisant les fichiers .ini
+    Compatible avec le format de gsui.py pour une migration transparente
+    """
+    
+    def __init__(self, config_file: str = "data/gsgui.ini", strategies_file: str = "data/strategies.ini"):
+        self.config_file = config_file
+        self.strategies_file = strategies_file
+        self._lock = Lock()  # Thread safety pour les écritures
+        
+        # Chargement initial
+        self._load_configs()
+        logger.info(f"✅ ConfigManager initialized with {config_file} and {strategies_file}")
+    
+    def _load_configs(self):
+        """Charge les fichiers de configuration"""
+        try:
+            # Configuration principale (gsgui.ini)
+            if os.path.exists(self.config_file):
+                self.config = ConfigObj(self.config_file, encoding='utf-8')
+            else:
+                self.config = ConfigObj(self.config_file, encoding='utf-8')
+                self._create_default_config()
+            
+            # Stratégies (strategies.ini)
+            if os.path.exists(self.strategies_file):
+                self.strategies = ConfigObj(self.strategies_file, encoding='utf-8')
+            else:
+                self.strategies = ConfigObj(self.strategies_file, encoding='utf-8')
+                self._create_default_strategies()
+            
+            # S'assurer que l'encodage UTF-8 est fixé
+            self.config.encoding = 'utf-8'
+            self.strategies.encoding = 'utf-8'
+            
+        except Exception as e:
+            logger.error(f"Error loading configs: {e}")
+            # Créer des configs par défaut en cas d'erreur
+            self.config = ConfigObj(self.config_file, encoding='utf-8')
+            self.strategies = ConfigObj(self.strategies_file, encoding='utf-8')
+            self._create_default_config()
+            self._create_default_strategies()
+    
+    def _create_default_config(self):
+        """Crée une configuration par défaut"""
+        self.config['version'] = '1.0.0'
+        self.config['player'] = 'default_user'
+        self.config['host'] = ""
+        self.config['challenge'] = ""
+        
+        # Section players vide au début
+        self.config['players'] = {}
+        
+        self._save_config()
+    
+    def _create_default_strategies(self):
+        """Crée des stratégies par défaut"""
+        self.strategies['end4'] = {
+            'description': 'Stratégie conservative - 4m - votes répartis',
+            '0': 'vote, end-4m0s, 70',
+            '1': 'vote, end-3m0s, 40',
+            '2': 'vote, end-2m0s, 40',
+            '3': 'vote, end-1m0s, 40',
+            '4': 'vote, end-0m30s, 20'
+        }
+        
+        self.strategies['fill'] = {
+            'description': 'Stratégie rapide - maintenant',
+            '0': 'vote, now, 70'
+        }
+        
+        self._save_strategies()
+    
+    def _save_config(self):
+        """Sauvegarde la configuration principale"""
+        with self._lock:
+            try:
+                self.config.write()
+                logger.debug(f"Configuration saved to {self.config_file}")
+            except Exception as e:
+                logger.error(f"Error saving config: {e}")
+    
+    def _save_strategies(self):
+        """Sauvegarde les stratégies"""
+        with self._lock:
+            try:
+                self.strategies.write()
+                logger.debug(f"Strategies saved to {self.strategies_file}")
+            except Exception as e:
+                logger.error(f"Error saving strategies: {e}")
+    
+    # === USER MANAGEMENT ===
+    
+    def create_user(self, user_id: str, user_data: Dict[str, Any]) -> bool:
+        """Crée un nouvel utilisateur"""
+        try:
+            if 'players' not in self.config:
+                self.config['players'] = {}
+            
+            # Données utilisateur avec valeurs par défaut de gsui.py
+            user_section = {
+                'user_name': user_data.get('user_name', ''),
+                'xtoken': user_data.get('xtoken', ''),
+                'turbo_algorithm': user_data.get('turbo_algorithm', 'hybrid'),
+                'auto_optimize_turbo': user_data.get('auto_optimize_turbo', True),
+                'created_at': datetime.now().isoformat()
+            }
+            
+            # Sections comme dans gsui.py
+            user_section['challenges'] = {}
+            user_section['process'] = {}
+            user_section['cmdes'] = {}
+            
+            self.config['players'][user_id] = user_section
+            self._save_config()
+            
+            logger.info(f"✅ User {user_id} created")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error creating user {user_id}: {e}")
+            return False
+    
+    def get_user(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """Récupère un utilisateur"""
+        try:
+            users = self.config.get('players', {})
+            return users.get(user_id)
+        except Exception as e:
+            logger.error(f"Error getting user {user_id}: {e}")
+            return None
+    
+    def update_user(self, user_id: str, updates: Dict[str, Any]) -> bool:
+        """Met à jour un utilisateur"""
+        try:
+            if 'players' not in self.config or user_id not in self.config['players']:
+                return False
+            
+            # Mise à jour des champs
+            for key, value in updates.items():
+                self.config['players'][user_id][key] = value
+            
+            self.config['players'][user_id]['updated_at'] = datetime.now().isoformat()
+            self._save_config()
+            
+            logger.debug(f"User {user_id} updated")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error updating user {user_id}: {e}")
+            return False
+    
+    def list_users(self) -> List[str]:
+        """Liste tous les utilisateurs"""
+        try:
+            return list(self.config.get('players', {}).keys())
+        except Exception as e:
+            logger.error(f"Error listing users: {e}")
+            return []
+    
+    # === CHALLENGE MANAGEMENT ===
+    
+    def save_user_challenge(self, user_id: str, challenge_id: str, challenge_data: Dict[str, Any]) -> bool:
+        """Sauvegarde un challenge pour un utilisateur"""
+        try:
+            if user_id not in self.config.get('players', {}):
+                return False
+            
+            if 'challenges' not in self.config['players'][user_id]:
+                self.config['players'][user_id]['challenges'] = {}
+            
+            # Sauvegarder avec le format de gsui.py
+            challenge_section = {
+                'strategy_name': challenge_data.get('selected_strategy', ''),
+                'challenge_title': challenge_data.get('title', ''),
+                'scheduled_at': challenge_data.get('scheduled_at', datetime.now().isoformat()),
+                'status': challenge_data.get('status', ''),
+                'votes': challenge_data.get('votes', 0),
+                'rank': challenge_data.get('rank', 0)
+            }
+            
+            self.config['players'][user_id]['challenges'][challenge_id] = challenge_section
+            self._save_config()
+            
+            logger.debug(f"Challenge {challenge_id} saved for user {user_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error saving challenge {challenge_id} for user {user_id}: {e}")
+            return False
+    
+    def get_user_challenges(self, user_id: str) -> Dict[str, Any]:
+        """Récupère tous les challenges d'un utilisateur"""
+        try:
+            user = self.get_user(user_id)
+            if user:
+                return user.get('challenges', {})
+            return {}
+        except Exception as e:
+            logger.error(f"Error getting challenges for user {user_id}: {e}")
+            return {}
+    
+    def update_challenge_status(self, user_id: str, challenge_id: str, status: str, additional_data: Optional[Dict] = None) -> bool:
+        """Met à jour le statut d'un challenge"""
+        try:
+            if user_id not in self.config.get('players', {}):
+                return False
+            
+            challenges = self.config['players'][user_id].get('challenges', {})
+            if challenge_id in challenges:
+                challenges[challenge_id]['status'] = status
+                challenges[challenge_id]['updated_at'] = datetime.now().isoformat()
+                
+                if additional_data:
+                    challenges[challenge_id].update(additional_data)
+                
+                self._save_config()
+                return True
+            
+            return False
+            
+        except Exception as e:
+            logger.error(f"Error updating challenge status: {e}")
+            return False
+    
+    # === STRATEGY MANAGEMENT ===
+    
+    def get_strategy(self, strategy_name: str) -> Optional[Dict[str, Any]]:
+        """Récupère une stratégie"""
+        try:
+            return self.strategies.get(strategy_name)
+        except Exception as e:
+            logger.error(f"Error getting strategy {strategy_name}: {e}")
+            return None
+    
+    def list_strategies(self) -> Dict[str, Any]:
+        """Liste toutes les stratégies"""
+        try:
+            return dict(self.strategies)
+        except Exception as e:
+            logger.error(f"Error listing strategies: {e}")
+            return {}
+    
+    def create_strategy(self, strategy_name: str, strategy_config: Dict[str, Any]) -> bool:
+        """Crée une nouvelle stratégie"""
+        try:
+            self.strategies[strategy_name] = strategy_config
+            self._save_strategies()
+            
+            logger.info(f"✅ Strategy {strategy_name} created")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error creating strategy {strategy_name}: {e}")
+            return False
+    
+    # === TURBO HISTORY ===
+    
+    def save_turbo_history(self, user_id: str, turbo_data: Dict[str, Any]) -> bool:
+        """Sauvegarde l'historique turbo comme dans gsui.py"""
+        try:
+            if user_id not in self.config.get('players', {}):
+                return False
+            
+            # Créer la section turbo_history si elle n'existe pas
+            if 'turbo_history' not in self.config:
+                self.config['turbo_history'] = {}
+            
+            if user_id not in self.config['turbo_history']:
+                self.config['turbo_history'][user_id] = {}
+            
+            # ID unique pour l'entrée turbo (format gsui.py)
+            challenge_id = turbo_data['challenge_id']
+            photo1_id = turbo_data['photo1_id']
+            photo2_id = turbo_data['photo2_id']
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            turbo_id = f"{challenge_id}_{photo1_id}_{photo2_id}_{timestamp}"
+            
+            # Format complet comme dans gsui.py
+            turbo_entry = {
+                'timestamp': turbo_data.get('timestamp', datetime.now().isoformat()),
+                'challenge_id': challenge_id,
+                'challenge_title': turbo_data.get('challenge_title', ''),
+                'time_left': turbo_data.get('time_left', ''),
+                'algorithm': turbo_data.get('algorithm', 'default'),
+                'strategy_description': turbo_data.get('strategy_description', ''),
+                'success': turbo_data.get('success', False),
+                'photo1': {
+                    'id': photo1_id,
+                    'ratio': turbo_data.get('photo1_ratio'),
+                    'votes': turbo_data.get('photo1_votes'),
+                    'rank': turbo_data.get('photo1_rank'),
+                    'found': turbo_data.get('photo1_found', False)
+                },
+                'photo2': {
+                    'id': photo2_id,
+                    'ratio': turbo_data.get('photo2_ratio'),
+                    'votes': turbo_data.get('photo2_votes'),
+                    'rank': turbo_data.get('photo2_rank'),
+                    'found': turbo_data.get('photo2_found', False)
+                },
+                'winner': {
+                    'id': turbo_data.get('winner_id'),
+                    'is_photo1': turbo_data.get('is_photo1_winner', False)
+                }
+            }
+            
+            self.config['turbo_history'][user_id][turbo_id] = turbo_entry
+            self._save_config()
+            
+            logger.debug(f"Turbo history saved: {turbo_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error saving turbo history: {e}")
+            return False
+    
+    def get_turbo_history(self, user_id: str, limit: Optional[int] = None) -> List[Dict[str, Any]]:
+        """Récupère l'historique turbo d'un utilisateur"""
+        try:
+            history = self.config.get('turbo_history', {}).get(user_id, {})
+            entries = list(history.values())
+            
+            # Trier par timestamp (plus récent en premier)
+            entries.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+            
+            if limit:
+                entries = entries[:limit]
+            
+            return entries
+            
+        except Exception as e:
+            logger.error(f"Error getting turbo history for user {user_id}: {e}")
+            return []
+    
+    # === PROCESS TRACKING (comme dans gsui.py) ===
+    
+    def save_process_status(self, user_id: str, process_id: str, status: str, command: str = "") -> bool:
+        """Sauvegarde le statut d'un processus"""
+        try:
+            if user_id not in self.config.get('players', {}):
+                return False
+            
+            if 'process' not in self.config['players'][user_id]:
+                self.config['players'][user_id]['process'] = {}
+            
+            if 'cmdes' not in self.config['players'][user_id]:
+                self.config['players'][user_id]['cmdes'] = {}
+            
+            # Sauvegarder le statut et la commande (format gsui.py)
+            self.config['players'][user_id]['process'][process_id] = status
+            
+            if command:
+                self.config['players'][user_id]['cmdes'][process_id] = command
+            
+            self._save_config()
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error saving process status: {e}")
+            return False
+    
+    def get_user_processes(self, user_id: str) -> Dict[str, str]:
+        """Récupère tous les processus d'un utilisateur"""
+        try:
+            user = self.get_user(user_id)
+            if user:
+                return user.get('process', {})
+            return {}
+        except Exception as e:
+            logger.error(f"Error getting processes for user {user_id}: {e}")
+            return {}
+    
+    # === UTILITY METHODS ===
+    
+    def reload_configs(self):
+        """Recharge les configurations depuis les fichiers"""
+        self._load_configs()
+        logger.info("📁 Configurations reloaded")
+    
+    def backup_configs(self, backup_suffix: Optional[str] = None) -> bool:
+        """Crée une sauvegarde des fichiers de configuration"""
+        try:
+            if not backup_suffix:
+                backup_suffix = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            import shutil
+            
+            # Sauvegarder gsgui.ini
+            if os.path.exists(self.config_file):
+                backup_config = f"{self.config_file}.backup_{backup_suffix}"
+                shutil.copy2(self.config_file, backup_config)
+            
+            # Sauvegarder strategies.ini
+            if os.path.exists(self.strategies_file):
+                backup_strategies = f"{self.strategies_file}.backup_{backup_suffix}"
+                shutil.copy2(self.strategies_file, backup_strategies)
+            
+            logger.info(f"✅ Configurations backed up with suffix {backup_suffix}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error backing up configurations: {e}")
+            return False
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Retourne des statistiques sur les configurations"""
+        try:
+            users_count = len(self.config.get('players', {}))
+            strategies_count = len(self.strategies)
+            
+            # Compter l'historique turbo total
+            turbo_history_count = 0
+            turbo_history = self.config.get('turbo_history', {})
+            for user_history in turbo_history.values():
+                turbo_history_count += len(user_history)
+            
+            return {
+                'users_count': users_count,
+                'strategies_count': strategies_count,
+                'turbo_history_count': turbo_history_count,
+                'config_file': self.config_file,
+                'strategies_file': self.strategies_file,
+                'last_reload': datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting stats: {e}")
+            return {}
+
+
+# Instance globale du gestionnaire de configuration
+config_manager = ConfigManager()

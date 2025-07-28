@@ -1,37 +1,20 @@
 version: '3.8'
 
 services:
-  # Backend API
+  # Backend API (file-based persistence)
   backend:
     build: .
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://gsgui:gsgui@postgres:5432/gsgui
-      - REDIS_URL=redis://redis:6379/0
       - DEBUG=true
-    depends_on:
-      - postgres
-      - redis
+      - LOG_LEVEL=INFO
     volumes:
       - ./app:/app/app:ro  # Mount source pour développement
+      - ./data:/app/data   # Persistance des fichiers .ini
     restart: unless-stopped
-
-  # PostgreSQL Database
-  postgres:
-    image: postgres:14
-    environment:
-      POSTGRES_DB: gsgui
-      POSTGRES_USER: gsgui
-      POSTGRES_PASSWORD: gsgui
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    restart: unless-stopped
-
-  # Redis Cache
+    
+  # Redis Cache (optionnel pour les sessions WebSocket)
   redis:
     image: redis:7-alpine
     ports:
@@ -41,18 +24,5 @@ services:
     restart: unless-stopped
     command: redis-server --appendonly yes
 
-  # PostgreSQL Admin (optionnel)
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@gsgui.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "8080:80"
-    depends_on:
-      - postgres
-    restart: unless-stopped
-
 volumes:
-  postgres_data:
   redis_data:

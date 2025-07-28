@@ -23,14 +23,24 @@ from datetime import datetime, timedelta, time
 from configobj import ConfigObj
 from qasync import QEventLoop, asyncSlot
 
-try:
-    from src.gs.gsprompt import GuruBatch
-except ImportError:
-    from gsprompt import GuruBatch
 from PySide6.QtGui import QFont, QTextCursor
 from time import sleep
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+
+# Importer les algorithmes d'ensemble
+try:
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.append('.')  # Ajouter le répertoire courant
+    from ensemble_algorithms import ensemble_vote, hybrid_algorithm, ratio_low_algorithm, votes_high_algorithm, random_algorithm
+    from position_aware_algorithm import position_aware_algorithm
+    from adaptive_time_algorithm import adaptive_time_algorithm
+    from bruno_custom_refined import bruno_custom_refined
+    ENSEMBLE_AVAILABLE = True
+    print("✅ Modules d'ensemble importés avec succès")
+except ImportError as e:
+    print(f"⚠️ Impossible d'importer les modules d'ensemble: {e}")
+    ENSEMBLE_AVAILABLE = False
 
 class GurushotChallenge:
     def __init__(self, id, title, end_time, time_left, url, votes, rank, level, exposure, gps, challenge):
@@ -58,11 +68,14 @@ class AsyncFetcher(QObject):
     post_votes_panel_finished = Signal(object, object)
     turbo_finished = Signal(str, bool)  # (challenge_id, success)
     turbo_log = Signal(str)  # (log_message)
+    turbo_scores_update = Signal(str, str, int, int)  # (first_id, second_id, first_score, second_score)
     turbo_history_save = Signal(str, str, str, str, object, str, object, str, str, str, bool)  # (challenge_id, challenge_title, time_left, first_id, first_data, second_id, second_data, winner_id, algorithm, strategy_description, success)
 
-    def __init__(self, header):
+    def __init__(self, header, config=None, player=None):
         super().__init__()
         self.aio_header = header
+        self.config = config
+        self.player = player
 
     async def fetch_challenges(self):
         """VERSION FONCTIONNELLE copiée depuis gsgui.py"""
@@ -215,8 +228,13 @@ class AsyncFetcher(QObject):
                             required_selections = turbo_data.get('required_selections', 6)
                             turbo_unlock_type = turbo_data.get('turbo_unlock_type', 'COINS')
                             
+                            # Récupérer et afficher l'algorithme utilisé
+                            current_algorithm = self.get_turbo_algorithm()
+                            
                             print(f"📊 Turbo info: {len(images)} paires, {required_selections} requis, {max_selections} max, type: {turbo_unlock_type}")
+                            print(f"🎯 Algorithme utilisé: {current_algorithm}")
                             self.turbo_log.emit(f"🚀 Début turbo: {len(images)} paires à traiter")
+                            self.turbo_log.emit(f"🎯 Algorithme: {current_algorithm}")
                             
                             # Étape 2: Traiter chaque paire séquentiellement
                             success_count = await self.process_turbo_pairs_sequentially(challenge_id, images, challenge_title, challenge_time_left)
@@ -246,10 +264,11 @@ class AsyncFetcher(QObject):
         """Traite chaque paire séquentiellement jusqu'à 6 succès ou 5 échecs"""
         try:
             success_count = 0
+            novote_count = 0
             failure_count = 0
             total_pairs = len(image_pairs)
             required_successes = 6
-            max_failures = 5
+            max_failures = 4 # 5 de 0 à 4
             
             # Cache des pages consultées pour éviter les re-consultations
             pages_cache = {}  # {start: items}
@@ -281,12 +300,15 @@ class AsyncFetcher(QObject):
                     
                     print(f"   🎯 Algorithme: {strategy}")
                     
-                    print(f"   🏆 Gagnant: {winner_id} (ratio: {winner_ratio}, votes: {winner_votes}) vs perdant (ratio: {loser_ratio})")
-                    self.turbo_log.emit(f"🏆 Algo '{self.get_turbo_algorithm()}': ratio {winner_ratio:.3f} (vs {loser_ratio:.3f}) - {winner_votes} votes")
+                    print(f"   🏆 Choix Algo: {winner_id} (ratio: {winner_ratio}, votes: {winner_votes}) vs perdant (ratio: {loser_ratio})")
+                    self.turbo_log.emit(f"🏆 Choix Algo: {winner_id} (ratio: {winner_ratio}, votes: {winner_votes}) vs perdant (ratio: {loser_ratio})")
                     
-                    # Soumettre la sélection
-                    success, actual_winner_id = await self.submit_single_turbo_selection(challenge_id, winner_id, i+1, first_id, second_id, winner_ratio, loser_ratio)
-                    
+                    # Arrêter si on a atteint le nombre maximum d'échecs
+                    if failure_count < max_failures:
+                        # Soumettre la sélection
+                        success, actual_winner_id = await self.submit_single_turbo_selection(challenge_id, winner_id, i+1, first_id, second_id, winner_ratio, loser_ratio)
+                    else:
+                        novote_count += 1
                     # Historiser cette comparaison - utiliser le vrai gagnant (actual_winner_id)
                     self.turbo_history_save.emit(
                         str(challenge_id), challenge_title, challenge_time_left,
@@ -307,9 +329,11 @@ class AsyncFetcher(QObject):
                         print(f"   🎯 Choix par défaut: {winner_id} (ratio: {winner_ratio}) - autre photo non trouvée")
                         self.turbo_log.emit(f"🎯 Paire {i+1}: {winner_id} choisi par défaut (ratio: {winner_ratio:.3f}) - autre photo non trouvée")
                     
-                    # Soumettre la sélection avec ratio unique
-                    success, actual_winner_id = await self.submit_single_turbo_selection(challenge_id, winner_id, i+1, first_id, second_id, winner_ratio, None)
-                    
+                    if failure_count < max_failures:
+                        # Soumettre la sélection avec ratio unique
+                        success, actual_winner_id = await self.submit_single_turbo_selection(challenge_id, winner_id, i+1, first_id, second_id, winner_ratio, None)
+                    else:
+                        novote_count += 1
                     # Historiser cette comparaison (choix par défaut)
                     strategy_desc = f"choix par défaut - autre photo non trouvée"
                     self.turbo_history_save.emit(
@@ -333,7 +357,7 @@ class AsyncFetcher(QObject):
                     continue
                 
                 # Traiter le résultat de la soumission (commun aux cas 1 et 2)
-                if success:
+                if novote_count == 0 and success:
                     success_count += 1
                     print(f"   ✅ Comparaison réussie ({success_count}/{required_successes})")
                     
@@ -346,10 +370,10 @@ class AsyncFetcher(QObject):
                     print(f"   ❌ Comparaison échouée ({failure_count}/{max_failures})")
                     
                     # Arrêter si on a atteint le nombre maximum d'échecs
-                    if failure_count >= max_failures:
-                        print(f"   🛑 Arrêt: {max_failures} échecs atteints!")
-                        self.turbo_log.emit(f"🛑 Turbo arrêté: {max_failures} échecs consécutifs")
-                        break
+                    #if failure_count >= max_failures:
+                    #    print(f"   🛑 Arrêt: {max_failures} échecs atteints!")
+                    #    self.turbo_log.emit(f"🛑 Turbo arrêté: {max_failures} échecs consécutifs")
+                    #    break
                 
                 # Petite pause entre les paires
                 if i < total_pairs - 1:
@@ -365,20 +389,31 @@ class AsyncFetcher(QObject):
     def get_turbo_algorithm(self):
         """Récupère l'algorithme turbo configuré pour ce profil"""
         try:
+            # Debug: vérifier que config et player sont disponibles
+            if not self.config or not self.player:
+                print(f"❌ AsyncFetcher: config={self.config is not None}, player={self.player}")
+                return "bruno_custom"
+                
             # Vérifier la config du profil
             if self.config['players'].get(self.player) and self.config['players'][self.player].get('turbo_algorithm'):
-                return self.config['players'][self.player]['turbo_algorithm']
+                algo = self.config['players'][self.player]['turbo_algorithm']
+                print(f"🔧 DEBUG AsyncFetcher: Algorithme lu depuis config: {algo}")
+                return algo
             
-            # Valeur par défaut
-            return "bruno_custom"
-        except Exception:
-            return "bruno_custom"
+            # Valeur par défaut - Ensemble optimal basé sur feedback utilisateur en temps réel
+            print(f"🔧 DEBUG AsyncFetcher: Utilisation ensemble par défaut mis à jour")
+            return "[hybrid,position_aware,adaptive_time]"
+        except Exception as e:
+            print(f"❌ Erreur AsyncFetcher get_turbo_algorithm: {e}")
+            return "[hybrid,ratio_low,votes_high]"
     
-    def select_turbo_photo(self, first_id, first_data, second_id, second_data):
-        """Sélectionne la photo gagnante selon l'algorithme configuré"""
-        algorithm = self.get_turbo_algorithm()
+    def decide_turbo_choice(self, algorithm, first_id, first_data, second_id, second_data):
+        """DECISION PURE: Choisit entre deux photos selon l'algorithme ou ensemble d'algorithmes
         
-        # Données communes
+        Retourne: (winner_id, winner_ratio, loser_ratio, winner_votes, strategy_description)
+        Cette méthode est PURE - pas de soumission, juste la décision.
+        """
+        # Données communes pour debug
         first_ratio = first_data.get('ratio', 0)
         second_ratio = second_data.get('ratio', 0)
         first_votes = first_data.get('votes', 0)
@@ -389,38 +424,151 @@ class AsyncFetcher(QObject):
         print(f"   📊 Données: Photo1(votes:{first_votes}, rang:{first_rank}, ratio:{first_ratio}) vs Photo2(votes:{second_votes}, rang:{second_rank}, ratio:{second_ratio})")
         print(f"   🤖 Algorithme sélectionné: {algorithm}")
         
-        # Appliquer l'algorithme approprié
-        if algorithm == "ratio_low":
-            return self._algo_ratio_low(first_id, first_data, second_id, second_data)
+        # === GESTION DES ENSEMBLES D'ALGORITHMES ===
+        if algorithm.startswith('[') and algorithm.endswith(']') and ENSEMBLE_AVAILABLE:
+            try:
+                # Parser l'ensemble: [algo1,algo2,algo3]
+                algo_list = [algo.strip() for algo in algorithm[1:-1].split(',')]
+                print(f"   🗳️ Ensemble détecté: {algo_list}")
+                
+                # Appliquer le vote majoritaire
+                majority_choice, individual_choices, vote_details, majority_reason = ensemble_vote(
+                    first_id, first_data, second_id, second_data, algo_list
+                )
+                
+                # Déterminer les ratios et votes du gagnant
+                if majority_choice == first_id:
+                    winner_ratio, loser_ratio = first_ratio, second_ratio
+                    winner_votes = first_votes
+                else:
+                    winner_ratio, loser_ratio = second_ratio, first_ratio
+                    winner_votes = second_votes
+                
+                # Créer la description de stratégie
+                strategy_desc = f"Vote majoritaire {majority_reason}"
+                print(f"   📊 Détail votes: {individual_choices}")
+                print(f"   🏆 Gagnant majoritaire: {majority_choice}")
+                
+                return majority_choice, winner_ratio, loser_ratio, winner_votes, strategy_desc
+                
+            except Exception as e:
+                print(f"   ❌ Erreur ensemble: {e}, fallback sur bruno_custom")
+                return self._algo_bruno_custom(first_id, first_data, second_id, second_data)
+        
+        # === ALGORITHMES INDIVIDUELS ===
+        # Nouveaux algorithmes optimisés d'abord
+        if algorithm == "hybrid" and ENSEMBLE_AVAILABLE:
+            try:
+                winner_id, reason = hybrid_algorithm(first_id, first_data, second_id, second_data)
+                if winner_id == first_id:
+                    return first_id, first_ratio, second_ratio, first_votes, f"hybrid: {reason}"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"hybrid: {reason}"
+            except:
+                return self._algo_hybrid(first_id, first_data, second_id, second_data)
+        
+        elif algorithm == "ratio_low" and ENSEMBLE_AVAILABLE:
+            try:
+                winner_id, reason = ratio_low_algorithm(first_id, first_data, second_id, second_data)
+                if winner_id == first_id:
+                    return first_id, first_ratio, second_ratio, first_votes, f"ratio_low: {reason}"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"ratio_low: {reason}"
+            except:
+                return self._algo_ratio_low(first_id, first_data, second_id, second_data)
+        
+        elif algorithm == "votes_high" and ENSEMBLE_AVAILABLE:
+            try:
+                winner_id, reason = votes_high_algorithm(first_id, first_data, second_id, second_data)
+                if winner_id == first_id:
+                    return first_id, first_ratio, second_ratio, first_votes, f"votes_high: {reason}"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"votes_high: {reason}"
+            except:
+                return self._algo_votes_high(first_id, first_data, second_id, second_data)
+        
+        elif algorithm == "random" and ENSEMBLE_AVAILABLE:
+            try:
+                winner_id, reason = random_algorithm(first_id, first_data, second_id, second_data)
+                if winner_id == first_id:
+                    return first_id, first_ratio, second_ratio, first_votes, f"random: {reason}"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"random: {reason}"
+            except:
+                return self._algo_random(first_id, first_data, second_id, second_data)
+        
+        elif algorithm == "bruno_custom" and ENSEMBLE_AVAILABLE:
+            try:
+                winner_id, winner_ratio_ret, loser_ratio_ret, winner_votes_ret, reason = bruno_custom_refined(
+                    first_id, first_data, second_id, second_data
+                )
+                return winner_id, winner_ratio_ret, loser_ratio_ret, winner_votes_ret, f"bruno_custom: {reason}"
+            except:
+                return self._algo_bruno_custom(first_id, first_data, second_id, second_data)
+        
+        elif algorithm == "position_aware" and ENSEMBLE_AVAILABLE:
+            try:
+                winner_id, winner_ratio_ret, loser_ratio_ret, winner_votes_ret, reason = position_aware_algorithm(
+                    first_id, first_data, second_id, second_data
+                )
+                return winner_id, winner_ratio_ret, loser_ratio_ret, winner_votes_ret, f"position_aware: {reason}"
+            except Exception as e:
+                print(f"   ❌ Erreur position_aware: {e}, fallback sur bruno_custom")
+                return self._algo_bruno_custom(first_id, first_data, second_id, second_data)
+        
+        elif algorithm == "adaptive_time" and ENSEMBLE_AVAILABLE:
+            try:
+                winner_id, winner_ratio_ret, loser_ratio_ret, winner_votes_ret, reason = adaptive_time_algorithm(
+                    first_id, first_data, second_id, second_data, time_left="0D 12H 0M 0S"
+                )
+                return winner_id, winner_ratio_ret, loser_ratio_ret, winner_votes_ret, f"adaptive_time: {reason}"
+            except Exception as e:
+                print(f"   ❌ Erreur adaptive_time: {e}, fallback sur bruno_custom")
+                return self._algo_bruno_custom(first_id, first_data, second_id, second_data)
+        
+        # Algorithmes legacy
+        elif algorithm == "votes_ratio":
+            return self._algo_votes_high(first_id, first_data, second_id, second_data)  # Map vers votes_high pour compatibilité
         elif algorithm == "ratio_high":
             return self._algo_ratio_high(first_id, first_data, second_id, second_data)
-        elif algorithm == "votes_high":
-            return self._algo_votes_high(first_id, first_data, second_id, second_data)
         elif algorithm == "rank_best":
             return self._algo_rank_best(first_id, first_data, second_id, second_data)
         elif algorithm == "efficiency":
             return self._algo_efficiency(first_id, first_data, second_id, second_data)
-        elif algorithm == "hybrid":
-            return self._algo_hybrid(first_id, first_data, second_id, second_data)
-        elif algorithm == "random":
-            return self._algo_random(first_id, first_data, second_id, second_data)
-        elif algorithm == "bruno_custom":
-            return self._algo_bruno_custom(first_id, first_data, second_id, second_data)
+        elif algorithm == "ai_optimized":
+            return self._algo_ai_optimized(first_id, first_data, second_id, second_data)
+        elif algorithm == "advanced_rf":
+            return self._algo_advanced_rf(first_id, first_data, second_id, second_data)
+        elif algorithm == "votes_ratio_patterns":
+            print(f"🎯 EXECUTION: Utilisation de votes_ratio_patterns")
+            return self._algo_votes_ratio_patterns(first_id, first_data, second_id, second_data)
         else:
-            # Fallback sur hybrid
-            return self._algo_hybrid(first_id, first_data, second_id, second_data)
+            print(f"🎯 FALLBACK: Algorithme '{algorithm}' non reconnu, utilisation de l'ensemble optimal")
+            # Fallback sur l'ensemble optimal
+            if ENSEMBLE_AVAILABLE:
+                return self.decide_turbo_choice("[hybrid,ratio_low,votes_high]", first_id, first_data, second_id, second_data)
+            else:
+                return self._algo_bruno_custom(first_id, first_data, second_id, second_data)
+    
+    def select_turbo_photo(self, first_id, first_data, second_id, second_data):
+        """COMPATIBILITÉ: Utilise decide_turbo_choice avec l'algorithme configuré"""
+        algorithm = self.get_turbo_algorithm()
+        return self.decide_turbo_choice(algorithm, first_id, first_data, second_id, second_data)
     
     def _algo_ratio_low(self, first_id, first_data, second_id, second_data):
-        """Algorithme: Choisir le ratio le plus faible"""
+        """Algorithme: Choisir le ratio le plus faible
+        ⚠️ ATTENTION: D'après analyse historique, ratio plus GRAND = meilleur!
+        Cet algorithme est contre-intuitif mais gardé pour compatibilité.
+        """
         first_ratio = first_data.get('ratio', 0)
         second_ratio = second_data.get('ratio', 0)
         first_votes = first_data.get('votes', 0)
         second_votes = second_data.get('votes', 0)
         
         if first_ratio < second_ratio:
-            return first_id, first_ratio, second_ratio, first_votes, f"ratio_low ({first_ratio} < {second_ratio})"
+            return first_id, first_ratio, second_ratio, first_votes, f"ratio_low ({first_ratio} < {second_ratio}) ⚠️ contre-intuitif"
         elif second_ratio < first_ratio:
-            return second_id, second_ratio, first_ratio, second_votes, f"ratio_low ({second_ratio} < {first_ratio})"
+            return second_id, second_ratio, first_ratio, second_votes, f"ratio_low ({second_ratio} < {first_ratio}) ⚠️ contre-intuitif"
         else:
             # Même ratio: plus de votes
             if first_votes >= second_votes:
@@ -429,7 +577,9 @@ class AsyncFetcher(QObject):
                 return second_id, second_ratio, first_ratio, second_votes, f"ratio_low tie, plus de votes ({second_votes} > {first_votes})"
     
     def _algo_ratio_high(self, first_id, first_data, second_id, second_data):
-        """Algorithme: Choisir le ratio le plus élevé"""
+        """Algorithme: Choisir le ratio le plus élevé
+        ✅ CORRECT: D'après analyse historique, ratio plus grand = meilleur!
+        """
         first_ratio = first_data.get('ratio', 0)
         second_ratio = second_data.get('ratio', 0)
         first_votes = first_data.get('votes', 0)
@@ -554,54 +704,565 @@ class AsyncFetcher(QObject):
             return first_id, first_ratio, second_ratio, first_votes, "random (photo1 choisie)"
         else:
             return second_id, second_ratio, first_ratio, second_votes, "random (photo2 choisie)"
-    
+
     def _algo_bruno_custom(self, first_id, first_data, second_id, second_data):
-        """Algorithme personnalisé pour Bruno avec règles spécifiques sur ratio 1.5 et < 1"""
-        first_ratio = first_data.get('ratio', 0)
-        second_ratio = second_data.get('ratio', 0)
-        first_votes = first_data.get('votes', 0)
-        second_votes = second_data.get('votes', 0)
+        """
+        Algorithme Bruno Custom Affiné - Version 2.0
+        Basé sur analyses statistiques de 459 pairs historiques:
+        - 265 pairs ratio ~1.5: votes (53.2%) > ratio élevé (44.9%) > rang (38.9%)
+        - 194 pairs split ≥1.5 vs <1.5: équilibré 52.1% vs 47.9%, compensation cruciale
+        """
+        def safe_float(val, default=0.0):
+            try:
+                return float(val) if val else default
+            except (ValueError, TypeError):
+                return default
         
-        # Règle 3: Si une des 2 photos a un ratio < 1, prendre l'autre
+        first_ratio = safe_float(first_data.get('ratio', 0))
+        second_ratio = safe_float(second_data.get('ratio', 0))
+        first_votes = safe_float(first_data.get('votes', 0))
+        second_votes = safe_float(second_data.get('votes', 0))
+        first_rank = safe_float(first_data.get('rank', 999))
+        second_rank = safe_float(second_data.get('rank', 999))
+
+        # =================== RÈGLE 1: ÉVITER RATIO < 1.0 ===================
+        # (Règle universelle - maintenue inchangée)
         if first_ratio < 1.0 and second_ratio >= 1.0:
-            return second_id, second_ratio, first_ratio, second_votes, f"bruno_custom: éviter ratio < 1 ({first_ratio} < 1.0)"
+            return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: éviter <1.0 ({first_ratio} vs {second_ratio})"
         elif second_ratio < 1.0 and first_ratio >= 1.0:
-            return first_id, first_ratio, second_ratio, first_votes, f"bruno_custom: éviter ratio < 1 ({second_ratio} < 1.0)"
+            return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: éviter <1.0 ({second_ratio} vs {first_ratio})"
         elif first_ratio < 1.0 and second_ratio < 1.0:
-            # Les deux ont ratio < 1: prendre le moins pire (plus proche de 1)
+            # ZONE CRITIQUE: Deux ratios < 1.0 - VOTES prioritaires (70% succès vs 40% ratio)
+            votes_diff = abs(first_votes - second_votes)
+            
+            if votes_diff > 100:  # Différence significative de votes
+                if first_votes > second_votes:
+                    return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: deux<1.0 - votes prioritaires ({first_votes} vs {second_votes})"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: deux<1.0 - votes prioritaires ({second_votes} vs {first_votes})"
+            
+            # Si votes similaires, prendre le ratio moins pire (plus proche de 1.0)
             if first_ratio >= second_ratio:
-                return first_id, first_ratio, second_ratio, first_votes, f"bruno_custom: moins pire ratio < 1 ({first_ratio} >= {second_ratio})"
+                return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: deux<1.0 - ratio moins pire ({first_ratio} vs {second_ratio})"
             else:
-                return second_id, second_ratio, first_ratio, second_votes, f"bruno_custom: moins pire ratio < 1 ({second_ratio} > {first_ratio})"
+                return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: deux<1.0 - ratio moins pire ({second_ratio} vs {first_ratio})"
+
+        # =================== RÈGLE 2: CAS SPÉCIAL RATIO ~1.5 ===================
+        # Analyse: 265 pairs avec ratio ~1.5 - VOTES prioritaires (53.2% succès)
+        both_near_15 = (abs(first_ratio - 1.5) <= 0.1 and abs(second_ratio - 1.5) <= 0.1)
         
-        # Règle 1: Si les 2 ont un ratio différent et une photo a ratio=1.5, prendre l'autre
-        if first_ratio == 1.5 and second_ratio < 1.5 and second_votes > first_votes:
-            return second_id, second_ratio, first_ratio, second_votes, f"bruno_custom: ratio < 1.5 mais plus de votes"
+        if both_near_15:
+            # Dans la zone 1.5, les VOTES sont le facteur #1 (53.2% vs 44.9% ratio)
+            votes_diff = abs(first_votes - second_votes)
+            
+            if votes_diff > 100:  # Différence significative
+                if first_votes > second_votes:
+                    return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: zone1.5 - votes prioritaires ({first_votes} vs {second_votes})"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: zone1.5 - votes prioritaires ({second_votes} vs {first_votes})"
+            
+            # Si votes similaires dans zone 1.5, utiliser ratio élevé (facteur #2)
+            ratio_diff = abs(first_ratio - second_ratio)
+            if ratio_diff > 0.05:
+                if first_ratio > second_ratio:
+                    return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: zone1.5 - ratio élevé ({first_ratio} vs {second_ratio})"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: zone1.5 - ratio élevé ({second_ratio} vs {first_ratio})"
+            
+            # Fallback zone 1.5: rang (facteur #3 - 38.9%)
+            if first_rank < second_rank:
+                return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: zone1.5 - fallback rang ({first_rank} vs {second_rank})"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: zone1.5 - fallback rang ({second_rank} vs {first_rank})"
 
-        if second_ratio == 1.5 and first_ratio < 1.5 and second_votes < first_votes:
-            return first_id, first_ratio, second_ratio, first_votes, f"bruno_custom: ratio < 1.5 mais plus de votes"
+        # =================== RÈGLE 3: CAS SPÉCIAL SPLIT ≥1.5 vs <1.5 ===================
+        # Analyse: 194 pairs split - Combat équilibré mais compensation massive efficace
+        split_15 = ((first_ratio >= 1.5 and second_ratio < 1.5) or (second_ratio >= 1.5 and first_ratio < 1.5))
+        
+        if split_15:
+            # Identifier qui a le ratio élevé/faible
+            if first_ratio >= 1.5:
+                high_ratio_votes, low_ratio_votes = first_votes, second_votes
+                high_ratio_rank, low_ratio_rank = first_rank, second_rank
+                high_is_first = True
+            else:
+                high_ratio_votes, low_ratio_votes = second_votes, first_votes
+                high_ratio_rank, low_ratio_rank = second_rank, first_rank
+                high_is_first = False
+            
+            # Détecter compensation massive par basse ratio (69.9% succès quand ça compense)
+            massive_votes_compensation = low_ratio_votes > high_ratio_votes * 2
+            massive_rank_compensation = low_ratio_rank < high_ratio_rank * 0.3  # Rang excellent
+            
+            if massive_votes_compensation or massive_rank_compensation:
+                # Basse ratio compense massivement
+                if high_is_first:
+                    return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: split1.5 - compensation massive (votes:{low_ratio_votes} vs {high_ratio_votes})"
+                else:
+                    return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: split1.5 - compensation massive (votes:{low_ratio_votes} vs {high_ratio_votes})"
+            
+            # Détecter triple avantage haute ratio (79% succès)
+            triple_advantage = (high_ratio_votes > low_ratio_votes and high_ratio_rank < low_ratio_rank)
+            
+            if triple_advantage:
+                # Haute ratio a triple avantage
+                if high_is_first:
+                    return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: split1.5 - triple avantage ratio+votes+rang"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: split1.5 - triple avantage ratio+votes+rang"
+            
+            # Split équilibré: léger avantage au ratio élevé (52.1% vs 47.9%)
+            if high_is_first:
+                return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: split1.5 - léger avantage ratio élevé"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: split1.5 - léger avantage ratio élevé"
 
+        # =================== RÈGLE 4: CAS SPÉCIAL RATIO TRÈS ÉLEVÉ ≥2.0 ===================
+        # Analyse: 25 pairs split 2.0 - Combat équilibré 52% vs 48%, compensation critique
+        very_high_ratio_split = ((first_ratio >= 2.0 and second_ratio < 2.0) or (second_ratio >= 2.0 and first_ratio < 2.0))
+        
+        if very_high_ratio_split:
+            # Identifier qui a le ratio très élevé/normal
+            if first_ratio >= 2.0:
+                very_high_votes, normal_votes = first_votes, second_votes
+                very_high_rank, normal_rank = first_rank, second_rank
+                very_high_is_first = True
+            else:
+                very_high_votes, normal_votes = second_votes, first_votes
+                very_high_rank, normal_rank = second_rank, first_rank
+                very_high_is_first = False
+            
+            # Détecter compensation massive par ratio normal (33% succès)
+            massive_votes_comp = normal_votes > very_high_votes * 2
+            massive_rank_comp = normal_rank < very_high_rank * 0.5
+            
+            if massive_votes_comp or massive_rank_comp:
+                # Ratio normal compense massivement
+                if very_high_is_first:
+                    return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: split2.0 - compensation massive vs ratio très élevé"
+                else:
+                    return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: split2.0 - compensation massive vs ratio très élevé"
+            
+            # Détecter double/triple avantage ratio très élevé (77% ont meilleur rang)
+            double_advantage = (very_high_votes >= normal_votes and very_high_rank < normal_rank)
+            
+            if double_advantage:
+                # Ratio très élevé a double avantage
+                if very_high_is_first:
+                    return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: split2.0 - double avantage ratio très élevé"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: split2.0 - double avantage ratio très élevé"
+            
+            # Split équilibré: légère préférence ratio très élevé (52% vs 48%)
+            if very_high_is_first:
+                return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: split2.0 - légère préférence ratio très élevé"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: split2.0 - légère préférence ratio très élevé"
 
-        if first_ratio > 1.5 and second_ratio == 1.5 and second_votes > first_votes:
-            return second_id, second_ratio, first_ratio, second_votes, f"bruno_custom: ratio < 1.5 mais plus de votes"
+        # =================== RÈGLE 5: LOGIQUE CLASSIQUE BRUNO ===================
+        # (Pour tous les autres cas non couverts par les analyses spéciales)
+        
+        # Si différence de ratio significative (> 0.1), privilégier le plus élevé
+        ratio_diff = abs(first_ratio - second_ratio)
+        if ratio_diff > 0.1:
+            if first_ratio > second_ratio:
+                return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: ratio supérieur classique ({first_ratio} vs {second_ratio})"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: ratio supérieur classique ({second_ratio} vs {first_ratio})"
 
-        if second_ratio > 1.5 and first_ratio == 1.5 and second_votes < first_votes:
-            return first_id, first_ratio, second_ratio, first_votes, f"bruno_custom: ratio < 1.5 mais plus de votes"
+        # Si ratios similaires, utiliser le meilleur rang
+        rank_diff = abs(first_rank - second_rank)
+        if rank_diff > 50:  # Seuil significatif
+            if first_rank < second_rank:
+                return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: meilleur rang classique ({first_rank} vs {second_rank})"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: meilleur rang classique ({second_rank} vs {first_rank})"
 
-
-        if first_ratio > second_ratio:
-            return first_id, first_ratio, second_ratio, first_votes, f"bruno_custom: ratio > "
-
-        if second_ratio > first_ratio:
-            return second_id, second_ratio, first_ratio, second_votes, f"bruno_custom: ratio >"
-
-
-        # Fallback: Si aucune règle spéciale ne s'applique, utiliser votes le plus fort
+        # Fallback: plus de votes
         if first_votes > second_votes:
-            return first_id, first_ratio, second_ratio, first_votes, f"bruno_custom: fallback votes  plus fort ({first_votes})"
+            return first_id, first_ratio, second_ratio, first_votes, f"bruno_v2: plus de votes fallback ({first_votes} vs {second_votes})"
         else:
-            return second_id, second_ratio, first_ratio, second_votes, f"bruno_custom: fallback votes plus fort ({second_votes}"
+            return second_id, second_ratio, first_ratio, second_votes, f"bruno_v2: plus de votes fallback ({second_votes} vs {first_votes})"
+
+    def _algo_ai_optimized(self, first_id, first_data, second_id, second_data):
+        """Algorithme IA optimisé - 58.4% de précision (vs 53.8% Bruno Custom)
+        
+        Basé sur l'analyse de 413 comparaisons historiques avec règles découvertes par IA
+        """
+        def safe_float(val, default=0.0):
+            try:
+                return float(val) if val else default
+            except (ValueError, TypeError):
+                return default
+        
+        first_ratio = safe_float(first_data.get('ratio', 0))
+        second_ratio = safe_float(second_data.get('ratio', 0))
+        first_votes = safe_float(first_data.get('votes', 0))
+        second_votes = safe_float(second_data.get('votes', 0))
+        first_rank = safe_float(first_data.get('rank', 999))
+        second_rank = safe_float(second_data.get('rank', 999))
+        
+        # RÈGLE 1: Différence de rang importante (feature la plus importante: 17.2%)
+        rank_diff = abs(first_rank - second_rank)
+        if rank_diff > 300:
+            if first_rank < second_rank:
+                return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: meilleur rang ({first_rank} vs {second_rank})"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: meilleur rang ({second_rank} vs {first_rank})"
+        
+        # RÈGLE 2: Différence de votes importante (16.3%)
+        votes_diff = abs(first_votes - second_votes)
+        if votes_diff > 500:
+            if first_votes > second_votes:
+                return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: plus de votes ({first_votes} vs {second_votes})"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: plus de votes ({second_votes} vs {first_votes})"
+        
+        # RÈGLE 3A: Pattern découvert 1.3 vs 1.5 (55.7% succès pour 1.5)
+        # TOUJOURS favoriser celui qui a le ratio proche de 1.5
+        first_is_1_3 = 1.25 <= first_ratio <= 1.35
+        second_is_1_3 = 1.25 <= second_ratio <= 1.35
+        first_is_1_5 = 1.45 <= first_ratio <= 1.55
+        second_is_1_5 = 1.45 <= second_ratio <= 1.55
+        
+        if (first_is_1_3 and second_is_1_5):
+            return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: pattern 1.3vs1.5 - favoriser 1.5 ({second_ratio})"
+        elif (first_is_1_5 and second_is_1_3):
+            return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: pattern 1.5vs1.3 - favoriser 1.5 ({first_ratio})"
+        
+        # RÈGLE 3B: Pattern découvert 1.5 vs 1.8 (88.9% succès pour 1.8)
+        if (1.4 <= first_ratio <= 1.6) and (1.7 <= second_ratio <= 1.9):
+            return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: pattern 1.5vs1.8 - favoriser 1.8 ({second_ratio})"
+        elif (1.7 <= first_ratio <= 1.9) and (1.4 <= second_ratio <= 1.6):
+            return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: pattern 1.8vs1.5 - favoriser 1.8 ({first_ratio})"
+        
+        # RÈGLE 4A: Cas spécial - deux ratios sous 1.0 (Photo2 gagne 85.7%)
+        if first_ratio < 1.0 and second_ratio < 1.0:
+            if abs(first_votes - second_votes) > 50:
+                if first_votes > second_votes:
+                    return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: sous1.0 mais plus de votes ({first_votes} vs {second_votes})"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: sous1.0 mais plus de votes ({second_votes} vs {first_votes})"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: pattern sous1.0 - Photo2 par défaut (85.7%)"
+        
+        # RÈGLE 4B: Un seul ratio sous 1.0 - éviter sauf votes massifs
+        elif first_ratio < 1.0 and second_ratio >= 1.0:
+            if first_votes > second_votes * 3:
+                return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: exception sous1.0 - votes 3x supérieurs ({first_votes} vs {second_votes})"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: éviter sous1.0 ({first_ratio} vs {second_ratio})"
+        elif second_ratio < 1.0 and first_ratio >= 1.0:
+            if second_votes > first_votes * 3:
+                return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: exception sous1.0 - votes 3x supérieurs ({second_votes} vs {first_votes})"
+            else:
+                return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: éviter sous1.0 ({second_ratio} vs {first_ratio})"
+        
+        # RÈGLE 5: Zone danger 1.5 (confirmée par IA)
+        first_danger = abs(first_ratio - 1.5) < 0.1
+        second_danger = abs(second_ratio - 1.5) < 0.1
+        if first_danger and not second_danger:
+            return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: éviter zone danger 1.5 ({first_ratio})"
+        elif second_danger and not first_danger:
+            return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: éviter zone danger 1.5 ({second_ratio})"
+        
+        # Fallback: ratio plus ÉLEVÉ (logique corrigée après analyse historique)
+        if first_ratio >= second_ratio:
+            return first_id, first_ratio, second_ratio, first_votes, f"ai_optimized: fallback ratio plus élevé ({first_ratio} >= {second_ratio})"
+        else:
+            return second_id, second_ratio, first_ratio, second_votes, f"ai_optimized: fallback ratio plus élevé ({second_ratio} > {first_ratio})"
+
+    def _algo_advanced_rf(self, first_id, first_data, second_id, second_data):
+        """Algorithme Random Forest Avancé - 88.1% de précision
+        
+        Utilise un modèle Random Forest avec 55 features engineered
+        Basé sur l'analyse de 413 comparaisons avec cross-validation 68.8%
+        """
+        try:
+            import pandas as pd
+            import pickle
+            
+            # Charger le modèle Random Forest
+            try:
+                if not hasattr(self, '_rf_model'):
+                    with open('turbo_rf_model.pkl', 'rb') as f:
+                        model_data = pickle.load(f)
+                        self._rf_model = model_data['model']
+                        self._rf_feature_names = model_data['feature_names']
+            except FileNotFoundError:
+                # Fallback si modèle pas trouvé
+                return self._algo_ai_optimized(first_id, first_data, second_id, second_data)
+            except Exception as e:
+                self.log(f"⚠️ Erreur chargement modèle RF: {e}")
+                return self._algo_ai_optimized(first_id, first_data, second_id, second_data)
+            
+            # Créer les features pour le modèle
+            features = self._create_rf_features(first_data, second_data)
+            
+            # Prédiction
+            X = pd.DataFrame([features], columns=self._rf_feature_names)
+            prediction = self._rf_model.predict(X)[0]
+            probabilities = self._rf_model.predict_proba(X)[0]
+            confidence = max(probabilities)
+            
+            # Choisir le gagnant
+            if prediction == 1:  # Photo1 gagne
+                chosen_id = first_id
+                chosen_ratio = first_data.get('ratio', 0)
+                other_ratio = second_data.get('ratio', 0)
+                chosen_votes = first_data.get('votes', 0)
+                reason = f"advanced_rf: Photo1 (conf:{confidence:.3f})"
+            else:  # Photo2 gagne
+                chosen_id = second_id
+                chosen_ratio = second_data.get('ratio', 0)
+                other_ratio = first_data.get('ratio', 0)
+                chosen_votes = second_data.get('votes', 0)
+                reason = f"advanced_rf: Photo2 (conf:{confidence:.3f})"
+            
+            return chosen_id, chosen_ratio, other_ratio, chosen_votes, reason
+            
+        except Exception as e:
+            self.log(f"⚠️ Erreur Advanced RF: {e}, fallback vers AI Optimized")
+            return self._algo_ai_optimized(first_id, first_data, second_id, second_data)
     
+    def _create_rf_features(self, photo1_data, photo2_data):
+        """Crée les features pour le modèle Random Forest"""
+        def safe_float(val, default=0.0):
+            try:
+                return float(val) if val else default
+            except (ValueError, TypeError):
+                return default
+        
+        # Données de base
+        r1 = safe_float(photo1_data.get('ratio', 0))
+        r2 = safe_float(photo2_data.get('ratio', 0))
+        v1 = safe_float(photo1_data.get('votes', 0))
+        v2 = safe_float(photo2_data.get('votes', 0))
+        rank1 = safe_float(photo1_data.get('rank', 999))
+        rank2 = safe_float(photo2_data.get('rank', 999))
+        
+        # Éviter divisions par zéro
+        r1_safe = max(r1, 0.001)
+        r2_safe = max(r2, 0.001)
+        v1_safe = max(v1, 1)
+        v2_safe = max(v2, 1)
+        rank1_safe = max(rank1, 1)
+        rank2_safe = max(rank2, 1)
+        
+        features = {}
+        
+        # Features de base
+        features['ratio_1'] = r1
+        features['ratio_2'] = r2
+        features['votes_1'] = v1
+        features['votes_2'] = v2
+        features['rank_1'] = rank1
+        features['rank_2'] = rank2
+        
+        # Différences
+        features['ratio_diff'] = r1 - r2
+        features['votes_diff'] = v1 - v2
+        features['rank_diff'] = rank1 - rank2
+        features['ratio_diff_abs'] = abs(r1 - r2)
+        features['votes_diff_abs'] = abs(v1 - v2)
+        features['rank_diff_abs'] = abs(rank1 - rank2)
+        
+        # Ratios des métriques
+        features['ratio_ratio'] = r1_safe / r2_safe
+        features['votes_ratio'] = v1_safe / v2_safe
+        features['rank_ratio'] = rank2_safe / rank1_safe
+        
+        # Features composées importantes
+        features['views_est_1'] = v1_safe / r1_safe
+        features['views_est_2'] = v2_safe / r2_safe
+        features['views_est_ratio'] = features['views_est_1'] / features['views_est_2']
+        
+        features['perf_score_1'] = v1 * r1
+        features['perf_score_2'] = v2 * r2
+        features['perf_score_diff'] = features['perf_score_1'] - features['perf_score_2']
+        
+        features['rank_penalty_1'] = rank1 * r1
+        features['rank_penalty_2'] = rank2 * r2
+        features['rank_penalty_diff'] = features['rank_penalty_1'] - features['rank_penalty_2']
+        
+        features['rank_efficiency_1'] = rank1_safe / r1_safe
+        features['rank_efficiency_2'] = rank2_safe / r2_safe
+        features['rank_efficiency_ratio'] = features['rank_efficiency_2'] / features['rank_efficiency_1']
+        
+        # Features catégoriques
+        def categorize_ratio(r):
+            if r < 0.8: return 0
+            elif r < 1.0: return 1
+            elif r < 1.2: return 2
+            elif r < 1.4: return 3
+            elif r < 1.6: return 4
+            elif r < 2.0: return 5
+            else: return 6
+        
+        features['ratio_cat_1'] = categorize_ratio(r1)
+        features['ratio_cat_2'] = categorize_ratio(r2)
+        features['ratio_cat_diff'] = features['ratio_cat_1'] - features['ratio_cat_2']
+        
+        # Similitudes
+        features['ratio_similar'] = 1 if abs(r1 - r2) < 0.05 else 0
+        features['votes_similar'] = 1 if abs(v1 - v2) < 50 else 0
+        features['rank_similar'] = 1 if abs(rank1 - rank2) < 100 else 0
+        
+        # Statistiques
+        features['ratio_mean'] = (r1 + r2) / 2
+        features['votes_mean'] = (v1 + v2) / 2
+        features['rank_mean'] = (rank1 + rank2) / 2
+        features['ratio_min'] = min(r1, r2)
+        features['ratio_max'] = max(r1, r2)
+        features['votes_max'] = max(v1, v2)
+        features['rank_min'] = min(rank1, rank2)
+        features['ratio_std'] = abs(r1 - r2) / 2
+        features['votes_std'] = abs(v1 - v2) / 2
+        features['rank_std'] = abs(rank1 - rank2) / 2
+        
+        # Features interaction les plus importantes
+        features['votes_rank_interaction_1'] = v1_safe / rank1_safe
+        features['votes_rank_interaction_2'] = v2_safe / rank2_safe
+        features['votes_rank_interaction_ratio'] = features['votes_rank_interaction_1'] / features['votes_rank_interaction_2']
+        
+        # Score GuruShots hypothétique
+        features['guru_score_1'] = (v1_safe / rank1_safe) / r1_safe
+        features['guru_score_2'] = (v2_safe / rank2_safe) / r2_safe
+        features['guru_score_diff'] = features['guru_score_1'] - features['guru_score_2']
+        
+        # Avantages spécifiques
+        features['photo1_ratio_advantage'] = 1 if r1 < r2 * 0.9 else 0
+        features['photo2_ratio_advantage'] = 1 if r2 < r1 * 0.9 else 0
+        features['photo1_votes_compensation'] = 1 if (v1 > v2 * 2 and r1 > r2) else 0
+        features['photo2_votes_compensation'] = 1 if (v2 > v1 * 2 and r2 > r1) else 0
+        features['photo1_rank_advantage'] = 1 if rank1 < rank2 * 0.7 else 0
+        features['photo2_rank_advantage'] = 1 if rank2 < rank1 * 0.7 else 0
+        
+        return features
+
+    def _algo_votes_ratio_patterns(self, first_id, first_data, second_id, second_data):
+        """
+        Algorithme basé sur l'analyse des rapports votes/ratio
+        
+        Découvertes clés de l'analyse de 378 cas valides:
+        - Rapport votes < 0.2: MAX votes gagne 93.3% (14/15)
+        - Rapport votes < 0.3: MAX votes gagne 76.2% (32/42)  
+        - Pattern dominant: Double domination (MAX votes + MAX ratio) = 38.9%
+        - Zone équilibrée (0.6-0.8): MAX votes gagne 75.6% (68/90)
+        """
+        
+        def safe_float(val, default=0.0):
+            try:
+                return float(val) if val else default
+            except (ValueError, TypeError):
+                return default
+        
+        first_votes = safe_float(first_data.get('votes', 0))
+        second_votes = safe_float(second_data.get('votes', 0))
+        first_ratio = safe_float(first_data.get('ratio', 0))
+        second_ratio = safe_float(second_data.get('ratio', 0))
+        first_rank = safe_float(first_data.get('rank', 999))
+        second_rank = safe_float(second_data.get('rank', 999))
+        
+        # Éviter les données invalides
+        if first_votes <= 0 or second_votes <= 0 or first_ratio <= 0 or second_ratio <= 0:
+            # Fallback vers Bruno Custom
+            if first_ratio > second_ratio:
+                return first_id, first_ratio, second_ratio, first_votes, "pattern: fallback ratio (données invalides)"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, "pattern: fallback ratio (données invalides)"
+        
+        # Calculer les rapports
+        votes_min = min(first_votes, second_votes)
+        votes_max = max(first_votes, second_votes)
+        votes_ratio = votes_min / votes_max  # Entre 0 et 1
+        
+        ratio_min = min(first_ratio, second_ratio)
+        ratio_max = max(first_ratio, second_ratio)
+        ratio_rapport = ratio_min / ratio_max  # Entre 0 et 1
+        
+        # Déterminer qui a les max
+        first_has_votes_max = first_votes >= second_votes
+        first_has_ratio_max = first_ratio >= second_ratio
+        
+        # =================== RÈGLE 1: DÉSÉQUILIBRE VOTES EXTRÊME ===================
+        # Rapport votes < 0.2: MAX votes gagne 93.3% (14/15 dans l'analyse)
+        if votes_ratio < 0.2:
+            if first_has_votes_max:
+                return first_id, first_ratio, second_ratio, first_votes, f"pattern: déséquilibre extrême votes ({votes_ratio:.3f}) - 93.3% succès"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"pattern: déséquilibre extrême votes ({votes_ratio:.3f}) - 93.3% succès"
+        
+        # =================== RÈGLE 2: DÉSÉQUILIBRE VOTES FORT ===================
+        # Rapport votes < 0.3: MAX votes gagne 76.2% (32/42 dans l'analyse)
+        if votes_ratio < 0.3:
+            if first_has_votes_max:
+                return first_id, first_ratio, second_ratio, first_votes, f"pattern: déséquilibre fort votes ({votes_ratio:.3f}) - 76.2% succès"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"pattern: déséquilibre fort votes ({votes_ratio:.3f}) - 76.2% succès"
+        
+        # =================== RÈGLE 3: DÉSÉQUILIBRE VOTES MODÉRÉ ===================
+        # Rapport votes < 0.4: MAX votes gagne 76.4% (55/72 dans l'analyse)
+        if votes_ratio < 0.4:
+            if first_has_votes_max:
+                return first_id, first_ratio, second_ratio, first_votes, f"pattern: déséquilibre modéré votes ({votes_ratio:.3f}) - 76.4% succès"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"pattern: déséquilibre modéré votes ({votes_ratio:.3f}) - 76.4% succès"
+        
+        # =================== RÈGLE 4: ZONE ÉQUILIBRÉE - DOMINANCE VOTES ===================
+        # Zone équilibrée (0.6-0.8 votes): MAX votes gagne encore 75.6% (68/90)
+        if votes_ratio >= 0.6 and votes_ratio <= 0.8:
+            if first_has_votes_max:
+                return first_id, first_ratio, second_ratio, first_votes, f"pattern: zone équilibrée ({votes_ratio:.3f}) - MAX votes dominant 75.6%"
+            else:
+                return second_id, second_ratio, first_ratio, second_votes, f"pattern: zone équilibrée ({votes_ratio:.3f}) - MAX votes dominant 75.6%"
+        
+        # =================== RÈGLE 5: TRÈS ÉQUILIBRÉ - DOUBLE DOMINATION ===================
+        # Zone très équilibrée (0.8-1.0): MAX votes gagne 68.0% (100/147)
+        # Pattern double domination prioritaire
+        if votes_ratio >= 0.8:
+            # Privilégier la double domination (MAX votes + MAX ratio)
+            if first_has_votes_max and first_has_ratio_max:
+                return first_id, first_ratio, second_ratio, first_votes, f"pattern: double domination photo1 (v:{first_votes:.0f} r:{first_ratio:.3f})"
+            elif (not first_has_votes_max) and (not first_has_ratio_max):
+                return second_id, second_ratio, first_ratio, second_votes, f"pattern: double domination photo2 (v:{second_votes:.0f} r:{second_ratio:.3f})"
+            else:
+                # Cas mixte - privilégier MAX votes (68% dans zone très équilibrée)
+                if first_has_votes_max:
+                    return first_id, first_ratio, second_ratio, first_votes, f"pattern: très équilibré ({votes_ratio:.3f}) - MAX votes 68%"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"pattern: très équilibré ({votes_ratio:.3f}) - MAX votes 68%"
+        
+        # =================== RÈGLE 6: CAS INTERMÉDIAIRE ===================
+        # Zone modérée (0.4-0.6): MAX votes gagne 60.9% (42/69) - moins dominant
+        # Utiliser logique hybride avec ratios
+        if votes_ratio >= 0.4 and votes_ratio < 0.6:
+            # Analyser les ratios aussi pour les cas modérés
+            if ratio_rapport < 0.5:
+                # Déséquilibre ratio fort - privilégier MAX ratio
+                if first_has_ratio_max:
+                    return first_id, first_ratio, second_ratio, first_votes, f"pattern: zone modérée + déséq. ratio ({ratio_rapport:.3f}) - MAX ratio"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"pattern: zone modérée + déséq. ratio ({ratio_rapport:.3f}) - MAX ratio"
+            else:
+                # Ratios équilibrés - privilégier MAX votes (60.9%)
+                if first_has_votes_max:
+                    return first_id, first_ratio, second_ratio, first_votes, f"pattern: zone modérée équilibrée - MAX votes 60.9%"
+                else:
+                    return second_id, second_ratio, first_ratio, second_votes, f"pattern: zone modérée équilibrée - MAX votes 60.9%"
+        
+        # =================== FALLBACK ===================
+        # Si aucun pattern identifié clairement, utiliser double domination
+        # (Pattern le plus fréquent: 38.9% des cas)
+        if first_has_votes_max and first_has_ratio_max:
+            return first_id, first_ratio, second_ratio, first_votes, f"pattern: fallback double domination photo1"
+        elif (not first_has_votes_max) and (not first_has_ratio_max):
+            return second_id, second_ratio, first_ratio, second_votes, f"pattern: fallback double domination photo2"
+        elif first_has_votes_max:
+            return first_id, first_ratio, second_ratio, first_votes, f"pattern: fallback MAX votes"
+        else:
+            return second_id, second_ratio, first_ratio, second_votes, f"pattern: fallback MAX votes"
+
     async def find_photo_in_ranking(self, challenge_id, photo_id, pages_cache):
         """Trouve une photo dans le classement en utilisant le cache des pages"""
         try:
@@ -703,6 +1364,9 @@ class AsyncFetcher(QObject):
                             print(f"   🏁 État: {state}")
                             
                             self.turbo_log.emit(f"📊 Scores: {first_score}% vs {second_score}%")
+                            
+                            # Émettre signal pour mettre à jour les scores dans le DataFrame
+                            self.turbo_scores_update.emit(first_id, second_id, first_score, second_score)
                             
                             # Déterminer le vrai gagnant basé sur les scores
                             actual_winner_id = first_id if first_score >= second_score else second_id
@@ -1403,31 +2067,52 @@ class ProfileTab(QWidget):
         # Puis initialiser le fetcher (après que result_panel existe)
         self.init_fetcher()
         
+        # Timer pour countdown
+        self.countdown_timer = QTimer(self)  # Parent explicite
+        self.countdown_timer.timeout.connect(self.update_countdown)
+        self.countdown_timer.start(1000)  # Mise à jour chaque seconde
+        
         # Connecter les signaux internes
         self.vote_request.connect(self.vote_challenge)
         self.refresh_request.connect(self.fetch_challenges)
         self.update_gui_request.connect(self.update_challenge_table)
         
-        # Timer pour countdown
-        self.countdown_timer = QTimer()
-        self.countdown_timer.timeout.connect(self.update_countdown)
-        self.countdown_timer.start(1000)  # Mise à jour chaque seconde
-        
         # Déclencher un fetch initial après un délai
         QTimer.singleShot(1000, self.initial_fetch)
-        
+    
+    def get_turbo_algorithm(self):
+        """Récupère l'algorithme turbo configuré pour ce profil"""
+        try:
+            # Debug: afficher la config complète
+            player_config = self.config['players'].get(self.player, {})
+            algo = player_config.get('turbo_algorithm', 'NOT_FOUND')
+            print(f"🔧 DEBUG ProfileTab: player={self.player}, config turbo_algorithm={algo}")
+            self.log(f"🔧 DEBUG: Algorithme lu par ProfileTab = {algo}")
+            
+            # Vérifier la config du profil
+            if self.config['players'].get(self.player) and self.config['players'][self.player].get('turbo_algorithm'):
+                return self.config['players'][self.player]['turbo_algorithm']
+            
+            # Valeur par défaut - Ensemble optimal basé sur nos analyses
+            print(f"🔧 DEBUG ProfileTab: Fallback vers ensemble optimal")
+            return "[hybrid,ratio_low,votes_high]"
+        except Exception as e:
+            print(f"🔧 DEBUG ProfileTab: Erreur {e}")
+            return "[hybrid,ratio_low,votes_high]"
+    
     def init_fetcher(self):
         """Initialise le fetcher pour ce profil"""
         if self.config['players'].get(self.player) and self.config['players'][self.player].get('xtoken'):
             self.xtoken = self.config['players'][self.player]['xtoken']
             self.log(f"🔑 Token configuré pour {self.player}: {self.xtoken[:20]}...")
-            self.fetcher = AsyncFetcher(header=self.aio_connect_session())
+            self.fetcher = AsyncFetcher(header=self.aio_connect_session(), config=self.config, player=self.player)
             self.fetcher.finished.connect(self.on_challenges_fetched)
             self.fetcher.vote_finished.connect(self.on_vote_finished)
             self.fetcher.get_votes_panel_finished.connect(self.on_get_votes_panel_fetched)
             self.fetcher.post_votes_panel_finished.connect(self.on_post_votes_panel_fetched)
             self.fetcher.turbo_finished.connect(self.on_turbo_finished)
             self.fetcher.turbo_log.connect(self.log)
+            self.fetcher.turbo_scores_update.connect(self.update_turbo_scores)
             self.fetcher.turbo_history_save.connect(self.save_turbo_history)
         else:
             self.fetcher = None
@@ -1535,7 +2220,13 @@ class ProfileTab(QWidget):
         row1.addWidget(turbo_button)
         
         # Auto-optimize toggle button
-        auto_optimize_enabled = self.config['players'][self.player].get('auto_optimize_turbo', True)
+        # Convertir la valeur du fichier config en boolean
+        auto_optimize_raw = self.config['players'][self.player].get('auto_optimize_turbo', True)
+        if isinstance(auto_optimize_raw, str):
+            auto_optimize_enabled = auto_optimize_raw.lower() in ('true', '1', 'yes', 'on')
+        else:
+            auto_optimize_enabled = bool(auto_optimize_raw)
+            
         auto_optimize_text = "🤖 Auto: ON" if auto_optimize_enabled else "🤖 Auto: OFF"
         self.auto_optimize_button = QPushButton(auto_optimize_text)
         auto_optimize_color = '#27ae60' if auto_optimize_enabled else '#e67e22'
@@ -2229,7 +2920,7 @@ class ProfileTab(QWidget):
             self, 
             "🗳️ Fill Challenges",
             f"Nombre de votes à ajouter sur {len(self.selected_challenges)} challenge(s):",
-            70,  # valeur par défaut
+        80,  # valeur par défaut
             1,   # minimum
             1000 # maximum
         )
@@ -2289,7 +2980,7 @@ class ProfileTab(QWidget):
             self.log("❌ Aucun fill programmé (erreurs de programmation)")
     
     def turbo_selected_challenges(self):
-        """Active le turbo pour les challenges sélectionnés"""
+        """Active le turbo pour les challenges sélectionnés avec choix d'algorithme"""
         if not self.selected_challenges:
             self.log("❌ Aucun challenge sélectionné")
             return
@@ -2297,8 +2988,28 @@ class ProfileTab(QWidget):
         if not self.fetcher:
             self.log("❌ Pas de fetcher disponible")
             return
+        
+        # Afficher la dialog de choix d'algorithme
+        selected_algorithm = self.show_turbo_algorithm_dialog()
+        if not selected_algorithm:
+            self.log("🚫 Turbo annulé par l'utilisateur")
+            return
+        
+        # Sauvegarder temporairement l'algorithme choisi
+        original_algorithm = self.config['players'][self.player].get('turbo_algorithm', 'bruno_custom')
+        self.log(f"🔧 DEBUG: Algorithme original dans config: {original_algorithm}")
+        self.log(f"🔧 DEBUG: Algorithme sélectionné dans dialog: {selected_algorithm}")
+        
+        if selected_algorithm != original_algorithm:
+            self.log(f"🔄 Algorithme temporaire: {original_algorithm} → {selected_algorithm}")
+            self.config['players'][self.player]['turbo_algorithm'] = selected_algorithm
+            self.config.encoding = 'utf-8'
+            self.config.write()
+            self.log(f"🔧 DEBUG: Configuration sauvegardée avec {selected_algorithm}")
+        else:
+            self.log(f"🔧 DEBUG: Même algorithme, pas de changement: {selected_algorithm}")
             
-        self.log(f"🚀 Turbo lancé pour {len(self.selected_challenges)} challenge(s)")
+        self.log(f"🚀 Turbo lancé pour {len(self.selected_challenges)} challenge(s) avec {selected_algorithm}")
         
         for challenge_id in self.selected_challenges:
             challenge = self.find_challenge_by_id(challenge_id)
@@ -2307,6 +3018,135 @@ class ProfileTab(QWidget):
                 asyncio.create_task(self.fetcher.turbo_challenge(challenge_id, challenge.title, challenge.time_left))
             else:
                 self.log(f"   ❌ Challenge {challenge_id} non trouvé")
+    
+    def show_turbo_algorithm_dialog(self):
+        """Affiche une dialog pour choisir l'ensemble d'algorithmes turbo avec checkboxes"""
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTextEdit, QScrollArea, QGroupBox
+        
+        dialog = QDialog(self)
+        dialog.setWindowTitle("🚀 Ensemble d'Algorithmes Turbo")
+        dialog.setFixedSize(600, 500)
+        
+        layout = QVBoxLayout(dialog)
+        
+        # Titre
+        title_label = QLabel("🗳️ Sélectionnez les algorithmes pour le vote majoritaire:")
+        title_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-bottom: 10px;")
+        layout.addWidget(title_label)
+        
+        # Info sur le vote majoritaire
+        info_label = QLabel("💡 Le système choisira la décision majoritaire parmi les algorithmes sélectionnés")
+        info_label.setStyleSheet("font-size: 11px; color: #7f8c8d; margin-bottom: 15px;")
+        layout.addWidget(info_label)
+        
+        # Zone de scroll pour les checkboxes
+        scroll_area = QScrollArea()
+        scroll_widget = QWidget()
+        scroll_layout = QVBoxLayout(scroll_widget)
+        
+        # Algorithmes disponibles avec performances mises à jour
+        self.algorithm_checkboxes = {}
+        algorithms = [
+            ("hybrid", "⚖️ Hybrid (67.2%) - Logique équilibrée", True),
+            ("position_aware", "🎯 Position Aware (58.5%/67%*) - Patterns par position", True),
+            ("adaptive_time", "⏰ Adaptive Time (59.0%/67%*) - Stratégie temporelle", True),
+            ("ratio_low", "📉 Ratio Low (66.5%) - Privilégie ratios stables", False), 
+            ("votes_high", "🗳️ Votes High (68.6%) - Priorité votes élevés", False),
+            ("bruno_custom", "🏆 Bruno Custom (63.9%) - Champion historique", False),
+            ("votes_ratio", "📊 Votes Ratio (64.6%) - Balance votes/ratio", False),
+            ("random", "🎲 Random (57.0%) - Baseline aléatoire", False)
+        ]
+        
+        # Récupérer l'ensemble actuel depuis la config
+        current_algorithm = self.get_turbo_algorithm()
+        current_ensemble = []
+        
+        # Parser l'ensemble actuel s'il est au format [algo1,algo2,algo3]
+        if current_algorithm.startswith('[') and current_algorithm.endswith(']'):
+            current_ensemble = [algo.strip() for algo in current_algorithm[1:-1].split(',')]
+        elif current_algorithm in [algo[0] for algo in algorithms]:
+            # Si c'est un algorithme seul, le convertir en ensemble d'un élément
+            current_ensemble = [current_algorithm]
+        
+        # Si aucun ensemble configuré, utiliser l'ensemble par défaut optimal
+        # Mise à jour basée sur feedback utilisateur : meilleur en conditions réelles
+        if not current_ensemble:
+            current_ensemble = ['hybrid', 'position_aware', 'adaptive_time']
+        
+        # Créer les checkboxes
+        for algo_key, algo_display, default_checked in algorithms:
+            checkbox = QCheckBox(algo_display)
+            checkbox.setChecked(algo_key in current_ensemble)
+            checkbox.setStyleSheet("font-size: 12px; padding: 5px;")
+            self.algorithm_checkboxes[algo_key] = checkbox
+            scroll_layout.addWidget(checkbox)
+        
+        scroll_area.setWidget(scroll_widget)
+        scroll_area.setMaximumHeight(200)
+        layout.addWidget(scroll_area)
+        
+        # Statistiques de performance
+        stats_label = QLabel("📈 Performance de l'ensemble [hybrid,ratio_low,votes_high]: 68.6% (meilleur score)")
+        stats_label.setStyleSheet("font-size: 11px; color: #27ae60; font-weight: bold; margin: 10px 0;")
+        layout.addWidget(stats_label)
+        
+        # Description détaillée
+        description_text = QTextEdit()
+        description_text.setMaximumHeight(120)
+        description_text.setReadOnly(True)
+        description_text.setPlainText(
+            "🎯 Vote Majoritaire: Chaque algorithme vote pour sa photo préférée, "
+            "la décision finale est prise à la majorité.\n\n"
+            "✅ Avantages: Robustesse, réduction des biais, performances améliorées\n"
+            "📊 Résultats: Ensemble optimal atteint 68.6% de précision vs 63-68% individuels"
+        )
+        layout.addWidget(QLabel("Description du système:"))
+        layout.addWidget(description_text)
+        
+        # Boutons
+        button_layout = QHBoxLayout()
+        
+        # Bouton reset
+        reset_button = QPushButton("🔄 Ensemble Optimal")
+        reset_button.clicked.connect(lambda: self._reset_to_optimal_ensemble())
+        button_layout.addWidget(reset_button)
+        
+        cancel_button = QPushButton("🚫 Annuler")
+        cancel_button.clicked.connect(dialog.reject)
+        button_layout.addWidget(cancel_button)
+        
+        ok_button = QPushButton("🚀 Lancer Turbo")
+        ok_button.setStyleSheet("background-color: #27ae60; color: white; font-weight: bold;")
+        ok_button.clicked.connect(dialog.accept)
+        button_layout.addWidget(ok_button)
+        
+        layout.addLayout(button_layout)
+        
+        # Fonction pour reset vers l'ensemble optimal
+        def _reset_to_optimal_ensemble():
+            optimal_algos = ['hybrid', 'ratio_low', 'votes_high']
+            for algo_key, checkbox in self.algorithm_checkboxes.items():
+                checkbox.setChecked(algo_key in optimal_algos)
+        
+        self._reset_to_optimal_ensemble = _reset_to_optimal_ensemble
+        
+        # Afficher la dialog
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            # Récupérer les algorithmes sélectionnés
+            selected_algos = []
+            for algo_key, checkbox in self.algorithm_checkboxes.items():
+                if checkbox.isChecked():
+                    selected_algos.append(algo_key)
+            
+            if len(selected_algos) == 0:
+                return None  # Aucun algorithme sélectionné
+            elif len(selected_algos) == 1:
+                return selected_algos[0]  # Un seul algorithme
+            else:
+                # Ensemble d'algorithmes - format [algo1,algo2,algo3]
+                return f"[{','.join(selected_algos)}]"
+        else:
+            return None
     
     def fin_selected_challenges(self):
         """Applique une stratégie de fin aux challenges sélectionnés"""
@@ -2811,9 +3651,16 @@ class ProfileTab(QWidget):
         """Évaluation automatique et silencieuse des algorithmes après chaque turbo"""
         try:
             # Vérifier si l'auto-optimisation est activée
-            auto_optimize = self.config['players'][self.player].get('auto_optimize_turbo', True)
+            auto_optimize_raw = self.config['players'][self.player].get('auto_optimize_turbo', True)
+            if isinstance(auto_optimize_raw, str):
+                auto_optimize = auto_optimize_raw.lower() in ('true', '1', 'yes', 'on')
+            else:
+                auto_optimize = bool(auto_optimize_raw)
             if not auto_optimize:
+                print(f"🔧 DEBUG: Auto-optimisation DÉSACTIVÉE pour {self.player}")
                 return
+            else:
+                print(f"🔧 DEBUG: Auto-optimisation ACTIVÉE pour {self.player} - va s'exécuter")
             
             history = self.config.get('turbo_history', {}).get(self.player, {})
             
@@ -2836,9 +3683,16 @@ class ProfileTab(QWidget):
                 if not photo1.get('found', False) or not photo2.get('found', False):
                     continue
                 
-                # Déterminer si l'algorithme a fait le bon choix
-                turbo_success = comp_data.get('success', False)
-                algorithm_made_good_choice = turbo_success
+                # Déterminer si l'algorithme a fait le bon choix en comparant avec le vrai winner
+                winner_info = comp_data.get('winner', {})
+                is_photo1_winner = winner_info.get('is_photo1', True)
+                chosen_winner_id = comp_data.get('winner', {}).get('id')
+                
+                # Reconstituer quel était le choix de l'algorithme à l'époque
+                algorithm_choice_was_photo1 = chosen_winner_id == photo1.get('id')
+                
+                # L'algorithme a fait le bon choix si son choix correspond au vrai gagnant
+                algorithm_made_good_choice = (algorithm_choice_was_photo1 == is_photo1_winner)
                 
                 if algo not in algo_stats:
                     algo_stats[algo] = {'total': 0, 'success': 0}
@@ -3037,6 +3891,50 @@ class ProfileTab(QWidget):
     def save_turbo_history(self, challenge_id, challenge_title, time_left, first_id, first_data, second_id, second_data, winner_id, algorithm, strategy_description, success):
         """Sauvegarde l'historique d'une comparaison turbo pour l'apprentissage IA"""
         try:
+            # NOUVEAU: Sauvegarde DataFrame/Feather (prioritaire)
+            try:
+                from turbo_dataframe_manager import TurboDataFrameManager
+                
+                # Initialiser le gestionnaire DataFrame
+                if not hasattr(self, '_turbo_df_manager'):
+                    self._turbo_df_manager = TurboDataFrameManager("turbo_data.feather")
+                
+                # Déterminer l'ID de la photo choisie par l'algorithme
+                # Si success=True, l'algorithme a choisi winner_id
+                # Si success=False, l'algorithme a choisi l'autre photo
+                if winner_id and success is not None:
+                    if success:
+                        chosen_id = winner_id
+                    else:
+                        chosen_id = second_id if winner_id == first_id else first_id
+                else:
+                    chosen_id = None
+                
+                # Ajouter au DataFrame
+                self._turbo_df_manager.add_turbo_entry(
+                    profile_name=self.player,
+                    challenge_id=str(challenge_id),
+                    challenge_title=challenge_title,
+                    time_left=time_left,
+                    algorithm=algorithm,
+                    photo1_id=first_id,
+                    photo2_id=second_id,
+                    photo1_data=first_data if first_data else {},
+                    photo2_data=second_data if second_data else {},
+                    chosen_id=chosen_id,
+                    winner_id=winner_id,
+                    scores_str=None,  # Sera ajouté plus tard si disponible
+                    strategy_description=strategy_description
+                )
+                
+                self.log(f"💾 Historique DataFrame sauvegardé: {self.player} - {challenge_title[:30]}...")
+                
+            except ImportError:
+                self.log(f"⚠️ TurboDataFrameManager non disponible, utilisation système legacy")
+            except Exception as e:
+                self.log(f"⚠️ Erreur sauvegarde DataFrame: {e}, utilisation système legacy")
+            
+            # LEGACY: Sauvegarde ConfigObj (pour compatibilité)
             # Créer la section turbo_history si elle n'existe pas
             if 'turbo_history' not in self.config:
                 self.config['turbo_history'] = {}
@@ -3085,13 +3983,49 @@ class ProfileTab(QWidget):
             self.config.encoding = 'utf-8'
             self.config.write()
             
-            self.log(f"💾 Historique turbo sauvegardé: {comparison_id}")
+            self.log(f"💾 Historique legacy sauvegardé: {comparison_id}")
             
             # Nettoyer l'historique si nécessaire (garder max 1000 entrées)
             self.cleanup_turbo_history(max_entries=1000)
             
         except Exception as e:
             self.log(f"⚠️ Erreur sauvegarde historique turbo: {e}")
+    
+    def update_turbo_scores(self, photo1_id, photo2_id, score1, score2):
+        """Met à jour les scores d'un turbo récent dans le DataFrame"""
+        try:
+            if hasattr(self, '_turbo_df_manager'):
+                # Trouver l'entrée récente correspondante et mettre à jour les scores
+                df = self._turbo_df_manager.get_dataframe()
+                
+                # Chercher l'entrée la plus récente avec ces photos
+                mask = (
+                    (df['profile_name'] == self.player) &
+                    ((df['photo1_id'] == photo1_id) & (df['photo2_id'] == photo2_id) |
+                     (df['photo1_id'] == photo2_id) & (df['photo2_id'] == photo1_id)) &
+                    (df['scores_photo1'].isna())  # Pas encore de scores
+                )
+                
+                matching = df[mask]
+                if len(matching) > 0:
+                    # Prendre la plus récente
+                    idx = matching['timestamp'].idxmax()
+                    
+                    # Déterminer quel score va à quelle photo
+                    if df.at[idx, 'photo1_id'] == photo1_id:
+                        self._turbo_df_manager.df.at[idx, 'scores_photo1'] = float(score1)
+                        self._turbo_df_manager.df.at[idx, 'scores_photo2'] = float(score2)
+                    else:
+                        self._turbo_df_manager.df.at[idx, 'scores_photo1'] = float(score2)
+                        self._turbo_df_manager.df.at[idx, 'scores_photo2'] = float(score1)
+                    
+                    # Sauvegarder
+                    self._turbo_df_manager._save_dataframe()
+                    
+                    self.log(f"📊 Scores mis à jour: {score1}% vs {score2}%")
+                    
+        except Exception as e:
+            self.log(f"⚠️ Erreur mise à jour scores: {e}")
 
     def cleanup_turbo_history(self, max_entries=1000):
         """Nettoie l'historique turbo en gardant les entrées les plus récentes"""
@@ -3148,15 +4082,16 @@ class ProfileTab(QWidget):
                 if not photo1.get('found', False) or not photo2.get('found', False):
                     continue
                 
-                # Déterminer le vrai gagnant basé sur le résultat du turbo
-                turbo_success = comp_data.get('success', False)
-                original_winner = comp_data.get('winner', {}).get('id')
+                # Déterminer le vrai gagnant basé sur winner.is_photo1
+                winner_info = comp_data.get('winner', {})
+                winner_id = winner_info.get('id')
+                is_photo1 = winner_info.get('is_photo1', True)  # Default True pour compatibilité
                 
-                # LOGIQUE: Si turbo SUCCESS → original_winner était bon, sinon l'autre
-                if turbo_success:
-                    correct_winner = original_winner
+                # LOGIQUE CORRECTE: winner.is_photo1 indique si photo1 a gagné
+                if is_photo1:
+                    correct_winner = photo1['id']
                 else:
-                    correct_winner = photo2['id'] if original_winner == photo1['id'] else photo1['id']
+                    correct_winner = photo2['id']
                 
                 test_data.append({
                     'photo1': photo1,
@@ -3173,7 +4108,8 @@ class ProfileTab(QWidget):
             # 2. Tester tous les algorithmes sur les mêmes données
             algorithms_to_test = [
                 'ratio_low', 'ratio_high', 'votes_high', 'rank_best', 
-                'efficiency', 'hybrid', 'bruno_custom', 'random'
+                'efficiency', 'hybrid', 'bruno_custom', 'ai_optimized', 'advanced_rf', 
+                'votes_ratio_patterns', 'random'
             ]
             
             algo_results = {}
@@ -3614,18 +4550,15 @@ class ProfileTab(QWidget):
                 try:
                     simulated_winner = self.apply_algorithm_to_photos(algorithm_name, photo1, photo2)
                     
-                    # Déterminer le vrai gagnant basé sur le résultat du turbo
-                    turbo_success = comp_data.get('success', False)
-                    original_winner = comp_data.get('winner', {}).get('id')
+                    # Déterminer le vrai gagnant basé sur winner.is_photo1
+                    winner_info = comp_data.get('winner', {})
+                    is_photo1_winner = winner_info.get('is_photo1', True)
                     
-                    # LOGIQUE CORRECTE:
-                    # - Si turbo SUCCESS → original_winner était le bon choix
-                    # - Si turbo FAILED → l'autre photo aurait été le bon choix
-                    if turbo_success:
-                        correct_winner = original_winner
+                    # LOGIQUE CORRECTE: winner.is_photo1 indique si photo1 a gagné
+                    if is_photo1_winner:
+                        correct_winner = photo1['id']
                     else:
-                        # Le bon choix était l'autre photo
-                        correct_winner = photo2['id'] if original_winner == photo1['id'] else photo1['id']
+                        correct_winner = photo2['id']
                     
                     # Vérifier si l'algorithme simule aurait fait le bon choix
                     if simulated_winner == correct_winner:
@@ -3649,86 +4582,239 @@ class ProfileTab(QWidget):
             return 0
 
     def apply_algorithm_to_photos(self, algorithm_name, photo1, photo2):
-        """Applique un algorithme spécifique à deux photos et retourne le gagnant"""
+        """Applique un algorithme spécifique à deux photos et retourne le gagnant
+        
+        Version ProfileTab avec algorithmes intégrés.
+        """
         try:
+            # Conversion sécurisée des valeurs
+            def safe_float(val, default=0.0):
+                try:
+                    return float(val) if val else default
+                except (ValueError, TypeError):
+                    return default
+            
+            # Données converties
+            first_ratio = safe_float(photo1.get('ratio', 0))
+            second_ratio = safe_float(photo2.get('ratio', 0))
+            first_votes = safe_float(photo1.get('votes', 0))
+            second_votes = safe_float(photo2.get('votes', 0))
+            first_rank = safe_float(photo1.get('rank', 999))
+            second_rank = safe_float(photo2.get('rank', 999))
+            
+            first_id = photo1['id']
+            second_id = photo2['id']
+            
+            # ALGORITHMES INTÉGRÉS
             if algorithm_name == "ratio_low":
-                return photo1['id'] if photo1.get('ratio', 0) <= photo2.get('ratio', 0) else photo2['id']
+                if first_ratio < second_ratio:
+                    return first_id
+                elif second_ratio < first_ratio:
+                    return second_id
+                else:
+                    return first_id if first_votes >= second_votes else second_id
+            
             elif algorithm_name == "ratio_high":
-                return photo1['id'] if photo1.get('ratio', 0) >= photo2.get('ratio', 0) else photo2['id']
+                if first_ratio > second_ratio:
+                    return first_id
+                elif second_ratio > first_ratio:
+                    return second_id
+                else:
+                    return first_id if first_votes >= second_votes else second_id
+            
             elif algorithm_name == "votes_high":
-                return photo1['id'] if photo1.get('votes', 0) >= photo2.get('votes', 0) else photo2['id']
+                if first_votes > second_votes:
+                    return first_id
+                elif second_votes > first_votes:
+                    return second_id
+                else:
+                    return first_id if first_ratio <= second_ratio else second_id
+            
             elif algorithm_name == "rank_best":
-                return photo1['id'] if photo1.get('rank', 999) <= photo2.get('rank', 999) else photo2['id']
+                if first_rank < second_rank:
+                    return first_id
+                elif second_rank < first_rank:
+                    return second_id
+                else:
+                    return first_id if first_votes >= second_votes else second_id
+            
             elif algorithm_name == "efficiency":
-                eff1 = photo1.get('votes', 0) / photo1.get('rank', 999) if photo1.get('rank', 999) > 0 else 0
-                eff2 = photo2.get('votes', 0) / photo2.get('rank', 999) if photo2.get('rank', 999) > 0 else 0
-                return photo1['id'] if eff1 >= eff2 else photo2['id']
+                first_eff = first_votes / first_rank if first_rank > 0 else 0
+                second_eff = second_votes / second_rank if second_rank > 0 else 0
+                return first_id if first_eff >= second_eff else second_id
+            
             elif algorithm_name == "bruno_custom":
-                return self.apply_bruno_custom_algorithm(photo1, photo2)
+                # RÈGLE 1: Éviter ratio < 1.0
+                if first_ratio < 1.0 and second_ratio >= 1.0:
+                    return second_id
+                elif second_ratio < 1.0 and first_ratio >= 1.0:
+                    return first_id
+                
+                # RÈGLE 2: Sweet spot 1.15-1.30
+                first_sweet = 1.15 <= first_ratio <= 1.30
+                second_sweet = 1.15 <= second_ratio <= 1.30
+                
+                if first_sweet and not second_sweet and first_votes >= 50:
+                    return first_id
+                elif second_sweet and not first_sweet and second_votes >= 50:
+                    return second_id
+                
+                # RÈGLE 3: Éviter zone danger 1.5
+                first_danger = abs(first_ratio - 1.5) < 0.1
+                second_danger = abs(second_ratio - 1.5) < 0.1
+                
+                if first_danger and not second_danger:
+                    return second_id
+                elif second_danger and not first_danger:
+                    return first_id
+                
+                # Fallback: ratio plus faible
+                return first_id if first_ratio <= second_ratio else second_id
+            
             elif algorithm_name == "hybrid":
-                return self.apply_hybrid_algorithm(photo1, photo2)
-            else:
-                # Fallback aléatoire
+                # Critères de validité
+                min_votes = 200
+                max_rank = 550
+                
+                first_valid = first_votes >= min_votes and first_rank <= max_rank
+                second_valid = second_votes >= min_votes and second_rank <= max_rank
+                
+                if first_valid and not second_valid:
+                    return first_id
+                elif second_valid and not first_valid:
+                    return second_id
+                elif first_valid and second_valid:
+                    # Score efficacité
+                    first_score = first_votes / first_rank if first_rank > 0 else 0
+                    second_score = second_votes / second_rank if second_rank > 0 else 0
+                    return first_id if first_score >= second_score else second_id
+                else:
+                    # Fallback: ratio plus faible
+                    return first_id if first_ratio <= second_ratio else second_id
+            
+            elif algorithm_name == "random":
                 import random
-                return random.choice([photo1['id'], photo2['id']])
-        except Exception:
-            return photo1['id']  # Fallback
-
-    def apply_bruno_custom_algorithm(self, photo1, photo2):
-        """Applique l'algorithme bruno_custom simplifié"""
-        try:
-            ratio1 = photo1.get('ratio', 0)
-            ratio2 = photo2.get('ratio', 0)
-            votes1 = photo1.get('votes', 0)
-            votes2 = photo2.get('votes', 0)
+                return random.choice([first_id, second_id])
             
-            # Règle 3: Éviter ratio < 1
-            if ratio1 < 1.0 and ratio2 >= 1.0:
-                return photo2['id']
-
-            elif ratio2 < 1.0 and ratio1 >= 1.0:
-                return photo1['id']
+            elif algorithm_name == "ai_optimized":
+                # Algorithme optimisé par IA (précision estimée: 67.7%)
+                
+                # RÈGLE 1: Différence de rang importante (feature la plus importante: 17.2%)
+                rank_diff = abs(first_rank - second_rank)
+                if rank_diff > 300:
+                    return first_id if first_rank < second_rank else second_id
+                
+                # RÈGLE 2: Différence de votes importante (16.3%)
+                votes_diff = abs(first_votes - second_votes)
+                if votes_diff > 500:
+                    return first_id if first_votes > second_votes else second_id
+                
+                # RÈGLE 3A: Pattern découvert ZONE_1.5_1.3_vs_1.5 (55.7% succès pour 1.5)
+                first_is_1_3 = 1.25 <= first_ratio <= 1.35
+                second_is_1_3 = 1.25 <= second_ratio <= 1.35
+                first_is_1_5 = 1.45 <= first_ratio <= 1.55
+                second_is_1_5 = 1.45 <= second_ratio <= 1.55
+                
+                if (first_is_1_3 and second_is_1_5):
+                    return second_id  # Favoriser 1.5 vs 1.3
+                elif (first_is_1_5 and second_is_1_3):
+                    return first_id  # Favoriser 1.5 vs 1.3
+                
+                # RÈGLE 3B: Pattern découvert ZONE_1.5_1.5_vs_1.8 (88.9% succès pour 1.8)
+                if (1.4 <= first_ratio <= 1.6) and (1.7 <= second_ratio <= 1.9):
+                    return second_id  # Favoriser le ratio plus élevé (contre-intuitif)
+                elif (1.7 <= first_ratio <= 1.9) and (1.4 <= second_ratio <= 1.6):
+                    return first_id
+                
+                # RÈGLE 4A: Cas spécial - les deux ratios sous 1.0 (14 cas analysés)
+                if first_ratio < 1.0 and second_ratio < 1.0:
+                    # Pattern découvert: Photo2 gagne 85.7% du temps, votes comptent plus que ratio
+                    if abs(first_votes - second_votes) > 50:  # Différence significative de votes
+                        return first_id if first_votes > second_votes else second_id
+                    else:
+                        return second_id  # Fallback: favoriser Photo2 (pattern statistique)
+                
+                # RÈGLE 4B: Un seul ratio sous 1.0 - éviter sauf votes massifs
+                elif first_ratio < 1.0 and second_ratio >= 1.0:
+                    if first_votes > second_votes * 3:
+                        return first_id  # Exception: votes 3x supérieurs
+                    else:
+                        return second_id
+                elif second_ratio < 1.0 and first_ratio >= 1.0:
+                    if second_votes > first_votes * 3:
+                        return second_id
+                    else:
+                        return first_id
+                
+                # RÈGLE 5: Zone danger 1.5
+                first_danger = abs(first_ratio - 1.5) < 0.1
+                second_danger = abs(second_ratio - 1.5) < 0.1
+                if first_danger and not second_danger:
+                    return second_id
+                elif second_danger and not first_danger:
+                    return first_id
+                
+                # Fallback: ratio plus faible
+                return first_id if first_ratio <= second_ratio else second_id
             
-            # Règle 1: Éviter ratio ≈ 1.5
-            if ratio1 < ratio2 and votes1 > votes2:
-                return photo1['id']
-
-            if ratio2 < ratio1 and votes2 > votes1:
-                return photo2['id']
-
-            # Fallback: ratio plus faible
-            return photo1['id'] if votes1 > votes2 else photo2['id']
-        except Exception:
-            return photo1['id']
-
-    def apply_hybrid_algorithm(self, photo1, photo2):
-        """Applique l'algorithme hybrid simplifié"""
-        try:
-            votes1 = photo1.get('votes', 0)
-            votes2 = photo2.get('votes', 0)
-            rank1 = photo1.get('rank', 999)
-            rank2 = photo2.get('rank', 999)
-            ratio1 = photo1.get('ratio', 0)
-            ratio2 = photo2.get('ratio', 0)
-            
-            # Filtres de sécurité
-            valid1 = votes1 >= 200 and rank1 <= 550
-            valid2 = votes2 >= 200 and rank2 <= 550
-            
-            if valid1 and not valid2:
-                return photo1['id']
-            elif valid2 and not valid1:
-                return photo2['id']
-            elif valid1 and valid2:
-                # Score efficacité
-                score1 = votes1 / rank1 if rank1 > 0 else 0
-                score2 = votes2 / rank2 if rank2 > 0 else 0
-                return photo1['id'] if score1 >= score2 else photo2['id']
             else:
-                # Fallback: ratio faible
-                return photo1['id'] if ratio1 <= ratio2 else photo2['id']
-        except Exception:
-            return photo1['id']
+                # Fallback sur hybrid
+                return self.apply_algorithm_to_photos("hybrid", photo1, photo2)
+            
+        except Exception as e:
+            print(f"⚠️ Erreur évaluation algorithme {algorithm_name}: {e}")
+            return photo1['id']  # Fallback
+    
+    def test_algorithm_integration(self):
+        """Teste que les vrais algorithmes sont bien utilisés dans l'évaluation"""
+        try:
+            print("🧪 === TEST D'INTÉGRATION DES VRAIS ALGORITHMES ===")
+            
+            # Données de test
+            photo1 = {
+                'id': 'test_photo_1',
+                'votes': 150,
+                'ratio': 1.2,
+                'rank': 100
+            }
+            photo2 = {
+                'id': 'test_photo_2', 
+                'votes': 200,
+                'ratio': 1.5,
+                'rank': 200
+            }
+            
+            algorithms = ["ratio_low", "ratio_high", "votes_high", "bruno_custom", "hybrid"]
+            
+            print(f"📊 Test avec Photo1 (votes:{photo1['votes']}, ratio:{photo1['ratio']}, rang:{photo1['rank']})")
+            print(f"📊      vs Photo2 (votes:{photo2['votes']}, ratio:{photo2['ratio']}, rang:{photo2['rank']})")
+            print()
+            
+            for algo in algorithms:
+                try:
+                    # Test avec apply_algorithm_to_photos (méthode d'évaluation)
+                    winner_id = self.apply_algorithm_to_photos(algo, photo1, photo2)
+                    
+                    # Test avec decide_turbo_choice (méthode directe)
+                    first_data = {'votes': photo1['votes'], 'ratio': photo1['ratio'], 'rank': photo1['rank']}
+                    second_data = {'votes': photo2['votes'], 'ratio': photo2['ratio'], 'rank': photo2['rank']}
+                    
+                    result = self.decide_turbo_choice(algo, photo1['id'], first_data, photo2['id'], second_data)
+                    direct_winner = result[0]
+                    strategy_desc = result[4]
+                    
+                    # Vérifier cohérence
+                    status = "✅" if winner_id == direct_winner else "❌"
+                    print(f"   {status} {algo:12} → Gagnant: {winner_id} | Stratégie: {strategy_desc}")
+                    
+                except Exception as e:
+                    print(f"   ❌ {algo:12} → ERREUR: {e}")
+            
+            print("\n🎯 Test terminé - Les deux méthodes doivent donner des résultats identiques")
+            
+        except Exception as e:
+            print(f"❌ Erreur lors du test d'intégration: {e}")
+
 
     def create_demo_turbo_history(self):
         """Crée un historique turbo de démonstration pour tester l'évaluation"""
@@ -3834,7 +4920,11 @@ class ProfileTab(QWidget):
         """Toggle l'auto-optimisation des algorithmes turbo"""
         try:
             # Inverser l'état
-            current_state = self.config['players'][self.player].get('auto_optimize_turbo', True)
+            current_state_raw = self.config['players'][self.player].get('auto_optimize_turbo', True)
+            if isinstance(current_state_raw, str):
+                current_state = current_state_raw.lower() in ('true', '1', 'yes', 'on')
+            else:
+                current_state = bool(current_state_raw)
             new_state = not current_state
             
             # Mettre à jour la configuration
