@@ -1330,16 +1330,19 @@ class AsyncFetcher(QObject):
             print(f"     ❌ Erreur lors de la recherche: {e}")
             return None
     
-    async def submit_single_turbo_selection(self, challenge_id, image_id, pair_number, first_id, second_id, winner_ratio=None, loser_ratio=None):
-        """Soumet une sélection unique et retourne (success, actual_winner_id)"""
+    async def submit_single_turbo_selection(self, challenge_id, image_id, pair_number, first_id, second_id, winner_ratio=None, loser_ratio=None, is_retry=False):
+        """Soumet une sélection unique et retourne (success, actual_winner_id)
+        Si is_retry=True, indique qu'il s'agit d'une resoumission automatique"""
         try:
-            print(f"   📤 Soumission paire {pair_number}: {image_id}")
+            retry_prefix = "🔄 RETRY " if is_retry else ""
+            print(f"   📤 {retry_prefix}Soumission paire {pair_number}: {image_id}")
+            
             if winner_ratio is not None and loser_ratio is not None:
-                self.turbo_log.emit(f"📤 Soumission paire {pair_number}: {image_id} (ratio: {winner_ratio:.3f}) vs (ratio: {loser_ratio:.3f})")
+                self.turbo_log.emit(f"📤 {retry_prefix}Soumission paire {pair_number}: {image_id} (ratio: {winner_ratio:.3f}) vs (ratio: {loser_ratio:.3f})")
             elif winner_ratio is not None:
-                self.turbo_log.emit(f"📤 Soumission paire {pair_number}: {image_id} (ratio: {winner_ratio:.3f}) - choix par défaut")
+                self.turbo_log.emit(f"📤 {retry_prefix}Soumission paire {pair_number}: {image_id} (ratio: {winner_ratio:.3f}) - choix par défaut")
             else:
-                self.turbo_log.emit(f"📤 Soumission paire {pair_number}: {image_id}")
+                self.turbo_log.emit(f"📤 {retry_prefix}Soumission paire {pair_number}: {image_id}")
             
             async with aiohttp.ClientSession(headers=self.aio_header, connector=aiohttp.TCPConnector(ssl=False)) as session:
                 payload = {
@@ -1372,12 +1375,32 @@ class AsyncFetcher(QObject):
                             actual_winner_id = first_id if first_score >= second_score else second_id
                             
                             if is_successful_selection:
+                                success_msg = f"✅ Paire {pair_number} SUCCESS - {image_id} (scores: {first_score}%/{second_score}%)"
+                                if is_retry:
+                                    success_msg = f"🎯 RETRY SUCCESS! " + success_msg
                                 print(f"   ✅ Comparaison réussie: {image_id}")
-                                self.turbo_log.emit(f"✅ Paire {pair_number} SUCCESS - {image_id} (scores: {first_score}%/{second_score}%)")
+                                self.turbo_log.emit(success_msg)
                                 return True, actual_winner_id
                             else:
-                                print(f"   ❌ Comparaison échouée: {image_id}")
+                                print(f"   ❌ Comparaison échouée: {image_id} -> Vrai gagnant: {actual_winner_id}")
                                 self.turbo_log.emit(f"❌ Paire {pair_number} FAILED - {image_id} (scores: {first_score}%/{second_score}%) - Vrai gagnant: {actual_winner_id}")
+                                
+                                # 🚀 RETRY AUTOMATIQUE avec le vrai gagnant (sauf si c'est déjà un retry)
+                                if not is_retry and actual_winner_id != image_id:
+                                    print(f"   🔄 Retry automatique avec le vrai gagnant: {actual_winner_id}")
+                                    self.turbo_log.emit(f"🔄 AUTO-RETRY avec vrai gagnant: {actual_winner_id}")
+                                    
+                                    # Appeler récursivement avec le bon gagnant
+                                    retry_success, retry_winner = await self.submit_single_turbo_selection(
+                                        challenge_id, actual_winner_id, pair_number, first_id, second_id, 
+                                        winner_ratio, loser_ratio, is_retry=True
+                                    )
+                                    
+                                    if retry_success:
+                                        return True, retry_winner  # Le retry a réussi !
+                                    else:
+                                        self.turbo_log.emit(f"💔 RETRY FAILED - Même le vrai gagnant a échoué")
+                                
                                 return False, actual_winner_id
                         else:
                             error_msg = result.get('message', 'Erreur inconnue')
