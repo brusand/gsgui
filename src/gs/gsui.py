@@ -2123,6 +2123,22 @@ class ProfileTab(QWidget):
             print(f"🔧 DEBUG ProfileTab: Erreur {e}")
             return "[hybrid,ratio_low,votes_high]"
     
+    def is_turbo_history_enabled(self):
+        """Vérifie si l'historisation des turbos est activée pour ce profil"""
+        try:
+            player_config = self.config['players'].get(self.player, {})
+            enabled = player_config.get('turbo_history_enabled', True)  # True par défaut
+            
+            # Gestion des valeurs string/bool
+            if isinstance(enabled, str):
+                enabled = enabled.lower() in ('true', '1', 'yes', 'on')
+            
+            print(f"🔧 DEBUG: Historisation turbo pour {self.player}: {enabled}")
+            return bool(enabled)
+        except Exception as e:
+            print(f"❌ Erreur lecture historisation turbo: {e}")
+            return True  # Par défaut activé en cas d'erreur
+    
     def init_fetcher(self):
         """Initialise le fetcher pour ce profil"""
         if self.config['players'].get(self.player) and self.config['players'][self.player].get('xtoken'):
@@ -2258,6 +2274,22 @@ class ProfileTab(QWidget):
         self.auto_optimize_button.setChecked(auto_optimize_enabled)
         self.auto_optimize_button.clicked.connect(self.toggle_auto_optimize)
         row1.addWidget(self.auto_optimize_button)
+        
+        # Bouton toggle historisation turbo
+        history_enabled_raw = self.config['players'][self.player].get('turbo_history_enabled', True)
+        if isinstance(history_enabled_raw, str):
+            history_enabled = history_enabled_raw.lower() in ('true', '1', 'yes', 'on')
+        else:
+            history_enabled = bool(history_enabled_raw)
+            
+        history_text = "📋 History: ON" if history_enabled else "📋 History: OFF"
+        self.history_button = QPushButton(history_text)
+        history_color = '#3498db' if history_enabled else '#95a5a6'
+        self.history_button.setStyleSheet(button_style.replace('#3498db', history_color).replace('#2980b9', '#2980b9' if history_enabled else '#7f8c8d').replace('#21618c', '#21618c' if history_enabled else '#6c7b7b'))
+        self.history_button.setCheckable(True)
+        self.history_button.setChecked(history_enabled)
+        self.history_button.clicked.connect(self.toggle_turbo_history)
+        row1.addWidget(self.history_button)
         
         row1.addStretch()
         toolbar_layout.addLayout(row1)
@@ -3914,6 +3946,10 @@ class ProfileTab(QWidget):
     def save_turbo_history(self, challenge_id, challenge_title, time_left, first_id, first_data, second_id, second_data, winner_id, algorithm, strategy_description, success):
         """Sauvegarde l'historique d'une comparaison turbo pour l'apprentissage IA"""
         try:
+            # Vérifier si l'historisation est activée
+            if not self.is_turbo_history_enabled():
+                print(f"⏭️ Historisation turbo désactivée pour {self.player} - Comparaison ignorée")
+                return
             # NOUVEAU: Sauvegarde DataFrame/Feather (prioritaire)
             try:
                 from turbo_dataframe_manager import TurboDataFrameManager
@@ -4991,6 +5027,60 @@ class ProfileTab(QWidget):
                 
         except Exception as e:
             self.log(f"❌ Erreur toggle auto-optimisation: {e}")
+    
+    def toggle_turbo_history(self):
+        """Toggle l'historisation des données turbo"""
+        try:
+            # Inverser l'état
+            current_state_raw = self.config['players'][self.player].get('turbo_history_enabled', True)
+            if isinstance(current_state_raw, str):
+                current_state = current_state_raw.lower() in ('true', '1', 'yes', 'on')
+            else:
+                current_state = bool(current_state_raw)
+            
+            new_state = not current_state
+            
+            # Mettre à jour la configuration
+            self.config['players'][self.player]['turbo_history_enabled'] = new_state
+            self.config.encoding = 'utf-8'
+            self.config.write()
+            
+            # Mettre à jour le texte du bouton
+            text = "📋 History: ON" if new_state else "📋 History: OFF"
+            self.history_button.setText(text)
+            
+            # Mettre à jour les couleurs
+            button_style = """
+                QPushButton {
+                    background-color: #3498db;
+                    border: none;
+                    color: white;
+                    padding: 8px 16px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 14px;
+                    margin: 2px;
+                    cursor: pointer;
+                    border-radius: 4px;
+                }
+                QPushButton:hover {
+                    background-color: #2980b9;
+                }
+                QPushButton:pressed {
+                    background-color: #21618c;
+                }
+            """
+            
+            history_color = '#3498db' if new_state else '#95a5a6'
+            self.history_button.setStyleSheet(button_style.replace('#3498db', history_color).replace('#2980b9', '#2980b9' if new_state else '#7f8c8d').replace('#21618c', '#21618c' if new_state else '#6c7b7b'))
+            
+            # Log du changement
+            status = "activée" if new_state else "désactivée"
+            self.log(f"🔄 Historisation turbo {status}")
+            
+        except Exception as e:
+            self.log(f"❌ Erreur toggle historisation turbo: {e}")
 
 def main():
     app = QApplication(sys.argv)
