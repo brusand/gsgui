@@ -538,9 +538,45 @@ class EnhancedGSGUI(QMainWindow):
             strategy_text = challenge.selected_strategy or ""
             self.challenge_table.setItem(row, 8, QTableWidgetItem(strategy_text))
             
-            # Statut turbo
-            turbo_text = {"none": "", "running": "🟡", "completed": "✅", "failed": "❌"}.get(challenge.turbo_status, "")
-            self.challenge_table.setItem(row, 9, QTableWidgetItem(turbo_text))
+            # Statut turbo avec tous les états GSGUI
+            turbo_status = challenge.turbo_status
+            turbo_indicators = {
+                "none": "",
+                "running": "🟡 Running",
+                "completed": "✅ OK", 
+                "failed": "❌ Failed",
+                "timer": "⏰ Timer",
+                "unknown": "❓ Unknown",
+                "locked": "🔒 Locked",
+                "free": "🆓 Free",
+                "won": "🏆 Won",
+                "used": "✅ Used"
+            }
+            turbo_text = turbo_indicators.get(turbo_status, "")
+            
+            turbo_item = QTableWidgetItem(turbo_text)
+            
+            # Couleur de fond selon l'état
+            if turbo_status == "running":
+                turbo_item.setBackground(QColor(255, 235, 59, 50))  # Jaune transparent
+            elif turbo_status == "completed":
+                turbo_item.setBackground(QColor(76, 175, 80, 50))   # Vert transparent
+            elif turbo_status == "failed":
+                turbo_item.setBackground(QColor(244, 67, 54, 50))   # Rouge transparent
+            elif turbo_status == "timer":
+                turbo_item.setBackground(QColor(255, 152, 0, 50))   # Orange transparent
+            elif turbo_status == "unknown":
+                turbo_item.setBackground(QColor(158, 158, 158, 50)) # Gris transparent
+            elif turbo_status == "locked":
+                turbo_item.setBackground(QColor(96, 125, 139, 50))  # Bleu-gris transparent
+            elif turbo_status == "free":
+                turbo_item.setBackground(QColor(139, 195, 74, 50))  # Vert clair transparent
+            elif turbo_status == "won":
+                turbo_item.setBackground(QColor(255, 193, 7, 50))   # Doré transparent
+            elif turbo_status == "used":
+                turbo_item.setBackground(QColor(76, 175, 80, 50))   # Vert transparent (comme completed)
+                
+            self.challenge_table.setItem(row, 9, turbo_item)
         
         # Connecter le signal de changement d'état des checkboxes
         self.challenge_table.itemChanged.connect(self.on_item_changed)

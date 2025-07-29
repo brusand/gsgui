@@ -70,6 +70,7 @@ turbo_executions = {}
 # Configuration files with thread locks
 config_lock = threading.Lock()
 BACKEND_STRATEGIES_FILE = "backend_strategies.ini"
+BACKEND_TURBO_FILE = "backend_turbo.ini"
 
 # WebSocket connections for real-time logs
 websocket_connections: Set[WebSocket] = set()
@@ -139,7 +140,7 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
                     try:
                         timeleft = challenge_data['time_left']
                         
-                        # Format compatible avec notre interface
+                        # Format compatible avec notre interface + préserver les données originales
                         challenge = {
                             'id': str(challenge_data['id']),
                             'title': challenge_data['title'],
@@ -157,7 +158,8 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
                                 'seconds': timeleft.get('seconds', 0)
                             },
                             'selected_strategy': None,  # À implémenter
-                            'turbo_status': 'none'  # À implémenter
+                            'turbo_status': 'none',  # À implémenter
+                            '_original_data': challenge_data  # Préserver les données originales pour turbo status
                         }
                         challenges.append(challenge)
                         
@@ -238,6 +240,129 @@ def remove_challenge_strategy(challenge_id: str):
         log_and_broadcast(error_msg, "error")
         return False
 
+def load_turbo_states():
+    """Charge les états des turbos depuis le fichier .ini"""
+    try:
+        with config_lock:
+            if not os.path.exists(BACKEND_TURBO_FILE):
+                return {}
+            
+            config = ConfigObj(BACKEND_TURBO_FILE, encoding='utf-8')
+            turbo_states = {}
+            
+            for challenge_id, turbo_data in config.items():
+                if isinstance(turbo_data, dict):
+                    turbo_states[challenge_id] = {
+                        'status': turbo_data.get('status', 'none'),
+                        'turbo_id': turbo_data.get('turbo_id', ''),
+                        'executed_at': turbo_data.get('executed_at', ''),
+                        'profile_id': turbo_data.get('profile_id', 'bruno')
+                    }
+            
+            print(f"📋 Loaded {len(turbo_states)} turbo states from .ini")
+            return turbo_states
+    except Exception as e:
+        print(f"❌ Error loading turbo states: {e}")
+        return {}
+
+def save_turbo_state(challenge_id: str, status: str, turbo_id: str = '', profile_id: str = "bruno"):
+    """Sauvegarde l'état d'un turbo dans le fichier .ini"""
+    try:
+        with config_lock:
+            config = ConfigObj(BACKEND_TURBO_FILE, encoding='utf-8')
+            
+            config[challenge_id] = {
+                'status': status,
+                'turbo_id': turbo_id,
+                'executed_at': datetime.now().isoformat(),
+                'profile_id': profile_id
+            }
+            
+            config.write()
+            log_and_broadcast(f"💾 Turbo state saved: {challenge_id} → {status}", "success")
+            return True
+    except Exception as e:
+        error_msg = f"❌ Error saving turbo state: {e}"
+        log_and_broadcast(error_msg, "error")
+        return False
+
+def remove_turbo_state(challenge_id: str):
+    """Supprime l'état turbo d'un challenge du fichier .ini"""
+    try:
+        with config_lock:
+            config = ConfigObj(BACKEND_TURBO_FILE, encoding='utf-8')
+            
+            if challenge_id in config:
+                del config[challenge_id]
+                config.write()
+                log_and_broadcast(f"🗑️ Removed turbo state for challenge {challenge_id}", "info")
+                return True
+            return False
+    except Exception as e:
+        error_msg = f"❌ Error removing turbo state: {e}"
+        log_and_broadcast(error_msg, "error")
+        return False
+
+def get_real_turbo_status(challenge_data: Dict) -> str:
+    """Extrait l'état turbo réel depuis les données GuruShots API"""
+    try:
+        # Vérifier member.turbo.state (structure officielle GuruShots)
+        if 'member' in challenge_data and 'turbo' in challenge_data['member']:
+            turbo_data = challenge_data['member']['turbo']
+            if isinstance(turbo_data, dict) and 'state' in turbo_data:
+                state = turbo_data['state']
+                
+                # Retourner l'état exact de l'API GuruShots
+                if state in ["FREE", "WON", "USED", "LOCKED"]:
+                    return state.lower()  # Convertir en minuscules pour cohérence
+                
+                # Gérer d'autres états possibles
+                return state.lower()
+        
+        # Fallback: Si pas de données turbo dans member
+        return "unknown"
+        
+    except Exception as e:
+        print(f"❌ Error extracting turbo status: {e}")
+        return "unknown"
+
+def determine_turbo_status(challenge: Dict, turbo_states: Dict, challenge_data: Dict) -> str:
+    """Détermine l'état turbo intelligent selon les règles GSGUI"""
+    challenge_id = challenge['id']
+    
+    # 1. Priorité: États explicites locaux (running/completed/failed)
+    if challenge_id in turbo_states:
+        local_status = turbo_states[challenge_id]['status']
+        if local_status in ["running", "completed", "failed"]:
+            return local_status
+    
+    # 2. Extraire l'état réel depuis l'API GuruShots
+    api_status = get_real_turbo_status(challenge_data)
+    if api_status in ["free", "won", "used", "locked"]:
+        return api_status
+    
+    # 3. Fallback: Logique GSGUI intelligente
+    time_left = challenge.get('time_left', {})
+    days = time_left.get('days', 0)
+    
+    # Si challenge fini ou presque fini
+    if days == 0:
+        hours = time_left.get('hours', 0)
+        if hours <= 2:  # Moins de 2h restantes
+            return "locked"  # Turbo verrouillé
+    
+    # Si challenge très récent (plus de 10 jours)
+    if days > 10:
+        return "timer"  # En attente du bon moment
+    
+    # Si on ne peut pas déterminer
+    votes = challenge.get('votes', 0)
+    if votes == 0:
+        return "unknown"  # État inconnu
+    
+    # Par défaut, disponible
+    return "none"
+
 def get_user_token_from_config() -> Optional[str]:
     """Récupère le token depuis la config"""
     try:
@@ -291,12 +416,15 @@ async def get_challenges(user_token: str):
             if config_token:
                 real_challenges = await fetch_real_challenges(config_token)
         
-        # Charger les stratégies stockées
+        # Charger les stratégies et états turbo stockés
         challenge_strategies = load_challenge_strategies()
+        turbo_states = load_turbo_states()
         
-        # Enrichir les challenges avec leurs stratégies
+        # Enrichir les challenges avec leurs stratégies et états turbo
         for challenge in real_challenges:
             challenge_id = challenge['id']
+            
+            # Stratégies
             if challenge_id in challenge_strategies:
                 strategy_info = challenge_strategies[challenge_id]
                 challenge['selected_strategy'] = strategy_info['strategy_name']
@@ -304,6 +432,20 @@ async def get_challenges(user_token: str):
             else:
                 challenge['selected_strategy'] = None
                 challenge['strategy_status'] = None
+            
+            # États turbo intelligents avec données originales
+            original_data = challenge.get('_original_data', {})
+            challenge['turbo_status'] = determine_turbo_status(challenge, turbo_states, original_data)
+            
+            # Nettoyer les données internes
+            if '_original_data' in challenge:
+                del challenge['_original_data']
+            
+            # ID turbo si disponible
+            if challenge_id in turbo_states:
+                challenge['turbo_id'] = turbo_states[challenge_id]['turbo_id']
+            else:
+                challenge['turbo_id'] = None
         
         print(f"📋 Returning {len(real_challenges)} challenges with strategies")
         return {"challenges": real_challenges}
@@ -392,9 +534,12 @@ async def cancel_strategy(profile_id: str, strategy_id: str):
 
 @app.post("/api/v1/profiles/{profile_id}/turbo/execute")
 async def execute_turbo(profile_id: str, request: TurboExecutionRequest):
-    """Exécute un turbo"""
+    """Exécute un turbo et sauvegarde l'état"""
     try:
         turbo_id = f"turbo_{profile_id}_{request.challenge_id}_{int(datetime.now().timestamp())}"
+        
+        # Sauvegarder l'état turbo comme "running"
+        save_turbo_state(request.challenge_id, "running", turbo_id, profile_id)
         
         turbo_executions[turbo_id] = {
             "turbo_id": turbo_id,
@@ -409,17 +554,34 @@ async def execute_turbo(profile_id: str, request: TurboExecutionRequest):
             "successful_pairs": 8
         }
         
-        # Simuler l'exécution
+        # Simuler l'exécution avec résultat aléatoire
         await asyncio.sleep(0.1)
+        
+        # Simuler un résultat (95% de succès)
+        import random
+        success = random.random() < 0.95
+        
+        if success:
+            # Marquer comme complété
+            save_turbo_state(request.challenge_id, "completed", turbo_id, profile_id)
+            log_and_broadcast(f"🚀 Turbo completed successfully for challenge {request.challenge_id}", "success")
+            status = "completed"
+        else:
+            # Marquer comme échoué
+            save_turbo_state(request.challenge_id, "failed", turbo_id, profile_id)
+            log_and_broadcast(f"❌ Turbo failed for challenge {request.challenge_id}", "error")
+            status = "failed"
         
         return {
             "turbo_id": turbo_id,
             "profile_id": profile_id,
             "challenge_id": request.challenge_id,
-            "status": "running",
-            "message": "Turbo execution started"
+            "status": status,
+            "message": f"Turbo execution {status}"
         }
     except Exception as e:
+        # En cas d'erreur, marquer comme échoué
+        save_turbo_state(request.challenge_id, "failed", "", profile_id)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/challenges/simple-vote")
@@ -584,8 +746,12 @@ async def schedule_existing_strategies():
 @app.on_event("startup")
 async def startup_event():
     """Événements de démarrage du backend"""
-    print("🚀 Backend startup - Loading strategies...")
+    print("🚀 Backend startup - Loading strategies and turbo states...")
     await schedule_existing_strategies()
+    
+    # Charger les états turbo existants
+    turbo_states = load_turbo_states()
+    print(f"📋 Loaded {len(turbo_states)} existing turbo states")
 
 if __name__ == "__main__":
     print("🚀 Démarrage du backend GSGUI avec vrais challenges...")
