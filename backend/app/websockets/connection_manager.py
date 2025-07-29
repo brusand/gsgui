@@ -46,8 +46,11 @@ class RealtimeEventTypes:
     
     # Turbo
     TURBO_STARTED = "turbo_started"
-    TURBO_RESULT = "turbo_result"
-    TURBO_COMPARISON = "turbo_comparison"
+    TURBO_COMPLETED = "turbo_completed"
+    TURBO_FAILED = "turbo_failed"
+    TURBO_CANCELLED = "turbo_cancelled"
+    TURBO_LOG = "turbo_log"
+    TURBO_PAIR_RESULT = "turbo_pair_result"
     
     # Classements
     RANKING_CHANGE = "ranking_change"

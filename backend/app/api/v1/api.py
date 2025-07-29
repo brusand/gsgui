@@ -4,7 +4,7 @@ API Router v1 - Regroupe tous les endpoints
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import challenges
+from app.api.v1.endpoints import challenges, profiles, strategies, turbo
 
 api_router = APIRouter()
 
@@ -13,4 +13,22 @@ api_router.include_router(
     challenges.router,
     prefix="/challenges",
     tags=["challenges"]
+)
+
+api_router.include_router(
+    profiles.router,
+    prefix="/profiles",
+    tags=["profiles"]
+)
+
+api_router.include_router(
+    strategies.router,
+    prefix="",
+    tags=["strategies"]
+)
+
+api_router.include_router(
+    turbo.router,
+    prefix="",
+    tags=["turbo"]
 )
