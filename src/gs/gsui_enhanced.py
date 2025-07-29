@@ -796,6 +796,11 @@ class EnhancedGSGUI(QMainWindow):
                 
                 self.log(f"✅ Fill terminé: {success_count}/{len(selected)} challenges - {vote_count} votes chacun")
                 
+                # Refresh automatique après tous les fills pour mettre à jour les votes
+                if success_count > 0:
+                    self.log("🔄 Refresh automatique des challenges après Fill...")
+                    self.refresh_challenges()
+                
             except Exception as e:
                 self.log(f"❌ Erreur Fill: {e}")
             finally:
