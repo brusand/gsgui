@@ -330,18 +330,24 @@ def determine_turbo_status(challenge: Dict, turbo_states: Dict, challenge_data: 
     """Détermine l'état turbo intelligent selon les règles GSGUI"""
     challenge_id = challenge['id']
     
-    # 1. Priorité: États explicites locaux (running/completed/failed)
+    # 1. Priorité ABSOLUE: États locaux critiques (running/failed uniquement)
     if challenge_id in turbo_states:
         local_status = turbo_states[challenge_id]['status']
-        if local_status in ["running", "completed", "failed"]:
+        if local_status in ["running", "failed"]:
             return local_status
     
-    # 2. Extraire l'état réel depuis l'API GuruShots
+    # 2. PRIORITÉ: États réels depuis l'API GuruShots
     api_status = get_real_turbo_status(challenge_data)
-    if api_status in ["free", "won", "used", "locked"]:
+    if api_status in ["free", "won", "used", "locked", "timer"]:
         return api_status
     
-    # 3. Fallback: Logique GSGUI intelligente
+    # 3. États locaux non-critiques (completed) - seulement si pas d'API
+    if challenge_id in turbo_states:
+        local_status = turbo_states[challenge_id]['status']
+        if local_status == "completed":
+            return local_status
+    
+    # 4. Fallback: Logique GSGUI intelligente
     time_left = challenge.get('time_left', {})
     days = time_left.get('days', 0)
     
