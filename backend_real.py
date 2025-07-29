@@ -313,7 +313,7 @@ def get_real_turbo_status(challenge_data: Dict) -> str:
                 state = turbo_data['state']
                 
                 # Retourner l'état exact de l'API GuruShots
-                if state in ["FREE", "WON", "USED", "LOCKED"]:
+                if state in ["FREE", "WON", "USED", "LOCKED", "TIMER"]:
                     return state.lower()  # Convertir en minuscules pour cohérence
                 
                 # Gérer d'autres états possibles

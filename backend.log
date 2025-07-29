@@ -1,6 +1,524 @@
-INFO:     Started server process [55749]
+/Users/bruno/gsgui/backend_real.py:780: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+INFO:     Started server process [90141]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
-🚀 Démarrage du backend GSGUI Simple...
-INFO:     127.0.0.1:53082 - "GET / HTTP/1.1" 200 OK
+🚀 Démarrage du backend GSGUI avec vrais challenges...
+🚀 Backend startup - Loading strategies and turbo states...
+🔄 Loading existing strategies from .ini...
+📋 Loaded 4 challenge strategies from .ini
+📅 Found 4 strategies to schedule:
+  - Challenge 105504: 2m (pending)
+  - Challenge 105507: 4m (pending)
+  - Challenge 105512: 4m (pending)
+  - Challenge 105681: fill20 (pending)
+✅ Strategy scheduling initialization complete
+📋 Loaded 6 turbo states from .ini
+📋 Loaded 6 existing turbo states
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+🌊 DEBUG COASTLINE - Full data structure:
+  - ID: 105512
+  - Title: Coastline
+  - Member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - Turbo data found: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - Full member data: {'time_joined': 1753778356, 'boost': {'state': 'MISSED', 'timeout': None}, 'turbo': {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}, 'ranking': {'total': {'votes': 522, 'rank': 1203, 'level': 2, 'level_name': 'SKILLED', 'level_rank': 202, 'next': 228, 'percent': 69.692923898531, 'benchmark': [{'benchmark': '1', 'score': '2666'}, {'benchmark': '10', 'score': '2480'}, {'benchmark': '100', 'score': '2025'}], 'prizes': [], 'exposure': 0, 'points': 60, 'guru_picks': 0, 'next_message': '228 votes to next level'}, 'entries': [{'id': '0c6dd02b2e48ec3b1d4a1663fb7a84c8', 'votes': 190, 'rank': 862, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3093518882, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '444124ccd69447b1c061db98842fa019', 'votes': 136, 'rank': 916, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3365245082, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': 'e96b589d3319e397bcc9fd89968bf3bd', 'votes': 104, 'rank': 948, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000539032553, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '83a85db59ad25b9e9171781de48d123b', 'votes': 92, 'rank': 960, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000994852893, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}], 'member': {'id': '0ccd720cab0da1c771a7a2086453d7dc', 'avatar': 'https://photos.gurushots.com/unsafe/500x500/0ccd720cab0da1c771a7a2086453d7dc/3_3cd55cc1d92bfe86addaa58479df5eed.jpg', 'country': 'Greenland', 'country_code': 'GL', 'member_status': 11, 'member_status_name': 'GURU II', 'member_group_id': 1003, 'name': 'bruno Tapdur', 'user_name': 'ow.lala', 'moderator': False, 'moderator_badge': False, 'member_league_id': 11}, 'index': 2458, 'exposure': {'exposure_factor': 0, 'vote_exposure_factor': 0, 'vote_ratio': 1.43}, 'swaps': []}, 'friends': []}
+🌊 END COASTLINE DEBUG
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+🔍 Processing turbo status for Wood & Metal Combinations (ID: 105508)
+🔍 Debug turbo status for challenge 105508:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Uninhabited (ID: 105533)
+🔍 Debug turbo status for challenge 105533:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Culinary Time (ID: 105509)
+🔍 Debug turbo status for challenge 105509:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Most Memorable (ID: 105544)
+🔍 Debug turbo status for challenge 105544:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Smoke (ID: 105502)
+🔍 Debug turbo status for challenge 105502:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'TIMER', 'time_to_open': 1753824600}
+  - turbo state found: TIMER
+🔍 Processing turbo status for Balloons of All Kinds (ID: 105519)
+🔍 Processing turbo status for The Bluest Skies (ID: 105504)
+🔍 Processing turbo status for Freeze Action Shots (ID: 105522)
+🔍 Debug turbo status for challenge 105522:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Coastline (ID: 105512)
+🔍 Debug turbo status for challenge 105512:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Ultimate Exposure (ID: 105755)
+🔍 Processing turbo status for Captivating Architecture (ID: 105805)
+🔍 Debug turbo status for challenge 105805:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105805
+🔍 Processing turbo status for Guru of The Week (ID: 105485)
+🔍 Debug turbo status for challenge 105485:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Photo of the Week! (ID: 105754)
+🔍 Debug turbo status for challenge 105754:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Banisters Or Railings (ID: 105516)
+🔍 Debug turbo status for challenge 105516:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Capturing Numbers (ID: 105526)
+🔍 Debug turbo status for challenge 105526:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Excellent Timing (ID: 104749)
+🔍 Debug turbo status for challenge 104749:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Humorous Shots (ID: 105507)
+🔍 Processing turbo status for Photographer of the Week (ID: 105484)
+🔍 Debug turbo status for challenge 105484:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'LOCKED', 'time_to_open': None}
+  - turbo state found: LOCKED
+🔍 Processing turbo status for Powerful Lighting (ID: 105681)
+🔍 Debug turbo status for challenge 105681:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105681
+🔍 Processing turbo status for Your Perfect Shot (ID: 105173)
+🔍 Debug turbo status for challenge 105173:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105173
+🔍 Processing turbo status for Photogenic (ID: 105416)
+🔍 Debug turbo status for challenge 105416:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105416
+🔍 Processing turbo status for Our Amazing Planet (ID: 105176)
+🔍 Debug turbo status for challenge 105176:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105176
+🔍 Processing turbo status for Very Best of Black & White (ID: 104616)
+🔍 Debug turbo status for challenge 104616:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 104616
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:63789 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+🔍 Request for real challenges with token: test...
+🔍 Fetching real challenges avec token: test...
+📡 GuruShots API status: 200
+📊 API data keys: ['success', 'error_code']
+✅ Successfully processed 0 real challenges
+⚠️ No real challenges, using config token...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+🌊 DEBUG COASTLINE - Full data structure:
+  - ID: 105512
+  - Title: Coastline
+  - Member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - Turbo data found: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - Full member data: {'time_joined': 1753778356, 'boost': {'state': 'MISSED', 'timeout': None}, 'turbo': {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}, 'ranking': {'total': {'votes': 522, 'rank': 1209, 'level': 2, 'level_name': 'SKILLED', 'level_rank': 203, 'next': 228, 'percent': 69.692923898531, 'benchmark': [{'benchmark': '1', 'score': '2685'}, {'benchmark': '10', 'score': '2480'}, {'benchmark': '100', 'score': '2015'}], 'prizes': [], 'exposure': 0, 'points': 60, 'guru_picks': 0, 'next_message': '228 votes to next level'}, 'entries': [{'id': '0c6dd02b2e48ec3b1d4a1663fb7a84c8', 'votes': 190, 'rank': 853, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3093518882, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '444124ccd69447b1c061db98842fa019', 'votes': 136, 'rank': 907, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3365245082, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': 'e96b589d3319e397bcc9fd89968bf3bd', 'votes': 104, 'rank': 939, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000539032553, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '83a85db59ad25b9e9171781de48d123b', 'votes': 92, 'rank': 951, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000994852893, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}], 'member': {'id': '0ccd720cab0da1c771a7a2086453d7dc', 'avatar': 'https://photos.gurushots.com/unsafe/500x500/0ccd720cab0da1c771a7a2086453d7dc/3_3cd55cc1d92bfe86addaa58479df5eed.jpg', 'country': 'Greenland', 'country_code': 'GL', 'member_status': 11, 'member_status_name': 'GURU II', 'member_group_id': 1003, 'name': 'bruno Tapdur', 'user_name': 'ow.lala', 'moderator': False, 'moderator_badge': False, 'member_league_id': 11}, 'index': 2460, 'exposure': {'exposure_factor': 0, 'vote_exposure_factor': 0, 'vote_ratio': 1.43}, 'swaps': []}, 'friends': []}
+🌊 END COASTLINE DEBUG
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+🔍 Processing turbo status for Wood & Metal Combinations (ID: 105508)
+🔍 Debug turbo status for challenge 105508:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Uninhabited (ID: 105533)
+🔍 Debug turbo status for challenge 105533:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Culinary Time (ID: 105509)
+🔍 Debug turbo status for challenge 105509:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Most Memorable (ID: 105544)
+🔍 Debug turbo status for challenge 105544:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Smoke (ID: 105502)
+🔍 Debug turbo status for challenge 105502:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'TIMER', 'time_to_open': 1753824600}
+  - turbo state found: TIMER
+🔍 Processing turbo status for Balloons of All Kinds (ID: 105519)
+🔍 Processing turbo status for The Bluest Skies (ID: 105504)
+🔍 Processing turbo status for Freeze Action Shots (ID: 105522)
+🔍 Debug turbo status for challenge 105522:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Coastline (ID: 105512)
+🔍 Debug turbo status for challenge 105512:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Ultimate Exposure (ID: 105755)
+🔍 Processing turbo status for Captivating Architecture (ID: 105805)
+🔍 Debug turbo status for challenge 105805:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105805
+🔍 Processing turbo status for Guru of The Week (ID: 105485)
+🔍 Debug turbo status for challenge 105485:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Photo of the Week! (ID: 105754)
+🔍 Debug turbo status for challenge 105754:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Banisters Or Railings (ID: 105516)
+🔍 Debug turbo status for challenge 105516:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Capturing Numbers (ID: 105526)
+🔍 Debug turbo status for challenge 105526:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Excellent Timing (ID: 104749)
+🔍 Debug turbo status for challenge 104749:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Humorous Shots (ID: 105507)
+🔍 Processing turbo status for Photographer of the Week (ID: 105484)
+🔍 Debug turbo status for challenge 105484:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'LOCKED', 'time_to_open': None}
+  - turbo state found: LOCKED
+🔍 Processing turbo status for Powerful Lighting (ID: 105681)
+🔍 Debug turbo status for challenge 105681:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105681
+🔍 Processing turbo status for Your Perfect Shot (ID: 105173)
+🔍 Debug turbo status for challenge 105173:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105173
+🔍 Processing turbo status for Photogenic (ID: 105416)
+🔍 Debug turbo status for challenge 105416:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105416
+🔍 Processing turbo status for Our Amazing Planet (ID: 105176)
+🔍 Debug turbo status for challenge 105176:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105176
+🔍 Processing turbo status for Very Best of Black & White (ID: 104616)
+🔍 Debug turbo status for challenge 104616:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 104616
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:63863 - "GET /api/v1/challenges/?user_token=test HTTP/1.1" 200 OK
+💾 Turbo state saved: 105519 → running
+💾 Turbo state saved: 105519 → completed
+🚀 Turbo completed successfully for challenge 105519
+INFO:     127.0.0.1:63867 - "POST /api/v1/profiles/bruno/turbo/execute HTTP/1.1" 200 OK
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+🌊 DEBUG COASTLINE - Full data structure:
+  - ID: 105512
+  - Title: Coastline
+  - Member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - Turbo data found: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - Full member data: {'time_joined': 1753778356, 'boost': {'state': 'MISSED', 'timeout': None}, 'turbo': {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}, 'ranking': {'total': {'votes': 522, 'rank': 1206, 'level': 2, 'level_name': 'SKILLED', 'level_rank': 205, 'next': 228, 'percent': 69.692923898531, 'benchmark': [{'benchmark': '1', 'score': '2693'}, {'benchmark': '10', 'score': '2480'}, {'benchmark': '100', 'score': '2022'}], 'prizes': [], 'exposure': 0, 'points': 60, 'guru_picks': 0, 'next_message': '228 votes to next level'}, 'entries': [{'id': '0c6dd02b2e48ec3b1d4a1663fb7a84c8', 'votes': 190, 'rank': 860, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3093518882, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '444124ccd69447b1c061db98842fa019', 'votes': 136, 'rank': 914, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3365245082, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': 'e96b589d3319e397bcc9fd89968bf3bd', 'votes': 104, 'rank': 946, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000539032553, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '83a85db59ad25b9e9171781de48d123b', 'votes': 92, 'rank': 958, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000994852893, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}], 'member': {'id': '0ccd720cab0da1c771a7a2086453d7dc', 'avatar': 'https://photos.gurushots.com/unsafe/500x500/0ccd720cab0da1c771a7a2086453d7dc/3_3cd55cc1d92bfe86addaa58479df5eed.jpg', 'country': 'Greenland', 'country_code': 'GL', 'member_status': 11, 'member_status_name': 'GURU II', 'member_group_id': 1003, 'name': 'bruno Tapdur', 'user_name': 'ow.lala', 'moderator': False, 'moderator_badge': False, 'member_league_id': 11}, 'index': 2462, 'exposure': {'exposure_factor': 0, 'vote_exposure_factor': 0, 'vote_ratio': 1.43}, 'swaps': []}, 'friends': []}
+🌊 END COASTLINE DEBUG
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+🔍 Processing turbo status for Wood & Metal Combinations (ID: 105508)
+🔍 Debug turbo status for challenge 105508:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Uninhabited (ID: 105533)
+🔍 Debug turbo status for challenge 105533:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Culinary Time (ID: 105509)
+🔍 Debug turbo status for challenge 105509:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Most Memorable (ID: 105544)
+🔍 Debug turbo status for challenge 105544:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Smoke (ID: 105502)
+🔍 Debug turbo status for challenge 105502:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'TIMER', 'time_to_open': 1753824600}
+  - turbo state found: TIMER
+🔍 Processing turbo status for Balloons of All Kinds (ID: 105519)
+🔍 Processing turbo status for The Bluest Skies (ID: 105504)
+🔍 Processing turbo status for Freeze Action Shots (ID: 105522)
+🔍 Debug turbo status for challenge 105522:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Coastline (ID: 105512)
+🔍 Debug turbo status for challenge 105512:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Ultimate Exposure (ID: 105755)
+🔍 Processing turbo status for Captivating Architecture (ID: 105805)
+🔍 Debug turbo status for challenge 105805:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105805
+🔍 Processing turbo status for Guru of The Week (ID: 105485)
+🔍 Debug turbo status for challenge 105485:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Photo of the Week! (ID: 105754)
+🔍 Debug turbo status for challenge 105754:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Banisters Or Railings (ID: 105516)
+🔍 Debug turbo status for challenge 105516:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Capturing Numbers (ID: 105526)
+🔍 Debug turbo status for challenge 105526:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Excellent Timing (ID: 104749)
+🔍 Debug turbo status for challenge 104749:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Humorous Shots (ID: 105507)
+🔍 Processing turbo status for Photographer of the Week (ID: 105484)
+🔍 Debug turbo status for challenge 105484:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'LOCKED', 'time_to_open': None}
+  - turbo state found: LOCKED
+🔍 Processing turbo status for Powerful Lighting (ID: 105681)
+🔍 Debug turbo status for challenge 105681:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105681
+🔍 Processing turbo status for Your Perfect Shot (ID: 105173)
+🔍 Debug turbo status for challenge 105173:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105173
+🔍 Processing turbo status for Photogenic (ID: 105416)
+🔍 Debug turbo status for challenge 105416:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105416
+🔍 Processing turbo status for Our Amazing Planet (ID: 105176)
+🔍 Debug turbo status for challenge 105176:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105176
+🔍 Processing turbo status for Very Best of Black & White (ID: 104616)
+🔍 Debug turbo status for challenge 104616:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 104616
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:64001 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64010 - "POST /api/v1/profiles/register HTTP/1.1" 200 OK
+INFO:     ('127.0.0.1', 64012) - "WebSocket /ws/logs" [accepted]
+INFO:     connection open
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+🌊 DEBUG COASTLINE - Full data structure:
+  - ID: 105512
+  - Title: Coastline
+  - Member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - Turbo data found: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - Full member data: {'time_joined': 1753778356, 'boost': {'state': 'MISSED', 'timeout': None}, 'turbo': {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}, 'ranking': {'total': {'votes': 522, 'rank': 1205, 'level': 2, 'level_name': 'SKILLED', 'level_rank': 203, 'next': 228, 'percent': 69.692923898531, 'benchmark': [{'benchmark': '1', 'score': '2693'}, {'benchmark': '10', 'score': '2480'}, {'benchmark': '100', 'score': '2026'}], 'prizes': [], 'exposure': 0, 'points': 60, 'guru_picks': 0, 'next_message': '228 votes to next level'}, 'entries': [{'id': '0c6dd02b2e48ec3b1d4a1663fb7a84c8', 'votes': 190, 'rank': 858, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3093518882, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '444124ccd69447b1c061db98842fa019', 'votes': 136, 'rank': 912, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 3365245082, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': 'e96b589d3319e397bcc9fd89968bf3bd', 'votes': 104, 'rank': 944, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000539032553, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}, {'id': '83a85db59ad25b9e9171781de48d123b', 'votes': 92, 'rank': 956, 'member_id': '0ccd720cab0da1c771a7a2086453d7dc', 'adult': False, 'event_id': 4000994852893, 'guru_pick': False, 'boost': -1, 'turbo': False, 'boosting': False, 'boosted': False}], 'member': {'id': '0ccd720cab0da1c771a7a2086453d7dc', 'avatar': 'https://photos.gurushots.com/unsafe/500x500/0ccd720cab0da1c771a7a2086453d7dc/3_3cd55cc1d92bfe86addaa58479df5eed.jpg', 'country': 'Greenland', 'country_code': 'GL', 'member_status': 11, 'member_status_name': 'GURU II', 'member_group_id': 1003, 'name': 'bruno Tapdur', 'user_name': 'ow.lala', 'moderator': False, 'moderator_badge': False, 'member_league_id': 11}, 'index': 2463, 'exposure': {'exposure_factor': 0, 'vote_exposure_factor': 0, 'vote_ratio': 1.43}, 'swaps': []}, 'friends': []}
+🌊 END COASTLINE DEBUG
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+🔍 Processing turbo status for Wood & Metal Combinations (ID: 105508)
+🔍 Debug turbo status for challenge 105508:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Uninhabited (ID: 105533)
+🔍 Debug turbo status for challenge 105533:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Culinary Time (ID: 105509)
+🔍 Debug turbo status for challenge 105509:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Most Memorable (ID: 105544)
+🔍 Debug turbo status for challenge 105544:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Smoke (ID: 105502)
+🔍 Debug turbo status for challenge 105502:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'TIMER', 'time_to_open': 1753824600}
+  - turbo state found: TIMER
+🔍 Processing turbo status for Balloons of All Kinds (ID: 105519)
+🔍 Processing turbo status for The Bluest Skies (ID: 105504)
+🔍 Processing turbo status for Freeze Action Shots (ID: 105522)
+🔍 Debug turbo status for challenge 105522:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Coastline (ID: 105512)
+🔍 Debug turbo status for challenge 105512:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Ultimate Exposure (ID: 105755)
+🔍 Processing turbo status for Captivating Architecture (ID: 105805)
+🔍 Debug turbo status for challenge 105805:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105805
+🔍 Processing turbo status for Guru of The Week (ID: 105485)
+🔍 Debug turbo status for challenge 105485:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Photo of the Week! (ID: 105754)
+🔍 Debug turbo status for challenge 105754:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Banisters Or Railings (ID: 105516)
+🔍 Debug turbo status for challenge 105516:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Capturing Numbers (ID: 105526)
+🔍 Debug turbo status for challenge 105526:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Excellent Timing (ID: 104749)
+🔍 Debug turbo status for challenge 104749:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'WON', 'time_to_open': None}
+  - turbo state found: WON
+🔍 Processing turbo status for Humorous Shots (ID: 105507)
+🔍 Processing turbo status for Photographer of the Week (ID: 105484)
+🔍 Debug turbo status for challenge 105484:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: {'max_selections': 10, 'turbo_unlock_type': 'COINS', 'turbo_unlock_amount': 250, 'required_selections': 6, 'state': 'LOCKED', 'time_to_open': None}
+  - turbo state found: LOCKED
+🔍 Processing turbo status for Powerful Lighting (ID: 105681)
+🔍 Debug turbo status for challenge 105681:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105681
+🔍 Processing turbo status for Your Perfect Shot (ID: 105173)
+🔍 Debug turbo status for challenge 105173:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105173
+🔍 Processing turbo status for Photogenic (ID: 105416)
+🔍 Debug turbo status for challenge 105416:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105416
+🔍 Processing turbo status for Our Amazing Planet (ID: 105176)
+🔍 Debug turbo status for challenge 105176:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 105176
+🔍 Processing turbo status for Very Best of Black & White (ID: 104616)
+🔍 Debug turbo status for challenge 104616:
+  - member keys: ['time_joined', 'boost', 'turbo', 'ranking', 'friends', 'exhibition']
+  - turbo data: None
+  - turbo data format: <class 'NoneType'>
+  - fallback to 'unknown' for challenge 104616
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:64014 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     connection closed
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90141]
