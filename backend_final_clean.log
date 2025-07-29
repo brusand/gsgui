@@ -30,3 +30,25 @@ INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 📋 Loaded 6 turbo states from .ini
 📋 Returning 23 challenges with strategies
 INFO:     127.0.0.1:64396 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:64477 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64601 - "POST /api/v1/profiles/register HTTP/1.1" 200 OK
+INFO:     ('127.0.0.1', 64603) - "WebSocket /ws/logs" [accepted]
+INFO:     connection open
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:64605 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+INFO:     connection closed

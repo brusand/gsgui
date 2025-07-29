@@ -236,6 +236,17 @@ class EnhancedGSGUI(QMainWindow):
         self.connect_websocket()
         
         print("✅ Enhanced GSGUI initialized")
+        
+        # Charger automatiquement les challenges au démarrage
+        QTimer.singleShot(500, self.auto_load_challenges)  # Attendre 500ms que l'UI soit prête
+    
+    def auto_load_challenges(self):
+        """Charge automatiquement les challenges au démarrage"""
+        if self.user_token:
+            self.log("🔄 Chargement automatique des challenges...")
+            self.refresh_challenges()
+        else:
+            self.log("⚠️ Aucun token configuré - Veuillez configurer votre profil")
     
     def load_strategies(self):
         """Charge les stratégies depuis strategies.ini"""
