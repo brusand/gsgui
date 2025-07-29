@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout, QWidget,
                                QTableWidget, QTableWidgetItem, QLabel, QCheckBox,
                                QComboBox, QPushButton, QTextEdit, QSplitter, 
-                               QApplication, QProgressBar, QHeaderView)
+                               QApplication, QProgressBar, QHeaderView, QInputDialog)
 from PySide6.QtCore import Qt, QTimer, Signal, QThread
 from PySide6.QtGui import QColor, QTextCursor
 from configobj import ConfigObj
@@ -757,12 +757,28 @@ class EnhancedGSGUI(QMainWindow):
         thread.start()
     
     def execute_fill(self):
-        """Exécute fill"""
+        """Exécute fill avec popup pour saisir le nombre de votes"""
         selected = self.get_selected()
         if not selected:
             self.log("⚠️ Aucun challenge sélectionné")
             return
         
+        # Popup pour saisir le nombre de votes (comme GSGUI original)
+        vote_count, ok = QInputDialog.getInt(
+            self, 
+            "⚡ Fill - Nombre de votes", 
+            f"Nombre de votes à exécuter pour {len(selected)} challenge(s) sélectionné(s):",
+            80,  # Valeur par défaut
+            1,   # Minimum
+            999, # Maximum
+            1    # Step
+        )
+        
+        if not ok:
+            self.log("❌ Fill annulé")
+            return
+        
+        self.log(f"🚀 Démarrage Fill: {vote_count} votes sur {len(selected)} challenges")
         self.fill_btn.setEnabled(False)
         
         def fill_worker():
@@ -770,18 +786,18 @@ class EnhancedGSGUI(QMainWindow):
                 success_count = 0
                 for challenge in selected:
                     try:
-                        if self.api_client.execute_simple_vote(challenge.url, 80, self.user_token):
+                        if self.api_client.execute_simple_vote(challenge.url, vote_count, self.user_token):
                             success_count += 1
-                            self.log(f"⚡ Fill: {challenge.title[:30]}...")
+                            self.log(f"⚡ Fill ({vote_count}): {challenge.title[:30]}...")
                         else:
                             self.log(f"❌ Fill échoué: {challenge.title[:20]}")
                     except Exception as e:
                         self.log(f"❌ {challenge.title[:20]}: {e}")
                 
-                self.log(f"✅ Fill sur {success_count}/{len(selected)}")
+                self.log(f"✅ Fill terminé: {success_count}/{len(selected)} challenges - {vote_count} votes chacun")
                 
             except Exception as e:
-                self.log(f"❌ Fill: {e}")
+                self.log(f"❌ Erreur Fill: {e}")
             finally:
                 self.fill_btn.setEnabled(True)
         
