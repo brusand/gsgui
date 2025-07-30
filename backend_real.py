@@ -17,6 +17,16 @@ import threading
 import os
 import json
 from typing import Set
+import sys
+
+# Ajouter le chemin backend pour importer le service GuruShots
+sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
+try:
+    from app.services.gurushots_api import GuruShotsAPI
+    REAL_VOTE_AVAILABLE = True
+except ImportError:
+    print("⚠️ Real GuruShots API service not available, using simulation")
+    REAL_VOTE_AVAILABLE = False
 
 app = FastAPI(title="GSGUI Real API", version="1.0.0")
 
@@ -66,6 +76,9 @@ class SimpleVoteRequest(BaseModel):
 profiles = {}
 strategies = {}
 turbo_executions = {}
+
+# Instance du service GuruShots pour les vrais votes
+gurushots_api = None
 
 # Configuration files with thread locks
 config_lock = threading.Lock()
@@ -592,20 +605,49 @@ async def execute_turbo(profile_id: str, request: TurboExecutionRequest):
 
 @app.post("/api/v1/challenges/simple-vote")
 async def simple_vote(request: SimpleVoteRequest, user_token: str):
-    """Vote simple"""
+    """Vote simple avec vrai API GuruShots"""
     try:
-        # Simuler le vote
-        await asyncio.sleep(0.1)
-        
-        return {
-            "success": True,
-            "message": f"Successfully cast {request.vote_count} votes",
-            "result_data": {
-                "votes_cast": request.vote_count,
-                "challenge_url": request.challenge_url
+        if REAL_VOTE_AVAILABLE and gurushots_api:
+            # Utiliser le vrai service GuruShots
+            log_and_broadcast(f"🗳️ Exécution vote réel: {request.vote_count} votes sur {request.challenge_url}", "info")
+            
+            result = await gurushots_api.execute_simple_vote(request.challenge_url, request.vote_count)
+            
+            if result.success:
+                log_and_broadcast(f"✅ Vote réussi: {result.message}", "success")
+                return {
+                    "success": True,
+                    "message": result.message,
+                    "result_data": {
+                        "votes_cast": request.vote_count,
+                        "challenge_url": request.challenge_url,
+                        "exposure_gained": getattr(result, 'exposure_gained', 0)
+                    }
+                }
+            else:
+                log_and_broadcast(f"❌ Vote échoué: {result.message}", "error")
+                return {
+                    "success": False,
+                    "message": result.message,
+                    "result_data": {}
+                }
+        else:
+            # Fallback: simulation si service pas disponible
+            log_and_broadcast(f"⚠️ Vote simulé (service réel indisponible): {request.vote_count} votes", "warning")
+            await asyncio.sleep(0.1)
+            
+            return {
+                "success": True,
+                "message": f"Successfully cast {request.vote_count} votes (simulated)",
+                "result_data": {
+                    "votes_cast": request.vote_count,
+                    "challenge_url": request.challenge_url
+                }
             }
-        }
+            
     except Exception as e:
+        error_msg = f"❌ Error during vote execution: {e}"
+        log_and_broadcast(error_msg, "error")
         return {
             "success": False,
             "message": str(e),
@@ -752,12 +794,27 @@ async def schedule_existing_strategies():
 @app.on_event("startup")
 async def startup_event():
     """Événements de démarrage du backend"""
+    global gurushots_api
+    
     print("🚀 Backend startup - Loading strategies and turbo states...")
     await schedule_existing_strategies()
     
     # Charger les états turbo existants
     turbo_states = load_turbo_states()
     print(f"📋 Loaded {len(turbo_states)} existing turbo states")
+    
+    # Initialiser le service GuruShots avec le token depuis la config
+    if REAL_VOTE_AVAILABLE:
+        try:
+            user_token = get_user_token_from_config()
+            if user_token:
+                gurushots_api = GuruShotsAPI(user_token)
+                print("✅ GuruShots API service initialized with real voting capability")
+            else:
+                print("⚠️ No user token found in config - using simulated voting")
+        except Exception as e:
+            print(f"❌ Failed to initialize GuruShots API service: {e}")
+            print("⚠️ Falling back to simulated voting")
 
 if __name__ == "__main__":
     print("🚀 Démarrage du backend GSGUI avec vrais challenges...")

@@ -150,3 +150,50 @@ INFO:     127.0.0.1:65180 - "POST /api/v1/challenges/simple-vote?user_token=a1ca
 📋 Loaded 6 turbo states from .ini
 📋 Returning 23 challenges with strategies
 INFO:     127.0.0.1:65182 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+INFO:     connection closed
+🔌 WebSocket disconnected. Active connections: 0
+INFO:     127.0.0.1:65275 - "POST /api/v1/profiles/register HTTP/1.1" 200 OK
+INFO:     ('127.0.0.1', 65277) - "WebSocket /ws/logs" [accepted]
+INFO:     connection open
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:65279 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65283 - "POST /api/v1/challenges/simple-vote?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:65285 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:65289 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+🔍 Request for real challenges with token: a1cad95a6d480c14f51d...
+🔍 Fetching real challenges avec token: a1cad95a6d480c14f51d...
+📡 GuruShots API status: 200
+📊 API data keys: ['challenges', 'exhibition', 'suggested_challenges', 'next_interval', 'success']
+✅ Successfully processed 23 real challenges
+📋 Loaded 4 challenge strategies from .ini
+📋 Loaded 6 turbo states from .ini
+📋 Returning 23 challenges with strategies
+INFO:     127.0.0.1:65292 - "GET /api/v1/challenges/?user_token=a1cad95a6d480c14f51dd0eba4914c8337b893c789ec6278bb440c7c9a673b162f042470c62684e6da2bd342ffea7777 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     connection closed
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92682]
