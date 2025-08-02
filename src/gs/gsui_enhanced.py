@@ -13,10 +13,334 @@ from datetime import datetime, timedelta
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QHBoxLayout, QWidget,
                                QTableWidget, QTableWidgetItem, QLabel, QCheckBox,
                                QComboBox, QPushButton, QTextEdit, QSplitter, 
-                               QApplication, QProgressBar, QHeaderView, QInputDialog)
-from PySide6.QtCore import Qt, QTimer, Signal, QThread
-from PySide6.QtGui import QColor, QTextCursor
-from configobj import ConfigObj
+                               QApplication, QProgressBar, QHeaderView, QInputDialog,
+                               QDialog, QDialogButtonBox, QGridLayout, QGroupBox,
+                               QMessageBox, QLineEdit)
+from PySide6.QtCore import Qt, QTimer, Signal, QThread, QMetaObject, Q_ARG
+from PySide6.QtGui import QColor, QTextCursor, QFont
+
+try:
+    import browser_cookie3
+    COOKIE_SUPPORT = True
+except ImportError:
+    COOKIE_SUPPORT = False
+    print("⚠️ browser_cookie3 not available - manual token required")
+
+
+def get_gurushots_token_from_cookies():
+    """Récupère le token GuruShots depuis les cookies du navigateur"""
+    if not COOKIE_SUPPORT:
+        return None
+    
+    try:
+        # Essayer Chrome en premier
+        try:
+            cookies = browser_cookie3.chrome(domain_name='gurushots.com')
+            for cookie in cookies:
+                if cookie.name == 'gs_t':
+                    print(f"✅ Token trouvé dans Chrome: {cookie.value[:20]}...")
+                    return cookie.value
+        except Exception as e:
+            print(f"⚠️ Chrome cookies non accessibles: {e}")
+        
+        # Essayer Firefox
+        try:
+            cookies = browser_cookie3.firefox(domain_name='gurushots.com')
+            for cookie in cookies:
+                if cookie.name == 'gs_t':
+                    print(f"✅ Token trouvé dans Firefox: {cookie.value[:20]}...")
+                    return cookie.value
+        except Exception as e:
+            print(f"⚠️ Firefox cookies non accessibles: {e}")
+        
+        # Essayer Safari (macOS)
+        try:
+            cookies = browser_cookie3.safari(domain_name='gurushots.com')
+            for cookie in cookies:
+                if cookie.name == 'gs_t':
+                    print(f"✅ Token trouvé dans Safari: {cookie.value[:20]}...")
+                    return cookie.value
+        except Exception as e:
+            print(f"⚠️ Safari cookies non accessibles: {e}")
+            
+        print("❌ Token gs_t non trouvé dans les navigateurs")
+        return None
+        
+    except Exception as e:
+        print(f"❌ Erreur récupération cookies: {e}")
+        return None
+
+
+class ProfileSelectionDialog(QDialog):
+    """Dialog pour sélectionner le profil utilisateur au démarrage"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("🔑 Sélection du Profil GSGUI")
+        self.setFixedSize(400, 300)
+        self.selected_profile = None
+        
+        self.setup_ui()
+        self.load_profiles_from_ini()
+    
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+        
+        # Titre
+        title_label = QLabel("Sélectionnez votre profil GSGUI")
+        title_label.setStyleSheet("font-size: 16px; font-weight: bold; margin: 10px;")
+        
+        # Liste des profils disponibles
+        self.profile_combo = QComboBox()
+        self.profile_combo.setStyleSheet("font-size: 14px; padding: 5px;")
+        
+        # Bouton pour nouveau profil
+        new_profile_btn = QPushButton("➕ Nouveau Profil")
+        new_profile_btn.clicked.connect(self.create_new_profile)
+        
+        # Boutons OK/Cancel
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        
+        layout.addWidget(title_label)
+        layout.addWidget(QLabel("Profils disponibles:"))
+        layout.addWidget(self.profile_combo)
+        layout.addWidget(new_profile_btn)
+        layout.addStretch()
+        layout.addWidget(buttons)
+    
+    def load_profiles_from_ini(self):
+        """Charge les profils depuis le backend et crée automatiquement si aucun"""
+        try:
+            # Appeler le backend pour récupérer la liste des profils disponibles
+            try:
+                response = requests.get("http://localhost:8001/api/v1/profiles", timeout=5)
+                if response.status_code == 200:
+                    profiles_data = response.json()
+                    profiles = profiles_data.get('profiles', [])
+                    
+                    for profile in profiles:
+                        profile_name = profile.get('name', '')
+                        has_token = profile.get('has_token', False)
+                        display_name = f"{profile_name} {'✅' if has_token else '❌'}"
+                        self.profile_combo.addItem(display_name, profile_name)
+                    
+                    if len(profiles) > 0:
+                        return  # Profils chargés avec succès
+                else:
+                    print(f"⚠️ Erreur backend profils: {response.status_code}")
+            except Exception as e:
+                print(f"⚠️ Backend non disponible: {e}")
+            
+            # Fallback: profils par défaut si backend non disponible
+            known_profiles = ["bruno"]  # Profils connus
+            for profile in known_profiles:
+                self.profile_combo.addItem(profile)
+            
+            if self.profile_combo.count() == 0:
+                # Aucun profil trouvé, essayer la création automatique
+                gs_token = get_gurushots_token_from_cookies()
+                if gs_token:
+                    # Proposer la création automatique
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Création Automatique de Profil")
+                    msg.setText("Aucun profil trouvé, mais token GuruShots détecté!")
+                    msg.setInformativeText(f"Token: {gs_token[:20]}...\n\nVoulez-vous créer automatiquement un profil 'auto' ?")
+                    msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                    
+                    if msg.exec() == QMessageBox.Yes:
+                        try:
+                            self.save_profile_to_ini("auto", gs_token)
+                            self.profile_combo.addItem("auto")
+                            print("✅ Profil 'auto' créé automatiquement")
+                        except Exception as e:
+                            print(f"❌ Erreur création profil auto: {e}")
+                            self.profile_combo.addItem("Aucun profil trouvé")
+                    else:
+                        self.profile_combo.addItem("Aucun profil trouvé")
+                else:
+                    self.profile_combo.addItem("Aucun profil trouvé")
+                    
+        except Exception as e:
+            print(f"❌ Erreur chargement profils: {e}")
+            self.profile_combo.addItem("Erreur chargement profils")
+    
+    def create_new_profile(self):
+        """Crée un nouveau profil avec récupération automatique de gs_token"""
+        profile_name, ok = QInputDialog.getText(self, "Nouveau Profil", "Nom du profil:")
+        if ok and profile_name:
+            try:
+                # Essayer d'abord la récupération automatique depuis les cookies
+                gs_token = get_gurushots_token_from_cookies()
+                
+                if gs_token:
+                    # Token trouvé automatiquement
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Token Trouvé")
+                    msg.setText(f"Token GuruShots trouvé automatiquement dans votre navigateur!")
+                    msg.setInformativeText(f"Token: {gs_token[:20]}...\n\nVoulez-vous l'utiliser pour le profil '{profile_name}' ?")
+                    msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                    
+                    if msg.exec() == QMessageBox.Yes:
+                        # Utiliser le token trouvé
+                        self.save_profile_to_ini(profile_name, gs_token)
+                        self.profile_combo.addItem(profile_name)
+                        self.profile_combo.setCurrentText(profile_name)
+                        QMessageBox.information(self, "Succès", f"Profil '{profile_name}' créé avec succès!")
+                        return
+                
+                # Fallback: récupération manuelle si automatique échoue
+                msg = QMessageBox()
+                msg.setWindowTitle("Configuration Manuelle")
+                if gs_token:
+                    msg.setText("Récupération manuelle du token")
+                    msg.setInformativeText("Token automatique refusé ou récupération manuelle demandée.")
+                else:
+                    msg.setText(f"Impossible de récupérer automatiquement le token pour '{profile_name}'")
+                    msg.setInformativeText("Veuillez le récupérer manuellement:\n\n"
+                                         "1. Connectez-vous sur gurushots.com\n"
+                                         "2. F12 → Application → Cookies → gurushots.com\n"
+                                         "3. Copiez la valeur du cookie 'gs_t'")
+                
+                msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                
+                if msg.exec() == QMessageBox.Ok:
+                    gs_token_manual, token_ok = QInputDialog.getText(self, "Token Manuel", 
+                                                                   "Collez votre gs_t token ici:")
+                    if token_ok and gs_token_manual:
+                        self.save_profile_to_ini(profile_name, gs_token_manual)
+                        self.profile_combo.addItem(profile_name)
+                        self.profile_combo.setCurrentText(profile_name)
+                        QMessageBox.information(self, "Succès", f"Profil '{profile_name}' créé avec succès!")
+                    else:
+                        QMessageBox.warning(self, "Annulé", "Création de profil annulée - token manquant")
+                        
+            except Exception as e:
+                QMessageBox.critical(self, "Erreur", f"Erreur lors de la création du profil: {e}")
+    
+    def save_profile_to_ini(self, profile_name, gs_token):
+        """Enregistre le profil via le backend"""
+        try:
+            # Enregistrer le profil directement via l'API backend
+            import requests
+            data = {
+                "profile_name": profile_name,
+                "gs_token": gs_token
+            }
+            response = requests.post("http://localhost:8001/api/v1/profiles/register", 
+                                   json=data, timeout=10)
+            
+            if response.status_code == 200:
+                print(f"✅ Profil '{profile_name}' enregistré via backend")
+            else:
+                raise Exception(f"Backend registration failed: {response.status_code}")
+            
+        except Exception as e:
+            print(f"❌ Erreur enregistrement profil: {e}")
+            raise
+    
+    def get_selected_profile(self):
+        """Retourne le profil sélectionné"""
+        if self.profile_combo.currentText() and self.profile_combo.currentText() != "Aucun profil trouvé":
+            # Si on a des données utilisateur (userData), utiliser ça, sinon parser le texte
+            current_data = self.profile_combo.currentData()
+            if current_data:
+                return current_data  # Retourne le nom du profil sans emoji
+            else:
+                # Fallback: parser le texte pour enlever les emojis
+                text = self.profile_combo.currentText()
+                return text.replace(" ✅", "").replace(" ❌", "").strip()
+        return None
+
+
+class TurboAlgorithmDialog(QDialog):
+    """Dialog pour sélection des algorithmes turbo comme GSGUI original"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("🚀 Sélection Algorithme Turbo")
+        self.setFixedSize(500, 400)
+        
+        # Algorithmes disponibles avec leurs statistiques
+        self.algorithms = {
+            'hybrid': {'name': 'Hybrid (67.2%)', 'desc': 'Logique équilibrée', 'checked': True},
+            'position_aware': {'name': 'Position Aware (58.5%/67%*)', 'desc': 'Patterns par position', 'checked': True},
+            'adaptive_time': {'name': 'Adaptive Time (59.0%/67%*)', 'desc': 'Stratégie temporelle', 'checked': True},
+            'ratio_low': {'name': 'Ratio Low (66.5%)', 'desc': 'Privilégie ratios stables', 'checked': False},
+            'votes_high': {'name': 'Votes High (68.6%)', 'desc': 'Priorité votes élevés', 'checked': False},
+            'bruno_custom': {'name': 'Bruno Custom (63.9%)', 'desc': 'Champion historique', 'checked': False},
+            'votes_ratio': {'name': 'Votes Ratio (64.6%)', 'desc': 'Balance votes/ratio', 'checked': False},
+            'random': {'name': 'Random (57.0%)', 'desc': 'Baseline aléatoire', 'checked': False}
+        }
+        
+        self.checkboxes = {}
+        self.setup_ui()
+    
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+        
+        # Titre et description
+        title_label = QLabel("Sélection des algorithmes Turbo")
+        title_label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        layout.addWidget(title_label)
+        
+        desc_label = QLabel("Sélectionnez un ou plusieurs algorithmes pour le vote ensemble (majorité gagne)")
+        desc_label.setStyleSheet("color: #666; margin-bottom: 15px;")
+        layout.addWidget(desc_label)
+        
+        # Groupe algorithmes
+        group_box = QGroupBox("Algorithmes disponibles")
+        group_layout = QGridLayout(group_box)
+        
+        row = 0
+        for algo_key, algo_info in self.algorithms.items():
+            checkbox = QCheckBox(algo_info['name'])
+            checkbox.setChecked(algo_info['checked'])
+            checkbox.setToolTip(algo_info['desc'])
+            
+            desc_label = QLabel(algo_info['desc'])
+            desc_label.setStyleSheet("color: #888; font-size: 11px;")
+            
+            group_layout.addWidget(checkbox, row, 0)
+            group_layout.addWidget(desc_label, row, 1)
+            
+            self.checkboxes[algo_key] = checkbox
+            row += 1
+        
+        layout.addWidget(group_box)
+        
+        # Boutons reset et optimal
+        button_layout = QHBoxLayout()
+        
+        reset_btn = QPushButton("🔄 Reset Optimal")
+        reset_btn.setToolTip("Réinitialiser à l'ensemble optimal par défaut")
+        reset_btn.clicked.connect(self.reset_to_optimal)
+        button_layout.addWidget(reset_btn)
+        
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
+        
+        # Boutons OK/Cancel
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+        layout.addWidget(button_box)
+    
+    def reset_to_optimal(self):
+        """Réinitialise à l'ensemble optimal par défaut"""
+        optimal_algos = ['hybrid', 'position_aware', 'adaptive_time']
+        
+        for algo_key, checkbox in self.checkboxes.items():
+            checkbox.setChecked(algo_key in optimal_algos)
+    
+    def get_selected_algorithms(self):
+        """Retourne la liste des algorithmes sélectionnés"""
+        selected = []
+        for algo_key, checkbox in self.checkboxes.items():
+            if checkbox.isChecked():
+                selected.append(algo_key)
+        return selected
 
 
 class ApiThread(QThread):
@@ -38,15 +362,40 @@ class ApiThread(QThread):
 
 
 class EnhancedApiClient:
-    """Client API enhanced avec requests"""
+    """Client API enhanced avec système de profils"""
     
     def __init__(self):
         self.base_url = "http://localhost:8001/api/v1"
+        self.profile_name = None
         
-    def get_challenges(self, user_token):
-        """Récupère les vrais challenges"""
+    def set_profile(self, profile_name):
+        """Définit le profil actuel"""
+        self.profile_name = profile_name
+    
+    def register_profile(self, profile_name, gs_token=None):
+        """Enregistre un profil auprès du backend"""
         try:
-            params = {'user_token': user_token}
+            data = {
+                "profile_name": profile_name,
+                "gs_token": gs_token
+            }
+            response = requests.post(f"{self.base_url}/profiles/register", json=data, timeout=10)
+            
+            if response.status_code == 200:
+                result = response.json()
+                return result
+            return None
+        except Exception as e:
+            print(f"❌ Erreur register profile: {e}")
+            return None
+        
+    def get_challenges(self):
+        """Récupère les vrais challenges pour le profil actuel"""
+        try:
+            if not self.profile_name:
+                raise Exception("Aucun profil sélectionné")
+                
+            params = {'profile_name': self.profile_name}
             response = requests.get(f"{self.base_url}/challenges/", params=params, timeout=10)
             
             if response.status_code == 200:
@@ -59,17 +408,6 @@ class EnhancedApiClient:
             print(f"❌ Connection Error: {e}")
             return []
     
-    def register_profile(self, profile_name, gs_token):
-        """Enregistre un profil"""
-        try:
-            data = {
-                "profile_name": profile_name,
-                "gs_token": gs_token
-            }
-            response = requests.post(f"{self.base_url}/profiles/register", json=data, timeout=5)
-            return response.status_code == 200
-        except:
-            return False
     
     def schedule_strategy(self, challenge_id, strategy_name, scheduled_at, challenge_title=None):
         """Programme une stratégie"""
@@ -115,35 +453,43 @@ class EnhancedApiClient:
         except:
             return 0
     
-    def execute_turbo(self, challenge_id, challenge_title=None):
-        """Exécute un turbo"""
+    def execute_turbo(self, challenge_id, challenge_title=None, algorithm=None):
+        """Exécute un turbo avec algorithme sélectionné - utilise le profil"""
         try:
+            if not self.profile_name:
+                raise Exception("Aucun profil sélectionné")
+                
             data = {
                 "challenge_id": challenge_id,
                 "challenge_title": challenge_title,
-                "challenge_time_left": "1j"
+                "challenge_time_left": "1j",
+                "algorithm": algorithm or "hybrid"
             }
             
-            profile_id = "bruno"
-            response = requests.post(f"{self.base_url}/profiles/{profile_id}/turbo/execute", 
-                                   json=data, timeout=10)
+            params = {'profile_name': self.profile_name}
+            response = requests.post(f"{self.base_url}/challenges/turbo", 
+                                   json=data, params=params, timeout=60)  # Plus de temps pour turbo
             
             if response.status_code == 200:
                 result = response.json()
-                return result.get('turbo_id') is not None
+                return result.get('success', False)
             return False
-        except:
+        except Exception as e:
+            print(f"❌ Erreur turbo: {e}")
             return False
     
-    def execute_simple_vote(self, challenge_url, vote_count, user_token):
-        """Exécute un vote simple"""
+    def execute_simple_vote(self, challenge_url, vote_count):
+        """Exécute un vote simple avec le profil actuel"""
         try:
+            if not self.profile_name:
+                raise Exception("Aucun profil sélectionné")
+                
             data = {
                 "challenge_url": challenge_url,
                 "vote_count": vote_count
             }
             
-            params = {'user_token': user_token}
+            params = {'profile_name': self.profile_name}
             response = requests.post(f"{self.base_url}/challenges/simple-vote", 
                                    json=data, params=params, timeout=10)
             
@@ -151,7 +497,8 @@ class EnhancedApiClient:
                 result = response.json()
                 return result.get('success', False)
             return False
-        except:
+        except Exception as e:
+            print(f"❌ Erreur vote simple: {e}")
             return False
 
 
@@ -197,17 +544,16 @@ class EnhancedGSGUI(QMainWindow):
     """Interface GSGUI Enhanced - Comme l'original"""
     
     log_signal = Signal(str)
+    editor_signal = Signal(str)  # Signal pour ouvrir l'éditeur
     
     def __init__(self):
         super().__init__()
         
-        # Configuration
-        self.config = ConfigObj('gsgui.ini', encoding='utf-8')
+        # Plus besoin de ConfigObj - le backend gère les profils
         self.api_client = EnhancedApiClient()
         self.challenges = {}
         self.selected_challenges = set()
-        self.player = None
-        self.user_token = None
+        self.profile_name = None
         
         # Auto-refresh (par défaut désactivé)
         self.auto_refresh_enabled = False
@@ -216,10 +562,17 @@ class EnhancedGSGUI(QMainWindow):
         self.strategies = self.load_strategies()
         
         self.init_ui()
+        
+        # Sélection du profil au démarrage
+        if not self.select_profile_at_startup():
+            QApplication.quit()
+            return
+        
         self.load_config()
         
         # Connecter signaux
         self.log_signal.connect(self.append_log)
+        self.editor_signal.connect(self.show_strategy_editor)
         
         # Timer pour countdown (comme GSGUI original)
         self.countdown_timer = QTimer(self)
@@ -235,25 +588,54 @@ class EnhancedGSGUI(QMainWindow):
         self.websocket_client = None
         self.connect_websocket()
         
-        print("✅ Enhanced GSGUI initialized")
+        print(f"✅ Enhanced GSGUI initialized with profile: {self.profile_name}")
         
         # Charger automatiquement les challenges au démarrage
         QTimer.singleShot(500, self.auto_load_challenges)  # Attendre 500ms que l'UI soit prête
     
     def auto_load_challenges(self):
         """Charge automatiquement les challenges au démarrage"""
-        if self.user_token:
+        if self.profile_name:
             self.log("🔄 Chargement automatique des challenges...")
             self.refresh_challenges()
         else:
-            self.log("⚠️ Aucun token configuré - Veuillez configurer votre profil")
+            self.log("⚠️ Aucun profil sélectionné")
+    
+    def select_profile_at_startup(self):
+        """Sélectionne le profil au démarrage de l'application"""
+        try:
+            dialog = ProfileSelectionDialog(self)
+            if dialog.exec() == QDialog.Accepted:
+                selected_profile = dialog.get_selected_profile()
+                if selected_profile:
+                    self.profile_name = selected_profile
+                    self.api_client.set_profile(selected_profile)
+                    
+                    # Enregistrer le profil auprès du backend
+                    result = self.api_client.register_profile(selected_profile)
+                    if result:
+                        print(f"✅ Profil '{selected_profile}' enregistré avec succès")
+                        return True
+                    else:
+                        QMessageBox.warning(self, "Erreur Profil", 
+                                          f"Impossible d'enregistrer le profil '{selected_profile}'")
+                        return False
+                else:
+                    QMessageBox.warning(self, "Aucun Profil", "Aucun profil sélectionné. L'application va se fermer.")
+                    return False
+            else:
+                return False
+        except Exception as e:
+            print(f"❌ Erreur sélection profil: {e}")
+            QMessageBox.critical(self, "Erreur", f"Erreur lors de la sélection du profil: {e}")
+            return False
     
     def load_strategies(self):
-        """Charge les stratégies depuis strategies.ini"""
+        """Charge les stratégies par défaut (le backend gère les vrais fichiers de config)"""
         try:
-            strategies_config = ConfigObj('strategies.ini', encoding='utf-8')
-            strategy_names = list(strategies_config.keys())
-            print(f"📋 Stratégies chargées: {strategy_names}")
+            # Liste des stratégies standard - le backend gère les détails
+            strategy_names = ["fill", "4m", "3m", "2m", "Bruno", "alain", "caloune", "fill70", "fill20"]
+            print(f"📋 Stratégies par défaut: {strategy_names}")
             return strategy_names
         except Exception as e:
             print(f"❌ Erreur chargement stratégies: {e}")
@@ -309,59 +691,64 @@ class EnhancedGSGUI(QMainWindow):
         
         header_layout.addStretch()
         
-        # Boutons principaux
-        self.refresh_btn = QPushButton("🔄 Refresh")
-        self.refresh_btn.setStyleSheet("QPushButton { background-color: #27ae60; }")
-        self.refresh_btn.clicked.connect(self.refresh_challenges)
-        header_layout.addWidget(self.refresh_btn)
-        
-        # Bouton Auto-Refresh
-        self.auto_refresh_btn = QPushButton("🔄 Auto: OFF")
-        self.auto_refresh_btn.setStyleSheet("QPushButton { background-color: #7f8c8d; }")
-        self.auto_refresh_btn.clicked.connect(self.toggle_auto_refresh)
-        header_layout.addWidget(self.auto_refresh_btn)
-        
-        self.all_btn = QPushButton("✅ All")
-        self.all_btn.setStyleSheet("QPushButton { background-color: #f39c12; }")
-        self.all_btn.clicked.connect(self.select_all)
-        header_layout.addWidget(self.all_btn)
-        
-        self.none_btn = QPushButton("❌ None")
-        self.none_btn.setStyleSheet("QPushButton { background-color: #e67e22; }")
-        self.none_btn.clicked.connect(self.select_none)
-        header_layout.addWidget(self.none_btn)
+        # Bouton changement de profil
+        self.profile_btn = QPushButton("👤 Changer Profil")
+        self.profile_btn.setStyleSheet("QPushButton { background-color: #3498db; }")
+        self.profile_btn.clicked.connect(self.change_profile)
+        header_layout.addWidget(self.profile_btn)
         
         main_layout.addLayout(header_layout)
         
-        # Actions avec stratégies
+        # Actions principales: refresh, all, none, fill, turbo, stratégie, stratégies en cours
         actions_layout = QHBoxLayout()
         
-        actions_layout.addWidget(QLabel("Stratégie:"))
+        # 1. Refresh
+        self.refresh_btn = QPushButton("🔄 Refresh")
+        self.refresh_btn.setStyleSheet("QPushButton { background-color: #3498db; }")
+        self.refresh_btn.clicked.connect(self.refresh_challenges)
+        actions_layout.addWidget(self.refresh_btn)
         
-        self.strategy_combo = QComboBox()
-        self.strategy_combo.addItems(self.strategies)
-        actions_layout.addWidget(self.strategy_combo)
+        # 2. All
+        self.all_btn = QPushButton("✅ All")
+        self.all_btn.setStyleSheet("QPushButton { background-color: #f39c12; }")
+        self.all_btn.clicked.connect(self.select_all)
+        actions_layout.addWidget(self.all_btn)
         
-        self.strategy_btn = QPushButton("📅 Stratégie")
-        self.strategy_btn.setStyleSheet("QPushButton { background-color: #9b59b6; }")
-        self.strategy_btn.clicked.connect(self.apply_strategy)
-        actions_layout.addWidget(self.strategy_btn)
+        # 3. None
+        self.none_btn = QPushButton("❌ None")
+        self.none_btn.setStyleSheet("QPushButton { background-color: #e67e22; }")
+        self.none_btn.clicked.connect(self.select_none)
+        actions_layout.addWidget(self.none_btn)
         
+        # 4. Fill
         self.fill_btn = QPushButton("⚡ Fill")
         self.fill_btn.setStyleSheet("QPushButton { background-color: #16a085; }")
         self.fill_btn.clicked.connect(self.execute_fill)
         actions_layout.addWidget(self.fill_btn)
         
+        # 6. Turbo
         self.turbo_btn = QPushButton("🚀 Turbo")
         self.turbo_btn.setStyleSheet("QPushButton { background-color: #e74c3c; }")
         self.turbo_btn.clicked.connect(self.execute_turbo)
         actions_layout.addWidget(self.turbo_btn)
         
-        # Bouton Stratégies en cours
+        # 7. Stratégie
+        self.strategy_btn = QPushButton("📅 Stratégie")
+        self.strategy_btn.setStyleSheet("QPushButton { background-color: #9b59b6; }")
+        self.strategy_btn.clicked.connect(self.apply_strategy)
+        actions_layout.addWidget(self.strategy_btn)
+        
+        # 8. Stratégies en cours
         self.strategies_btn = QPushButton("📋 Stratégies en cours")
         self.strategies_btn.setStyleSheet("QPushButton { background-color: #8e44ad; }")
         self.strategies_btn.clicked.connect(self.show_active_strategies)
         actions_layout.addWidget(self.strategies_btn)
+        
+        # 9. Edition stratégie
+        self.edit_strategies_btn = QPushButton("✏️ Edition")
+        self.edit_strategies_btn.setStyleSheet("QPushButton { background-color: #34495e; }")
+        self.edit_strategies_btn.clicked.connect(self.edit_strategies)
+        actions_layout.addWidget(self.edit_strategies_btn)
         
         actions_layout.addStretch()
         main_layout.addLayout(actions_layout)
@@ -424,71 +811,56 @@ class EnhancedGSGUI(QMainWindow):
         self.log("🎨 Interface enhanced initialisée")
     
     def load_config(self):
-        """Charge la configuration"""
+        """Charge la configuration - Utilise maintenant le système de profils"""
         try:
-            if 'players' in self.config and self.config['players']:
-                self.player = list(self.config['players'].keys())[0]
-                self.user_token = self.config['players'][self.player].get('xtoken', '')
+            if self.profile_name:
+                self.profile_label.setText(f"Profil: {self.profile_name}")
+                self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
+                self.log(f"✅ Profil sélectionné: {self.profile_name}")
+                self.log("🔄 Cliquez sur 'Refresh' pour charger vos challenges")
                 
-                if self.user_token:
-                    self.profile_label.setText(f"Profil: {self.player}")
-                    self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
-                    self.log(f"✅ Profil: {self.player}")
-                    
-                    # Enregistrer profil
-                    if self.api_client.register_profile(self.player, self.user_token):
-                        self.log("🔌 API: registered")
-                    
-                    self.log("🔄 Cliquez sur 'Refresh' pour charger vos challenges")
-                    
-                    # Charger l'état auto-refresh
-                    self.load_auto_refresh_state()
-                else:
-                    self.log("⚠️ Token manquant")
+                # Charger l'état auto-refresh
+                self.load_auto_refresh_state()
             else:
-                self.log("⚠️ Configuration manquante")
+                self.profile_label.setText("Profil: Non sélectionné")
+                self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #e74c3c;")
+                self.log("❌ Aucun profil sélectionné")
         except Exception as e:
             self.log(f"❌ Erreur config: {e}")
     
     def load_auto_refresh_state(self):
-        """Charge l'état de l'auto-refresh depuis la config"""
+        """Initialise l'état de l'auto-refresh (par défaut OFF)"""
         try:
-            auto_refresh_enabled = self.config.get('ui_settings', {}).get('auto_refresh_enabled', False)
-            if isinstance(auto_refresh_enabled, str):
-                auto_refresh_enabled = auto_refresh_enabled.lower() == 'true'
-            
-            if auto_refresh_enabled:
-                self.auto_refresh_enabled = True
-                self.auto_refresh_btn.setText("🔄 Auto: ON")
-                self.auto_refresh_btn.setStyleSheet("QPushButton { background-color: #27ae60; }")
-                self.log("📖 Auto-refresh: ON (depuis config)")
-            else:
-                self.log("📖 Auto-refresh: OFF (depuis config)")
+            # Auto-refresh désactivé par défaut - peut être activé manuellement
+            self.log("📖 Auto-refresh: OFF (par défaut)")
         except Exception as e:
-            self.log(f"⚠️ Erreur chargement auto-refresh: {e}")
+            self.log(f"⚠️ Erreur initialisation auto-refresh: {e}")
     
     def save_auto_refresh_state(self):
-        """Sauvegarde l'état de l'auto-refresh dans la config"""
+        """Sauvegarde l'état de l'auto-refresh (en mémoire seulement)"""
         try:
-            if 'ui_settings' not in self.config:
-                self.config['ui_settings'] = {}
-            
-            self.config['ui_settings']['auto_refresh_enabled'] = str(self.auto_refresh_enabled)
-            self.config.write()
+            # État conservé en mémoire pour la session actuelle
+            status = "ON" if self.auto_refresh_enabled else "OFF"
+            self.log(f"💾 Auto-refresh state: {status}")
         except Exception as e:
             self.log(f"⚠️ Erreur sauvegarde auto-refresh: {e}")
     
     def refresh_challenges(self):
         """Rafraîchit les challenges"""
-        if not self.user_token:
-            self.log("❌ Token manquant")
+        if not self.profile_name:
+            self.log("❌ Aucun profil sélectionné")
+            return
+        
+        # Éviter les refresh multiples simultanés
+        if hasattr(self, 'api_thread') and self.api_thread and self.api_thread.isRunning():
+            self.log("⏳ Refresh déjà en cours...")
             return
         
         self.refresh_btn.setEnabled(False)
         self.status_label.setText("Chargement...")
         
-        # Lancer l'appel API dans un thread
-        self.api_thread = ApiThread(self.api_client.get_challenges, self.user_token)
+        # Lancer l'appel API dans un thread (plus besoin de user_token)
+        self.api_thread = ApiThread(self.api_client.get_challenges)
         self.api_thread.result_ready.connect(self.on_challenges_received)
         self.api_thread.error_occurred.connect(self.on_api_error)
         self.api_thread.start()
@@ -648,7 +1020,7 @@ class EnhancedGSGUI(QMainWindow):
     
     def auto_refresh_challenges(self):
         """Auto-refresh des challenges toutes les 15 secondes"""
-        if self.user_token and hasattr(self, 'refresh_btn') and self.refresh_btn.isEnabled():
+        if self.profile_name and hasattr(self, 'refresh_btn') and self.refresh_btn.isEnabled():
             self.log("🔄 Auto-refresh...")
             self.refresh_challenges()
     
@@ -664,15 +1036,11 @@ class EnhancedGSGUI(QMainWindow):
         
         if self.auto_refresh_enabled:
             # Activer auto-refresh
-            self.auto_refresh_btn.setText("🔄 Auto: ON")
-            self.auto_refresh_btn.setStyleSheet("QPushButton { background-color: #27ae60; }")
             if not self.auto_refresh_timer.isActive():
                 self.auto_refresh_timer.start(60000)  # 1 minute
             self.log("✅ Auto-refresh activé (1 min)")
         else:
             # Désactiver auto-refresh
-            self.auto_refresh_btn.setText("🔄 Auto: OFF")
-            self.auto_refresh_btn.setStyleSheet("QPushButton { background-color: #7f8c8d; }")
             if self.auto_refresh_timer.isActive():
                 self.auto_refresh_timer.stop()
             self.log("❌ Auto-refresh désactivé")
@@ -703,6 +1071,119 @@ class EnhancedGSGUI(QMainWindow):
         self.refresh_table_selection()
         self.log("❌ Sélection effacée")
     
+    def change_profile(self):
+        """Change de profil"""
+        profiles = ['bruno', 'caloune']  # Profils disponibles
+        current_idx = profiles.index(self.profile_name) if self.profile_name in profiles else 0
+        next_idx = (current_idx + 1) % len(profiles)
+        new_profile = profiles[next_idx]
+        
+        # Changer le profil
+        self.profile_name = new_profile
+        self.profile_label.setText(f"Profil: {new_profile}")
+        self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
+        self.log(f"👤 Profil changé: {new_profile}")
+        
+        # Rafraîchir automatiquement les challenges avec le nouveau profil
+        self.refresh_challenges()
+        
+    
+    
+    def edit_strategies(self):
+        """Ouvre l'éditeur de stratégies"""
+        def editor_worker():
+            try:
+                # Récupérer le contenu du fichier strategies.ini
+                response = requests.get(f"{self.api_client.base_url}/strategies/config", timeout=10)
+                if response.status_code != 200:
+                    self.log(f"❌ Erreur récupération strategies.ini: {response.status_code}")
+                    return
+                
+                data = response.json()
+                content = data['content']
+                
+                # Ouvrir l'éditeur via signal Qt (thread-safe)
+                self.editor_signal.emit(content)
+                
+            except Exception as e:
+                self.log(f"❌ Erreur ouverture éditeur: {e}")
+        
+        # Exécuter dans un thread séparé
+        thread = threading.Thread(target=editor_worker, daemon=True)
+        thread.start()
+    
+    def show_strategy_editor(self, content):
+        """Affiche l'éditeur de stratégies"""
+        try:
+            from PySide6.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QHBoxLayout, QPushButton, QLabel
+            from PySide6.QtGui import QFont
+            
+            dialog = QDialog(self)
+            dialog.setWindowTitle("Éditeur de stratégies - strategies.ini")
+            dialog.setModal(True)
+            dialog.resize(800, 600)
+        
+            layout = QVBoxLayout()
+            
+            # Label d'information
+            info_label = QLabel("Éditez le fichier strategies.ini. Un backup sera créé automatiquement.")
+            info_label.setStyleSheet("color: #7f8c8d; font-style: italic;")
+            layout.addWidget(info_label)
+            
+            # Éditeur de texte
+            editor = QTextEdit()
+            editor.setPlainText(content)
+            editor.setFont(QFont("Consolas", 10))
+            layout.addWidget(editor)
+        
+            # Boutons
+            buttons_layout = QHBoxLayout()
+            
+            save_btn = QPushButton("💾 Sauvegarder")
+            save_btn.setStyleSheet("QPushButton { background-color: #27ae60; }")
+            save_btn.clicked.connect(lambda: self.save_strategies(editor.toPlainText(), dialog))
+            buttons_layout.addWidget(save_btn)
+            
+            cancel_btn = QPushButton("❌ Annuler")
+            cancel_btn.setStyleSheet("QPushButton { background-color: #e74c3c; }")
+            cancel_btn.clicked.connect(dialog.reject)
+            buttons_layout.addWidget(cancel_btn)
+            
+            buttons_layout.addStretch()
+            layout.addLayout(buttons_layout)
+            
+            dialog.setLayout(layout)
+            dialog.exec_()
+            
+        except Exception as e:
+            self.log(f"❌ Erreur dans show_strategy_editor: {e}")
+    
+    def save_strategies(self, content, dialog):
+        """Sauvegarde le fichier strategies.ini"""
+        def save_worker():
+            try:
+                # Envoyer le contenu au backend
+                response = requests.post(
+                    f"{self.api_client.base_url}/strategies/config",
+                    json={"content": content},
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    self.log(f"✅ {data['message']}")
+                    self.log(f"📁 Backup: {data['backup']}")
+                    QTimer.singleShot(0, dialog.accept)
+                else:
+                    self.log(f"❌ Erreur sauvegarde: {response.status_code}")
+                    
+            except Exception as e:
+                self.log(f"❌ Erreur sauvegarde strategies.ini: {e}")
+        
+        # Exécuter dans un thread séparé
+        thread = threading.Thread(target=save_worker, daemon=True)
+        thread.start()
+    
     def refresh_table_selection(self):
         """Refresh les checkboxes du tableau"""
         for row in range(self.challenge_table.rowCount()):
@@ -716,36 +1197,86 @@ class EnhancedGSGUI(QMainWindow):
                         title_item.setCheckState(Qt.Unchecked)
     
     def apply_strategy(self):
-        """Applique stratégie avec nettoyage automatique"""
+        """Applique stratégie avec nettoyage automatique - d'abord sélectionner les challenges, puis la stratégie"""
         selected = self.get_selected()
         if not selected:
             self.log("⚠️ Aucun challenge sélectionné")
+            self.log("👆 Veuillez d'abord sélectionner les challenges dans la liste")
             return
         
-        strategy = self.strategy_combo.currentText()
+        # Récupérer la liste des stratégies depuis le backend
+        try:
+            response = requests.get("http://localhost:8001/api/v1/strategies/list", timeout=5)
+            if response.status_code == 200:
+                strategies_data = response.json()
+                strategies_list = strategies_data.get('strategies', [])
+                # Extraire seulement les noms pour le QInputDialog
+                strategies = [strategy['name'] for strategy in strategies_list]
+            else:
+                # Fallback en cas d'erreur
+                strategies = ["2m", "3m", "4m", "fill", "fill20", "fill70"]
+        except Exception as e:
+            self.log(f"⚠️ Erreur chargement stratégies: {e}")
+            # Fallback en cas d'erreur réseau  
+            strategies = ["2m", "3m", "4m", "fill", "fill20", "fill70"]
+        
+        # Demander quelle stratégie appliquer
+        strategy, ok = QInputDialog.getItem(
+            self, 
+            "Choix de stratégie", 
+            f"Sélectionnez la stratégie à appliquer aux {len(selected)} challenges sélectionnés:", 
+            strategies, 
+            0, 
+            False
+        )
+        
+        if not ok or not strategy:
+            self.log("❌ Stratégie annulée")
+            return
+        
         self.strategy_btn.setEnabled(False)
         
         def strategy_worker():
             try:
                 success_count = 0
+                current_profile = getattr(self, 'current_profile', 'bruno')  # Profile par défaut
+                
                 for challenge in selected:
                     try:
-                        # Nettoyer existantes (fonctionnalité critique)
-                        cancelled = self.api_client.cancel_challenge_strategies(challenge.id)
-                        if cancelled > 0:
-                            self.log(f"🧹 {cancelled} stratégie(s) annulée(s): {challenge.title[:20]}...")
-                        
-                        # Nouvelle stratégie
+                        # Programmer la stratégie via l'API backend
                         scheduled_time = datetime.now() + timedelta(minutes=2)
-                        if self.api_client.schedule_strategy(challenge.id, strategy, scheduled_time, challenge.title):
+                        
+                        # Construire la requête pour l'API backend
+                        strategy_data = {
+                            "challenge_id": challenge.id,
+                            "strategy_name": strategy,
+                            "scheduled_at": scheduled_time.isoformat(),
+                            "challenge_title": challenge.title
+                        }
+                        
+                        # Envoyer la requête à l'API backend
+                        response = requests.post(
+                            f"http://localhost:8001/api/v1/profiles/{current_profile}/strategies",
+                            json=strategy_data,
+                            timeout=10
+                        )
+                        
+                        if response.status_code == 200:
                             success_count += 1
                             self.log(f"📅 {strategy}: {challenge.title[:30]}...")
                         else:
-                            self.log(f"❌ Échec stratégie: {challenge.title[:20]}")
+                            error_msg = response.json().get('detail', 'Unknown error')
+                            self.log(f"❌ Échec stratégie {challenge.title[:20]}: {error_msg}")
                     except Exception as e:
                         self.log(f"❌ {challenge.title[:20]}: {e}")
                 
                 self.log(f"✅ Stratégie {strategy} appliquée à {success_count}/{len(selected)}")
+                
+                # Refresh automatique après application de stratégies pour voir les changements
+                if success_count > 0:
+                    self.log("🔄 Refresh automatique des challenges après Stratégie...")
+                    # Appel thread-safe depuis le thread principal
+                    QMetaObject.invokeMethod(self, "refresh_challenges", Qt.QueuedConnection)
                 
             except Exception as e:
                 self.log(f"❌ Erreur stratégie: {e}")
@@ -786,7 +1317,7 @@ class EnhancedGSGUI(QMainWindow):
                 success_count = 0
                 for challenge in selected:
                     try:
-                        if self.api_client.execute_simple_vote(challenge.url, vote_count, self.user_token):
+                        if self.api_client.execute_simple_vote(challenge.url, vote_count):
                             success_count += 1
                             self.log(f"⚡ Fill ({vote_count}): {challenge.title[:30]}...")
                         else:
@@ -799,7 +1330,8 @@ class EnhancedGSGUI(QMainWindow):
                 # Refresh automatique après tous les fills pour mettre à jour les votes
                 if success_count > 0:
                     self.log("🔄 Refresh automatique des challenges après Fill...")
-                    self.refresh_challenges()
+                    # Appel thread-safe depuis le thread principal
+                    QMetaObject.invokeMethod(self, "refresh_challenges", Qt.QueuedConnection)
                 
             except Exception as e:
                 self.log(f"❌ Erreur Fill: {e}")
@@ -810,12 +1342,27 @@ class EnhancedGSGUI(QMainWindow):
         thread.start()
     
     def execute_turbo(self):
-        """Exécute turbo"""
+        """Exécute turbo avec sélection d'algorithme comme GSGUI"""
         selected = self.get_selected()
         if not selected:
-            self.log("⚠️ Aucun challenge sélectionné")
+            self.log("⚠️ Aucun challenge sélectionné pour Turbo")
             return
         
+        # Popup de sélection d'algorithme comme GSGUI original
+        dialog = TurboAlgorithmDialog(self)
+        if dialog.exec() != QDialog.Accepted:
+            self.log("❌ Turbo annulé")
+            return
+        
+        selected_algorithms = dialog.get_selected_algorithms()
+        if not selected_algorithms:
+            self.log("⚠️ Aucun algorithme sélectionné")
+            return
+        
+        # Format d'algorithme pour le backend (ensemble ou single)
+        algorithm_str = f"[{','.join(selected_algorithms)}]" if len(selected_algorithms) > 1 else selected_algorithms[0]
+        
+        self.log(f"🚀 Démarrage Turbo: {algorithm_str} sur {len(selected)} challenges")
         self.turbo_btn.setEnabled(False)
         self.progress_bar.setVisible(True)
         self.progress_bar.setMaximum(len(selected))
@@ -825,9 +1372,9 @@ class EnhancedGSGUI(QMainWindow):
                 success_count = 0
                 for i, challenge in enumerate(selected):
                     try:
-                        self.log(f"🚀 Turbo: {challenge.title[:30]}...")
+                        self.log(f"🚀 Turbo ({algorithm_str}): {challenge.title[:30]}...")
                         
-                        if self.api_client.execute_turbo(challenge.id, challenge.title):
+                        if self.api_client.execute_turbo(challenge.id, challenge.title, algorithm_str):
                             success_count += 1
                             self.log(f"✅ Turbo: {challenge.title[:20]}")
                         else:
@@ -840,10 +1387,16 @@ class EnhancedGSGUI(QMainWindow):
                         self.log(f"❌ {challenge.title[:20]}: {e}")
                         self.progress_bar.setValue(i + 1)
                 
-                self.log(f"✅ Turbo sur {success_count}/{len(selected)}")
+                self.log(f"✅ Turbo terminé: {success_count}/{len(selected)} challenges - {algorithm_str}")
+                
+                # Refresh automatique après turbo pour mettre à jour les statuts
+                if success_count > 0:
+                    self.log("🔄 Refresh automatique des challenges après Turbo...")
+                    # Appel thread-safe depuis le thread principal
+                    QMetaObject.invokeMethod(self, "refresh_challenges", Qt.QueuedConnection)
                 
             except Exception as e:
-                self.log(f"❌ Turbo: {e}")
+                self.log(f"❌ Erreur Turbo: {e}")
             finally:
                 self.turbo_btn.setEnabled(True)
                 self.progress_bar.setVisible(False)
@@ -902,8 +1455,21 @@ class EnhancedGSGUI(QMainWindow):
                         msg_type = data.get('type', 'info')
                         msg_text = data.get('message', '')
                         
-                        # Formater selon le type
-                        if msg_type == "success":
+                        # Formater selon le type avec support pour les votes
+                        if msg_type == "vote_execution":
+                            formatted = f"[{timestamp[-8:]}] 🎯 {msg_text}"
+                        elif msg_type == "vote_success":
+                            formatted = f"[{timestamp[-8:]}] 🗳️✅ {msg_text}"
+                        elif msg_type == "vote_error":
+                            formatted = f"[{timestamp[-8:]}] 🗳️❌ {msg_text}"
+                        elif msg_type == "vote_simulation":
+                            formatted = f"[{timestamp[-8:]}] 🎭 {msg_text}"
+                        elif msg_type == "refresh_trigger":
+                            # Message de refresh + déclencher le refresh automatique
+                            formatted = f"[{timestamp[-8:]}] {msg_text}"
+                            # Déclencher le refresh de manière thread-safe
+                            QMetaObject.invokeMethod(self, "refresh_challenges", Qt.QueuedConnection)
+                        elif msg_type == "success":
                             formatted = f"[{timestamp[-8:]}] ✅ {msg_text}"
                         elif msg_type == "error":
                             formatted = f"[{timestamp[-8:]}] ❌ {msg_text}"
@@ -952,8 +1518,8 @@ class EnhancedGSGUI(QMainWindow):
             try:
                 self.log("🔍 Appel API /strategies/active...")
                 
-                # Appel API pour récupérer les stratégies actives avec token
-                params = {'user_token': self.user_token} if self.user_token else {}
+                # Appel API pour récupérer les stratégies actives avec profil
+                params = {'profile_name': self.profile_name} if self.profile_name else {}
                 response = requests.get(f"{self.api_client.base_url}/strategies/active", params=params, timeout=10)
                 
                 self.log(f"📡 API Response: {response.status_code}")
@@ -1017,8 +1583,13 @@ class EnhancedGSGUI(QMainWindow):
                             timing = action.get('timing', '')
                             votes = action.get('votes', 0)
                             
-                            # Formater le timing (end-4m0s -> 00:04:00)
-                            formatted_time = self.format_timing_simple(timing)
+                            # Utiliser l'heure d'exécution calculée par le backend si disponible
+                            execution_time = action.get('execution_time')
+                            if execution_time:
+                                formatted_time = execution_time  # Utiliser l'heure calculée par le backend
+                            else:
+                                # Fallback à l'ancien système si pas d'heure calculée
+                                formatted_time = self.format_timing_simple(timing)
                             
                             output.append(f"[{timestamp}] [bruno]    ⏰ {formatted_time} - Vote {votes} pour {challenge_title}")
             
