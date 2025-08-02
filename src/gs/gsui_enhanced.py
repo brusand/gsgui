@@ -1076,48 +1076,105 @@ class EnhancedGSGUI(QMainWindow):
     def logout(self):
         """Déconnexion propre et retour à l'écran de sélection des profils"""
         try:
+            print("🚪 [DEBUG] Début logout()")
             self.log("🚪 Déconnexion en cours...")
             
             # Fermer la connexion WebSocket proprement
+            print("🔌 [DEBUG] Appel disconnect_websocket()")
             self.disconnect_websocket()
+            print("🔌 [DEBUG] WebSocket déconnecté")
             self.log("🔌 WebSocket déconnecté")
             
             # Masquer la fenêtre principale
+            print("👁️ [DEBUG] Masquage fenêtre")
             self.hide()
             
             # Afficher la boîte de dialogue de sélection des profils
+            print("📋 [DEBUG] Création dialog ProfileSelectionDialog")
             dialog = ProfileSelectionDialog(self)
+            print("📋 [DEBUG] Exécution dialog")
             result = dialog.exec()
+            print(f"📋 [DEBUG] Résultat dialog: {result}")
             
             if result == QDialog.Accepted and dialog.selected_profile:
+                print(f"👤 [DEBUG] Nouveau profil sélectionné: {dialog.selected_profile}")
+                
                 # Nouveau profil sélectionné
                 new_profile = dialog.selected_profile
+                old_profile = self.profile_name
+                
+                print(f"👤 [DEBUG] Changement {old_profile} -> {new_profile}")
                 self.profile_name = new_profile
                 self.profile_label.setText(f"Profil: {new_profile}")
                 self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
                 
                 # Réinitialiser l'API client avec le nouveau profil
-                self.api_client = ApiClient(base_url=f"http://localhost:8001/api/v1", profile_name=new_profile)
+                print("🔧 [DEBUG] Réinitialisation API client")
+                try:
+                    self.api_client = ApiClient(base_url=f"http://localhost:8001/api/v1", profile_name=new_profile)
+                    print("✅ [DEBUG] API client réinitialisé")
+                except Exception as api_error:
+                    print(f"❌ [DEBUG] Erreur API client: {api_error}")
+                    raise
+                
+                # Petit délai avant reconnexion WebSocket
+                print("⏱️ [DEBUG] Délai avant reconnexion WebSocket")
+                import time
+                time.sleep(0.5)
                 
                 # Reconnecter le WebSocket avec le nouveau profil
-                self.connect_websocket()
+                print("🔌 [DEBUG] Reconnexion WebSocket")
+                try:
+                    self.connect_websocket()
+                    print("✅ [DEBUG] WebSocket reconnecté")
+                except Exception as ws_error:
+                    print(f"❌ [DEBUG] Erreur WebSocket: {ws_error}")
+                    # Ne pas lever l'erreur, continuer sans WebSocket
                 
                 # Réafficher la fenêtre et rafraîchir
+                print("👁️ [DEBUG] Réaffichage fenêtre")
                 self.show()
                 self.log(f"👤 Reconnecté avec le profil: {new_profile}")
                 
                 # Petit délai pour s'assurer que la connexion est établie
-                QTimer.singleShot(1000, self.refresh_challenges)
+                print("🔄 [DEBUG] Programmation refresh avec délai")
+                QTimer.singleShot(1500, self.safe_refresh_challenges)
+                print("✅ [DEBUG] Logout terminé avec succès")
+                
             else:
+                print("❌ [DEBUG] Annulation ou échec dialog - fermeture application")
                 # Annulation - fermer l'application
                 self.log("❌ Déconnexion annulée - Fermeture de l'application")
+                self.cleanup_before_quit()
                 QApplication.quit()
                 
         except Exception as e:
+            print(f"❌ [DEBUG] Exception dans logout(): {e}")
+            import traceback
+            print(f"❌ [DEBUG] Stack trace: {traceback.format_exc()}")
             self.log(f"❌ Erreur lors de la déconnexion: {e}")
             # En cas d'erreur, forcer l'arrêt propre
-            self.disconnect_websocket()
+            self.cleanup_before_quit()
             QApplication.quit()
+    
+    def safe_refresh_challenges(self):
+        """Refresh sécurisé avec gestion d'erreurs"""
+        try:
+            print("🔄 [DEBUG] Début safe_refresh_challenges()")
+            self.refresh_challenges()
+            print("✅ [DEBUG] Refresh terminé")
+        except Exception as e:
+            print(f"❌ [DEBUG] Erreur dans safe_refresh_challenges: {e}")
+            self.log(f"⚠️ Erreur lors du refresh: {e}")
+    
+    def cleanup_before_quit(self):
+        """Nettoyage avant fermeture de l'application"""
+        try:
+            print("🧹 [DEBUG] Nettoyage avant fermeture")
+            self.disconnect_websocket()
+            print("✅ [DEBUG] Nettoyage terminé")
+        except Exception as e:
+            print(f"❌ [DEBUG] Erreur nettoyage: {e}")
         
     
     
@@ -1575,26 +1632,40 @@ class EnhancedGSGUI(QMainWindow):
     def disconnect_websocket(self):
         """Déconnecte proprement le WebSocket"""
         try:
+            print("🔌 [DEBUG] Début disconnect_websocket()")
+            
             # Signaler l'arrêt
             self.websocket_should_stop = True
+            print("🔌 [DEBUG] Flag d'arrêt activé")
             
             # Fermer la connexion WebSocket
             if hasattr(self, 'websocket_client') and self.websocket_client:
                 try:
+                    print("🔌 [DEBUG] Fermeture WebSocket client")
                     self.websocket_client.close()
+                    print("✅ [DEBUG] WebSocket client fermé")
                 except Exception as e:
-                    print(f"⚠️ Erreur fermeture WebSocket: {e}")
+                    print(f"⚠️ [DEBUG] Erreur fermeture WebSocket: {e}")
             
             # Attendre que le thread se termine (avec timeout)
             if hasattr(self, 'websocket_thread') and self.websocket_thread and self.websocket_thread.is_alive():
-                self.websocket_thread.join(timeout=2.0)
+                print("🔌 [DEBUG] Attente fin thread WebSocket")
+                self.websocket_thread.join(timeout=3.0)  # Augmenté à 3s
+                if self.websocket_thread.is_alive():
+                    print("⚠️ [DEBUG] Thread WebSocket toujours actif après timeout")
+                else:
+                    print("✅ [DEBUG] Thread WebSocket terminé")
             
             # Nettoyer les références
+            print("🔌 [DEBUG] Nettoyage références")
             self.websocket_client = None
             self.websocket_thread = None
+            print("✅ [DEBUG] disconnect_websocket terminé")
             
         except Exception as e:
-            print(f"⚠️ Erreur disconnect_websocket: {e}")
+            print(f"❌ [DEBUG] Erreur disconnect_websocket: {e}")
+            import traceback
+            print(f"❌ [DEBUG] Stack trace disconnect: {traceback.format_exc()}")
     
     def show_active_strategies(self):
         """Affiche la fenêtre des stratégies en cours"""
