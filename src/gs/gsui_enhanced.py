@@ -1096,50 +1096,61 @@ class EnhancedGSGUI(QMainWindow):
             result = dialog.exec()
             print(f"📋 [DEBUG] Résultat dialog: {result}")
             
-            if result == QDialog.Accepted and dialog.selected_profile:
-                print(f"👤 [DEBUG] Nouveau profil sélectionné: {dialog.selected_profile}")
+            if result == QDialog.Accepted:
+                # Récupérer le profil sélectionné via la méthode appropriée
+                selected_profile = dialog.get_selected_profile()
+                print(f"👤 [DEBUG] Profil retourné par get_selected_profile(): {selected_profile}")
                 
-                # Nouveau profil sélectionné
-                new_profile = dialog.selected_profile
-                old_profile = self.profile_name
-                
-                print(f"👤 [DEBUG] Changement {old_profile} -> {new_profile}")
-                self.profile_name = new_profile
-                self.profile_label.setText(f"Profil: {new_profile}")
-                self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
-                
-                # Réinitialiser l'API client avec le nouveau profil
-                print("🔧 [DEBUG] Réinitialisation API client")
-                try:
-                    self.api_client = ApiClient(base_url=f"http://localhost:8001/api/v1", profile_name=new_profile)
-                    print("✅ [DEBUG] API client réinitialisé")
-                except Exception as api_error:
-                    print(f"❌ [DEBUG] Erreur API client: {api_error}")
-                    raise
-                
-                # Petit délai avant reconnexion WebSocket
-                print("⏱️ [DEBUG] Délai avant reconnexion WebSocket")
-                import time
-                time.sleep(0.5)
-                
-                # Reconnecter le WebSocket avec le nouveau profil
-                print("🔌 [DEBUG] Reconnexion WebSocket")
-                try:
-                    self.connect_websocket()
-                    print("✅ [DEBUG] WebSocket reconnecté")
-                except Exception as ws_error:
-                    print(f"❌ [DEBUG] Erreur WebSocket: {ws_error}")
-                    # Ne pas lever l'erreur, continuer sans WebSocket
-                
-                # Réafficher la fenêtre et rafraîchir
-                print("👁️ [DEBUG] Réaffichage fenêtre")
-                self.show()
-                self.log(f"👤 Reconnecté avec le profil: {new_profile}")
-                
-                # Petit délai pour s'assurer que la connexion est établie
-                print("🔄 [DEBUG] Programmation refresh avec délai")
-                QTimer.singleShot(1500, self.safe_refresh_challenges)
-                print("✅ [DEBUG] Logout terminé avec succès")
+                if selected_profile:
+                    print(f"👤 [DEBUG] Nouveau profil sélectionné: {selected_profile}")
+                    
+                    # Nouveau profil sélectionné
+                    new_profile = selected_profile
+                    old_profile = self.profile_name
+                    
+                    print(f"👤 [DEBUG] Changement {old_profile} -> {new_profile}")
+                    self.profile_name = new_profile
+                    self.profile_label.setText(f"Profil: {new_profile}")
+                    self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
+                    
+                    # Réinitialiser l'API client avec le nouveau profil
+                    print("🔧 [DEBUG] Réinitialisation API client")
+                    try:
+                        self.api_client = ApiClient(base_url=f"http://localhost:8001/api/v1", profile_name=new_profile)
+                        print("✅ [DEBUG] API client réinitialisé")
+                    except Exception as api_error:
+                        print(f"❌ [DEBUG] Erreur API client: {api_error}")
+                        raise
+                    
+                    # Petit délai avant reconnexion WebSocket
+                    print("⏱️ [DEBUG] Délai avant reconnexion WebSocket")
+                    import time
+                    time.sleep(0.5)
+                    
+                    # Reconnecter le WebSocket avec le nouveau profil
+                    print("🔌 [DEBUG] Reconnexion WebSocket")
+                    try:
+                        self.connect_websocket()
+                        print("✅ [DEBUG] WebSocket reconnecté")
+                    except Exception as ws_error:
+                        print(f"❌ [DEBUG] Erreur WebSocket: {ws_error}")
+                        # Ne pas lever l'erreur, continuer sans WebSocket
+                    
+                    # Réafficher la fenêtre et rafraîchir
+                    print("👁️ [DEBUG] Réaffichage fenêtre")
+                    self.show()
+                    self.log(f"👤 Reconnecté avec le profil: {new_profile}")
+                    
+                    # Petit délai pour s'assurer que la connexion est établie
+                    print("🔄 [DEBUG] Programmation refresh avec délai")
+                    QTimer.singleShot(1500, self.safe_refresh_challenges)
+                    print("✅ [DEBUG] Logout terminé avec succès")
+                else:
+                    print("❌ [DEBUG] Aucun profil sélectionné - fermeture application")
+                    # Aucun profil sélectionné
+                    self.log("❌ Aucun profil sélectionné - Fermeture de l'application")
+                    self.cleanup_before_quit()
+                    QApplication.quit()
                 
             else:
                 print("❌ [DEBUG] Annulation ou échec dialog - fermeture application")
