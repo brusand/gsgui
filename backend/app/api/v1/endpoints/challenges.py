@@ -16,7 +16,12 @@ from app.schemas.challenge import (
     SimpleVoteRequest,
     VoteResponse
 )
+from app.schemas.turbo import (
+    TurboExecutionRequest,
+    TurboExecutionResponse
+)
 from app.services.gurushots_api import GuruShotsAPI, ChallengeData
+from app.services.turbo_executor import turbo_executor
 from app.websockets.connection_manager import connection_manager
 from app.models.file_based_models import User, Challenge
 
@@ -317,3 +322,67 @@ async def delete_challenge(
     except Exception as e:
         logger.error(f"❌ Error deleting challenge {challenge_id}: {e}")
         raise HTTPException(status_code=500, detail=f"Error deleting challenge: {str(e)}")
+
+
+@router.post("/turbo", response_model=TurboExecutionResponse)
+async def execute_turbo(
+    request: TurboExecutionRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Exécute un turbo complet pour un challenge
+    Équivalent de la fonctionnalité turbo complète dans gsui.py
+    """
+    try:
+        import uuid
+        from datetime import datetime
+        
+        # Générer un ID unique pour ce turbo
+        turbo_id = str(uuid.uuid4())
+        
+        logger.info(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
+        logger.info(f"   Algorithme: {request.algorithm or 'hybrid'}")
+        
+        # Exécuter le turbo
+        result = await turbo_executor.execute_turbo(
+            profile_id=current_user.id,
+            turbo_id=turbo_id,
+            challenge_id=request.challenge_id,
+            challenge_title=request.challenge_title,
+            challenge_time_left=request.challenge_time_left,
+            algorithm=request.algorithm or "hybrid",
+            xtoken=current_user.xtoken
+        )
+        
+        # Construire la réponse
+        response = TurboExecutionResponse(
+            turbo_id=turbo_id,
+            profile_id=current_user.id,
+            challenge_id=request.challenge_id,
+            challenge_title=request.challenge_title or f"Challenge {request.challenge_id}",
+            algorithm_used=request.algorithm or "hybrid",
+            execution_started_at=datetime.now(),
+            execution_completed_at=datetime.now(),
+            status="completed" if result.get('success', False) else "failed",
+            success=result.get('success', False),
+            pairs_processed=result.get('pairs_processed', 0),
+            successful_pairs=result.get('successful_pairs', 0),
+            failed_pairs=result.get('failed_pairs', 0),
+            error_message=None if result.get('success', False) else "Turbo execution failed",
+            result_data=result
+        )
+        
+        logger.info(f"✅ Turbo {turbo_id} terminé: success={result.get('success', False)}")
+        
+        # Notifier via WebSocket
+        await connection_manager.notify_turbo_completed(
+            current_user.id,
+            turbo_id,
+            result
+        )
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"❌ Error executing turbo: {e}")
+        raise HTTPException(status_code=500, detail=f"Error executing turbo: {str(e)}")

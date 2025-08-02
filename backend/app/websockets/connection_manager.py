@@ -224,14 +224,53 @@ class ConnectionManager:
             "timestamp": datetime.now().isoformat()
         })
     
-    async def notify_turbo_result(self, user_id: str, challenge_id: str, algorithm: str, success: bool, result_data: Dict[str, Any]):
-        """Notifie le résultat d'un turbo"""
+    async def notify_turbo_started(self, user_id: str, turbo_id: str, challenge_id: str, algorithm: str):
+        """Notifie le début d'un turbo"""
         await self.send_personal_message(user_id, {
-            "type": RealtimeEventTypes.TURBO_RESULT,
+            "type": RealtimeEventTypes.TURBO_STARTED,
+            "turbo_id": turbo_id,
             "challenge_id": challenge_id,
             "algorithm": algorithm,
-            "success": success,
-            "result": result_data
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    async def notify_turbo_completed(self, user_id: str, turbo_id: str, result_data: Dict[str, Any]):
+        """Notifie la fin réussie d'un turbo"""
+        await self.send_personal_message(user_id, {
+            "type": RealtimeEventTypes.TURBO_COMPLETED,
+            "turbo_id": turbo_id,
+            "result": result_data,
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    async def notify_turbo_failed(self, user_id: str, turbo_id: str, error_message: str):
+        """Notifie l'échec d'un turbo"""
+        await self.send_personal_message(user_id, {
+            "type": RealtimeEventTypes.TURBO_FAILED,
+            "turbo_id": turbo_id,
+            "error_message": error_message,
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    async def notify_turbo_log(self, user_id: str, turbo_id: str, level: str, message: str):
+        """Notifie un log de turbo"""
+        await self.send_personal_message(user_id, {
+            "type": RealtimeEventTypes.TURBO_LOG,
+            "turbo_id": turbo_id,
+            "level": level,
+            "message": message,
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    async def notify_turbo_update(self, user_id: str, turbo_id: str, challenge_id: str, update_type: str, data: Dict[str, Any]):
+        """Notifie une mise à jour turbo générique"""
+        await self.send_personal_message(user_id, {
+            "type": "turbo_update",
+            "turbo_id": turbo_id,
+            "challenge_id": challenge_id,
+            "update_type": update_type,
+            "data": data,
+            "timestamp": datetime.now().isoformat()
         })
     
     async def notify_ranking_change(self, user_id: str, challenge_id: str, old_rank: int, new_rank: int, votes: int):

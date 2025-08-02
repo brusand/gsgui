@@ -69,9 +69,9 @@ description="Stratégie rapide - now - votes répartis"
 description="Stratégie rapide - now - votes répartis"
 0="vote, now,80"
 
-[fill1-next-5m0s]
+[fill70-next-1m0s]
 description="Stratégie rapide - now - votes répartis"
-0="vote, next-5m0s, 1"
+0="vote, next-1m0s,70"
 
 [fill20]
 description="Stratégie rapide - now - votes répartis"

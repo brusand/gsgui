@@ -14,7 +14,7 @@ from apscheduler.executors.asyncio import AsyncIOExecutor
 
 from app.services.config_manager import config_manager
 from app.services.gurushots_api import GuruShotsAPI
-from app.websockets.connection_manager import connection_manager
+# from app.websockets.connection_manager import connection_manager  # Désactivé pour backend monolithique
 
 logger = logging.getLogger(__name__)
 

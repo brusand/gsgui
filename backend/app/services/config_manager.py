@@ -147,6 +147,16 @@ class ConfigManager:
             logger.error(f"Error getting user {user_id}: {e}")
             return None
     
+    def get_user_section(self, user_id: str, section_name: str) -> Optional[Dict[str, Any]]:
+        """Récupère une section spécifique d'un utilisateur"""
+        try:
+            users = self.config.get('players', {})
+            user_data = users.get(user_id, {})
+            return user_data.get(section_name, {})
+        except Exception as e:
+            logger.error(f"Error getting user section {user_id}.{section_name}: {e}")
+            return {}
+    
     def update_user(self, user_id: str, updates: Dict[str, Any]) -> bool:
         """Met à jour un utilisateur"""
         try:

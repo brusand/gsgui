@@ -84,7 +84,7 @@ class GuruShotsAPI:
             
             async with aiohttp.ClientSession(
                 headers=self.headers,
-                connector=aiohttp.TCPConnector(ssl=ssl_context)
+                connector=aiohttp.TCPConnector(ssl=False)
             ) as session:
                 async with session.post(f'{self.base_url}/get_my_active_challenges') as response:
                     logger.info(f"📡 Response status: {response.status}")
@@ -148,7 +148,7 @@ class GuruShotsAPI:
             
             async with aiohttp.ClientSession(
                 headers=self.headers,
-                connector=aiohttp.TCPConnector(ssl=ssl_context)
+                connector=aiohttp.TCPConnector(ssl=False)
             ) as session:
                 async with session.post(
                     f'{self.base_url}/get_vote_data',
@@ -241,7 +241,7 @@ class GuruShotsAPI:
             
             async with aiohttp.ClientSession(
                 headers=self.headers,
-                connector=aiohttp.TCPConnector(ssl=ssl_context)
+                connector=aiohttp.TCPConnector(ssl=False)
             ) as session:
                 async with session.post(f'{self.base_url}/submit_votes', data=payload) as response:
                     

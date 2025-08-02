@@ -225,6 +225,48 @@ class GSGUIApiClient:
             logger.error(f"Error getting available strategies: {e}")
             raise
     
+    async def update_strategy(
+        self, 
+        strategy_id: str, 
+        strategy_name: Optional[str] = None,
+        scheduled_at: Optional[str] = None,
+        status: Optional[str] = None,
+        profile_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Met à jour une stratégie existante"""
+        try:
+            await self.ensure_session()
+            pid = profile_id or self.profile_id
+            
+            if not pid:
+                raise Exception("No profile ID available")
+            
+            # Construire les données à mettre à jour
+            update_data = {}
+            if strategy_name is not None:
+                update_data["strategy_name"] = strategy_name
+            if scheduled_at is not None:
+                update_data["scheduled_at"] = scheduled_at
+            if status is not None:
+                update_data["status"] = status
+            
+            if not update_data:
+                raise Exception("No update data provided")
+            
+            async with self.session.put(
+                f"{self.base_url}/{pid}/strategies/{strategy_id}",
+                json=update_data
+            ) as response:
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    error_text = await response.text()
+                    raise Exception(f"Failed to update strategy: {error_text}")
+                    
+        except Exception as e:
+            logger.error(f"Error updating strategy {strategy_id}: {e}")
+            raise
+    
     # --- Turbo Management ---
     
     async def execute_turbo(
