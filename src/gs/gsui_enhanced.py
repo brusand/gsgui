@@ -1479,6 +1479,11 @@ class EnhancedGSGUI(QMainWindow):
                         timestamp = data.get('timestamp', '')[:19]  # Couper les millisecondes
                         msg_type = data.get('type', 'info')
                         msg_text = data.get('message', '')
+                        msg_profile_id = data.get('profile_id')
+                        
+                        # Filtrer par profil - n'afficher que les messages pour le profil connecté
+                        if msg_profile_id and msg_profile_id != self.profile_name:
+                            return  # Ignorer les messages des autres profils
                         
                         # Formater selon le type avec support pour les votes
                         if msg_type == "vote_execution":

@@ -232,7 +232,8 @@ async def broadcast_log(message: str, log_type: str = "info", profile_name: str 
     log_data = {
         "timestamp": datetime.now().isoformat(),
         "type": log_type,
-        "message": improved_message
+        "message": improved_message,
+        "profile_id": profile_name
     }
     
     # Envoyer à toutes les connexions actives
