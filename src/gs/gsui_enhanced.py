@@ -1116,7 +1116,8 @@ class EnhancedGSGUI(QMainWindow):
                     # Réinitialiser l'API client avec le nouveau profil
                     print("🔧 [DEBUG] Réinitialisation API client")
                     try:
-                        self.api_client = ApiClient(base_url=f"http://localhost:8001/api/v1", profile_name=new_profile)
+                        self.api_client = EnhancedApiClient()
+                        self.api_client.set_profile(new_profile)
                         print("✅ [DEBUG] API client réinitialisé")
                     except Exception as api_error:
                         print(f"❌ [DEBUG] Erreur API client: {api_error}")
