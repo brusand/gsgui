@@ -10,6 +10,6 @@ sleep 1
 # Démarrer le backend
 echo "🚀 Lancement backend API sur port 8001..."
 cd /Users/bruno/gsgui
-python backend_real.py
+python gs_backend.py
 
 echo "👋 Backend arrêté"
