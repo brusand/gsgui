@@ -691,11 +691,11 @@ class EnhancedGSGUI(QMainWindow):
         
         header_layout.addStretch()
         
-        # Bouton changement de profil
-        self.profile_btn = QPushButton("👤 Changer Profil")
-        self.profile_btn.setStyleSheet("QPushButton { background-color: #3498db; }")
-        self.profile_btn.clicked.connect(self.change_profile)
-        header_layout.addWidget(self.profile_btn)
+        # Bouton déconnexion
+        self.logout_btn = QPushButton("🚪 Déconnexion")
+        self.logout_btn.setStyleSheet("QPushButton { background-color: #e74c3c; }")
+        self.logout_btn.clicked.connect(self.logout)
+        header_layout.addWidget(self.logout_btn)
         
         main_layout.addLayout(header_layout)
         
@@ -1071,21 +1071,46 @@ class EnhancedGSGUI(QMainWindow):
         self.refresh_table_selection()
         self.log("❌ Sélection effacée")
     
-    def change_profile(self):
-        """Change de profil"""
-        profiles = ['bruno', 'caloune']  # Profils disponibles
-        current_idx = profiles.index(self.profile_name) if self.profile_name in profiles else 0
-        next_idx = (current_idx + 1) % len(profiles)
-        new_profile = profiles[next_idx]
+    def logout(self):
+        """Déconnexion propre et retour à l'écran de sélection des profils"""
+        self.log("🚪 Déconnexion en cours...")
         
-        # Changer le profil
-        self.profile_name = new_profile
-        self.profile_label.setText(f"Profil: {new_profile}")
-        self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
-        self.log(f"👤 Profil changé: {new_profile}")
+        # Fermer la connexion WebSocket proprement
+        if hasattr(self, 'websocket_client') and self.websocket_client:
+            try:
+                self.websocket_client.close()
+                self.log("🔌 WebSocket déconnecté")
+            except Exception as e:
+                self.log(f"⚠️ Erreur fermeture WebSocket: {e}")
         
-        # Rafraîchir automatiquement les challenges avec le nouveau profil
-        self.refresh_challenges()
+        # Masquer la fenêtre principale
+        self.hide()
+        
+        # Afficher la boîte de dialogue de sélection des profils
+        dialog = ProfileSelectionDialog(self)
+        result = dialog.exec()
+        
+        if result == QDialog.Accepted and dialog.selected_profile:
+            # Nouveau profil sélectionné
+            new_profile = dialog.selected_profile
+            self.profile_name = new_profile
+            self.profile_label.setText(f"Profil: {new_profile}")
+            self.profile_label.setStyleSheet("font-size: 12pt; font-weight: bold; color: #27ae60;")
+            
+            # Réinitialiser l'API client avec le nouveau profil
+            self.api_client = ApiClient(base_url=f"http://localhost:8001/api/v1", profile_name=new_profile)
+            
+            # Reconnecter le WebSocket
+            self.connect_websocket()
+            
+            # Réafficher la fenêtre et rafraîchir
+            self.show()
+            self.log(f"👤 Reconnecté avec le profil: {new_profile}")
+            self.refresh_challenges()
+        else:
+            # Annulation - fermer l'application
+            self.log("❌ Déconnexion annulée - Fermeture de l'application")
+            QApplication.quit()
         
     
     
