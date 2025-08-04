@@ -255,7 +255,7 @@ class TurboExecutor:
                 'execution_duration': execution_duration
             }
             
-            await self._save_turbo_status(profile_id, turbo_id, final_status)
+            #await self._save_turbo_status(profile_id, turbo_id, final_status)
             
             # Notifier la fin via WebSocket
             if overall_success:
@@ -289,7 +289,7 @@ class TurboExecutor:
                 'execution_completed_at': execution_end.isoformat()
             }
             
-            await self._save_turbo_status(profile_id, turbo_id, error_status)
+            #await self._save_turbo_status(profile_id, turbo_id, error_status)
             await connection_manager.notify_turbo_failed(profile_id, turbo_id, str(e))
             
             raise

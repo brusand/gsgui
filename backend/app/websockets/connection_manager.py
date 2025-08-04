@@ -63,6 +63,8 @@ class RealtimeEventTypes:
     # Système
     HEARTBEAT = "heartbeat"
     SYSTEM_MESSAGE = "system_message"
+    #log
+    BROADCAST_LOG = "broadcast_log"
 
 
 class ConnectionManager:
@@ -142,6 +144,7 @@ class ConnectionManager:
     
     async def send_personal_message(self, user_id: str, message: Dict[str, Any]):
         """Envoie un message à un utilisateur spécifique"""
+        print(f"🔥 send_personal_message - user_id: {user_id}, message_type: {message.get('type')}")
         if user_id in self.active_connections:
             # Créer l'événement
             event = RealtimeEvent(
@@ -153,11 +156,16 @@ class ConnectionManager:
             
             # Envoyer à toutes les connexions de l'utilisateur
             disconnected_sockets = []
+            print(f"🔥 Envoi à {len(self.active_connections[user_id])} connexion(s) pour {user_id}")
             for websocket in self.active_connections[user_id]:
                 try:
-                    await websocket.send_text(event.to_json())
+                    json_message = event.to_json()
+                    print(f"🔥 Envoi WebSocket JSON: {json_message}")
+                    await websocket.send_text(json_message)
                     self.total_messages_sent += 1
+                    print(f"🔥 ✅ Message envoyé avec succès via WebSocket")
                 except Exception as e:
+                    print(f"🔥 ❌ Erreur envoi WebSocket: {e}")
                     logger.error(f"Error sending message to user {user_id}: {e}")
                     disconnected_sockets.append(websocket)
             
@@ -302,7 +310,20 @@ class ConnectionManager:
             "context": context or {},
             "timestamp": datetime.now().isoformat()
         })
-    
+    async def notify_broadcast_log(self, user_id: str, level: str, message: str):
+        """Notifie un log"""
+        print(f"🔥 notify_broadcast_log APPELÉ - user_id: {user_id}, level: {level}, message: {message}")
+        print(f"🔥 Connexions actives: {list(self.active_connections.keys())}")
+        
+        message_data = {
+            "type": RealtimeEventTypes.BROADCAST_LOG,
+            "level": level,  # 'info', 'success', 'error', 'warning'
+            "message": message,
+            "timestamp": datetime.now().isoformat()
+        }
+        print(f"🔥 Message à envoyer: {message_data}")
+        
+        await self.send_personal_message(user_id, message_data)
     # Méthodes utilitaires
     
     def get_connected_users(self) -> List[str]:
