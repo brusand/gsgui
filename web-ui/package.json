@@ -1,0 +1,44 @@
+{
+  "name": "gsgui-web-ui",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Interface web moderne pour GSGUI - GuruShots automation",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "axios": "^1.7.9",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.1"
+  },
+  "keywords": [
+    "gurushots",
+    "automation",
+    "react",
+    "typescript",
+    "vite",
+    "fastapi"
+  ],
+  "author": "GSGUI Team",
+  "license": "MIT"
+}

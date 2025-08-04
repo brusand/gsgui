@@ -1,0 +1,98 @@
+/* Style du dialog de sélection de stratégie */
+.strategy-dialog {
+  width: 500px;
+  max-width: 90vw;
+}
+
+.dialog-info {
+  margin-bottom: 20px;
+  color: #666;
+  text-align: center;
+}
+
+.strategy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.strategy-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.strategy-option:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.strategy-option input[type="radio"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.strategy-option input[type="radio"]:checked + .strategy-details {
+  color: #007bff;
+}
+
+.strategy-option:has(input[type="radio"]:checked) {
+  border-color: #007bff;
+  background-color: #e7f3ff;
+}
+
+.strategy-details {
+  flex: 1;
+}
+
+.strategy-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.strategy-description {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.no-strategies {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.no-strategies p:first-child {
+  font-weight: 600;
+  color: #dc3545;
+  margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .strategy-dialog {
+    width: 95vw;
+    margin: 10px;
+  }
+  
+  .strategy-option {
+    padding: 10px;
+  }
+  
+  .strategy-name {
+    font-size: 13px;
+  }
+  
+  .strategy-description {
+    font-size: 12px;
+  }
+}
