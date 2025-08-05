@@ -54,11 +54,117 @@ if ! command -v pip3 &> /dev/null; then
     exit 1
 fi
 
-# Installer les dépendances Python
+# Installer les dépendances Python avec environnement virtuel
 if [ -f "backend/requirements.txt" ]; then
     log_info "Installation des dépendances depuis backend/requirements.txt..."
-    pip3 install -r backend/requirements.txt
-    log_success "Dépendances Python installées avec succès"
+    
+    # Vérifier si on est dans un environnement virtuel
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        log_info "Création d'un environnement virtuel Python..."
+        
+        # Créer l'environnement virtuel
+        if ! python3 -m venv venv 2>/dev/null; then
+            # Fallback: essayer avec --user si venv échoue
+            log_warning "Création d'environnement virtuel échoué, essai installation avec --user..."
+            
+            # Essayer d'abord les dépendances compatibles
+            if [[ -f "backend/requirements-compatible.txt" ]]; then
+                log_info "Tentative avec requirements-compatible.txt (versions flexibles)..."
+                if pip3 install --user -r backend/requirements-compatible.txt; then
+                    log_success "Dépendances Python compatibles installées avec --user"
+                else
+                    log_warning "Échec avec requirements-compatible.txt, essai avec minimal..."
+                    if [[ -f "backend/requirements-minimal.txt" ]] && pip3 install --user -r backend/requirements-minimal.txt; then
+                        log_success "Dépendances Python minimales installées avec --user"
+                    else
+                        log_error "Échec installation dépendances"
+                        return 1
+                    fi
+                fi
+            elif [[ -f "backend/requirements-minimal.txt" ]]; then
+                log_info "Tentative avec requirements-minimal.txt (sans PostgreSQL)..."
+                if pip3 install --user -r backend/requirements-minimal.txt; then
+                    log_success "Dépendances Python minimales installées avec --user"
+                else
+                    log_error "Échec installation dépendances minimales"
+                    return 1
+                fi
+            else
+                pip3 install --user -r backend/requirements.txt
+                log_success "Dépendances Python installées avec --user"
+            fi
+        else
+            log_success "Environnement virtuel créé dans ./venv"
+            
+            # Activer l'environnement virtuel
+            if [[ -f "venv/bin/activate" ]]; then
+                source venv/bin/activate
+                log_success "Environnement virtuel activé"
+            elif [[ -f "venv/Scripts/activate" ]]; then
+                # Windows Git Bash
+                source venv/Scripts/activate
+                log_success "Environnement virtuel activé (Windows)"
+            else
+                log_error "Impossible d'activer l'environnement virtuel"
+                exit 1
+            fi
+            
+            # Mettre à jour pip et installer
+            python -m pip install --upgrade pip --quiet
+            
+            # Essayer d'abord requirements-compatible.txt si disponible
+            if [[ -f "backend/requirements-compatible.txt" ]]; then
+                log_info "Installation avec requirements-compatible.txt (versions flexibles)..."
+                if python -m pip install -r backend/requirements-compatible.txt; then
+                    log_success "Dépendances Python compatibles installées dans l'environnement virtuel"
+                else
+                    log_warning "Échec avec requirements-compatible.txt, essai avec minimal..."
+                    if [[ -f "backend/requirements-minimal.txt" ]] && python -m pip install -r backend/requirements-minimal.txt; then
+                        log_success "Dépendances Python minimales installées dans l'environnement virtuel"
+                    else
+                        log_warning "Échec avec versions allégées, essai avec requirements.txt complet..."
+                        python -m pip install -r backend/requirements.txt
+                        log_success "Dépendances Python complètes installées dans l'environnement virtuel"
+                    fi
+                fi
+            elif [[ -f "backend/requirements-minimal.txt" ]]; then
+                log_info "Installation avec requirements-minimal.txt (recommandé)..."
+                if python -m pip install -r backend/requirements-minimal.txt; then
+                    log_success "Dépendances Python minimales installées dans l'environnement virtuel"
+                else
+                    log_warning "Échec avec requirements-minimal.txt, essai avec requirements.txt complet..."
+                    python -m pip install -r backend/requirements.txt
+                    log_success "Dépendances Python complètes installées dans l'environnement virtuel"
+                fi
+            else
+                python -m pip install -r backend/requirements.txt
+                log_success "Dépendances Python installées dans l'environnement virtuel"
+            fi
+            
+            # Créer un script d'activation
+            cat > activate-env.sh << 'EOF'
+#!/bin/bash
+# Script d'activation de l'environnement virtuel GSGUI
+echo "🐍 Activation de l'environnement virtuel GSGUI..."
+if [[ -f "venv/bin/activate" ]]; then
+    source venv/bin/activate
+    echo "✅ Environnement virtuel activé"
+elif [[ -f "venv/Scripts/activate" ]]; then
+    source venv/Scripts/activate
+    echo "✅ Environnement virtuel activé (Windows)"
+else
+    echo "❌ Environnement virtuel non trouvé"
+    exit 1
+fi
+EOF
+            chmod +x activate-env.sh
+            log_info "Script d'activation créé: ./activate-env.sh"
+        fi
+    else
+        log_info "Environnement virtuel déjà actif: $VIRTUAL_ENV"
+        python -m pip install -r backend/requirements.txt
+        log_success "Dépendances Python installées"
+    fi
 else
     log_warning "Fichier backend/requirements.txt non trouvé"
 fi
