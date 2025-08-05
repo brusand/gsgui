@@ -10,7 +10,14 @@ from typing import List, Dict, Any, Optional, Tuple
 import logging
 from dataclasses import dataclass
 
-from app.core.config import settings
+try:
+    from app.core.config import settings
+except ImportError:
+    # Fallback simple si pas de settings
+    class DummySettings:
+        GURUSHOTS_RATE_LIMIT = 10
+        GURUSHOTS_API_BASE = "https://api.gurushots.com/rest"
+    settings = DummySettings()
 
 logger = logging.getLogger(__name__)
 
@@ -122,10 +129,10 @@ class GuruShotsAPI:
             end_time=datetime.fromtimestamp(challenge_data["close_time"]),
             time_left=timeleft,
             url=challenge_data['url'],
-            votes=int(challenge_data['member']['ranking']['total']['votes']),
-            rank=int(challenge_data['member']['ranking']['total']['rank']),
-            level=challenge_data['member']['ranking']['total']['level_name'],
-            exposure=int(challenge_data['member']['ranking']['total']['exposure']),
+            votes=int(challenge_data['member']['ranking']['total'].get('votes', 0)),
+            rank=int(challenge_data['member']['ranking']['total'].get('rank', 0)),
+            level=challenge_data['member']['ranking']['total'].get('level_name', 'UNKNOWN'),
+            exposure=int(challenge_data['member']['ranking']['total'].get('exposure', 0)),
             gps=int(0),  # Comme dans gsui.py
             challenge_data=challenge_data
         )

@@ -1,0 +1,149 @@
+.action-buttons {
+  background: #2d2d2d;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.button-row,
+.strategy-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.strategy-row {
+  margin-bottom: 10px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #545b62;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #1e7e34;
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #e0a800;
+}
+
+.btn-info {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+  background: #117a8b;
+}
+
+.btn-purple {
+  background: #8e44ad;
+  color: white;
+}
+
+.btn-purple:hover:not(:disabled) {
+  background: #6c3483;
+}
+
+.btn-dark {
+  background: #34495e;
+  color: white;
+}
+
+.btn-dark:hover:not(:disabled) {
+  background: #2c3e50;
+}
+
+.strategy-select {
+  flex: 1;
+  min-width: 300px;
+  padding: 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #1e1e1e;
+  color: #fff;
+  font-size: 14px;
+}
+
+.strategy-select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.selection-info {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.info-text {
+  color: #ccc;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .button-row,
+  .strategy-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .strategy-select {
+    min-width: auto;
+    width: 100%;
+  }
+}

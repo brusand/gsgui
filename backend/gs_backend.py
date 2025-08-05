@@ -18,22 +18,33 @@ import os
 import json
 from typing import Set
 import sys
+from app.websockets.connection_manager import connection_manager
 
-# Ajouter le chemin backend pour importer les services
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
+# Imports locaux maintenant que le fichier est dans backend/
 try:
     from app.services.gurushots_api import GuruShotsAPI
     REAL_VOTE_AVAILABLE = True
-except ImportError:
-    print("⚠️ Real GuruShots API service not available, using simulation")
+    print("✅ GuruShotsAPI imported successfully")
+except ImportError as e:
+    print(f"⚠️ GuruShotsAPI import failed: {e}")
     REAL_VOTE_AVAILABLE = False
 
 try:
     from app.services.strategy_scheduler import StrategyScheduler
     STRATEGY_SCHEDULER_AVAILABLE = True
-except ImportError:
-    print("⚠️ Strategy Scheduler service not available")
+    print("✅ StrategyScheduler imported successfully")
+except ImportError as e:
+    print(f"⚠️ Strategy Scheduler service not available: {e}")
     STRATEGY_SCHEDULER_AVAILABLE = False
+
+# Helper function pour créer GuruShotsAPI
+def create_gurushots_api(token):
+    """Crée une instance GuruShotsAPI"""
+    try:
+        return GuruShotsAPI(token)
+    except Exception as e:
+        print(f"⚠️ Error creating GuruShotsAPI: {e}")
+        return None
 
 app = FastAPI(title="GSGUI Real API", version="1.0.0")
 
@@ -70,7 +81,8 @@ class ScheduleStrategyRequest(BaseModel):
     scheduled_at: str
 
 class TurboExecutionRequest(BaseModel):
-    challenge_id: str
+    challenge_ids: List[str]  # Support multiple challenges like fill
+    challenge_id: Optional[str] = None  # Keep for backward compatibility
     challenge_title: Optional[str] = None
     challenge_time_left: Optional[str] = None
     algorithm: Optional[str] = None
@@ -78,6 +90,14 @@ class TurboExecutionRequest(BaseModel):
 class SimpleVoteRequest(BaseModel):
     challenge_url: str
     vote_count: int
+
+class FillRequest(BaseModel):
+    challenge_ids: List[str]
+    votes_per_challenge: int
+
+class MultiVoteRequest(BaseModel):
+    challenge_ids: List[str]
+    votes_per_challenge: int
 
 # In-memory storage
 profiles = {}
@@ -92,7 +112,7 @@ strategy_scheduler = None
 gsgui_ini_lock = threading.Lock()
 strategies_ini_lock = threading.Lock()
 backend_config_lock = threading.Lock()
-BACKEND_STRATEGIES_FILE = "./backend/data/backend_strategies.ini"
+BACKEND_STRATEGIES_FILE = os.path.join(os.path.dirname(__file__), "data", "backend_strategies.ini")
 BACKEND_TURBO_FILE = "backend_turbo.ini"
 
 # WebSocket connections for real-time logs
@@ -112,7 +132,7 @@ class ProfileService:
         """Récupère un profil par son ID depuis gsgui.ini"""
         try:
             with gsgui_ini_lock:
-                config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+                config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
                 
                 if 'players' not in config:
                     return None
@@ -136,7 +156,7 @@ class ProfileService:
         """Récupère tous les profils depuis gsgui.ini"""
         try:
             with gsgui_ini_lock:
-                config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+                config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
                 
                 profiles_dict = {}
                 if 'players' in config:
@@ -252,6 +272,10 @@ def log_and_broadcast(message: str, log_type: str = "info", profile_name: str = 
     print(message)
     # Créer une tâche asynchrone pour la diffusion
     try:
+        # Diffuser aux WebSockets par profil
+        if profile_name:
+            asyncio.create_task(connection_manager.notify_broadcast_log(
+                profile_name, log_type, message))
         asyncio.create_task(broadcast_log(message, log_type, profile_name))
     except RuntimeError:
         # Si pas de loop actif, ignorer la diffusion
@@ -285,20 +309,44 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
                 data = await response.json()
                 print(f"📊 API data keys: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
                 
+                # Debug : si success=false, afficher l'erreur
+                if isinstance(data, dict) and not data.get('success', True):
+                    error_code = data.get('error_code', 'unknown')
+                    error_msg = data.get('error', 'No error message')
+                    print(f"❌ GuruShots API Error: {error_code} - {error_msg}")
+                    print(f"🔍 Full response: {data}")
+                
                 challenges = []
                 for challenge_data in data.get('challenges', []):
                     try:
                         timeleft = challenge_data['time_left']
+                        
+                        # Calculer end_time comme dans gs_backend_ui.py
+                        from datetime import datetime, timedelta
+                        days = timeleft.get('days', 0)
+                        hours = timeleft.get('hours', 0)
+                        minutes = timeleft.get('minutes', 0)
+                        seconds = timeleft.get('seconds', 0)
+                        
+                        # Calcul du temps total en secondes pour tri et countdown (comme gs_backend_ui.py)
+                        time_left_seconds = days * 86400 + hours * 3600 + minutes * 60 + seconds
+                        
+                        # Calculer la date de fin
+                        end_datetime = datetime.now() + timedelta(seconds=time_left_seconds)
+                        end_time_formatted = end_datetime.strftime("%d/%m %H:%M")
+                        
+                        # Format d'affichage du temps (style GSGUI: 0D 0H 0M 0S)
+                        time_left_display = f"{days:d}D {hours:02d}H {minutes:02d}M {seconds:02d}S"
                         
                         # Format compatible avec notre interface + préserver les données originales
                         challenge = {
                             'id': str(challenge_data['id']),
                             'title': challenge_data['title'],
                             'url': challenge_data['url'],
-                            'votes': int(challenge_data['member']['ranking']['total']['votes']),
-                            'rank': int(challenge_data['member']['ranking']['total']['rank']),
-                            'level': challenge_data['member']['ranking']['total']['level_name'],
-                            'exposure': challenge_data['member']['ranking']['total']['exposure'],
+                            'votes': int(challenge_data['member']['ranking']['total'].get('votes', 0)),
+                            'rank': int(challenge_data['member']['ranking']['total'].get('rank', 0)),
+                            'level': challenge_data['member']['ranking']['total'].get('level_name', 'UNKNOWN'),
+                            'exposure': challenge_data['member']['ranking']['total'].get('exposure', 0),
                             'gps': 0,  # Placeholder
                             'time_left_days': timeleft['days'],
                             'time_left': {
@@ -307,17 +355,25 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
                                 'minutes': timeleft.get('minutes', 0),
                                 'seconds': timeleft.get('seconds', 0)
                             },
+                            'end_time': end_time_formatted,  # Format gs_backend_ui: "dd/mm HH:MM"
+                            'time_left_display': time_left_display,  # Format gs_backend_ui: "0D 00H 00M 00S"
+                            'time_left_seconds': time_left_seconds,  # Pour le tri (comme gs_backend_ui.py)
                             'selected_strategy': None,  # À implémenter
-                            'turbo_status': 'none',  # À implémenter
+                            'turbo_status': 'none',  # Sera calculé après
                             '_original_data': challenge_data  # Préserver les données originales pour turbo status
                         }
+                        
+                        # Calculer le statut turbo avec la logique existante
+                        challenge['turbo_status'] = determine_turbo_status(challenge, challenge_data)
                         challenges.append(challenge)
                         
                     except KeyError as e:
-                        print(f"⚠️ Missing key in challenge data: {e}")
+                        print(f"Error parsing challenge {challenge_data.get('id', 'unknown')}: {e}")
                         continue
                 
-                print(f"✅ Successfully processed {len(challenges)} real challenges")
+                # Trier par temps restant croissant (comme gs_backend_ui.py)
+                challenges.sort(key=lambda x: x['time_left_seconds'])
+                print(f"✅ Successfully processed {len(challenges)} real challenges (triés par temps restant)")
                 return challenges
                 
     except Exception as e:
@@ -330,7 +386,7 @@ def load_challenge_strategies():
     """Charge les stratégies stockées depuis gsgui.ini pour tous les profils"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
             challenge_strategies = {}
             
             if 'players' not in config:
@@ -359,7 +415,7 @@ def save_challenge_strategy(challenge_id: str, strategy_name: str, scheduled_at:
     """Sauvegarde une stratégie pour un challenge dans gsgui.ini sous le profil"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
             
             # S'assurer que la structure existe
             if 'players' not in config:
@@ -389,7 +445,7 @@ def remove_challenge_strategy(challenge_id: str, profile_id: str = None):
     """Supprime une stratégie d'un challenge depuis gsgui.ini pour un profil donné"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
             
             if 'players' not in config:
                 return False
@@ -424,22 +480,23 @@ def calculate_turbo_status(challenge_data: dict) -> str:
     """Calcule dynamiquement l'état turbo basé sur les données du challenge"""
     try:
         # Analyser l'état du challenge pour déterminer le status turbo
-        member = challenge_data.get('member', {})
-        ranking = member.get('ranking', {})
-        total = ranking.get('total', {})
-        
-        votes = int(total.get('votes', 0))
-        exposure = int(total.get('exposure', 0))
-        
-        # Logique de détection de l'état turbo
-        if votes == 0:
-            return "free"  # Aucun vote = disponible pour turbo
-        elif exposure > 0:
-            return "won"   # Exposure > 0 = turbo gagné
-        elif votes > 0:
-            return "used"  # Votes sans exposure = turbo utilisé mais pas gagné
-        else:
-            return "none"  # Pas de turbo possible
+        # Statut stratégie
+        turbo_status = challenge_data['member']['turbo']
+        turbo_indicators = {
+            "none": "",
+            "running": "🟡 Running",
+            "completed": "✅ OK",
+            "failed": "❌ Failed",
+            "timer": "⏰ Timer",
+            "unknown": "❓ Unknown",
+            "locked": "🔒 Locked",
+            "free": "🆓 Free",
+            "won": "🏆 Won",
+            "used": "✅ Used"
+        }
+        turbo_text = turbo_indicators.get(turbo_status, "")
+
+        return turbo_text
             
     except Exception as e:
         log_and_broadcast(f"❌ Error calculating turbo status: {e}", "error")
@@ -509,7 +566,7 @@ def get_user_token_from_config() -> Optional[str]:
     """Récupère le token depuis la config"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
             if 'players' in config and config['players']:
                 player = list(config['players'].keys())[0]
                 return config['players'][player].get('xtoken')
@@ -533,7 +590,7 @@ async def register_profile(request: ProfileRegisterRequest):
         try:
             from configobj import ConfigObj
             with gsgui_ini_lock:
-                config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+                config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
                 if 'players' in config and profile_id in config['players']:
                     x_token = config['players'][profile_id].get('xtoken')
                     print(f"✅ Token trouvé pour {profile_id}: {x_token[:20] if x_token else 'None'}...")
@@ -550,7 +607,7 @@ async def register_profile(request: ProfileRegisterRequest):
             # Sauvegarder le nouveau token dans gsgui.ini
             try:
                 with gsgui_ini_lock:
-                    config = ConfigObj('./backend/data/gsgui.ini', encoding='utf-8')
+                    config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
                     if 'players' not in config:
                         config['players'] = {}
                     if profile_id not in config['players']:
@@ -741,52 +798,96 @@ async def cancel_strategy(profile_id: str, strategy_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/profiles/{profile_id}/turbo/execute")
-async def execute_turbo(profile_id: str, request: TurboExecutionRequest):
-    """Exécute un turbo et sauvegarde l'état"""
-    try:
-        turbo_id = f"turbo_{profile_id}_{request.challenge_id}_{int(datetime.now().timestamp())}"
-        
-        # Sauvegarder l'état turbo comme "running"
-        
-        turbo_executions[turbo_id] = {
-            "turbo_id": turbo_id,
-            "profile_id": profile_id,
-            "challenge_id": request.challenge_id,
-            "challenge_title": request.challenge_title,
-            "algorithm_used": request.algorithm or "hybrid",
-            "execution_started_at": datetime.now().isoformat(),
-            "status": "running",
-            "success": True,
-            "pairs_processed": 10,
-            "successful_pairs": 8
-        }
-        
-        # Simuler l'exécution avec résultat aléatoire
-        await asyncio.sleep(0.1)
-        
-        # Simuler un résultat (95% de succès)
-        import random
-        success = random.random() < 0.95
-        
-        if success:
-            # Marquer comme complété
-            log_and_broadcast(f"🚀 Turbo completed successfully for challenge {request.challenge_id}", "success")
-            status = "completed"
-        else:
-            # Marquer comme échoué
-            log_and_broadcast(f"❌ Turbo failed for challenge {request.challenge_id}", "error")
-            status = "failed"
-        
-        return {
-            "turbo_id": turbo_id,
-            "profile_id": profile_id,
-            "challenge_id": request.challenge_id,
-            "status": status,
-            "message": f"Turbo execution {status}"
-        }
-    except Exception as e:
-        # En cas d'erreur, marquer comme échoué
-        raise HTTPException(status_code=500, detail=str(e))
+async def execute_turbo_complete(profile_id: str, request: TurboExecutionRequest):
+        """Exécute un turbo complet avec le système d'algorithmes sophistiqués"""
+        import uuid
+
+        # Générer un ID unique pour ce turbo (en dehors du try)
+        turbo_id = str(uuid.uuid4())
+        profile_id = profile_id.lower()
+
+        try:
+            from app.services.turbo_executor import turbo_executor
+
+            # Récupérer le profil et son x_token
+            if profile_id not in profiles:
+                raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found. Please register first.")
+
+            profile = profiles[profile_id]
+            x_token = profile.get('xtoken')
+            request.algorithm = profile.get('turbo_algorithm')
+
+            if not x_token:
+                raise HTTPException(status_code=401, detail=f"No valid token for profile {profile_id}")
+
+            print(f"🚀 Démarrage turbo pour profil {profile_id}: {x_token[:20]}...")
+            log_and_broadcast(f"🚀 Démarrage turbo pour profil {profile_id}: {x_token[:20]}...", "info", profile_id)
+
+            print(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
+            log_and_broadcast(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}", "info", profile_id)
+
+            print(f"   Algorithme: {request.algorithm or 'hybrid'}")
+            log_and_broadcast(f"   Algorithme: {request.algorithm or 'hybrid'}", "info", profile_id)
+
+            # Exécuter le turbo avec le système complet
+            result = await turbo_executor.execute_turbo(
+                profile_id=profile_id,
+                turbo_id=turbo_id,
+                challenge_id=request.challenge_id,
+                challenge_title=request.challenge_title,
+                challenge_time_left=request.challenge_time_left,
+                algorithm=request.algorithm,
+                xtoken=x_token
+            )
+
+            # Construire la réponse
+            from datetime import datetime
+            response = {
+                "turbo_id": turbo_id,
+                "profile_id": profile_id,
+                "challenge_id": request.challenge_id,
+                "challenge_title": request.challenge_title or f"Challenge {request.challenge_id}",
+                "algorithm_used": request.algorithm or "hybrid",
+                "execution_started_at": datetime.now().isoformat(),
+                "execution_completed_at": datetime.now().isoformat(),
+                "status": "completed" if result.get('success', False) else "failed",
+                "success": result.get('success', False),
+                "pairs_processed": result.get('pairs_processed', 0),
+                "successful_pairs": result.get('successful_pairs', 0),
+                "failed_pairs": result.get('failed_pairs', 0),
+                "error_message": None if result.get('success', False) else "Turbo execution failed",
+                "result_data": result
+            }
+
+            # Sauvegarder l'état final
+            final_status = "completed" if result.get('success', False) else "failed"
+
+            print(f"✅ Turbo {turbo_id} terminé: success={result.get('success', False)}")
+
+            # Log et broadcast du résultat
+            if result.get('success', False):
+                log_and_broadcast(f"🎉 Turbo SUCCESS: {result.get('successful_pairs', 0)} paires réussies", "success", profile_id)
+                
+                # Envoyer challenge_update WebSocket pour refresh automatique après turbo success
+                await connection_manager.notify_challenge_update(profile_id, {
+                    "action": "turbo_completed",
+                    "challenge_id": request.challenge_id,
+                    "success": True,
+                    "successful_pairs": result.get('successful_pairs', 0)
+                })
+            else:
+                log_and_broadcast(f"❌ Turbo FAILED: {result.get('error_message', 'Unknown error')}", "error", profile_id)
+
+            return response
+
+        except Exception as e:
+            print(f"❌ Error executing turbo: {e}")
+
+            # Sauvegarder l'échec
+            log_and_broadcast(f"❌ Turbo error: {str(e)}", "error", profile_id)
+
+            raise HTTPException(status_code=500, detail=f"Error executing turbo: {str(e)}")
+
 
 @app.post("/api/v1/challenges/simple-vote")
 async def simple_vote(request: SimpleVoteRequest, profile_name: str):
@@ -807,13 +908,15 @@ async def simple_vote(request: SimpleVoteRequest, profile_name: str):
         
         if REAL_VOTE_AVAILABLE:
             # Créer une instance GuruShotsAPI spécifique au profil
-            profile_api = GuruShotsAPI(x_token)
-            log_and_broadcast(f"🗳️ Exécution vote réel: {request.vote_count} votes sur {request.challenge_url}", "info")
+            profile_api = create_gurushots_api(x_token)
+            if not profile_api:
+                return []
+            log_and_broadcast(f"🗳️ Exécution vote réel: {request.vote_count} votes sur {request.challenge_url}", "info", profile_name)
             
             result = await profile_api.execute_simple_vote(request.challenge_url, request.vote_count)
             
             if result.success:
-                log_and_broadcast(f"✅ Vote réussi: {result.message}", "success")
+                log_and_broadcast(f"✅ Vote réussi: {result.message}", "success", profile_name)
                 return {
                     "success": True,
                     "message": result.message,
@@ -824,7 +927,7 @@ async def simple_vote(request: SimpleVoteRequest, profile_name: str):
                     }
                 }
             else:
-                log_and_broadcast(f"❌ Vote échoué: {result.message}", "error")
+                log_and_broadcast(f"❌ Vote échoué: {result.message}", "error", profile_name)
                 return {
                     "success": False,
                     "message": result.message,
@@ -832,7 +935,7 @@ async def simple_vote(request: SimpleVoteRequest, profile_name: str):
                 }
         else:
             # Fallback: simulation si service pas disponible
-            log_and_broadcast(f"⚠️ Vote simulé (service réel indisponible): {request.vote_count} votes", "warning")
+            log_and_broadcast(f"⚠️ Vote simulé (service réel indisponible): {request.vote_count} votes", "warning", profile_name)
             await asyncio.sleep(0.1)
             
             return {
@@ -846,12 +949,239 @@ async def simple_vote(request: SimpleVoteRequest, profile_name: str):
             
     except Exception as e:
         error_msg = f"❌ Error during vote execution: {e}"
-        log_and_broadcast(error_msg, "error")
+        log_and_broadcast(error_msg, "error", profile_name)
         return {
             "success": False,
             "message": str(e),
             "result_data": {}
         }
+
+@app.post("/api/v1/actions/multi-vote")
+async def multi_vote_challenges(request: MultiVoteRequest, profile_name: str):
+    """Exécute des votes sur plusieurs challenges en utilisant simple-vote en interne"""
+    try:
+        print(f"🗳️ Multi-vote request: {request.votes_per_challenge} votes pour {len(request.challenge_ids)} challenge(s) - profil: {profile_name}")
+        
+        # Récupérer le profil
+        profile_id = profile_name.lower()
+        profile = ProfileService.get_profile(profile_id)
+        
+        if not profile:
+            raise HTTPException(status_code=404, detail=f"Profile {profile_name} not found. Please register first.")
+        
+        success_count = 0
+        failed_challenges = []
+        results = []
+        
+        # Exécuter simple-vote pour chaque challenge
+        for challenge_id in request.challenge_ids:
+            try:
+                challenge_url = challenge_id #f"https://gurushots.com/challenge/{challenge_id}"
+                
+                # Créer une requête simple-vote
+                simple_request = SimpleVoteRequest(
+                    challenge_url=challenge_url,
+                    vote_count=request.votes_per_challenge
+                )
+                
+                # Appeler la fonction simple-vote existante
+                result = await simple_vote(simple_request, profile_name)
+                
+                if result.get("success", False):
+                    success_count += 1
+                    log_and_broadcast(f"✅ Multi-vote réussi: {challenge_id} ({request.votes_per_challenge} votes)", "success", profile_name)
+                    results.append({
+                        "challenge_id": challenge_id,
+                        "success": True,
+                        "message": result.get("message", "Vote réussi"),
+                        "votes_cast": request.votes_per_challenge
+                    })
+                else:
+                    failed_challenges.append(challenge_id)
+                    error_msg = result.get("message", "Erreur inconnue")
+                    log_and_broadcast(f"❌ Multi-vote échoué: {challenge_id} - {error_msg}", "error", profile_name)
+                    results.append({
+                        "challenge_id": challenge_id,
+                        "success": False,
+                        "message": error_msg,
+                        "votes_cast": 0
+                    })
+                    
+            except Exception as e:
+                failed_challenges.append(challenge_id)
+                error_msg = str(e)
+                log_and_broadcast(f"❌ Erreur multi-vote {challenge_id}: {error_msg}", "error", profile_name)
+                results.append({
+                    "challenge_id": challenge_id,
+                    "success": False,
+                    "message": error_msg,
+                    "votes_cast": 0
+                })
+        
+        total_votes = success_count * request.votes_per_challenge
+        summary_msg = f"✅ Multi-vote terminé: {success_count}/{len(request.challenge_ids)} challenges - {total_votes} votes au total"
+        log_and_broadcast(summary_msg, "success", profile_name)
+        
+        return {
+            "success": True,
+            "message": summary_msg,
+            "result_data": {
+                "total_challenges": len(request.challenge_ids),
+                "successful_votes": success_count,
+                "failed_votes": len(failed_challenges),
+                "votes_per_challenge": request.votes_per_challenge,
+                "total_votes_cast": total_votes,
+                "failed_challenge_ids": failed_challenges,
+                "detailed_results": results
+            }
+        }
+        
+    except Exception as e:
+        error_msg = f"❌ Erreur pendant multi-vote: {e}"
+        log_and_broadcast(error_msg, "error", profile_name)
+        return {
+            "success": False,
+            "message": str(e),
+            "result_data": {}
+        }
+
+@app.post("/api/v1/actions/fill")
+async def fill_challenges(request: FillRequest, profile_name: str):
+    """Exécute fill sur plusieurs challenges en utilisant simple-vote (même logique que multi-vote)"""
+    try:
+        print(f"⚡ Fill request: {request.votes_per_challenge} votes pour {len(request.challenge_ids)} challenge(s) - profil: {profile_name}")
+        
+        # Utiliser la même logique que multi-vote en appelant simple-vote pour chaque challenge
+        success_count = 0
+        failed_challenges = []
+        results = []
+        
+        # Récupérer le profil
+        profile_id = profile_name.lower()
+        profile = ProfileService.get_profile(profile_id)
+        
+        if not profile:
+            raise HTTPException(status_code=404, detail=f"Profile {profile_name} not found. Please register first.")
+        
+        # Exécuter simple-vote pour chaque challenge (même logique que multi-vote)
+        for challenge_id in request.challenge_ids:
+            try:
+                # Récupérer la vraie URL du challenge depuis les données (comme dans le turbo)
+                challenge_data = None
+                try:
+                    # Récupérer les données du challenge via l'API GuruShots
+                    profile_api = create_gurushots_api(profile.get('xtoken'))
+                    if not profile_api:
+                        print(f"⚠️ Could not create GuruShotsAPI for challenge {challenge_id}")
+                        continue
+                    
+                    print(f"🔍 Calling get_challenges() for challenge {challenge_id}")
+                    challenges_data = await profile_api.get_challenges()
+                    print(f"🔍 get_challenges() returned successfully")
+
+                except Exception as e:
+                    print(f"⚠️ Could not fetch challenge data for {challenge_id}: {e}")
+                    continue
+                
+                # challenges_data est une liste d'objets ChallengeData
+                challenge_data = None
+                if isinstance(challenges_data, list):
+                    # Chercher le challenge avec l'ID correspondant
+                    for challenge_obj in challenges_data:
+                        if hasattr(challenge_obj, 'id') and str(challenge_obj.id) == str(challenge_id):
+                            # Utiliser challenge_data qui contient le dict avec l'URL
+                            challenge_data = challenge_obj.challenge_data if hasattr(challenge_obj, 'challenge_data') else {'id': challenge_obj.id, 'url': getattr(challenge_obj, 'url', None)}
+                            print(f"✅ Found challenge {challenge_id} in list with URL: {challenge_data.get('url')}")
+                            break
+                    
+                    if not challenge_data:
+                        print(f"⚠️ Challenge {challenge_id} not found in list of {len(challenges_data)} challenges")
+                        # Debug: afficher les IDs disponibles
+                        available_ids = [getattr(c, 'id', 'N/A') for c in challenges_data[:5]]  # Premiers 5
+                        print(f"🔍 Available IDs (first 5): {available_ids}")
+                else:
+                    print(f"⚠️ Unexpected challenges_data type: {type(challenges_data)}")
+                    challenge_data = None
+                
+                # Utiliser la vraie URL ou fallback sur l'URL construite
+                challenge_url = challenge_data.get('url') if challenge_data else challenge_id
+                
+                # Créer une requête simple-vote
+                simple_request = SimpleVoteRequest(
+                    challenge_url=challenge_url,
+                    vote_count=request.votes_per_challenge
+                )
+                
+                # Appeler la fonction simple-vote existante
+                result = await simple_vote(simple_request, profile_name)
+                
+                if result.get("success", False):
+                    success_count += 1
+                    # Ne pas dupliquer les logs - simple_vote le fait déjà
+                    results.append({
+                        "challenge_id": challenge_id,
+                        "success": True,
+                        "message": result.get("message", "Vote réussi"),
+                        "votes_cast": request.votes_per_challenge
+                    })
+                else:
+                    failed_challenges.append(challenge_id)
+                    error_msg = result.get("message", "Erreur inconnue")
+                    # Ne pas dupliquer les logs - simple_vote le fait déjà
+                    results.append({
+                        "challenge_id": challenge_id,
+                        "success": False,
+                        "message": error_msg,
+                        "votes_cast": 0
+                    })
+                    
+            except Exception as e:
+                failed_challenges.append(challenge_id)
+                error_msg = str(e)
+                # Log seulement les erreurs non gérées par simple_vote
+                log_and_broadcast(f"❌ Erreur fill {challenge_id}: {error_msg}", "error", profile_name)
+                results.append({
+                    "challenge_id": challenge_id,
+                    "success": False,
+                    "message": error_msg,
+                    "votes_cast": 0
+                })
+        
+        total_votes = success_count * request.votes_per_challenge
+        summary_msg = f"✅ Fill terminé: {success_count}/{len(request.challenge_ids)} challenges - {total_votes} votes au total"
+        log_and_broadcast(summary_msg, "success", profile_name)
+        
+        # Envoyer challenge_update WebSocket pour refresh automatique après fill
+        await connection_manager.notify_challenge_update(profile_name, {
+            "action": "fill_completed",
+            "success_count": success_count,
+            "total_challenges": len(request.challenge_ids),
+            "total_votes": total_votes
+        })
+        
+        return {
+            "success": True,
+            "message": summary_msg,
+            "result_data": {
+                "total_challenges": len(request.challenge_ids),
+                "successful_fills": success_count,
+                "failed_fills": len(failed_challenges),
+                "votes_per_challenge": request.votes_per_challenge,
+                "total_votes_cast": total_votes,
+                "failed_challenge_ids": failed_challenges,
+                "detailed_results": results
+            }
+        }
+        
+    except Exception as e:
+        error_msg = f"❌ Erreur pendant fill: {e}"
+        log_and_broadcast(error_msg, "error", profile_name)
+        return {
+            "success": False,
+            "message": str(e),
+            "result_data": {}
+        }
+
 
 @app.post("/api/v1/challenges/turbo")
 async def execute_turbo_complete(request: TurboExecutionRequest, profile_name: str):
@@ -863,7 +1193,7 @@ async def execute_turbo_complete(request: TurboExecutionRequest, profile_name: s
     profile_id = profile_name.lower()
     
     try:
-        from backend.app.services.turbo_executor import turbo_executor
+        from app.services.turbo_executor import turbo_executor
         
         # Récupérer le profil et son x_token
         if profile_id not in profiles:
@@ -876,12 +1206,15 @@ async def execute_turbo_complete(request: TurboExecutionRequest, profile_name: s
             raise HTTPException(status_code=401, detail=f"No valid token for profile {profile_name}")
         
         print(f"🚀 Démarrage turbo pour profil {profile_name}: {x_token[:20]}...")
-        
+        log_and_broadcast(f"🚀 Démarrage turbo pour profil {profile_name}: {x_token[:20]}...", "info", profile_name)
+
         print(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
+        log_and_broadcast(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}", "info", profile_name)
+
         print(f"   Algorithme: {request.algorithm or 'hybrid'}")
-        
-        # Sauvegarder l'état turbo comme "running"
-        
+        log_and_broadcast(f"   Algorithme: {request.algorithm or 'hybrid'}", "info", profile_name)
+        if request.algorythm == '':
+            request.algorythm = "[hybrid,position_aware,adaptive_time]"
         # Exécuter le turbo avec le système complet
         result = await turbo_executor.execute_turbo(
             profile_id=profile_id,
@@ -889,10 +1222,10 @@ async def execute_turbo_complete(request: TurboExecutionRequest, profile_name: s
             challenge_id=request.challenge_id,
             challenge_title=request.challenge_title,
             challenge_time_left=request.challenge_time_left,
-            algorithm=request.algorithm or "hybrid",
+            algorithm=request.algorythm ,
             xtoken=x_token
         )
-        
+
         # Construire la réponse
         from datetime import datetime
         response = {
@@ -919,9 +1252,17 @@ async def execute_turbo_complete(request: TurboExecutionRequest, profile_name: s
         
         # Log et broadcast du résultat
         if result.get('success', False):
-            log_and_broadcast(f"🎉 Turbo SUCCESS: {result.get('successful_pairs', 0)} paires réussies", "success")
+            log_and_broadcast(f"🎉 Turbo SUCCESS: {result.get('successful_pairs', 0)} paires réussies", "success", profile_name)
+            
+            # Envoyer challenge_update WebSocket pour refresh automatique après turbo success
+            await connection_manager.notify_challenge_update(profile_name, {
+                "action": "turbo_completed",  
+                "challenge_id": request.challenge_id,
+                "success": True,
+                "successful_pairs": result.get('successful_pairs', 0)
+            })
         else:
-            log_and_broadcast(f"❌ Turbo FAILED: {result.get('error_message', 'Unknown error')}", "error")
+            log_and_broadcast(f"❌ Turbo FAILED: {result.get('error_message', 'Unknown error')}", "error", profile_name)
         
         return response
         
@@ -929,7 +1270,7 @@ async def execute_turbo_complete(request: TurboExecutionRequest, profile_name: s
         print(f"❌ Error executing turbo: {e}")
         
         # Sauvegarder l'échec
-        log_and_broadcast(f"❌ Turbo error: {str(e)}", "error")
+        log_and_broadcast(f"❌ Turbo error: {str(e)}", "error", profile_name)
         
         raise HTTPException(status_code=500, detail=f"Error executing turbo: {str(e)}")
 
@@ -937,7 +1278,7 @@ def parse_strategy_actions(strategy_name: str) -> List[Dict]:
     """Parse les actions d'une stratégie depuis strategies.ini"""
     try:
         with strategies_ini_lock:
-            strategies_config = ConfigObj('./backend/data/strategies.ini', encoding='utf-8')
+            strategies_config = ConfigObj(os.path.join(os.path.dirname(__file__), "data", "strategies.ini"), encoding='utf-8')
             if strategy_name not in strategies_config:
                 return []
             
@@ -1005,6 +1346,13 @@ async def get_active_strategies(profile_name: Optional[str] = None):
         total_jobs = 0
         
         for challenge_id, strategy_info in challenge_strategies.items():
+            # Filtrer par profil si spécifié
+            if profile_name:
+                profile_id = profile_name.lower()
+                strategy_profile_id = strategy_info.get('profile_id', '')
+                if strategy_profile_id != profile_id:
+                    continue  # Ignorer les stratégies des autres profils
+            
             strategy_name = strategy_info['strategy_name']
             
             # Parser les actions de la stratégie
@@ -1067,7 +1415,7 @@ async def get_profiles():
     """Récupère la liste des profils depuis gsgui.ini"""
     try:
         with gsgui_ini_lock:
-            gsgui_ini_path = "./backend/data/gsgui.ini"
+            gsgui_ini_path = "./data/gsgui.ini"
             config = ConfigObj(gsgui_ini_path, encoding='utf-8')
             
             profiles_data = []
@@ -1091,7 +1439,7 @@ async def add_profile(profile_name: str, xtoken: str):
     """Ajoute un nouveau profil dans gsgui.ini"""
     try:
         with gsgui_ini_lock:
-            gsgui_ini_path = "./backend/data/gsgui.ini"
+            gsgui_ini_path = "./data/gsgui.ini"
             config = ConfigObj(gsgui_ini_path, encoding='utf-8')
             
             # Créer la section players si elle n'existe pas
@@ -1124,7 +1472,7 @@ async def add_profile(profile_name: str, xtoken: str):
 async def get_strategies_list():
     """Récupère la liste des noms de stratégies depuis strategies.ini"""
     try:
-        strategies_ini_path = "./backend/data/strategies.ini"
+        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
         
         if not os.path.exists(strategies_ini_path):
             raise HTTPException(status_code=404, detail="Fichier strategies.ini non trouvé")
@@ -1151,7 +1499,7 @@ async def get_strategies_list():
 async def get_strategies_config():
     """Récupère le contenu du fichier strategies.ini"""
     try:
-        strategies_ini_path = "./backend/data/strategies.ini"
+        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
         
         with strategies_ini_lock:
             with open(strategies_ini_path, 'r', encoding='utf-8') as f:
@@ -1172,7 +1520,7 @@ async def update_strategies_config(request: dict):
         if not content:
             raise HTTPException(status_code=400, detail="Missing content field")
             
-        strategies_ini_path = "./backend/data/strategies.ini"
+        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
         
         with strategies_ini_lock:
             # Sauvegarder le fichier original
@@ -1189,6 +1537,30 @@ async def update_strategies_config(request: dict):
         
     except Exception as e:
         print(f"❌ Error updating strategies config: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/v1/strategies/cleanup")
+async def cleanup_strategies_endpoint(profile_name: Optional[str] = None):
+    """Nettoie les stratégies obsolètes et expirées"""
+    try:
+        print(f"🧹 API Cleanup demandé pour profil: {profile_name or 'tous'}")
+        
+        if profile_name:
+            # Cleanup pour un profil spécifique
+            profile_id = profile_name.lower()
+            cleanup_count = await cleanup_expired_strategies_for_profile(profile_id)
+        else:
+            # Cleanup global pour tous les profils
+            cleanup_count = await cleanup_expired_strategies_global()
+        
+        return {
+            "status": "success",
+            "message": f"✅ {cleanup_count} stratégie(s) obsolète(s) nettoyée(s)",
+            "cleaned_count": cleanup_count
+        }
+        
+    except Exception as e:
+        print(f"❌ Error cleanup strategies: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.websocket("/ws/logs")
@@ -1220,28 +1592,36 @@ async def websocket_logs(websocket: WebSocket):
         websocket_connections.discard(websocket)
         print(f"🔌 WebSocket disconnected. Active connections: {len(websocket_connections)}")
 
-async def schedule_existing_strategies():
-    """Programme les stratégies existantes au démarrage"""
+@app.websocket("/ws/logs/{profile_id}")
+async def websocket_logs_profile(websocket: WebSocket, profile_id: str):
+    """WebSocket endpoint pour les logs d'un profil spécifique"""
+    profile_id = profile_id.lower()
+    
+    # Enregistrer la connexion dans le connection_manager pour ce profil (qui gère accept())
     try:
-        print("🔄 Loading existing strategies from .ini...")
-        challenge_strategies = load_challenge_strategies()
+        await connection_manager.connect(websocket, profile_id)
         
-        if not challenge_strategies:
-            print("📋 No existing strategies found")
-            return
+        # Envoyer un message de bienvenue
+        welcome_data = {
+            "timestamp": datetime.now().isoformat(),
+            "type": "info", 
+            "message": f"🔌 Connexion WebSocket établie pour profil {profile_id}"
+        }
+        await websocket.send_text(json.dumps(welcome_data))
         
-        print(f"📅 Found {len(challenge_strategies)} strategies to schedule:")
-        for challenge_id, strategy_info in challenge_strategies.items():
-            strategy_name = strategy_info['strategy_name']
-            status = strategy_info['status']
-            print(f"  - Challenge {challenge_id}: {strategy_name} ({status})")
-        
-        # PROGRAMMER RÉELLEMENT toutes les stratégies existantes
-        await schedule_strategies_from_ini()
-        print("✅ Existing strategies scheduled in APScheduler")
-        
-    except Exception as e:
-        print(f"❌ Error scheduling existing strategies: {e}")
+        # Garder la connexion ouverte
+        while True:
+            try:
+                await websocket.receive_text()
+            except WebSocketDisconnect:
+                break
+    except WebSocketDisconnect:
+        pass
+    finally:
+        connection_manager.disconnect(websocket, profile_id)
+        print(f"🔌 WebSocket disconnected for profile {profile_id}")
+
+# NOTE: schedule_existing_strategies() supprimée - remplacée par startup_event()
 
 async def schedule_strategies_from_ini():
     """Programme les stratégies depuis backend_strategies.ini avec APScheduler"""
@@ -1268,14 +1648,66 @@ async def schedule_strategies_from_ini():
                     if profile_id in profiles:
                         x_token = profiles[profile_id].get('xtoken')
                         if x_token:
-                            api = GuruShotsAPI(x_token)
-                            challenges_response = await api.get_challenges()
-                            if challenges_response.success:
-                                # Chercher le challenge dans la réponse
-                                for challenge in challenges_response.result_data.get('challenges', []):
-                                    if str(challenge.get('id')) == str(challenge_id):
-                                        challenge_data = challenge
-                                        break
+                            api = create_gurushots_api(x_token)
+                            if not api:
+                                print(f"⚠️ Could not create GuruShotsAPI for challenge {challenge_data.get('id')}")
+                                return None
+                            challenges_data = await api.get_challenges()
+                            
+                            # Vérifier si c'est le nouveau format (avec .success) ou l'ancien (liste directe)
+                            if hasattr(challenges_data, 'success') and challenges_data.success:
+                                # Nouveau format avec .success et .result_data
+                                challenges_list = challenges_data.result_data.get('challenges', [])
+                                print(f"🔍 New API format - challenge keys: {list(challenges_list[0].keys()) if challenges_list else 'no challenges'}")
+                            elif isinstance(challenges_data, list):
+                                # Ancien format - liste directe d'objets ChallengeData
+                                challenges_list = []
+                                for ch in challenges_data:
+                                    if hasattr(ch, 'id'):
+                                        challenge_dict = {
+                                            'id': ch.id,
+                                            'title': getattr(ch, 'title', f'Challenge {ch.id}'),
+                                            'url': getattr(ch, 'url', None)
+                                        }
+                                        
+                                        # Essayer de récupérer les données de timing
+                                        for attr in ['close_time', 'end_time', 'ends_at', 'closing_time', 'challenge_data']:
+                                            if hasattr(ch, attr):
+                                                value = getattr(ch, attr)
+                                                if value:
+                                                    challenge_dict[attr] = value
+                                                    print(f"🔍 Found timing data: {attr} = {value}")
+                                        
+                                        # Si l'objet a un challenge_data, l'inclure aussi
+                                        if hasattr(ch, 'challenge_data') and ch.challenge_data:
+                                            challenge_dict['_original_data'] = ch.challenge_data
+                                        
+                                        challenges_list.append(challenge_dict)
+                            else:
+                                challenges_list = []
+                            
+                            # Chercher le challenge dans la liste
+                            for challenge in challenges_list:
+                                if str(challenge.get('id')) == str(challenge_id):
+                                    challenge_data = challenge
+                                    break
+                            
+                            # Si pas de données trouvées ou pas de timing, essayer fetch_real_challenges
+                            if not challenge_data or not any(key in challenge_data for key in ['close_time', 'end_time', 'time_left']):
+                                try:
+                                    print(f"🔍 Fallback: trying fetch_real_challenges for timing data")
+                                    real_challenges = await fetch_real_challenges(x_token)
+                                    for real_ch in real_challenges:
+                                        if str(real_ch.get('id')) == str(challenge_id):
+                                            # Merger les données
+                                            if challenge_data:
+                                                challenge_data.update(real_ch)
+                                            else:
+                                                challenge_data = real_ch
+                                            print(f"🔍 Merged data keys: {list(challenge_data.keys())}")
+                                            break
+                                except Exception as fallback_error:
+                                    print(f"⚠️ Fallback fetch failed: {fallback_error}")
                 except Exception as e:
                     print(f"⚠️ Could not fetch challenge data for {challenge_id}: {e}")
                 
@@ -1293,12 +1725,12 @@ async def schedule_strategies_from_ini():
 
                     if execution_time is None:
                         print(f"   ❌ Impossible de calculer le timing pour {action['timing']} - stratégie ignorée")
-                        await broadcast_log(f"   ❌ Impossible de calculer le timing pour {action['timing']} - stratégie ignorée", "strategy", profile_id)
+                        log_and_broadcast(f"   ❌ Impossible de calculer le timing pour {action['timing']} - stratégie ignorée", "strategy", profile_id)
                         continue
                     
                     if execution_time <= datetime.now():
                         print(f"   ⚠️ Timing {action['timing']} dans le passé - stratégie supprimée")
-                        await broadcast_log(
+                        log_and_broadcast(
                             f"   ⚠️ Timing {action['timing']} dans le passé - stratégie supprimée",
                             "strategy", profile_id)
 
@@ -1307,7 +1739,7 @@ async def schedule_strategies_from_ini():
 
                     if 'vote' in action['action']:
                         # Programmer le job avec APSchedule
-                        job_id = f"{challenge_id}_{action['timing']}_{action['votes']}"
+                        job_id = f"{profile_id}_{challenge_id}_{action['timing']}_{action['votes']}"
                         strategy_scheduler.add_job(
                             execute_strategy_vote,
                             'date',
@@ -1316,29 +1748,31 @@ async def schedule_strategies_from_ini():
                             id=job_id,
                             replace_existing=True
                         )
+                        print(f"📅 JOB PROGRAMMÉ: {job_id} à {execution_time.strftime('%H:%M:%S')} - ARGS: {[challenge_id, challenge_title, action['votes'], profile_id]}")
+                        log_and_broadcast(f"📅 Job APScheduler programmé: {job_id} à {execution_time.strftime('%H:%M:%S')}", "strategy", profile_id)
                     
                         # Affichage avec l'heure absolue calculée (format HH:MM:SS comme l'ancien GSGUI)
                         formatted_time = execution_time.strftime('%H:%M:%S')
                         print(f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {challenge_title}")
-                        await broadcast_log(
+                        log_and_broadcast(
                             f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {challenge_title}",
                             "strategy", profile_id)
                         scheduled_count += 1
                 
             except Exception as e:
                 print(f"❌ Error scheduling strategy for {challenge_id}: {e}")
-                await broadcast_log(
+                log_and_broadcast(
                     f"❌ Error scheduling strategy for {challenge_id}: {e}",
                     "strategy", profile_id)
         
         print(f"📊 Total: {scheduled_count} job(s) programmé(s)")
-        await broadcast_log(
+        log_and_broadcast(
             f"📊 Total: {scheduled_count} job(s) programmé(s)",
             "strategy", profile_id)
 
     except Exception as e:
         print(f"❌ Error in schedule_strategies_from_ini: {e}")
-        await broadcast_log(
+        log_and_broadcast(
             f"❌ Error in schedule_strategies_from_ini: {e}",
             "strategy", profile_id)
 
@@ -1352,7 +1786,7 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
             return
         
         print(f"🎯 Programming single strategy for challenge {challenge_id} (profile: {profile_id})")
-        await broadcast_log(
+        log_and_broadcast(
             f"🎯 Programming single strategy for challenge {challenge_id} (profile: {profile_id})",
             "strategy", profile_id)
         # Charger les stratégies depuis gsgui.ini
@@ -1405,7 +1839,7 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
             if 'vote' in action['action']:
                 # Programmer le job avec APScheduler
                 if 'now' in action['timing']:
-                    job_id = f"{challenge_id}_{action['timing']}_{action['votes']}"
+                    job_id = f"{profile_id}_{challenge_id}_{action['timing']}_{action['votes']}"
                     strategy_scheduler.add_job(
                         execute_strategy_vote,
                         'date',
@@ -1413,8 +1847,10 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
                         id=job_id,
                         replace_existing=True
                     )
+                    print(f"📅 JOB IMMÉDIAT PROGRAMMÉ: {job_id} - ARGS: {[challenge_id, title, action['votes'], profile_id]}")
+                    log_and_broadcast(f"📅 Job APScheduler immédiat programmé: {job_id}", "strategy", profile_id)
                 else:
-                    job_id = f"{challenge_id}_{action['timing']}_{action['votes']}"
+                    job_id = f"{profile_id}_{challenge_id}_{action['timing']}_{action['votes']}"
                     strategy_scheduler.add_job(
                         execute_strategy_vote,
                         'date',
@@ -1427,19 +1863,19 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
                 # Affichage avec l'heure absolue calculée
                 formatted_time = execution_time.strftime('%H:%M:%S')
                 print(f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {title}")
-                await broadcast_log(
+                log_and_broadcast(
                     f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {title}",
                     "strategy", profile_id)
                 scheduled_count += 1
         
         print(f"📊 Challenge {challenge_id}: {scheduled_count} job(s) programmé(s)")
-        await broadcast_log(
+        log_and_broadcast(
             f"📊 Challenge {challenge_id}: {scheduled_count} job(s) programmé(s)",
             "strategy", profile_id)
         
     except Exception as e:
         print(f"❌ Error in schedule_single_strategy: {e}")
-        await broadcast_log(
+        log_and_broadcast(
             f"❌ Error in schedule_single_strategy: {e}",
             "strategy", profile_id)
 
@@ -1641,7 +2077,7 @@ async def parse_timing_spec(challenge, timing_spec):
 
     except Exception as e:
         #print(f"❌ Erreur parsing timing '{timing_spec}': {e}")
-        await broadcast_log(f"❌ Erreur parsing timing '{timing_spec}': {e}")
+        log_and_broadcast(f"❌ Erreur parsing timing '{timing_spec}': {e}")
 
         return None
 def parse_time_offset(time_str):
@@ -1673,51 +2109,69 @@ def parse_time_offset(time_str):
 async def execute_strategy_vote(challenge_id, challenge_title, vote_count, profile_id):
     """Exécute un vote programmé par une stratégie"""
     try:
+        # Log de démarrage très visible
+        start_message = f"🚀 DÉMARRAGE EXECUTE_STRATEGY_VOTE - Challenge: {challenge_id}, Votes: {vote_count}, Profil: {profile_id}"
+        print(start_message)
+        log_and_broadcast(start_message, "vote_execution", profile_id)
+        
         execution_message = f"🗳️ Exécution vote programmé: {vote_count} votes pour {challenge_title}"
         print(execution_message)
-        await broadcast_log(execution_message, "vote_execution", profile_id)
+        log_and_broadcast(execution_message, "vote_execution", profile_id)
         
         # Récupérer le profil via le service
         profile = ProfileService.get_profile(profile_id)
         if not profile or not profile['xtoken']:
             profile_error = f"❌ Profil {profile_id} non trouvé ou token manquant"
             print(profile_error)
-            await broadcast_log(profile_error, "vote_error", profile_id)
+            log_and_broadcast(profile_error, "vote_error", profile_id)
             return
         
-        # Récupérer les données fraîches du challenge directement depuis l'API
+        # Récupérer les données du challenge via l'API (même méthode que pour fill)
+        challenge_data = None
         try:
-            real_challenges = await fetch_real_challenges(profile['xtoken'])
-            challenge_data = None
-            
-            if real_challenges:
-                for challenge in real_challenges:
-                    if str(challenge.get('id')) == str(challenge_id):
-                        challenge_data = challenge
-                        break
+            # Récupérer les données du challenge via l'API GuruShots
+            api = create_gurushots_api(profile.get('xtoken'))
+            if api:
+                print(f"🔍 Turbo: Calling get_challenges() for challenge {challenge_id}")
+                challenges_data = await api.get_challenges()
+                
+                # challenges_data est une liste d'objets ChallengeData
+                if isinstance(challenges_data, list):
+                    # Chercher le challenge avec l'ID correspondant
+                    for challenge_obj in challenges_data:
+                        if hasattr(challenge_obj, 'id') and str(challenge_obj.id) == str(challenge_id):
+                            # Utiliser challenge_data qui contient le dict avec l'URL
+                            challenge_data = challenge_obj.challenge_data if hasattr(challenge_obj, 'challenge_data') else {'id': challenge_obj.id, 'url': getattr(challenge_obj, 'url', None)}
+                            print(f"✅ Turbo: Found challenge {challenge_id} with URL: {challenge_data.get('url')}")
+                            break
+                    
+                    if not challenge_data:
+                        print(f"⚠️ Turbo: Challenge {challenge_id} not found in list of {len(challenges_data)} challenges")
             
             if not challenge_data:
                 # Challenge non trouvé - soit expiré, soit erreur API
                 not_found_message = f"⚠️ Challenge {challenge_id} ({challenge_title}) non trouvé dans les challenges actifs - vote annulé"
                 print(not_found_message)
-                await broadcast_log(not_found_message, "vote_error", profile_id)
+                log_and_broadcast(not_found_message, "vote_error", profile_id)
                 return
             else:
                 # Challenge trouvé - continuer avec le vote
                 execution_message = f"✅ Challenge {challenge_id} ({challenge_title}) validé - exécution du vote"
                 print(execution_message)
-                await broadcast_log(execution_message, "vote_execution", profile_id)
-
+                log_and_broadcast(execution_message, "vote_execution", profile_id)
 
         except Exception as api_error:
             # En cas d'erreur API, continuer quand même avec le vote (ne pas bloquer)
             print(f"⚠️ Erreur validation challenge {challenge_id}: {api_error} - continue quand même")
-            await broadcast_log(f"⚠️ Erreur validation challenge {challenge_id}: {api_error} - continue quand même", "vote_execution", profile_id)
+            log_and_broadcast(f"⚠️ Erreur validation challenge {challenge_id}: {api_error} - continue quand même", "vote_execution", profile_id)
             challenge_data = {'id': challenge_id, 'url': f"https://gurushots.com/challenge/{challenge_id}"}
         
         if REAL_VOTE_AVAILABLE:
             # Exécuter le vote avec l'URL du challenge récupérée via le service
-            api = GuruShotsAPI(profile['xtoken'])
+            api = create_gurushots_api(profile['xtoken'])
+            if not api:
+                await log_and_broadcast(f"⚠️ Could not create GuruShotsAPI for turbo", "error", profile_id)
+                return {'success': False, 'message': 'GuruShotsAPI not available'}
             challenge_url = challenge_data.get('url', f"https://gurushots.com/challenge/{challenge_id}")
             
             result = await api.execute_simple_vote(challenge_url, vote_count)
@@ -1725,25 +2179,53 @@ async def execute_strategy_vote(challenge_id, challenge_title, vote_count, profi
             if result.success:
                 success_message = f"✅ Vote réussi: {vote_count} votes pour {challenge_title}"
                 print(success_message)
-                await broadcast_log(success_message, "vote_success", profile_id)
+                log_and_broadcast(success_message, "vote_success", profile_id)
                 
                 # Déclencher un refresh automatique après vote réussi
                 refresh_message = "🔄 Refresh automatique des challenges après Vote..."
                 print(refresh_message)
-                await broadcast_log(refresh_message, "refresh_trigger", profile_id)
+                log_and_broadcast(refresh_message, "refresh_trigger", profile_id)
+                
+                # Envoyer challenge_update WebSocket pour refresh automatique
+                await connection_manager.notify_challenge_update(profile_id, {
+                    "action": "strategy_completed",
+                    "challenge_id": challenge_id,
+                    "vote_count": vote_count,
+                    "strategy_type": "vote"
+                })
+                
+                # Message de résumé comme pour Fill
+                summary_message = f"✅ Stratégie terminée: 1/1 challenge - {vote_count} votes au total"
+                print(summary_message)
+                log_and_broadcast(summary_message, "success", profile_id)
             else:
                 error_message = f"❌ Vote échoué: {result.message}"
                 print(error_message)
-                await broadcast_log(error_message, "vote_error", profile_id)
+                log_and_broadcast(error_message, "vote_error", profile_id)
+                
+                # Message d'échec
+                error_summary = f"❌ Stratégie échouée: 0/1 challenge - {vote_count} votes manqués"
+                print(error_summary)
+                log_and_broadcast(error_summary, "error", profile_id)
         else:
             simulation_message = f"⚠️ Vote simulé: {vote_count} votes pour {challenge_title}"
             print(simulation_message)
-            await broadcast_log(simulation_message, "vote_simulation", profile_id)
+            log_and_broadcast(simulation_message, "vote_simulation", profile_id)
+            
+            # Message de résumé pour simulation
+            sim_summary = f"⚠️ Stratégie simulée: 1/1 challenge - {vote_count} votes simulés"
+            print(sim_summary)
+            log_and_broadcast(sim_summary, "warning", profile_id)
             
     except Exception as e:
         error_message = f"❌ Erreur exécution vote: {e}"
         print(error_message)
-        await broadcast_log(error_message, "error", profile_id)
+        log_and_broadcast(error_message, "error", profile_id)
+        
+        # Message d'échec pour exception
+        exception_summary = f"❌ Stratégie échouée: erreur d'exécution - {vote_count} votes manqués"
+        print(exception_summary)
+        log_and_broadcast(exception_summary, "error", profile_id)
     
     finally:
         # Nettoyage automatique : vérifier s'il faut supprimer la stratégie après exécution
@@ -1759,7 +2241,7 @@ async def cleanup_completed_strategy(challenge_id, profile_id):
         if strategy_scheduler:
             jobs = strategy_scheduler.get_jobs()
             for job in jobs:
-                if job.id.startswith(f'vote_{profile_id}_{challenge_id}_'):
+                if job.id.startswith(f'{profile_id}_{challenge_id}_'):
                     remaining_jobs.append(job.id)
         
         # Si plus de jobs en attente, supprimer la stratégie du fichier .ini
@@ -1768,7 +2250,7 @@ async def cleanup_completed_strategy(challenge_id, profile_id):
             if success:
                 cleanup_message = f"🧹 Stratégie terminée et nettoyée pour challenge {challenge_id}"
                 print(cleanup_message)
-                await broadcast_log(cleanup_message, "cleanup", profile_id)
+                log_and_broadcast(cleanup_message, "cleanup", profile_id)
             else:
                 print(f"⚠️ Stratégie déjà nettoyée pour challenge {challenge_id}")
         else:
@@ -1785,7 +2267,7 @@ async def cleanup_existing_strategy_for_challenge(challenge_id, profile_id):
         if strategy_scheduler:
             jobs_to_remove = []
             for job in strategy_scheduler.get_jobs():
-                if job.id.startswith(f'{challenge_id}_') or job.id.startswith(f'vote_{profile_id}_{challenge_id}_'):
+                if job.id.startswith(f'{profile_id}_{challenge_id}_'):
                     jobs_to_remove.append(job.id)
             
             for job_id in jobs_to_remove:
@@ -1814,7 +2296,7 @@ async def cleanup_existing_strategy_for_challenge(challenge_id, profile_id):
         if jobs_removed > 0 or removed_from_ini or memory_removed > 0:
             cleanup_message = f"🧹 Ancienne stratégie nettoyée pour challenge {challenge_id}: {jobs_removed} job(s), ini={removed_from_ini}, mémoire={memory_removed}"
             print(cleanup_message)
-            await broadcast_log(cleanup_message, "cleanup", profile_id)
+            log_and_broadcast(cleanup_message, "cleanup", profile_id)
         
     except Exception as e:
         print(f"❌ Erreur cleanup_existing_strategy_for_challenge: {e}")
@@ -1835,7 +2317,10 @@ async def cleanup_expired_strategies():
                 if profile_id in profiles:
                     x_token = profiles[profile_id].get('xtoken')
                     if x_token:
-                        api = GuruShotsAPI(x_token)
+                        api = create_gurushots_api(x_token)
+                        if not api:
+                            print(f"⚠️ Could not create GuruShotsAPI for strategy {challenge_id}")
+                            return
                         challenges_list = await api.get_challenges()
                         
                         challenge_exists = False
@@ -1857,7 +2342,7 @@ async def cleanup_expired_strategies():
                             if strategy_scheduler:
                                 jobs_to_remove = []
                                 for job in strategy_scheduler.get_jobs():
-                                    if job.id.startswith(f'vote_{profile_id}_{challenge_id}_'):
+                                    if job.id.startswith(f'{profile_id}_{challenge_id}_'):
                                         jobs_to_remove.append(job.id)
                                 
                                 for job_id in jobs_to_remove:
@@ -1886,6 +2371,97 @@ async def test_vote_notification():
         return {"status": "Vote notification sent"}
     except Exception as e:
         return {"error": str(e)}
+
+async def cleanup_expired_strategies_for_profile(profile_id: str):
+    """Nettoie les stratégies expirées pour un profil spécifique"""
+    try:
+        print(f"🧹 Nettoyage des stratégies expirées pour profil {profile_id}...")
+        
+        challenge_strategies = load_challenge_strategies()
+        if not challenge_strategies:
+            return 0
+        
+        cleaned_count = 0
+        
+        # Filtrer les stratégies pour ce profil uniquement
+        profile_strategies = {
+            challenge_id: strategy_info 
+            for challenge_id, strategy_info in challenge_strategies.items()
+            if strategy_info.get('profile_id', '').lower() == profile_id.lower()
+        }
+        
+        if not profile_strategies:
+            print(f"📋 Aucune stratégie trouvée pour profil {profile_id}")
+            return 0
+        
+        # Vérifier les challenges actifs pour ce profil
+        if profile_id in profiles:
+            x_token = profiles[profile_id].get('xtoken')
+            if x_token:
+                api = create_gurushots_api(x_token)
+                if api:
+                    challenges_data = await api.get_challenges()
+                    
+                    # Vérifier si c'est le nouveau format (avec .success) ou l'ancien (liste directe)
+                    if hasattr(challenges_data, 'success') and challenges_data.success:
+                        # Nouveau format avec .success et .result_data
+                        challenges_list = challenges_data.result_data.get('challenges', [])
+                    elif isinstance(challenges_data, list):
+                        # Ancien format - liste directe d'objets ChallengeData
+                        challenges_list = [
+                            {'id': ch.id} for ch in challenges_data if hasattr(ch, 'id')
+                        ]
+                    else:
+                        challenges_list = []
+                    
+                    active_challenge_ids = {str(ch.get('id')) for ch in challenges_list}
+                    
+                    for challenge_id, strategy_info in profile_strategies.items():
+                        if str(challenge_id) not in active_challenge_ids:
+                            # Challenge expiré
+                            challenge_title = strategy_info.get('challenge_title', f'Challenge {challenge_id}')
+                            success = remove_challenge_strategy(challenge_id, profile_id)
+                            if success:
+                                print(f"🗑️ Challenge expiré supprimé pour {profile_id}: {challenge_title}")
+                                cleaned_count += 1
+                            
+                            # Supprimer les jobs du scheduler
+                            if strategy_scheduler:
+                                jobs_to_remove = []
+                                for job in strategy_scheduler.get_jobs():
+                                    if job.id.startswith(f'{profile_id}_{challenge_id}_'):
+                                        jobs_to_remove.append(job.id)
+                                
+                                for job_id in jobs_to_remove:
+                                    try:
+                                        strategy_scheduler.remove_job(job_id)
+                                        print(f"  🗑️ Job {job_id} supprimé du scheduler")
+                                    except Exception as job_error:
+                                        print(f"  ⚠️ Erreur suppression job {job_id}: {job_error}")
+        
+        print(f"✅ Profil {profile_id}: {cleaned_count} stratégie(s) expirée(s) nettoyée(s)")
+        return cleaned_count
+        
+    except Exception as e:
+        print(f"❌ Erreur cleanup profil {profile_id}: {e}")
+        return 0
+
+async def cleanup_expired_strategies_global():
+    """Nettoie les stratégies expirées pour tous les profils"""
+    try:
+        print("🧹 Nettoyage global des stratégies expirées...")
+        
+        total_cleaned = 0
+        for profile_id in profiles.keys():
+            cleaned_count = await cleanup_expired_strategies_for_profile(profile_id)
+            total_cleaned += cleaned_count
+        
+        print(f"✅ Cleanup global: {total_cleaned} stratégie(s) expirée(s) nettoyée(s)")
+        return total_cleaned
+        
+    except Exception as e:
+        print(f"❌ Erreur cleanup global: {e}")
+        return 0
 
 @app.get("/api/v1/debug/scheduler-status")
 async def get_scheduler_status():
@@ -1936,7 +2512,7 @@ async def startup_event():
     # Charger les profils depuis .ini
     load_profiles_from_ini()
     
-    await schedule_existing_strategies()
+    # NOTE: Les stratégies sont programmées dans startup_event() après l'init du scheduler
     
     # Nettoyer les stratégies expirées au démarrage
     await cleanup_expired_strategies()
@@ -1950,7 +2526,10 @@ async def startup_event():
         try:
             user_token = get_user_token_from_config()
             if user_token:
-                gurushots_api = GuruShotsAPI(user_token)
+                gurushots_api = create_gurushots_api(user_token)
+                if not gurushots_api:
+                    print(f"⚠️ Could not create GuruShotsAPI for profile loading")
+                    return
                 print("✅ GuruShots API service initialized with real voting capability")
             else:
                 print("⚠️ No user token found in config - using simulated voting")

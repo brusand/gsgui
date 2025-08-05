@@ -1,0 +1,154 @@
+.logs-panel {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.logs-header h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 16px;
+}
+
+.logs-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-indicator {
+  font-size: 12px;
+}
+
+.status-text {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.auto-scroll-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ccc;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.auto-scroll-toggle input {
+  margin: 0;
+}
+
+.logs-content {
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #0d1117;
+}
+
+.no-logs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  text-align: center;
+}
+
+.no-logs p {
+  margin: 5px 0;
+}
+
+.logs-hint {
+  font-size: 12px !important;
+  font-style: italic;
+}
+
+.logs-list {
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.log-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+  padding: 2px 0;
+}
+
+.log-time {
+  color: #666;
+  font-size: 11px;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.log-icon {
+  font-size: 12px;
+  min-width: 20px;
+}
+
+.log-message {
+  color: #ddd;
+  flex: 1;
+  word-break: break-word;
+}
+
+/* Couleurs par niveau de log */
+.log-info .log-message {
+  color: #58a6ff;
+}
+
+.log-success .log-message {
+  color: #3fb950;
+}
+
+.log-warning .log-message {
+  color: #d29922;
+}
+
+.log-error .log-message {
+  color: #f85149;
+}
+
+/* Scrollbar custom */
+.logs-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.logs-list::-webkit-scrollbar-track {
+  background: #21262d;
+}
+
+.logs-list::-webkit-scrollbar-thumb {
+  background: #484f58;
+  border-radius: 4px;
+}
+
+.logs-list::-webkit-scrollbar-thumb:hover {
+  background: #6e7681;
+}

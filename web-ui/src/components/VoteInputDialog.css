@@ -1,0 +1,156 @@
+.vote-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.vote-dialog {
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 12px;
+  width: 450px;
+  max-width: 90vw;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: dialogSlideIn 0.2s ease-out;
+}
+
+@keyframes dialogSlideIn {
+  from {
+    transform: scale(0.9) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.vote-dialog-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #333;
+}
+
+.vote-dialog-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.vote-dialog-content {
+  padding: 24px;
+}
+
+.vote-dialog-content p {
+  margin: 0 0 20px 0;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+.vote-input-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.vote-input {
+  background: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  width: 120px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.vote-input:focus {
+  outline: none;
+  border-color: #007acc;
+  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.2);
+}
+
+.vote-input-label {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.vote-info {
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.vote-info p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.vote-range {
+  color: #888;
+  margin-bottom: 8px !important;
+}
+
+.vote-total {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.vote-dialog-actions {
+  padding: 16px 24px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.vote-dialog-actions .btn {
+  min-width: 100px;
+  padding: 10px 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.vote-dialog-actions .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vote-dialog-actions .btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+/* Dark theme styling */
+.btn.btn-secondary {
+  background: #374151;
+  color: #d1d5db;
+  border: 1px solid #4b5563;
+}
+
+.btn.btn-secondary:hover:not(:disabled) {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.btn.btn-success {
+  background: #10b981;
+  color: white;
+  border: 1px solid #059669;
+}
+
+.btn.btn-success:hover:not(:disabled) {
+  background: #059669;
+  border-color: #047857;
+}

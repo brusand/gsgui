@@ -891,7 +891,37 @@ class EnhancedGSGUI(QMainWindow):
         self.log(f"❌ Erreur: {error}")
         self.status_label.setText("Erreur")
         self.refresh_btn.setEnabled(True)
-    
+
+    def get_turbo_status(self, challenge):
+        """Détermine l'état turbo réel d'un challenge"""
+        try:
+            # Récupérer les données brutes de l'API
+            challenge_data = challenge.challenge
+
+            # Si on a déjà un résultat local de turbo (succès/échec)
+            if challenge.turbo_status and challenge.turbo_status in ["success", "failed"]:
+                return challenge.turbo_status.upper()
+
+            # Vérifier member.turbo.state (structure officielle GuruShots)
+            if 'member' in challenge_data and 'turbo' in challenge_data['member']:
+                turbo_data = challenge_data['member']['turbo']
+                if isinstance(turbo_data, dict) and 'state' in turbo_data:
+                    state = turbo_data['state']
+
+                    # Retourner l'état exact de l'API
+                    if state in ["FREE", "WON", "USED", "LOCKED"]:
+                        return state
+
+                    # Gérer d'autres états possibles
+                    return state
+
+            # Fallback: Si pas de données turbo dans member
+            return "UNKNOWN"
+
+        except Exception as e:
+            print(f"⚠️ Erreur détection turbo pour {challenge.title}: {e}")
+            return "ERROR"
+
     def update_table(self, challenges):
         """Met à jour le tableau des challenges"""
         self.challenge_table.setRowCount(len(challenges))
@@ -920,15 +950,11 @@ class EnhancedGSGUI(QMainWindow):
             self.challenge_table.setItem(row, 7, QTableWidgetItem(str(challenge.gps)))
             
             # Statut stratégie
-            strategy_text = challenge.selected_strategy or ""
-            self.challenge_table.setItem(row, 8, QTableWidgetItem(strategy_text))
-            
-            # Statut turbo avec tous les états GSGUI
             turbo_status = challenge.turbo_status
             turbo_indicators = {
                 "none": "",
                 "running": "🟡 Running",
-                "completed": "✅ OK", 
+                "completed": "✅ OK",
                 "failed": "❌ Failed",
                 "timer": "⏰ Timer",
                 "unknown": "❓ Unknown",
@@ -938,29 +964,8 @@ class EnhancedGSGUI(QMainWindow):
                 "used": "✅ Used"
             }
             turbo_text = turbo_indicators.get(turbo_status, "")
-            
+
             turbo_item = QTableWidgetItem(turbo_text)
-            
-            # Couleur de fond selon l'état
-            if turbo_status == "running":
-                turbo_item.setBackground(QColor(255, 235, 59, 50))  # Jaune transparent
-            elif turbo_status == "completed":
-                turbo_item.setBackground(QColor(76, 175, 80, 50))   # Vert transparent
-            elif turbo_status == "failed":
-                turbo_item.setBackground(QColor(244, 67, 54, 50))   # Rouge transparent
-            elif turbo_status == "timer":
-                turbo_item.setBackground(QColor(255, 152, 0, 50))   # Orange transparent
-            elif turbo_status == "unknown":
-                turbo_item.setBackground(QColor(158, 158, 158, 50)) # Gris transparent
-            elif turbo_status == "locked":
-                turbo_item.setBackground(QColor(96, 125, 139, 50))  # Bleu-gris transparent
-            elif turbo_status == "free":
-                turbo_item.setBackground(QColor(139, 195, 74, 50))  # Vert clair transparent
-            elif turbo_status == "won":
-                turbo_item.setBackground(QColor(255, 193, 7, 50))   # Doré transparent
-            elif turbo_status == "used":
-                turbo_item.setBackground(QColor(76, 175, 80, 50))   # Vert transparent (comme completed)
-                
             self.challenge_table.setItem(row, 9, turbo_item)
         
         # Connecter le signal de changement d'état des checkboxes
@@ -1474,7 +1479,7 @@ class EnhancedGSGUI(QMainWindow):
                 for i, challenge in enumerate(selected):
                     try:
                         self.log(f"🚀 Turbo ({algorithm_str}): {challenge.title[:30]}...")
-                        
+
                         if self.api_client.execute_turbo(challenge.id, challenge.title, algorithm_str):
                             success_count += 1
                             self.log(f"✅ Turbo: {challenge.title[:20]}")

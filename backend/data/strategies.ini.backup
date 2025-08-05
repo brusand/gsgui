@@ -1,87 +1,100 @@
-[alain]
-description="Stratégie conservative - 4m - votes répartis"
-0="end-5m0s,-1"
-1="end-4m45s,-1"
-2="end-4m30s,-1"
-3="end-4m15s,-1"
-4="end-4m0s,70"
-5="end-3m45s,-1"
-6="end-3m30s,-1"
-7="end-3m15s,-1"
-8="end-3m0s,40"
-9="end-2m45s,-1"
-10="end-2m30s,-1"
-11="end-2m15s,-1"
-12="end-1m0s,40"
-13="end-0m45s,-1"
-14="end-0m30s,20"
-15="end-0m15s,-1"
+# Strategies configuration file
+# Bibliothèque des stratégies disponibles pour GSGUI
 
-[Bruno]
-description="Stratégie Bruno - 2m - votes répartis"
-0="vote,end-2m0s,80"
-1="vote,end-1m0s,40"
-2="vote,end-0m30s,20"
+[DEFAULT]
+description = Strategy templates for GSGUI
 
-[caloune]
-description="Stratégie conservative - 4m - votes répartis"
-0="vote, end-4m0s,1"
-1="vote, end-3m0s,1"
-2="vote, end-2m0s,1"
-3="vote, end-1m0s,1"
-4="end-0m30s,20"
-
-[4m]
-description="Stratégie conservative - 4m - votes répartis"
-0="vote, end-4m0s,70"
-1="vote, end-3m0s,40"
-2="vote, end-2m0s,40"
-3="vote, end-1m0s,40"
-4="vote, end-0m15s,20"
-5="vote, end-0m30s,20"
-6="vote, end-0m45s,20"
-
-
-[3m]
-description="Stratégie conservative - 3m - votes répartis"
-0="vote, end-3m0s,70"
-1="vote, end-2m0s,40"
-2="vote, end-1m0s,40"
-3="vote, end-0m30s,20"
-4="vote, end-0m15s,20"
-5="vote, end-0m30s,20"
-6="vote, end-0m45s,20"
-
-
-[2m]
-description="Stratégie conservative - 2m - votes répartis"
-0="vote, end-2m0s,80"
-1="vote, end-1m0s,40"
-2="vote, end-0m15s,10"
-3="vote, end-0m30s,10"
-4="vote, end-0m45s,10"
-
-[fill-1-now]
-description="Stratégie rapide - now - votes répartis"
-0="vote, now,1"
-
-[fill-80-now]
-description="Stratégie rapide - now - votes répartis"
-0="vote, now,80"
-
-[fill70-next-1m0s]
-description="Stratégie rapide - now - votes répartis"
-0="vote, next-1m0s,70"
+# === STRATEGIES DE VOTE IMMEDIAT ===
+[fill]
+name = Fill (vote immédiat)
+type = immediate
+description = Vote immédiatement avec tous les votes disponibles
+votes = all_available
+timing = now
 
 [fill20]
-description="Stratégie rapide - now - votes répartis"
-0="vote, now,20"
+name = Fill 20 votes
+type = immediate  
+description = Vote immédiatement avec 20 votes
+votes = 20
+timing = now
 
-[when1m-2m-1]
-description="Stratégie rapide - now - votes répartis sur les 2 prochaines minutes"
-0="vote, next-1m0s,1"
-1="vote, next-2m0s,1"
+[fill70]
+name = Fill 70 votes
+type = immediate
+description = Vote immédiatement avec 70 votes  
+votes = 70
+timing = now
 
-[novote]
-description="Stratégie rapide - now - votes répartis"
-0="vote, now,-1"
+# === STRATEGIES DE FIN DE CHALLENGE ===
+[4m]
+name = 4 minutes avant fin
+type = timed
+description = Vote 4 minutes avant la fin du challenge
+timing = end-4m0s
+votes = all_available
+
+[3m]
+name = 3 minutes avant fin
+type = timed
+description = Vote 3 minutes avant la fin du challenge
+timing = end-3m0s
+votes = all_available
+
+[2m]
+name = 2 minutes avant fin
+type = timed
+description = Vote 2 minutes avant la fin du challenge
+timing = end-2m0s
+votes = all_available
+
+[1m]
+name = 1 minute avant fin
+type = timed
+description = Vote 1 minute avant la fin du challenge
+timing = end-1m0s
+votes = all_available
+
+# === STRATEGIES DE FIN PRECISE ===
+[end-45s]
+name = 45 secondes avant fin
+type = timed
+description = Vote 45 secondes avant la fin du challenge
+timing = end-0m45s
+votes = all_available
+
+[end-30s]
+name = 30 secondes avant fin
+type = timed
+description = Vote 30 secondes avant la fin du challenge
+timing = end-0m30s
+votes = all_available
+
+[end-15s]
+name = 15 secondes avant fin
+type = timed
+description = Vote 15 secondes avant la fin du challenge
+timing = end-0m15s
+votes = all_available
+
+# === STRATEGIES PERSONNALISEES ===
+[Bruno]
+name = Stratégie Bruno
+type = custom
+description = Stratégie personnalisée pour Bruno
+timing = end-2m30s
+votes = all_available
+
+[alain]
+name = Stratégie Alain
+type = custom
+description = Stratégie personnalisée pour Alain
+timing = end-1m30s
+votes = all_available
+
+[caloune]
+name = Stratégie Caloune
+type = custom
+description = Stratégie personnalisée pour Caloune
+timing = end-3m30s
+votes = all_available

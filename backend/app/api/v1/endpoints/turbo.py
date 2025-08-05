@@ -532,5 +532,5 @@ async def _execute_turbo_background(
             'execution_completed_at': datetime.now().isoformat()
         }
         
-        await _save_turbo_status(profile_id, turbo_id, error_status)
+        #await _save_turbo_status(profile_id, turbo_id, error_status)
         await connection_manager.notify_turbo_failed(profile_id, turbo_id, str(e))

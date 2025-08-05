@@ -255,7 +255,7 @@ class TurboExecutor:
                 'execution_duration': execution_duration
             }
             
-            await self._save_turbo_status(profile_id, turbo_id, final_status)
+            #await self._save_turbo_status(profile_id, turbo_id, final_status)
             
             # Notifier la fin via WebSocket
             if overall_success:
@@ -289,7 +289,7 @@ class TurboExecutor:
                 'execution_completed_at': execution_end.isoformat()
             }
             
-            await self._save_turbo_status(profile_id, turbo_id, error_status)
+            #await self._save_turbo_status(profile_id, turbo_id, error_status)
             await connection_manager.notify_turbo_failed(profile_id, turbo_id, str(e))
             
             raise
@@ -307,9 +307,21 @@ class TurboExecutor:
                     'https://api.gurushots.com/rest/get_challenge_turbo',
                     data={'challenge_id': challenge_id}
                 ) as response:
+                    logger.info(f"🔍 Turbo API status for challenge {challenge_id}: {response.status}")
+                    
                     if response.status == 200:
                         turbo_data = await response.json()
-                        logger.info(f"✅ Turbo data retrieved for challenge {challenge_id}")
+                        logger.info(f"📊 Turbo data keys: {list(turbo_data.keys()) if isinstance(turbo_data, dict) else 'Not a dict'}")
+                        
+                        # Debug: si success=false, afficher l'erreur
+                        if isinstance(turbo_data, dict) and not turbo_data.get('success', True):
+                            error_code = turbo_data.get('error_code', 'unknown')
+                            error_msg = turbo_data.get('error', 'No error message')
+                            logger.error(f"❌ Turbo API Error: {error_code} - {error_msg}")
+                            logger.info(f"🔍 Full turbo response: {turbo_data}")
+                        else:
+                            logger.info(f"✅ Turbo data retrieved for challenge {challenge_id}")
+                        
                         return turbo_data
                     else:
                         error_text = await response.text()
