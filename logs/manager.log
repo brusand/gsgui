@@ -1,0 +1,284 @@
+[0;34m[2025-08-05 07:49:28] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 07:49:28] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 07:49:28] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 07:49:28] ℹ️  Démarrage du backend...[0m
+[0;31m[2025-08-05 07:49:31] ❌ Échec du démarrage du backend[0m
+[0;34m[2025-08-05 07:50:25] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 07:50:25] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 07:50:25] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 07:50:25] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 07:50:27] ✅ Backend démarré avec succès (PID: 21530)[0m
+[0;34m[2025-08-05 07:50:27] ℹ️  Démarrage du frontend...[0m
+[0;34m[2025-08-05 07:51:00] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 07:51:00] ℹ️  Arrêt de Backend (PID: 21530)...[0m
+[0;32m[2025-08-05 07:51:01] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 07:51:01] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 07:51:01] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 07:51:03] ✅ Backend démarré avec succès (PID: 21623)[0m
+[0;34m[2025-08-05 07:51:03] ℹ️  Démarrage du frontend...[0m
+[0;34m[2025-08-05 07:54:08] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 07:54:08] ℹ️  Arrêt de Backend (PID: 21623)...[0m
+[0;32m[2025-08-05 07:54:09] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 07:54:09] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 07:54:09] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 07:54:11] ✅ Backend démarré avec succès (PID: 21855)[0m
+[0;34m[2025-08-05 07:54:11] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 07:54:15] ✅ Frontend démarré avec succès (PID: 21867)[0m
+[0;34m[2025-08-05 07:54:17] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 07:56:43] ℹ️  Arrêt demandé, nettoyage en cours...[0m
+[0;34m[2025-08-05 07:56:43] ℹ️  Arrêt de Backend (PID: 21855)...[0m
+[0;32m[2025-08-05 07:56:44] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 07:56:44] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;32m[2025-08-05 07:56:44] ✅ Tous les processus ont été arrêtés[0m
+[0;34m[2025-08-05 08:03:37] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:03:37] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:03:37] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:03:37] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:03:39] ✅ Backend démarré avec succès (PID: 22512)[0m
+[0;34m[2025-08-05 08:03:39] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:03:42] ✅ Frontend démarré avec succès (PID: 22523)[0m
+[0;34m[2025-08-05 08:03:44] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 08:11:52] ℹ️  Arrêt demandé, nettoyage en cours...[0m
+[0;34m[2025-08-05 08:11:52] ℹ️  Arrêt de Backend (PID: 22512)...[0m
+[0;32m[2025-08-05 08:11:53] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:11:53] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;32m[2025-08-05 08:11:53] ✅ Tous les processus ont été arrêtés[0m
+[0;34m[2025-08-05 08:11:58] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:11:58] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:11:58] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:11:58] ℹ️  Démarrage du backend...[0m
+[0;31m[2025-08-05 08:12:00] ❌ Échec du démarrage du backend[0m
+[0;34m[2025-08-05 08:12:42] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:12:42] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:12:42] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:12:42] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:12:44] ✅ Backend démarré avec succès (PID: 23686)[0m
+[0;34m[2025-08-05 08:12:44] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:12:47] ✅ Frontend démarré avec succès (PID: 23700)[0m
+[0;34m[2025-08-05 08:12:49] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 08:14:55] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:14:55] ℹ️  Arrêt de Backend (PID: 23686)...[0m
+[0;32m[2025-08-05 08:14:56] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:14:56] ℹ️  Arrêt de Frontend (PID: 23700)...[0m
+[0;32m[2025-08-05 08:14:57] ✅ Frontend arrêté avec succès[0m
+[0;34m[2025-08-05 08:14:57] ℹ️  Démarrage du backend...[0m
+[0;31m[2025-08-05 08:14:59] ❌ Échec du démarrage du backend[0m
+[1;33m[2025-08-05 08:15:00] ⚠️  Backend arrêté détecté, redémarrage...[0m
+[0;34m[2025-08-05 08:15:00] ℹ️  Démarrage du backend...[0m
+[0;31m[2025-08-05 08:15:02] ❌ Échec du démarrage du backend[0m
+[0;34m[2025-08-05 08:15:58] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:15:58] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:15:58] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:15:58] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:16:00] ✅ Backend démarré avec succès (PID: 25802)[0m
+[0;34m[2025-08-05 08:16:00] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:16:03] ✅ Frontend démarré avec succès (PID: 25825)[0m
+[0;34m[2025-08-05 08:16:05] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 08:22:02] ℹ️  Redémarrage de GSGUI...[0m
+[0;34m[2025-08-05 08:22:02] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:22:02] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:22:04] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:22:06] ✅ Backend démarré avec succès (PID: 27556)[0m
+[0;34m[2025-08-05 08:22:06] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:22:09] ✅ Frontend démarré avec succès (PID: 27578)[0m
+[0;34m[2025-08-05 08:25:27] ℹ️  Redémarrage de GSGUI...[0m
+[0;34m[2025-08-05 08:25:27] ℹ️  Arrêt de Backend (PID: 27556)...[0m
+[0;32m[2025-08-05 08:25:28] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:25:28] ℹ️  Arrêt de Frontend (PID: 27578)...[0m
+[0;32m[2025-08-05 08:25:29] ✅ Frontend arrêté avec succès[0m
+[0;34m[2025-08-05 08:25:31] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:25:33] ✅ Backend démarré avec succès (PID: 28569)[0m
+[0;34m[2025-08-05 08:25:34] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:25:37] ✅ Frontend démarré avec succès (PID: 28592)[0m
+[0;34m[2025-08-05 08:30:05] ℹ️  Redémarrage de GSGUI...[0m
+[0;34m[2025-08-05 08:30:05] ℹ️  Arrêt de Backend (PID: 28569)...[0m
+[0;32m[2025-08-05 08:30:06] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:30:06] ℹ️  Arrêt de Frontend (PID: 28592)...[0m
+[0;32m[2025-08-05 08:30:07] ✅ Frontend arrêté avec succès[0m
+[0;34m[2025-08-05 08:30:09] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:30:11] ✅ Backend démarré avec succès (PID: 29661)[0m
+[0;34m[2025-08-05 08:30:11] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:30:14] ✅ Frontend démarré avec succès (PID: 29683)[0m
+[0;34m[2025-08-05 08:41:38] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:41:38] ℹ️  Arrêt de Backend (PID: 29661)...[0m
+[0;32m[2025-08-05 08:41:39] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:41:39] ℹ️  Arrêt de Frontend (PID: 29683)...[0m
+[0;32m[2025-08-05 08:41:40] ✅ Frontend arrêté avec succès[0m
+[0;34m[2025-08-05 08:41:40] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:41:43] ✅ Backend démarré avec succès (PID: 30836)[0m
+[0;34m[2025-08-05 08:41:43] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:41:46] ✅ Frontend démarré avec succès (PID: 30851)[0m
+[0;34m[2025-08-05 08:41:48] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 08:43:15] ℹ️  Redémarrage de GSGUI...[0m
+[0;34m[2025-08-05 08:43:15] ℹ️  Arrêt de Backend (PID: 30836)...[0m
+[0;32m[2025-08-05 08:43:17] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:43:17] ℹ️  Arrêt de Frontend (PID: 30851)...[0m
+[0;32m[2025-08-05 08:43:18] ✅ Frontend arrêté avec succès[0m
+[1;33m[2025-08-05 08:43:18] ⚠️  Backend arrêté détecté, redémarrage...[0m
+[0;34m[2025-08-05 08:43:18] ℹ️  Démarrage du backend...[0m
+[1;33m[2025-08-05 08:43:20] ⚠️  Backend déjà en cours d'exécution (PID: 31225)[0m
+[0;34m[2025-08-05 08:43:20] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:43:20] ✅ Backend démarré avec succès (PID: 31225)[0m
+[0;32m[2025-08-05 08:43:23] ✅ Frontend démarré avec succès (PID: 31247)[0m
+[1;33m[2025-08-05 08:46:06] ⚠️  Frontend arrêté détecté, redémarrage...[0m
+[0;34m[2025-08-05 08:46:06] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:46:09] ✅ Frontend démarré avec succès (PID: 32158)[0m
+[0;34m[2025-08-05 08:46:46] ℹ️  Arrêt demandé, nettoyage en cours...[0m
+[0;34m[2025-08-05 08:46:46] ℹ️  Arrêt de Backend (PID: 31225)...[0m
+[0;32m[2025-08-05 08:46:47] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:46:47] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;32m[2025-08-05 08:46:47] ✅ Tous les processus ont été arrêtés[0m
+[0;34m[2025-08-05 08:47:02] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:47:02] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:47:02] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:47:02] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:47:04] ✅ Backend démarré avec succès (PID: 32763)[0m
+[0;34m[2025-08-05 08:47:04] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:47:07] ✅ Frontend démarré avec succès (PID: 32781)[0m
+[0;34m[2025-08-05 08:47:09] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 08:50:02] ℹ️  Arrêt demandé, nettoyage en cours...[0m
+[0;34m[2025-08-05 08:50:02] ℹ️  Arrêt de Backend (PID: 32763)...[0m
+[0;32m[2025-08-05 08:50:03] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:50:03] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;32m[2025-08-05 08:50:03] ✅ Tous les processus ont été arrêtés[0m
+[0;34m[2025-08-05 08:50:05] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:50:05] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:50:05] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:50:05] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:50:07] ✅ Backend démarré avec succès (PID: 33252)[0m
+[0;34m[2025-08-05 08:50:07] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:50:10] ✅ Frontend démarré avec succès (PID: 33263)[0m
+[0;34m[2025-08-05 08:50:12] ℹ️  Démarrage de la surveillance des processus...[0m
+[1;33m[2025-08-05 08:51:07] ⚠️  Frontend arrêté détecté, redémarrage...[0m
+[0;34m[2025-08-05 08:51:07] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:51:10] ✅ Frontend démarré avec succès (PID: 33542)[0m
+[0;34m[2025-08-05 08:51:23] ℹ️  Arrêt demandé, nettoyage en cours...[0m
+[0;34m[2025-08-05 08:51:24] ℹ️  Arrêt de Backend (PID: 33252)...[0m
+[0;32m[2025-08-05 08:51:25] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:51:25] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;32m[2025-08-05 08:51:25] ✅ Tous les processus ont été arrêtés[0m
+[0;34m[2025-08-05 08:51:57] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:51:57] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:51:57] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:51:57] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:51:59] ✅ Backend démarré avec succès (PID: 34143)[0m
+[0;34m[2025-08-05 08:51:59] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:52:02] ✅ Frontend démarré avec succès (PID: 34164)[0m
+[0;34m[2025-08-05 08:52:04] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 08:52:42] ℹ️  Arrêt demandé, nettoyage en cours...[0m
+[0;34m[2025-08-05 08:52:43] ℹ️  Arrêt de Backend (PID: 34143)...[0m
+[0;32m[2025-08-05 08:52:44] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 08:52:44] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;32m[2025-08-05 08:52:44] ✅ Tous les processus ont été arrêtés[0m
+[0;34m[2025-08-05 08:56:49] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 08:56:49] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:56:49] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 08:56:49] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 08:56:51] ✅ Backend démarré avec succès (PID: 36658)[0m
+[0;34m[2025-08-05 08:56:51] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 08:56:54] ✅ Frontend démarré avec succès (PID: 36672)[0m
+[0;34m[2025-08-05 08:56:56] ℹ️  Démarrage de la surveillance des processus...[0m
+[0;34m[2025-08-05 09:44:49] ℹ️  Arrêt demandé, nettoyage en cours...[0m
+[0;34m[2025-08-05 09:44:49] ℹ️  Arrêt de Backend (PID: 36658)...[0m
+[0;32m[2025-08-05 09:44:50] ✅ Backend arrêté avec succès[0m
+[0;34m[2025-08-05 09:44:50] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;32m[2025-08-05 09:44:50] ✅ Tous les processus ont été arrêtés[0m
+[0;34m[2025-08-05 09:44:51] ℹ️  Démarrage de GSGUI avec surveillance...[0m
+[0;34m[2025-08-05 09:44:51] ℹ️  Backend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 09:44:51] ℹ️  Frontend n'est pas en cours d'exécution[0m
+[0;34m[2025-08-05 09:44:51] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 09:44:53] ✅ Backend démarré avec succès (PID: 42658)[0m
+[0;34m[2025-08-05 09:44:53] ℹ️  Démarrage du frontend...[0m
+[0;32m[2025-08-05 09:44:57] ✅ Frontend démarré avec succès (PID: 42671)[0m
+[0;34m[2025-08-05 09:44:59] ℹ️  Démarrage de la surveillance des processus...[0m
+[1;33m[2025-08-05 10:09:33] ⚠️  Backend arrêté détecté, redémarrage...[0m
+[0;34m[2025-08-05 10:09:33] ℹ️  Démarrage du backend...[0m
+[0;32m[2025-08-05 10:09:35] ✅ Backend démarré avec succès (PID: 46260)[0m
+[1;33m[2025-08-05 10:09:35] ⚠️  Frontend arrêté détecté, redémarrage...[0m
+[0;34m[2025-08-05 10:09:35] ℹ️  Démarrage du frontend...[0m
+[0;31m[2025-08-05 10:09:38] ❌ Échec du démarrage du frontend[0m
+[2025-08-05 12:13:00] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:13:00] ℹ️  Vérification des prérequis...
+[2025-08-05 12:13:00] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 12:13:00] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 12:13:00] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 12:13:00] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 12:13:00] ℹ️  Démarrage du backend...
+[2025-08-05 12:13:00] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 12:13:02] ❌ Échec du démarrage du backend
+[2025-08-05 12:15:41] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:15:41] ℹ️  Vérification des prérequis...
+[2025-08-05 12:15:41] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 12:15:41] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 12:15:41] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-05 12:15:41] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 12:15:41] ℹ️  Démarrage du backend...
+[2025-08-05 12:15:41] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 12:15:43] ✅ Backend démarré (PID: 54986)
+[2025-08-05 12:15:46] ℹ️  Démarrage du frontend...
+[2025-08-05 12:15:49] ✅ Frontend démarré (PID: 55026)
+[2025-08-05 12:15:49] ✅ === Tous les services sont démarrés ===
+[2025-08-05 12:15:49] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 12:15:49] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 12:16:27] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:16:27] ℹ️  Vérification des prérequis...
+[2025-08-05 12:16:27] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 12:16:27] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 12:16:27] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 12:16:27] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 12:16:27] ℹ️  Démarrage du backend...
+[2025-08-05 12:16:27] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 12:16:29] ✅ Backend démarré (PID: 55125)
+[2025-08-05 12:16:32] ⚠️  Frontend déjà en cours d'exécution (PID: 55026)
+[2025-08-05 12:16:32] ✅ === Tous les services sont démarrés ===
+[2025-08-05 12:16:32] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 12:16:32] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 12:17:24] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:17:24] ℹ️  === État des services GSGUI ===
+[2025-08-05 12:17:24] ⚠️  Backend arrêté (PID file existe mais processus mort)
+[2025-08-05 12:17:24] ✅ Frontend actif (PID: 55026)
+[2025-08-05 12:17:43] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:17:43] ℹ️  Vérification des prérequis...
+[2025-08-05 12:17:43] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 12:17:43] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 12:17:43] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-05 12:17:43] ℹ️  === Démarrage avec surveillance automatique ===
+[2025-08-05 12:17:43] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-05 12:17:43] ✅ Frontend actif (PID: 55026)
+[2025-08-05 12:18:46] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:18:46] ℹ️  Vérification des prérequis...
+[2025-08-05 12:18:46] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 12:18:46] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 12:18:46] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 12:18:46] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 12:18:46] ℹ️  Démarrage du backend...
+[2025-08-05 12:18:46] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 12:18:48] ✅ Backend démarré (PID: 56129)
+[2025-08-05 12:18:51] ⚠️  Frontend déjà en cours d'exécution (PID: 55026)
+[2025-08-05 12:18:51] ✅ === Tous les services sont démarrés ===
+[2025-08-05 12:18:51] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 12:18:51] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 12:21:37] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:21:37] ℹ️  === État des services GSGUI ===
+[2025-08-05 12:21:37] ⚠️  Backend arrêté (PID file existe mais processus mort)
+[2025-08-05 12:21:37] ✅ Frontend actif (PID: 55026)
+[2025-08-05 12:21:50] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:21:50] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-05 12:21:50] ℹ️  Arrêt des processus...
+[2025-08-05 12:21:50] ℹ️  Arrêt du processus frontend (PID: 55026)...
+[2025-08-05 12:21:51] ✅ Processus frontend arrêté proprement
+[2025-08-05 12:21:51] ✅ Tous les processus ont été arrêtés
+[2025-08-05 12:24:34] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 12:24:34] ℹ️  Vérification des prérequis...
+[2025-08-05 12:24:34] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 12:24:34] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 12:24:34] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-05 12:24:34] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 12:24:34] ℹ️  Démarrage du backend...
+[2025-08-05 12:24:34] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 12:24:36] ✅ Backend démarré (PID: 58617)
+[2025-08-05 12:24:39] ℹ️  Démarrage du frontend...
+[2025-08-05 12:24:42] ✅ Frontend démarré (PID: 58657)
+[2025-08-05 12:24:42] ✅ === Tous les services sont démarrés ===
+[2025-08-05 12:24:42] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 12:24:42] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique

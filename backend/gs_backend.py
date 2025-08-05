@@ -309,6 +309,13 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
                 data = await response.json()
                 print(f"📊 API data keys: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
                 
+                # Debug : si success=false, afficher l'erreur
+                if isinstance(data, dict) and not data.get('success', True):
+                    error_code = data.get('error_code', 'unknown')
+                    error_msg = data.get('error', 'No error message')
+                    print(f"❌ GuruShots API Error: {error_code} - {error_msg}")
+                    print(f"🔍 Full response: {data}")
+                
                 challenges = []
                 for challenge_data in data.get('challenges', []):
                     try:
