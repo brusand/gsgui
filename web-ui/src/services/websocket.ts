@@ -8,21 +8,25 @@ export class WebSocketService {
   private reconnectInterval = 3000;
   private listeners: Map<string, ((data: any) => void)[]> = new Map();
 
-  constructor(url: string = 'ws://127.0.0.1:8001/ws/logs') {
+  constructor(url: string = '/ws/logs') {
     this.url = url;
   }
 
   // Nouvelle méthode pour se connecter avec un profile_id spécifique
   connectWithProfile(profileName: string): Promise<void> {
     const profileId = profileName.toLowerCase();
-    this.url = `ws://127.0.0.1:8001/ws/logs/${profileId}`;
+    this.url = `/ws/logs/${profileId}`;
     return this.connect();
   }
 
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        this.ws = new WebSocket(this.url);
+        // Construire l'URL WebSocket complète
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}${this.url}`;
+        console.log('🔌 Connecting to WebSocket:', wsUrl);
+        this.ws = new WebSocket(wsUrl);
 
         this.ws.onopen = () => {
           console.log('✅ WebSocket connected');

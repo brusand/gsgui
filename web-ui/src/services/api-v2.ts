@@ -6,7 +6,7 @@ class GSGUIApiClient {
   private api: AxiosInstance;
   // private baseURL: string;
 
-  constructor(baseURL: string = 'http://127.0.0.1:8001/api/v1') {
+  constructor(baseURL: string = '/api/v1') {
     // this.baseURL = baseURL;
     this.api = axios.create({
       baseURL,
