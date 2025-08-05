@@ -399,6 +399,86 @@ class ConfigManager:
             logger.error(f"Error getting processes for user {user_id}: {e}")
             return {}
     
+    # === USER MANAGEMENT METHODS ===
+    
+    def list_users(self) -> List[str]:
+        """Retourne la liste des IDs utilisateur disponibles"""
+        try:
+            players = self.config.get('players', {})
+            return list(players.keys())
+        except Exception as e:
+            logger.error(f"Error listing users: {e}")
+            return []
+    
+    def get_user(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """Récupère les informations d'un utilisateur"""
+        try:
+            players = self.config.get('players', {})
+            return players.get(user_id)
+        except Exception as e:
+            logger.error(f"Error getting user {user_id}: {e}")
+            return None
+    
+    def create_user(self, user_id: str, user_data: Dict[str, Any]) -> bool:
+        """Crée un nouvel utilisateur"""
+        try:
+            with self._lock:
+                if 'players' not in self.config:
+                    self.config['players'] = {}
+                
+                self.config['players'][user_id] = user_data
+                self.config.write()
+                logger.info(f"✅ User {user_id} created")
+                return True
+        except Exception as e:
+            logger.error(f"Error creating user {user_id}: {e}")
+            return False
+    
+    def update_user(self, user_id: str, updates: Dict[str, Any]) -> bool:
+        """Met à jour un utilisateur existant"""
+        try:
+            with self._lock:
+                players = self.config.get('players', {})
+                if user_id not in players:
+                    logger.warning(f"User {user_id} not found for update")
+                    return False
+                
+                players[user_id].update(updates)
+                self.config.write()
+                logger.info(f"✅ User {user_id} updated")
+                return True
+        except Exception as e:
+            logger.error(f"Error updating user {user_id}: {e}")
+            return False
+    
+    def get_user_challenges(self, user_id: str) -> Dict[str, Any]:
+        """Récupère les challenges/stratégies d'un utilisateur"""
+        try:
+            players = self.config.get('players', {})
+            user = players.get(user_id, {})
+            return user.get('scheduled_strategies', {})
+        except Exception as e:
+            logger.error(f"Error getting challenges for user {user_id}: {e}")
+            return {}
+    
+    def get_turbo_history(self, user_id: str) -> List[Dict[str, Any]]:
+        """Récupère l'historique turbo d'un utilisateur"""
+        try:
+            turbo_history = self.config.get('turbo_history', {})
+            user_history = turbo_history.get(user_id, {})
+            
+            # Convertir en liste
+            history_list = []
+            for turbo_id, turbo_data in user_history.items():
+                turbo_entry = dict(turbo_data)
+                turbo_entry['turbo_id'] = turbo_id
+                history_list.append(turbo_entry)
+            
+            return sorted(history_list, key=lambda x: x.get('timestamp', ''), reverse=True)
+        except Exception as e:
+            logger.error(f"Error getting turbo history for user {user_id}: {e}")
+            return []
+
     # === UTILITY METHODS ===
     
     def reload_configs(self):

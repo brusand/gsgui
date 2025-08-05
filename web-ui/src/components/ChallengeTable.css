@@ -1,0 +1,164 @@
+.challenge-table-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: #2c3e50;
+  border-radius: 8px;
+  margin: 0.5rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #34495e;
+}
+
+.table-header h2 {
+  color: #ecf0f1;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.selection-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #34495e;
+  border-radius: 4px;
+  border: 1px solid #7f8c8d;
+}
+
+.challenge-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #34495e;
+}
+
+.challenge-table th {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #7f8c8d;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  vertical-align: bottom;
+}
+
+.challenge-table td {
+  padding: 4px;
+  color: #ecf0f1;
+}
+
+.challenge-row {
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #7f8c8d;
+}
+
+.challenge-row:nth-child(even) {
+  background-color: rgba(52, 73, 94, 0.5);
+}
+
+.challenge-row.selected {
+  background-color: rgba(52, 152, 219, 0.5) !important;
+}
+
+/* Largeurs des colonnes comme dans gs_backend_ui.py */
+.title-col { width: auto; } /* Stretch */
+.end-time-col { width: 150px; }
+.remaining-col { width: 100px; }
+.votes-col { width: 80px; }
+.rank-col { width: 60px; }
+.level-col { width: 60px; }
+.exposure-col { width: 80px; }
+.gps-col { width: 60px; }
+.strategy-col { width: 100px; }
+.turbo-col { width: 80px; }
+
+.title-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.challenge-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.challenge-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.end-time-cell {
+  text-align: center;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.remaining-cell {
+  text-align: center;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.votes-cell, .rank-cell, .level-cell, .exposure-cell, .gps-cell {
+  text-align: center;
+}
+
+.strategy-cell {
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.turbo-cell {
+  text-align: center;
+  font-size: 0.8em;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #95a5a6;
+  font-style: italic;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  background: #444;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: #555;
+}

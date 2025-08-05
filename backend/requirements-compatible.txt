@@ -1,0 +1,31 @@
+# Version compatible pour Python 3.13+
+# Core FastAPI dependencies
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+python-multipart>=0.0.6
+
+# Database (SQLite compatible)
+sqlalchemy>=2.0.0
+
+# Async HTTP client (pour GuruShots API)
+aiohttp>=3.8.0
+httpx>=0.25.0
+requests>=2.31.0
+
+# Background tasks et scheduling
+apscheduler>=3.10.0
+
+# Configuration et validation
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# WebSockets
+websockets>=12.0
+
+# Utilities
+python-dateutil>=2.8.0
+configobj>=5.0.0
+
+# Development
+pytest>=7.0.0
+black>=23.0.0
