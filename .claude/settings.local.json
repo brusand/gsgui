@@ -49,7 +49,20 @@
       "mcp__filesystem__directory_tree",
       "mcp__filesystem__search_files",
       "Bash(# Sauvegarder l''original\ncp turbos.feather turbos_original.feather\n\n# Remplacer par la version nettoyée\ncp turbos_clean.feather turbos.feather\n\n# Vérifier les fichiers\necho \"\"📁 Fichiers créés:\"\"\nls -la turbos*.feather turbos*.csv | while read line; do echo \"\"   $line\"\"; done\n\necho \"\"\"\"\necho \"\"🔍 Vérification du nouveau fichier principal:\"\"\npython -c \"\"\nimport pandas as pd\ndf = pd.read_feather(''turbos.feather'')\nprint(f''✅ turbos.feather: {len(df)} entrées cohérentes'')\n\n# Test de cohérence rapide sur 5 entrées aléatoires\nimport random\nsample_indices = random.sample(range(len(df)), 5)\nall_consistent = True\n\nfor idx in sample_indices:\n    row = df.iloc[idx]\n    if row[''id_photo_gagnante''] != '''':\n        winner = row[''id_photo_gagnante'']\n        p1 = row[''id_photo1'']\n        p2 = row[''id_photo2'']\n        if winner != p1 and winner != p2:\n            all_consistent = False\n            break\n\nprint(f''🔍 Test cohérence sur échantillon: {\\\"\"✅ Toutes cohérentes\\\"\" if all_consistent else \\\"\"❌ Incohérences détectées\\\"\"}'')\n\"\")",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(git checkout:*)",
+      "mcp__filesystem__read_file",
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx vite:*)",
+      "Bash(curl:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx serve:*)",
+      "Bash(./start-webui.sh:*)",
+      "Bash(./stop-webui.sh:*)"
     ]
   },
   "enableAllProjectMcpServers": false,

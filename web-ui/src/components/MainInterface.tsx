@@ -290,6 +290,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
       <main className="main-content">
         <ActionButtons
           selectedCount={selectedChallenges.size}
+          totalCount={challenges.length}
           strategies={strategies}
           isLoading={isLoading}
           onRefresh={refreshChallenges}
@@ -298,6 +299,8 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onApplyStrategy={handleStrategyApplication}
           onShowActiveStrategies={handleShowActiveStrategies}
           onEditStrategies={handleEditStrategies}
+          onSelectAll={handleSelectAll}
+          onSelectNone={handleSelectNone}
         />
 
         <ChallengeTable
