@@ -6,6 +6,7 @@ import './ActionButtons.css';
 
 interface ActionButtonsProps {
   selectedCount: number;
+  totalCount: number;
   strategies: Strategy[];
   isLoading: boolean;
   onRefresh: () => void;
@@ -14,10 +15,13 @@ interface ActionButtonsProps {
   onApplyStrategy: (strategy: string) => void;
   onShowActiveStrategies: () => void;
   onEditStrategies: () => void;
+  onSelectAll: () => void;
+  onSelectNone: () => void;
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({
   selectedCount,
+  totalCount,
   strategies,
   isLoading,
   onRefresh,
@@ -25,7 +29,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   onTurbo,
   onApplyStrategy,
   onShowActiveStrategies,
-  onEditStrategies
+  onEditStrategies,
+  onSelectAll,
+  onSelectNone
 }) => {
   const [showVoteDialog, setShowVoteDialog] = useState<boolean>(false);
   const [showStrategyDialog, setShowStrategyDialog] = useState<boolean>(false);
@@ -65,6 +71,25 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   return (
     <div className="action-buttons">
       <div className="button-row">
+        {/* Boutons de sélection */}
+        <button
+          onClick={onSelectAll}
+          disabled={isLoading || totalCount === 0}
+          className="btn btn-secondary"
+          title="Sélectionner tous les challenges"
+        >
+          ☑️ All
+        </button>
+
+        <button
+          onClick={onSelectNone}
+          disabled={isLoading || selectedCount === 0}
+          className="btn btn-secondary"
+          title="Désélectionner tous les challenges"
+        >
+          ⬜ None
+        </button>
+
         {/* Bouton Refresh */}
         <button
           onClick={onRefresh}
@@ -74,7 +99,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         >
           {isLoading ? '⏳' : '🔄'} Refresh
         </button>
+      </div>
 
+      <div className="strategy-row">
         {/* Bouton Fill */}
         <button
           onClick={handleFillClick}
@@ -96,9 +123,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           🚀 Turbo
           {selectedCount > 0 && ` (${selectedCount})`}
         </button>
-      </div>
 
-      <div className="strategy-row">
         {/* Bouton Stratégie */}
         <button
           onClick={handleStrategyClick}
