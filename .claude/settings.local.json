@@ -62,7 +62,9 @@
       "Bash(npm run build:*)",
       "Bash(npx serve:*)",
       "Bash(./start-webui.sh:*)",
-      "Bash(./stop-webui.sh:*)"
+      "Bash(./stop-webui.sh:*)",
+      "Bash(kill:*)",
+      "Bash(node:*)"
     ]
   },
   "enableAllProjectMcpServers": false,
