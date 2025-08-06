@@ -1,0 +1,400 @@
+.logs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.logs-modal {
+  background: #1a1a1a;
+  border-radius: 12px;
+  width: 90vw;
+  height: 85vh;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+.logs-modal-header {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  padding: 16px 24px;
+  border-bottom: 2px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logs-modal-title h2 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logs-file-path {
+  color: #888;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+  margin-left: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.logs-modal-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #2a2a2a;
+  color: #fff;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007acc;
+  background: #333;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.btn-clear-search {
+  background: #666;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  min-width: 32px;
+}
+
+.btn-clear-search:hover {
+  background: #777;
+}
+
+.control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.auto-refresh-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ccc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.auto-refresh-toggle input[type="checkbox"] {
+  accent-color: #007acc;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-refresh {
+  background: #007acc;
+  color: white;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: #005a99;
+  transform: translateY(-1px);
+}
+
+.btn-refresh:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.btn-download {
+  background: #28a745;
+  color: white;
+}
+
+.btn-download:hover:not(:disabled) {
+  background: #1e7e34;
+  transform: translateY(-1px);
+}
+
+.btn-download:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.btn-close {
+  background: #dc3545;
+  color: white;
+  min-width: 40px;
+}
+
+.btn-close:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.btn-retry {
+  background: #ffc107;
+  color: #000;
+  margin-top: 12px;
+}
+
+.btn-retry:hover {
+  background: #e0a800;
+}
+
+.logs-modal-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.logs-error {
+  padding: 32px;
+  text-align: center;
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  margin: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.logs-loading {
+  padding: 32px;
+  text-align: center;
+  color: #ccc;
+}
+
+.logs-empty {
+  padding: 32px;
+  text-align: center;
+  color: #888;
+}
+
+.logs-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.logs-text {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  background: #0d1117;
+  color: #c9d1d9;
+  border-radius: 0;
+}
+
+.logs-text::-webkit-scrollbar {
+  width: 12px;
+}
+
+.logs-text::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 6px;
+}
+
+.logs-text::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 6px;
+  border: 2px solid #1a1a1a;
+}
+
+.logs-text::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+.log-line {
+  margin: 0;
+  padding: 2px 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  border-left: 3px solid transparent;
+  padding-left: 8px;
+  transition: background-color 0.1s ease;
+}
+
+.log-line:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.log-error {
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+  border-left-color: #ff6b6b;
+}
+
+.log-warning {
+  color: #ffd93d;
+  background-color: rgba(255, 217, 61, 0.1);
+  border-left-color: #ffd93d;
+}
+
+.log-success {
+  color: #6bcf7f;
+  background-color: rgba(107, 207, 127, 0.1);
+  border-left-color: #6bcf7f;
+}
+
+.log-vite {
+  color: #646cff;
+  background-color: rgba(100, 108, 255, 0.1);
+  border-left-color: #646cff;
+}
+
+.log-info {
+  color: #c9d1d9;
+}
+
+.log-timestamp {
+  color: #7c8487;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.log-message {
+  color: inherit;
+}
+
+.search-info {
+  background: rgba(0, 122, 204, 0.1);
+  border-left: 3px solid #007acc;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.search-info p {
+  margin: 0;
+  color: #007acc;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.logs-end-marker {
+  height: 1px;
+  visibility: hidden;
+}
+
+.logs-modal-footer {
+  background: #2d2d2d;
+  padding: 12px 24px;
+  border-top: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.logs-stats {
+  display: flex;
+  gap: 24px;
+  font-size: 0.8rem;
+  color: #888;
+  font-family: 'Courier New', monospace;
+}
+
+.logs-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.logs-modal {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .logs-modal {
+    width: 95vw;
+    height: 90vh;
+  }
+  
+  .logs-modal-header {
+    padding: 12px 16px;
+  }
+  
+  .logs-modal-controls {
+    gap: 8px;
+  }
+  
+  .search-section {
+    flex-wrap: wrap;
+  }
+  
+  .control-buttons {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .logs-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .logs-file-path {
+    margin-left: 0;
+    margin-top: 4px;
+  }
+}

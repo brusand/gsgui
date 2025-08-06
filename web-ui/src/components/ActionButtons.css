@@ -101,6 +101,15 @@
   background: #2c3e50;
 }
 
+.btn-logs {
+  background: #fd7e14;
+  color: white;
+}
+
+.btn-logs:hover:not(:disabled) {
+  background: #e76500;
+}
+
 .strategy-select {
   flex: 1;
   min-width: 300px;
