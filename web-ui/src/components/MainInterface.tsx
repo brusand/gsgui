@@ -3,6 +3,7 @@ import ChallengeTable from './ChallengeTable';
 import ActionButtons from './ActionButtons';
 import LogsPanel from './LogsPanel';
 import StrategyEditor from './StrategyEditor';
+import LogsViewerModal from './LogsViewerModal';
 import type { Challenge, Strategy } from '../types/api';
 import { apiClient } from '../services/api-v2';
 import { wsService } from '../services/websocket';
@@ -23,6 +24,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isStrategyEditorOpen, setIsStrategyEditorOpen] = useState(false);
   const [strategyEditorContent, setStrategyEditorContent] = useState('');
+  const [isLogsViewerOpen, setIsLogsViewerOpen] = useState(false);
 
   // Helper functions pour récupérer les détails des stratégies depuis strategies.ini
   // Commenté temporairement - pas utilisé actuellement
@@ -367,6 +369,10 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
     }
   };
 
+  const handleShowLogs = () => {
+    setIsLogsViewerOpen(true);
+  };
+
   return (
     <div className="main-interface">
       <header className="main-header">
@@ -396,6 +402,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onEditStrategies={handleEditStrategies}
           onSelectAll={handleSelectAll}
           onSelectNone={handleSelectNone}
+          onShowLogs={handleShowLogs}
         />
 
         <ChallengeTable
@@ -414,6 +421,11 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
         onClose={() => setIsStrategyEditorOpen(false)}
         onSave={handleSaveStrategies}
         initialContent={strategyEditorContent}
+      />
+
+      <LogsViewerModal
+        isOpen={isLogsViewerOpen}
+        onClose={() => setIsLogsViewerOpen(false)}
       />
     </div>
   );
