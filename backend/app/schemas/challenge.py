@@ -173,3 +173,70 @@ class FollowingsResponse(BaseModel):
     items: List[Dict[str, Any]] = Field(description="Following users data")
     message: Optional[str] = None
     error: Optional[str] = None
+
+
+
+class AncaSurveillanceRequest(BaseModel):
+    """Schema for starting ANCA surveillance"""
+    challenge_ids: Optional[List[int]] = Field(
+        default=None,
+        description="Specific challenge IDs to monitor (optional, will monitor all active if not specified)"
+    )
+
+
+class StrategyExecutionRequest(BaseModel):
+    """Schema for executing enhanced strategies"""
+    strategy_name: str = Field(description="Name of strategy to execute")
+    challenge_id: int = Field(description="Challenge ID")
+    challenge_url: str = Field(description="Challenge URL")
+    challenge_end_time: datetime = Field(description="Challenge end time for timing calculations")
+
+
+class AncaEventResponse(BaseModel):
+    """Schema for ANCA event data"""
+    timestamp: str
+    challenge_id: int
+    event_type: str  # 'entry', 'swap', 'boost', 'rank_change'
+    photo_id: Optional[str] = None
+    votes: Optional[int] = None
+    rank: Optional[int] = None
+    time_left: Optional[str] = None
+    additional_data: Optional[Dict[str, Any]] = None
+
+
+class AncaPatternResponse(BaseModel):
+    """Schema for ANCA behavioral patterns"""
+    anca_username: str
+    total_events: int
+    event_breakdown: Dict[str, int]
+    patterns: List[Dict[str, Any]]
+
+
+class StrategyStatusResponse(BaseModel):
+    """Schema for strategy execution status"""
+    strategy_id: str
+    strategy_name: str
+    challenge_id: int
+    status: str  # 'active', 'completed', 'failed', 'cancelled'
+    started_at: str
+    total_actions: int
+    completed_actions: int
+    successful_actions: int
+
+
+class EnhancedStrategyAction(BaseModel):
+    """Schema for enhanced strategy actions"""
+    step: int
+    action: str  # 'vote', 'submit', 'swap', 'boost', 'turbo', 'fill'
+    timing: str  # 'end-2m0s', 'now', 'next-1h0s'
+    parameters: List[str]
+    scheduled_time: Optional[str] = None
+    executed: bool = False
+    result: Optional[Dict[str, Any]] = None
+
+
+class AvailableStrategyResponse(BaseModel):
+    """Schema for available strategy information"""
+    name: str
+    description: str
+    actions_count: int
