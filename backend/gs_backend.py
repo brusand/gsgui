@@ -2455,4 +2455,4 @@ async def startup_event():
 
 if __name__ == "__main__":
     print("🚀 Démarrage du backend GSGUI avec vrais challenges...")
-    uvicorn.run(app, host="127.0.0.1", port=8001, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=8001, log_level="info")
