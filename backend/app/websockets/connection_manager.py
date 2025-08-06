@@ -324,6 +324,57 @@ class ConnectionManager:
         print(f"🔥 Message à envoyer: {message_data}")
         
         await self.send_personal_message(user_id, message_data)
+
+    
+    async def notify_swap_executed(self, user_id: str, challenge_id: int, success: bool, 
+                                 current_photo_id: str, new_photo_id: str):
+        """Notifie l'exécution d'un swap de photo"""
+        await self.send_personal_message(user_id, {
+            "type": "swap_executed",
+            "challenge_id": challenge_id,
+            "success": success,
+            "current_photo_id": current_photo_id,
+            "new_photo_id": new_photo_id,
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    async def notify_competitor_event(self, user_id: str, challenge_id: int, 
+                                    competitor_name: str, event_type: str, 
+                                    event_data: Dict[str, Any]):
+        """Notifie un événement de concurrent détecté"""
+        await self.send_personal_message(user_id, {
+            "type": "competitor_event",
+            "challenge_id": challenge_id,
+            "competitor_name": competitor_name,
+            "event_type": event_type,  # 'post', 'swap_out', 'boost'
+            "event_data": event_data,
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    async def notify_tracking_status(self, user_id: str, challenge_id: int, 
+                                   status: str, message: str = ""):
+        """Notifie un changement de statut de tracking"""
+        await self.send_personal_message(user_id, {
+            "type": "tracking_status",
+            "challenge_id": challenge_id,
+            "status": status,  # 'started', 'stopped', 'error'
+            "message": message,
+            "timestamp": datetime.now().isoformat()
+        })
+    
+    async def notify_anca_activity(self, user_id: str, challenge_id: int, 
+                                 anca_username: str, activity_type: str, 
+                                 activity_data: Dict[str, Any]):
+        """Notifie spécifiquement l'activité d'ANCA the vampire ou autres gagnants suivis"""
+        await self.send_personal_message(user_id, {
+            "type": "anca_activity",
+            "challenge_id": challenge_id,
+            "anca_username": anca_username,
+            "activity_type": activity_type,  # 'entry', 'swap', 'boost', 'strategy_change'
+            "activity_data": activity_data,
+            "priority": "high",  # Pour les alertes importantes
+            "timestamp": datetime.now().isoformat()
+        })
     # Méthodes utilitaires
     
     def get_connected_users(self) -> List[str]:
