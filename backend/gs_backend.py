@@ -486,7 +486,14 @@ def calculate_turbo_status(challenge_data: dict) -> str:
     try:
         # Analyser l'état du challenge pour déterminer le status turbo
         # Statut stratégie
-        turbo_status = challenge_data['member']['turbo']
+        turbo_data = challenge_data['member']['turbo']
+        
+        # Extraire le status depuis le dictionnaire turbo
+        if isinstance(turbo_data, dict):
+            turbo_status = turbo_data.get('status', 'none')
+        else:
+            turbo_status = str(turbo_data) if turbo_data else 'none'
+            
         turbo_indicators = {
             "none": "",
             "running": "🟡 Running",
@@ -2455,4 +2462,4 @@ async def startup_event():
 
 if __name__ == "__main__":
     print("🚀 Démarrage du backend GSGUI avec vrais challenges...")
-    uvicorn.run(app, host="0.0.0.0", port=8001, log_level="info")
+    uvicorn.run(app, host="127.0.0.1", port=8001, log_level="info")
