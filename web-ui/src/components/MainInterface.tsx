@@ -24,9 +24,67 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
   const [isStrategyEditorOpen, setIsStrategyEditorOpen] = useState(false);
   const [strategyEditorContent, setStrategyEditorContent] = useState('');
 
+  // Helper functions pour récupérer les détails des stratégies depuis strategies.ini
+  // Commenté temporairement - pas utilisé actuellement
+  // const getStrategyDetails = (strategyName: string): { votes: string; timing: string; description: string } => {
+  //   // Parser le contenu de strategies.ini pour trouver les détails
+  //   // Le strategyEditorContent contient le contenu du fichier strategies.ini
+  //   const lines = strategyEditorContent.split('\n');
+  //   let inSection = false;
+  //   let votes = '80';
+  //   let timing = 'end-4m0s';
+  //   let description = strategyName;
+    
+  //   for (let i = 0; i < lines.length; i++) {
+  //     const line = lines[i].trim();
+      
+  //     // Détecter le début de la section [strategyName]
+  //     if (line === `[${strategyName}]`) {
+  //       inSection = true;
+  //       continue;
+  //     }
+      
+  //     // Détecter la fin de la section (nouvelle section ou fin de fichier)
+  //     if (inSection && line.startsWith('[') && line !== `[${strategyName}]`) {
+  //       break;
+  //     }
+      
+  //     // Parser les propriétés dans la section
+  //     if (inSection && line.includes('=')) {
+  //       const [key, value] = line.split('=', 2);
+  //       const cleanKey = key.trim();
+  //       const cleanValue = value.trim();
+        
+  //       switch (cleanKey) {
+  //         case 'votes':
+  //           votes = cleanValue;
+  //           break;
+  //         case 'timing':
+  //           timing = cleanValue;
+  //           break;
+  //         case 'description':
+  //           description = cleanValue;
+  //           break;
+  //       }
+  //     }
+  //   }
+    
+  //   return { votes, timing, description };
+  // };
+
+  // Helper functions disponibles pour usage futur
+  // const getStrategyVotes = (strategyName: string): string => {
+  //   return getStrategyDetails(strategyName).votes;
+  // };
+
+  // const getStrategyTiming = (strategyName: string): string => {
+  //   return getStrategyDetails(strategyName).timing;
+  // };
+
   useEffect(() => {
     loadStrategies();
     refreshChallenges();
+    loadStrategiesConfig(); // Charger le contenu strategies.ini pour parsing
 
     // Écouter les messages WebSocket pour refresh auto
     const handleLogMessage = (data: any) => {
@@ -66,6 +124,17 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
         { name: 'fill_30m', description: 'Fill toutes les 30m', schedule: '*/30 * * * *' },
         { name: 'turbo_1h', description: 'Turbo toutes les heures', schedule: '0 * * * *' }
       ]);
+    }
+  };
+
+  const loadStrategiesConfig = async () => {
+    try {
+      const configData = await apiClient.getStrategiesConfig();
+      setStrategyEditorContent(configData.content);
+    } catch (error) {
+      console.error('Erreur chargement strategies.ini:', error);
+      // Contenu par défaut si l'API échoue
+      setStrategyEditorContent('# Strategies configuration file\n# Unable to load from server');
     }
   };
 
@@ -184,29 +253,45 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
         let totalActions = 0;
         strategiesData.strategies?.forEach((strategy: any) => {
           const challengeTitle = strategy.challenge_title || `Challenge ${strategy.challenge_id}`;
+          const strategyName = strategy.strategy_name;
           
-          // En-tête de la stratégie
+          // En-tête du challenge
           wsService.emitLocalLog(`🎯 ${challengeTitle}:`, 'info');
           
-          // Détail de chaque action/job programmé
-          if (strategy.actions && Array.isArray(strategy.actions)) {
-            strategy.actions.forEach((action: any) => {
-              const executionTime = action.execution_time || 'N/A';
-              const votes = action.votes || 0;
-              const actionDesc = votes > 0 ? `Vote ${votes}` : 'Action';
+          // Afficher TOUTES les actions programmées pour ce challenge
+          const actions = strategy.actions || [];
+          if (actions.length === 0) {
+            wsService.emitLocalLog(`   ⚠️ Aucune action programmée pour ${strategyName}`, 'warning');
+          } else {
+            actions.forEach((action: any) => {
+              const executionTime = action.execution_time || 'Heure inconnue';
+              const votes = action.votes || '80';
               
-              wsService.emitLocalLog(`   ⏰ ${executionTime} - ${actionDesc} pour ${challengeTitle}`, 'info');
+              // Format exact comme l'ancienne version
+              wsService.emitLocalLog(`   ⏰ ${executionTime} - Vote ${votes} pour ${challengeTitle}`, 'info');
               totalActions++;
             });
-          } else {
-            // Fallback si pas d'actions détaillées
-            const status = strategy.status || 'unknown';
-            wsService.emitLocalLog(`   📋 Stratégie: ${strategy.strategy_name} | Status: ${status}`, 'info');
-            totalActions++;
           }
         });
         
         wsService.emitLocalLog(`📊 Total: ${totalActions} job(s) programmé(s)`, 'success');
+        
+        // Afficher les stratégies persistantes comme dans l'ancienne version
+        if (strategiesData.strategies && strategiesData.strategies.length > 0) {
+          wsService.emitLocalLog('💾 Stratégies persistantes:', 'info');
+          
+          // Grouper par stratégie pour éviter les doublons
+          const uniqueStrategies = new Map();
+          strategiesData.strategies.forEach((strategy: any) => {
+            const challengeTitle = strategy.challenge_title || `Challenge ${strategy.challenge_id}`;
+            const strategyName = strategy.strategy_name;
+            uniqueStrategies.set(challengeTitle, strategyName);
+          });
+          
+          uniqueStrategies.forEach((strategyName, challengeTitle) => {
+            wsService.emitLocalLog(`   📝 ${challengeTitle}: ${strategyName}`, 'info');
+          });
+        }
         
         // Proposer un cleanup automatique après affichage
         if (totalActions > 0) {

@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Dict, Any, Optional
-from backend.app.websockets.connection_manager import connection_manager, RealtimeEventTypes
+from app.websockets.connection_manager import connection_manager, RealtimeEventTypes
 
 
 async def notify_broadcast_log(profile_id: str, level: str, message: str):
