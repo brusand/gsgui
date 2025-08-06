@@ -4,7 +4,7 @@ Turbo WebSocket Notifications - Extension for connection_manager
 
 from datetime import datetime
 from typing import Dict, Any, Optional
-from backend.app.websockets.connection_manager import connection_manager, RealtimeEventTypes
+from app.websockets.connection_manager import connection_manager, RealtimeEventTypes
 
 
 async def notify_turbo_started(profile_id: str, turbo_data: Dict[str, Any]):

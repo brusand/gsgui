@@ -11,10 +11,10 @@ import ssl
 import uuid
 import json
 
-from backend.app.services.config_manager import config_manager
-from backend.app.services.turbo_algorithms import turbo_algorithms_service
-from backend.app.websockets.connection_manager import connection_manager
-from backend.app.websockets.turbo_notifications import *
+from app.services.config_manager import config_manager
+from app.services.turbo_algorithms import turbo_algorithms_service
+from app.websockets.connection_manager import connection_manager
+from app.websockets.turbo_notifications import *
 
 logger = logging.getLogger(__name__)
 

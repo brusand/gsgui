@@ -30,15 +30,33 @@ const ProfileSelectionDialog: React.FC<ProfileSelectionDialogProps> = ({
   const loadProfiles = async () => {
     try {
       setIsLoading(true);
-      const profilesData = await apiClient.getProfiles();
-      setProfiles(profilesData);
+      console.log('🔍 Début chargement des profils...');
       
-      // Sélectionner le premier profil s'il existe
-      if (profilesData.length > 0) {
-        setSelectedProfile(profilesData[0].name);
+      const profilesData = await apiClient.getProfiles();
+      console.log('✅ Profils reçus:', profilesData);
+      console.log('📊 Nombre de profils:', profilesData?.length || 0);
+      
+      if (Array.isArray(profilesData)) {
+        setProfiles(profilesData);
+        
+        // Sélectionner le premier profil s'il existe
+        if (profilesData.length > 0) {
+          console.log('🎯 Sélection du premier profil:', profilesData[0].name);
+          setSelectedProfile(profilesData[0].name);
+        } else {
+          console.warn('⚠️ Aucun profil trouvé dans la réponse');
+        }
+      } else {
+        console.error('❌ Les données de profils ne sont pas un tableau:', typeof profilesData);
+        setProfiles([]);
       }
     } catch (error) {
-      console.error('Erreur chargement profils:', error);
+      console.error('❌ Erreur chargement profils:', error);
+      // Afficher l'erreur dans l'interface pour debug
+      if (error instanceof Error) {
+        console.error('Détails de l\'erreur:', error.message, error.stack);
+      }
+      setProfiles([]);
     } finally {
       setIsLoading(false);
     }
@@ -299,7 +317,7 @@ const ProfileSelectionDialog: React.FC<ProfileSelectionDialogProps> = ({
         <p>Sélectionnez votre profil GSGUI</p>
         
         <div className="form-group">
-          <label>Profils disponibles:</label>
+          <label>Profils disponibles: (Trouvé: {profiles.length})</label>
           <select 
             value={selectedProfile} 
             onChange={(e) => setSelectedProfile(e.target.value)}
@@ -312,6 +330,11 @@ const ProfileSelectionDialog: React.FC<ProfileSelectionDialogProps> = ({
               </option>
             ))}
           </select>
+          {profiles.length === 0 && !isLoading && (
+            <div style={{ color: 'red', marginTop: '8px' }}>
+              ❌ Aucun profil trouvé. Vérifiez la console pour plus de détails.
+            </div>
+          )}
         </div>
 
         <button 

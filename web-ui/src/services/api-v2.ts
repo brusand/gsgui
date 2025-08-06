@@ -22,8 +22,30 @@ class GSGUIApiClient {
 
   // Profiles
   async getProfiles(): Promise<Profile[]> {
-    const response = await this.api.get<{ profiles: Profile[] }>('/profiles');
-    return response.data.profiles;
+    try {
+      console.log('🌐 Appel API: GET /api/v1/profiles');
+      const response = await this.api.get<{ profiles: Profile[] }>('/profiles');
+      console.log('📡 Réponse brute:', response);
+      console.log('📦 Données reçues:', response.data);
+      console.log('👥 Profils extraits:', response.data.profiles);
+      
+      if (!response.data || !response.data.profiles) {
+        throw new Error('Format de réponse invalide: pas de propriété "profiles"');
+      }
+      
+      if (!Array.isArray(response.data.profiles)) {
+        throw new Error('Format de réponse invalide: "profiles" n\'est pas un tableau');
+      }
+      
+      return response.data.profiles;
+    } catch (error) {
+      console.error('❌ Erreur dans getProfiles():', error);
+      if (error instanceof Error) {
+        console.error('Message d\'erreur:', error.message);
+        console.error('Stack trace:', error.stack);
+      }
+      throw error; // Re-throw pour que le composant puisse gérer l'erreur
+    }
   }
 
   async createProfile(name: string, token: string): Promise<ApiResponse<void>> {
