@@ -1591,6 +1591,75 @@ async def cleanup_strategies_endpoint(profile_name: Optional[str] = None):
         print(f"❌ Error cleanup strategies: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/v1/logs/{log_type}")
+async def get_logs(log_type: str):
+    """
+    Récupère le contenu d'un fichier de log
+    
+    Args:
+        log_type: Type de log (backend, frontend, manager)
+        
+    Returns:
+        Contenu du fichier de log en texte brut
+    """
+    from fastapi.responses import PlainTextResponse
+    from pathlib import Path
+    
+    try:
+        # Chemin vers le répertoire logs (au niveau racine du projet)
+        logs_dir = Path(__file__).parent.parent / "logs"
+        
+        if log_type == "backend":
+            log_file = logs_dir / "backend.log"
+        elif log_type == "frontend":
+            log_file = logs_dir / "frontend.log" 
+        elif log_type == "manager":
+            log_file = logs_dir / "manager.log"
+        else:
+            raise HTTPException(status_code=400, detail=f"Type de log non supporté: {log_type}")
+        
+        if not log_file.exists():
+            return PlainTextResponse(
+                content=f"# Fichier de log non trouvé\n# Chemin: {log_file}\n# Le fichier sera créé au démarrage de l'application",
+                status_code=200
+            )
+        
+        # Lire le fichier de log
+        with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+        
+        # Limiter la taille si le fichier est trop gros (max 5MB)
+        max_size = 5 * 1024 * 1024  # 5MB
+        if len(content) > max_size:
+            # Prendre les dernières lignes pour rester dans la limite
+            lines = content.split('\n')
+            truncated_lines = []
+            current_size = 0
+            
+            # Partir de la fin et remonter
+            for line in reversed(lines):
+                line_size = len(line) + 1  # +1 pour le \n
+                if current_size + line_size > max_size:
+                    break
+                truncated_lines.append(line)
+                current_size += line_size
+            
+            # Remettre dans l'ordre et ajouter un message d'info
+            truncated_lines.reverse()
+            content = "# Fichier tronqué - seules les dernières lignes sont affichées\n" + '\n'.join(truncated_lines)
+        
+        return PlainTextResponse(
+            content=content,
+            status_code=200,
+            headers={"Content-Type": "text/plain; charset=utf-8"}
+        )
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors de la lecture du fichier de log: {str(e)}"
+        )
+
 @app.websocket("/ws/logs")
 async def websocket_logs(websocket: WebSocket):
     """WebSocket endpoint pour les logs en temps réel"""
