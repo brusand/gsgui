@@ -9,14 +9,51 @@ from fastapi.responses import JSONResponse
 import uvicorn
 from datetime import datetime
 import logging
+import logging.handlers
+import os
 
 from app.api.v1.api import api_router
 from app.core.config import settings
 from app.websockets.connection_manager import connection_manager
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Configure rotating logs
+def setup_rotating_logs():
+    # Créer le répertoire de logs s'il n'existe pas
+    log_dir = "../logs"
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # Configuration du logger racine
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    
+    # Supprimer les handlers existants
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+    
+    # Handler rotatif pour backend.log
+    backend_handler = logging.handlers.RotatingFileHandler(
+        filename=os.path.join(log_dir, "backend.log"),
+        maxBytes=10 * 1024 * 1024,  # 10 MB
+        backupCount=5,  # Garder 5 fichiers de backup
+        encoding='utf-8'
+    )
+    backend_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    ))
+    
+    # Handler console (pour voir les logs en temps réel)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s'
+    ))
+    
+    # Ajouter les handlers
+    root_logger.addHandler(backend_handler)
+    root_logger.addHandler(console_handler)
+    
+    return root_logger
+
+logger = setup_rotating_logs()
 
 # Create FastAPI application
 app = FastAPI(

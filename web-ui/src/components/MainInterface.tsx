@@ -112,6 +112,16 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
     };
   }, [profileName]);
 
+  // Auto-refresh toutes les minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('🔄 Auto-refresh périodique (1 minute)');
+      refreshChallenges();
+    }, 60000); // 60 secondes
+
+    return () => clearInterval(interval);
+  }, [profileName]);
+
   const loadStrategies = async () => {
     try {
       const strategiesData = await apiClient.getStrategies();
