@@ -314,3 +314,157 @@ class GuruShotsAPI:
                 success=False,
                 message=f"Error executing simple vote: {str(e)}"
             )
+
+    async def swap_photo(self, challenge_id: int, current_photo_id: str, new_photo_id: str) -> dict:
+        """
+        Swap a photo in a challenge
+        
+        Args:
+            challenge_id: Challenge ID
+            current_photo_id: Current photo ID to replace
+            new_photo_id: New photo ID to use instead
+            
+        Returns:
+            API response with swap result
+        """
+        url = f"{self.base_url}/swap"
+        
+        payload = {
+            'c_id': str(challenge_id),
+            'el': 'my_challenge_current',
+            'el_id': True,
+            'img_id': current_photo_id,
+            'new_img_id': new_photo_id
+        }
+        
+        async with aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(ssl=ssl_context), 
+            timeout=aiohttp.ClientTimeout(total=30)
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        logger.info(f"Photo swapped successfully in challenge {challenge_id}")
+                        return result
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Swap failed with status {response.status}: {error_text}")
+                        return {"success": False, "error": f"HTTP {response.status}", "details": error_text}
+                        
+            except Exception as e:
+                logger.error(f"Error during photo swap: {str(e)}")
+                return {"success": False, "error": str(e)}
+
+    async def get_challenge_followings(self, challenge_id: int, limit: int = 200, start: int = 0) -> dict:
+        """
+        Get followings participating in a challenge
+        
+        Args:
+            challenge_id: Challenge ID 
+            limit: Maximum number of results
+            start: Start offset
+            
+        Returns:
+            API response with followings data
+        """
+        url = f"{self.base_url}/get_top_photographer"
+        
+        payload = {
+            'c_id': str(challenge_id),
+            'filter': 'following',
+            'init': 'true',
+            'limit': str(limit),
+            'start': str(start)
+        }
+        
+        async with aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(ssl=ssl_context),
+            timeout=aiohttp.ClientTimeout(total=30)
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        logger.info(f"Retrieved {len(result.get('items', []))} followings for challenge {challenge_id}")
+                        return result
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Get followings failed with status {response.status}: {error_text}")
+                        return {"success": False, "error": f"HTTP {response.status}", "details": error_text}
+                        
+            except Exception as e:
+                logger.error(f"Error getting challenge followings: {str(e)}")
+                return {"success": False, "error": str(e)}
+
+    async def get_user_followings(self, user_id: int, limit: int = 200, start: int = 0) -> dict:
+        """
+        Get user's following list
+        
+        Args:
+            user_id: User ID
+            limit: Maximum number of results  
+            start: Start offset
+            
+        Returns:
+            API response with following list
+        """
+        url = f"{self.base_url}/get_following"
+        
+        payload = {
+            'id': str(user_id),
+            'limit': str(limit),
+            'start': str(start)
+        }
+        
+        async with aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(ssl=ssl_context),
+            timeout=aiohttp.ClientTimeout(total=30) 
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        logger.info(f"Retrieved {len(result.get('items', []))} followings for user {user_id}")
+                        return result
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Get user followings failed with status {response.status}: {error_text}")
+                        return {"success": False, "error": f"HTTP {response.status}", "details": error_text}
+                        
+            except Exception as e:
+                logger.error(f"Error getting user followings: {str(e)}")
+                return {"success": False, "error": str(e)}
+
+    async def get_challenge_details(self, challenge_url: str) -> dict:
+        """
+        Get detailed challenge information
+        
+        Args:
+            challenge_url: Challenge URL
+            
+        Returns:
+            Challenge details including timing and status
+        """
+        url = f"{self.base_url}/get_challenge"
+        
+        payload = {'challenge_url': challenge_url}
+        
+        async with aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(ssl=ssl_context),
+            timeout=aiohttp.ClientTimeout(total=30)
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        logger.info(f"Retrieved challenge details for {challenge_url}")
+                        return result
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Get challenge details failed with status {response.status}: {error_text}")
+                        return {"success": False, "error": f"HTTP {response.status}", "details": error_text}
+                        
+            except Exception as e:
+                logger.error(f"Error getting challenge details: {str(e)}")
+                return {"success": False, "error": str(e)}
