@@ -282,3 +282,291 @@
 [2025-08-05 12:24:42] ✅ === Tous les services sont démarrés ===
 [2025-08-05 12:24:42] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
 [2025-08-05 12:24:42] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 13:33:36] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 13:33:36] ℹ️  Vérification des prérequis...
+[2025-08-05 13:33:36] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 13:33:36] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 13:33:36] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 13:33:36] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 13:33:36] ℹ️  Démarrage du backend...
+[2025-08-05 13:33:36] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 13:33:38] ✅ Backend démarré (PID: 63246)
+[2025-08-05 13:33:41] ⚠️  Frontend déjà en cours d'exécution (PID: 58657)
+[2025-08-05 13:33:41] ✅ === Tous les services sont démarrés ===
+[2025-08-05 13:33:41] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 13:33:41] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 13:35:32] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 13:35:32] ℹ️  Vérification des prérequis...
+[2025-08-05 13:35:32] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 13:35:32] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 13:35:32] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 13:35:32] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 13:35:32] ℹ️  Démarrage du backend...
+[2025-08-05 13:35:32] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 13:35:34] ✅ Backend démarré (PID: 64936)
+[2025-08-05 13:35:37] ⚠️  Frontend déjà en cours d'exécution (PID: 58657)
+[2025-08-05 13:35:37] ✅ === Tous les services sont démarrés ===
+[2025-08-05 13:35:37] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 13:35:37] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 13:36:53] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 13:36:53] ℹ️  === État des services GSGUI ===
+[2025-08-05 13:36:53] ⚠️  Backend arrêté (PID file existe mais processus mort)
+[2025-08-05 13:36:53] ✅ Frontend actif (PID: 58657)
+[2025-08-05 13:37:10] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 13:37:10] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-05 13:37:10] ℹ️  Arrêt des processus...
+[2025-08-05 13:37:10] ℹ️  Arrêt du processus frontend (PID: 58657)...
+[2025-08-05 13:37:11] ✅ Processus frontend arrêté proprement
+[2025-08-05 13:37:11] ✅ Tous les processus ont été arrêtés
+[2025-08-05 13:37:20] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 13:37:20] ℹ️  === État des services GSGUI ===
+[2025-08-05 13:37:20] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-05 13:37:20] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-05 13:37:34] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 13:37:34] ℹ️  Vérification des prérequis...
+[2025-08-05 13:37:34] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 13:37:34] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 13:37:34] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 13:37:34] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 13:37:34] ℹ️  Démarrage du backend...
+[2025-08-05 13:37:34] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 13:37:36] ✅ Backend démarré (PID: 65645)
+[2025-08-05 13:37:38] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 13:37:38] ℹ️  Vérification des prérequis...
+[2025-08-05 13:37:38] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 13:37:39] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 13:37:39] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-05 13:37:39] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 13:37:39] ⚠️  Backend déjà en cours d'exécution (PID: 65645)
+[2025-08-05 13:37:39] ℹ️  Démarrage du frontend...
+[2025-08-05 13:37:42] ⚠️  Frontend déjà en cours d'exécution (PID: 65785)
+[2025-08-05 13:37:42] ✅ === Tous les services sont démarrés ===
+[2025-08-05 13:37:42] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 13:37:42] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 13:37:42] ✅ Frontend démarré (PID: 65785)
+[2025-08-05 13:37:42] ✅ === Tous les services sont démarrés ===
+[2025-08-05 13:37:42] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 13:37:42] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 14:50:23] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 14:50:23] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-05 14:50:23] ℹ️  Arrêt des processus...
+[2025-08-05 14:50:23] ℹ️  Arrêt du processus frontend (PID: 65785)...
+[2025-08-05 14:50:24] ✅ Processus frontend arrêté proprement
+[2025-08-05 14:50:24] ⚠️  Processus backend (PID: 65645) n'existe plus
+[2025-08-05 14:50:24] ✅ Tous les processus ont été arrêtés
+[2025-08-05 14:52:58] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 14:52:58] ℹ️  Vérification des prérequis...
+[2025-08-05 14:52:58] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 14:52:58] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 14:52:58] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 14:52:58] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 14:52:58] ℹ️  Démarrage du backend...
+[2025-08-05 14:52:58] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 14:53:00] ✅ Backend démarré (PID: 85935)
+[2025-08-05 14:53:03] ℹ️  Démarrage du frontend...
+[2025-08-05 14:53:06] ✅ Frontend démarré (PID: 85982)
+[2025-08-05 14:53:06] ✅ === Tous les services sont démarrés ===
+[2025-08-05 14:53:06] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 14:53:06] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 15:14:30] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 15:14:30] ℹ️  Vérification des prérequis...
+[2025-08-05 15:14:30] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 15:14:30] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 15:14:30] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 15:14:30] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 15:14:30] ℹ️  Démarrage du backend...
+[2025-08-05 15:14:30] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 15:14:32] ✅ Backend démarré (PID: 93795)
+[2025-08-05 15:14:35] ⚠️  Frontend déjà en cours d'exécution (PID: 85982)
+[2025-08-05 15:14:35] ✅ === Tous les services sont démarrés ===
+[2025-08-05 15:14:35] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 15:14:35] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 21:08:37] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 21:08:37] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-05 21:08:37] ℹ️  Arrêt des processus...
+[2025-08-05 21:08:37] ℹ️  Arrêt du processus frontend (PID: 85982)...
+[2025-08-05 21:08:38] ✅ Processus frontend arrêté proprement
+[2025-08-05 21:08:38] ⚠️  Processus backend (PID: 93795) n'existe plus
+[2025-08-05 21:08:38] ✅ Tous les processus ont été arrêtés
+[2025-08-05 21:08:42] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 21:08:42] ℹ️  Vérification des prérequis...
+[2025-08-05 21:08:42] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 21:08:42] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 21:08:42] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 21:08:42] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 21:08:42] ℹ️  Démarrage du backend...
+[2025-08-05 21:08:42] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 21:08:44] ✅ Backend démarré (PID: 22079)
+[2025-08-05 21:08:47] ℹ️  Démarrage du frontend...
+[2025-08-05 21:08:50] ✅ Frontend démarré (PID: 22088)
+[2025-08-05 21:08:50] ✅ === Tous les services sont démarrés ===
+[2025-08-05 21:08:50] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 21:08:50] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 21:29:43] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 21:29:43] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-05 21:29:43] ℹ️  Arrêt des processus...
+[2025-08-05 21:29:43] ℹ️  Arrêt du processus frontend (PID: 22088)...
+[2025-08-05 21:29:44] ✅ Processus frontend arrêté proprement
+[2025-08-05 21:29:44] ⚠️  Processus backend (PID: 22079) n'existe plus
+[2025-08-05 21:29:44] ✅ Tous les processus ont été arrêtés
+[2025-08-05 21:29:47] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 21:29:47] ℹ️  Vérification des prérequis...
+[2025-08-05 21:29:47] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 21:29:47] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 21:29:47] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 21:29:47] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 21:29:47] ℹ️  Démarrage du backend...
+[2025-08-05 21:29:47] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 21:29:49] ✅ Backend démarré (PID: 24676)
+[2025-08-05 21:29:52] ℹ️  Démarrage du frontend...
+[2025-08-05 21:29:55] ✅ Frontend démarré (PID: 24684)
+[2025-08-05 21:29:55] ✅ === Tous les services sont démarrés ===
+[2025-08-05 21:29:55] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 21:29:55] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-05 22:34:46] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 22:34:46] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-05 22:34:46] ℹ️  Arrêt des processus...
+[2025-08-05 22:34:46] ℹ️  Arrêt du processus frontend (PID: 24684)...
+[2025-08-05 22:34:47] ✅ Processus frontend arrêté proprement
+[2025-08-05 22:34:47] ⚠️  Processus backend (PID: 24676) n'existe plus
+[2025-08-05 22:34:47] ✅ Tous les processus ont été arrêtés
+[2025-08-05 22:34:51] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-05 22:34:51] ℹ️  Vérification des prérequis...
+[2025-08-05 22:34:51] ✅ Tous les prérequis sont satisfaits
+[2025-08-05 22:34:51] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-05 22:34:51] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-05 22:34:51] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-05 22:34:51] ℹ️  Démarrage du backend...
+[2025-08-05 22:34:51] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-05 22:34:53] ✅ Backend démarré (PID: 33283)
+[2025-08-05 22:34:56] ℹ️  Démarrage du frontend...
+[2025-08-05 22:34:59] ✅ Frontend démarré (PID: 33296)
+[2025-08-05 22:34:59] ✅ === Tous les services sont démarrés ===
+[2025-08-05 22:34:59] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-05 22:34:59] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-06 02:43:40] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 02:43:40] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-06 02:43:40] ℹ️  Arrêt des processus...
+[2025-08-06 02:43:40] ℹ️  Arrêt du processus frontend (PID: 33296)...
+[2025-08-06 02:43:41] ✅ Processus frontend arrêté proprement
+[2025-08-06 02:43:41] ⚠️  Processus backend (PID: 33283) n'existe plus
+[2025-08-06 02:43:41] ✅ Tous les processus ont été arrêtés
+[2025-08-06 02:43:46] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 02:43:46] ℹ️  Vérification des prérequis...
+[2025-08-06 02:43:46] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 02:43:46] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 02:43:46] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 02:43:46] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 02:43:46] ℹ️  Démarrage du backend...
+[2025-08-06 02:43:46] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 02:43:48] ❌ Échec du démarrage du backend
+[2025-08-06 02:44:05] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 02:44:05] ℹ️  Vérification des prérequis...
+[2025-08-06 02:44:05] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 02:44:05] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 02:44:05] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 02:44:05] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 02:44:05] ℹ️  Démarrage du backend...
+[2025-08-06 02:44:05] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 02:44:07] ❌ Échec du démarrage du backend
+[2025-08-06 02:55:50] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 02:55:50] ℹ️  Vérification des prérequis...
+[2025-08-06 02:55:50] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 02:55:50] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 02:55:50] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 02:55:50] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 02:55:50] ℹ️  Démarrage du backend...
+[2025-08-06 02:55:50] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 02:55:52] ❌ Échec du démarrage du backend
+[2025-08-06 03:01:52] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 03:01:52] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-06 03:01:52] ℹ️  Arrêt des processus...
+[2025-08-06 03:01:52] ✅ Tous les processus ont été arrêtés
+[2025-08-06 03:01:57] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 03:01:57] ℹ️  Vérification des prérequis...
+[2025-08-06 03:01:57] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 03:01:57] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 03:01:57] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 03:01:57] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 03:01:57] ℹ️  Démarrage du backend...
+[2025-08-06 03:01:57] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 03:01:59] ✅ Backend démarré (PID: 54176)
+[2025-08-06 03:02:02] ℹ️  Démarrage du frontend...
+[2025-08-06 03:02:05] ✅ Frontend démarré (PID: 54201)
+[2025-08-06 03:02:05] ✅ === Tous les services sont démarrés ===
+[2025-08-06 03:02:05] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-06 03:02:05] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-06 03:18:38] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 03:18:39] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-06 03:18:39] ℹ️  Arrêt des processus...
+[2025-08-06 03:18:39] ⚠️  Processus frontend (PID: 54201) n'existe plus
+[2025-08-06 03:18:39] ⚠️  Processus backend (PID: 54176) n'existe plus
+[2025-08-06 03:18:39] ✅ Tous les processus ont été arrêtés
+[2025-08-06 03:18:51] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 03:18:51] ℹ️  Vérification des prérequis...
+[2025-08-06 03:18:51] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 03:18:51] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 03:18:51] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 03:18:51] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 03:18:51] ℹ️  Démarrage du backend...
+[2025-08-06 03:18:51] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 03:18:53] ✅ Backend démarré (PID: 61338)
+[2025-08-06 03:18:56] ℹ️  Démarrage du frontend...
+[2025-08-06 03:18:59] ✅ Frontend démarré (PID: 61357)
+[2025-08-06 03:18:59] ✅ === Tous les services sont démarrés ===
+[2025-08-06 03:18:59] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-06 03:18:59] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-06 09:41:26] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 09:41:26] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-06 09:41:26] ℹ️  Arrêt des processus...
+[2025-08-06 09:41:26] ℹ️  Arrêt du processus frontend (PID: 61357)...
+[2025-08-06 09:41:27] ✅ Processus frontend arrêté proprement
+[2025-08-06 09:41:27] ⚠️  Processus backend (PID: 61338) n'existe plus
+[2025-08-06 09:41:27] ✅ Tous les processus ont été arrêtés
+[2025-08-06 09:41:32] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 09:41:32] ℹ️  Vérification des prérequis...
+[2025-08-06 09:41:32] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 09:41:32] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 09:41:32] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 09:41:32] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 09:41:32] ℹ️  Démarrage du backend...
+[2025-08-06 09:41:32] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 09:41:34] ❌ Échec du démarrage du backend
+[2025-08-06 09:42:22] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 09:42:22] ℹ️  Vérification des prérequis...
+[2025-08-06 09:42:22] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 09:42:22] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 09:42:22] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 09:42:22] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 09:42:22] ℹ️  Démarrage du backend...
+[2025-08-06 09:42:22] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 09:42:24] ✅ Backend démarré (PID: 27104)
+[2025-08-06 09:42:27] ℹ️  Démarrage du frontend...
+[2025-08-06 09:42:30] ✅ Frontend démarré (PID: 27129)
+[2025-08-06 09:42:30] ✅ === Tous les services sont démarrés ===
+[2025-08-06 09:42:30] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-06 09:42:30] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-06 09:46:41] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 09:46:41] ℹ️  Vérification des prérequis...
+[2025-08-06 09:46:41] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 09:46:41] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 09:46:41] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 09:46:41] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 09:46:41] ℹ️  Démarrage du backend...
+[2025-08-06 09:46:41] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-06 09:46:43] ✅ Backend démarré (PID: 28798)
+[2025-08-06 09:46:46] ⚠️  Frontend déjà en cours d'exécution (PID: 27129)
+[2025-08-06 09:46:46] ✅ === Tous les services sont démarrés ===
+[2025-08-06 09:46:46] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-06 09:46:46] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-06 16:07:40] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-06 16:07:40] ℹ️  Vérification des prérequis...
+[2025-08-06 16:07:40] ✅ Tous les prérequis sont satisfaits
+[2025-08-06 16:07:40] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-06 16:07:40] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-06 16:07:40] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-06 16:07:40] ⚠️  Backend déjà en cours d'exécution (PID: 28798)
+[2025-08-06 16:07:43] ⚠️  Frontend déjà en cours d'exécution (PID: 27129)
+[2025-08-06 16:07:43] ✅ === Tous les services sont démarrés ===
+[2025-08-06 16:07:43] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-06 16:07:43] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique

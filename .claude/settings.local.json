@@ -64,7 +64,9 @@
       "Bash(./start-webui.sh:*)",
       "Bash(./stop-webui.sh:*)",
       "Bash(kill:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(sqlite3:*)",
+      "mcp__filesystem__list_allowed_directories"
     ]
   },
   "enableAllProjectMcpServers": false,
