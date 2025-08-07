@@ -315,13 +315,123 @@ class GuruShotsAPI:
                 message=f"Error executing simple vote: {str(e)}"
             )
 
+    async def boost_photo(self, challenge_id: int, image_id: str) -> dict:
+        """
+        Boost a photo in a challenge
+
+        Args:
+            challenge_id: Challenge ID
+            image_id: Photo ID to boost
+
+        Returns:
+            API response with swap result
+        """
+        url = f"{self.base_url}/boost_photo"
+
+        payload = {
+            'c_id': str(challenge_id),
+            'image_id': image_id,
+        }
+        async with aiohttp.ClientSession(
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        logger.info(f"Photo boost  successfully in challenge {challenge_id}")
+                        return result
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Boost failed with status {response.status}: {error_text}")
+                        return {"success": False, "error": f"HTTP {response.status}", "details": error_text}
+
+            except Exception as e:
+                logger.error(f"Error during photo boost: {str(e)}")
+                return {"success": False, "error": str(e)}
+
+    async def turbo_photo(self, challenge_id: int, image_id: str) -> dict:
+        """
+        Set Turbo a photo in a challenge
+
+        Args:
+            challenge_id: Challenge ID
+            image_id: Photo ID to set turbo
+
+        Returns:
+            API response with swap result
+        """
+        url = f"{self.base_url}/set_challenge_turbo"
+
+        payload = {
+            'challenge_id': str(challenge_id),
+            'image_id': image_id,
+        }
+        async with aiohttp.ClientSession(
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        logger.info(f"Photo set turbo  successfully in challenge {challenge_id}")
+                        return result
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Set turbo failed with status {response.status}: {error_text}")
+                        return {"success": False, "error": f"HTTP {response.status}", "details": error_text}
+
+            except Exception as e:
+                logger.error(f"Error during photo set turbo: {str(e)}")
+                return {"success": False, "error": str(e)}
+
+    async def submit_photo(self, challenge_id: int,  image_ids: List[str]) -> dict:
+        """
+        Submit a photo in a challenge
+
+        Args:
+            challenge_id: Challenge ID
+            image_ids[]:  photos ID to submit
+
+        Returns:
+            API response with swap result
+        """
+        url = f"{self.base_url}/submit_to_challenge"
+        images = []
+        payload = {
+            'c_id': str(challenge_id),
+            'el': 'challenges',
+            'el_id': True,
+        }
+        payload = {'image_ids[' + str(id) + ']': value for id, value in enumerate(image_ids)}
+        async with aiohttp.ClientSession(
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        logger.info(f"Photo submited successfully in challenge {challenge_id}")
+                        return result
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Submit failed with status {response.status}: {error_text}")
+                        return {"success": False, "error": f"HTTP {response.status}", "details": error_text}
+
+            except Exception as e:
+                logger.error(f"Error during photo submit: {str(e)}")
+                return {"success": False, "error": str(e)}
+
     async def swap_photo(self, challenge_id: int, current_photo_id: str, new_photo_id: str) -> dict:
         """
         Swap a photo in a challenge
         
         Args:
             challenge_id: Challenge ID
-            current_photo_id: Current photo ID to replace
+            current_photo_id: photo ID to swap
             new_photo_id: New photo ID to use instead
             
         Returns:
@@ -338,8 +448,8 @@ class GuruShotsAPI:
         }
         
         async with aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(ssl=ssl_context), 
-            timeout=aiohttp.ClientTimeout(total=30)
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
         ) as session:
             try:
                 async with session.post(url, data=payload, headers=self.headers) as response:
@@ -379,8 +489,8 @@ class GuruShotsAPI:
         }
         
         async with aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(ssl=ssl_context),
-            timeout=aiohttp.ClientTimeout(total=30)
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
         ) as session:
             try:
                 async with session.post(url, data=payload, headers=self.headers) as response:
@@ -418,8 +528,8 @@ class GuruShotsAPI:
         }
         
         async with aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(ssl=ssl_context),
-            timeout=aiohttp.ClientTimeout(total=30) 
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
         ) as session:
             try:
                 async with session.post(url, data=payload, headers=self.headers) as response:
@@ -451,8 +561,8 @@ class GuruShotsAPI:
         payload = {'challenge_url': challenge_url}
         
         async with aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(ssl=ssl_context),
-            timeout=aiohttp.ClientTimeout(total=30)
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
         ) as session:
             try:
                 async with session.post(url, data=payload, headers=self.headers) as response:

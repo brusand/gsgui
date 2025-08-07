@@ -377,6 +377,11 @@ async def get_available_strategies():
                 "name": "swap",
                 "description": "Swap votes strategically",
                 "min_duration_minutes": 15
+            },
+            {
+                "name": "submit",
+                "description": "submit image ids strategically",
+                "min_duration_minutes": 15
             }
         ]
         
