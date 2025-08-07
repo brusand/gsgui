@@ -43,10 +43,11 @@ init_config() {
         # Garder la détection Python originale
     fi
     
-    BACKEND_CMD="$PYTHON_CMD gs_backend.py"
-    FRONTEND_CMD="$NPM_CMD run dev"
     BACKEND_DIR="$SCRIPT_DIR/backend"
     FRONTEND_DIR="$SCRIPT_DIR/web-ui"
+    
+    BACKEND_CMD="$PYTHON_CMD gs_backend.py"
+    FRONTEND_CMD="$NPM_CMD run dev"
     PID_DIR="$SCRIPT_DIR/pids"
     LOG_DIR="$SCRIPT_DIR/logs"
     
@@ -179,6 +180,7 @@ create_directories() {
     mkdir -p "$PID_DIR" "$LOG_DIR"
     log_info "Répertoires créés: $PID_DIR, $LOG_DIR"
 }
+
 
 # Fonction pour tuer un processus de manière portable
 kill_process() {
