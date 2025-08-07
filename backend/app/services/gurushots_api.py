@@ -578,3 +578,51 @@ class GuruShotsAPI:
             except Exception as e:
                 logger.error(f"Error getting challenge details: {str(e)}")
                 return {"success": False, "error": str(e)}
+
+    async def get_current_user_info(self) -> dict:
+        """
+        Get current user information from GuruShots API
+        
+        Returns:
+            User information including username and user_id
+        """
+        url = f"{self.base_url}/get_page_data"
+        
+        payload = {
+            'url': 'https://gurushots.com/challenges/my-challenges/current'
+        }
+        
+        async with aiohttp.ClientSession(
+                headers=self.headers,
+                connector=aiohttp.TCPConnector(ssl=False)
+        ) as session:
+            try:
+                async with session.post(url, data=payload, headers=self.headers) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        
+                        # Extract user info from page data
+                        items = result.get('items', {})
+                        page = items.get('page', {})
+                        member_path = page.get('member_path', {})
+                        
+                        if member_path:
+                            user_info = {
+                                'user_id': member_path.get('id'),
+                                'username': member_path.get('user_name', ''),
+                                'name': member_path.get('name', ''),
+                                'profile_url': member_path.get('url', '')
+                            }
+                            logger.info(f"Retrieved user info: {user_info['username']} (ID: {user_info['user_id']})")
+                            return user_info
+                        else:
+                            logger.warning("No member_path found in page data")
+                            return {}
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Get user info failed with status {response.status}: {error_text}")
+                        return {}
+                        
+            except Exception as e:
+                logger.error(f"Error getting current user info: {str(e)}")
+                return {}

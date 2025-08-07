@@ -255,55 +255,352 @@ class ExtendedStrategyExecutor:
         return result
     
     async def _execute_boost_action(self, api_client: GuruShotsAPI, challenge_id: int, 
-                                  challenge_url: str, params: List[str]) -> Dict:
+                              challenge_url: str, params: List[str]) -> Dict:
         """Execute boost action with index support"""
         if not params:
             return {'success': False, 'error': 'Image ID or index required for boost'}
         
-        param = params[0]
+        param = params[0].strip()
+        image_id = None
         
-        # Handle index notation like [0] (photo with most votes)
-        if param.isdigit():
-            index = int(param)
+        # Handle index notation like [0] (photo with most votes) or just 0
+        if param.startswith('[') and param.endswith(']'):
+            # Remove brackets: [0] -> 0
+            index_str = param[1:-1]
+        else:
+            index_str = param
+        
+        # Check if it's a numeric index
+        if index_str.isdigit():
+            index = int(index_str)
+            logger.info(f"🔍 Resolving photo index [{index}] for boost action")
+            
             image_id = await self._resolve_photo_by_index(api_client, challenge_id, index)
             if not image_id:
-                return {'success': False, 'error': f'Could not resolve photo index {index}'}
+                return {
+                    'success': False, 
+                    'error': f'Could not resolve photo index [{index}]. User may not have photos in challenge or index out of range.'
+                }
+            
+            logger.info(f"✅ Resolved index [{index}] to photo ID: {image_id}")
         else:
+            # Direct image ID provided
             image_id = param
+            logger.info(f"📸 Using direct photo ID: {image_id}")
         
         try:
-            # Use the new boost method you added
+            # Use the boost method (assuming you added this to GuruShotsAPI)
             result = await api_client.boost_photo(challenge_id, image_id)
-            logger.info(f"⚡ Boosted image {image_id} in challenge {challenge_id}")
-            return result
+            
+            if result.get('success', True):  # Assume success if not explicitly failed
+                logger.info(f"⚡ Successfully boosted photo {image_id} in challenge {challenge_id}")
+                return {
+                    'success': True,
+                    'message': f'Boosted photo {image_id}',
+                    'image_id': image_id,
+                    'resolved_from_index': index_str if index_str.isdigit() else None
+                }
+            else:
+                error_msg = result.get('error', 'Boost failed')
+                logger.error(f"❌ Boost failed: {error_msg}")
+                return {'success': False, 'error': error_msg, 'image_id': image_id}
+                
         except Exception as e:
-            return {'success': False, 'error': str(e)}
+            logger.error(f"❌ Exception during boost: {str(e)}")
+            return {'success': False, 'error': str(e), 'image_id': image_id}
     
     async def _execute_turbo_action(self, api_client: GuruShotsAPI, challenge_id: int, params: List[str]) -> Dict:
-        """Execute turbo action using set_turbo (unlock turbo)"""
+        """Execute turbo action using set_turbo (unlock turbo) with optional photo index"""
         try:
-            # Use set_turbo method you added (unlock turbo)
+            # Check if a photo index is specified for targeting
+            target_photo_id = None
+            if params and params[0].strip():
+                param = params[0].strip()
+                
+                # Handle index notation
+                if param.startswith('[') and param.endswith(']'):
+                    index_str = param[1:-1]
+                else:
+                    index_str = param
+                
+                if index_str.isdigit():
+                    index = int(index_str)
+                    logger.info(f"🎯 Resolving photo index [{index}] for turbo targeting")
+                    
+                    target_photo_id = await self._resolve_photo_by_index(api_client, challenge_id, index)
+                    if target_photo_id:
+                        logger.info(f"✅ Turbo will target photo {target_photo_id} (index [{index}])")
+                    else:
+                        logger.warning(f"⚠️ Could not resolve photo index [{index}], proceeding with general turbo")
+                else:
+                    target_photo_id = param
+                    logger.info(f"🎯 Turbo will target specific photo: {target_photo_id}")
+            
+            # Use set_turbo method (unlock turbo)
+            # Note: set_turbo might not support targeting specific photos, 
+            # but we log the intention for future enhancement
             result = await api_client.set_turbo(challenge_id)
-            logger.info(f"🚀 Unlocked turbo for challenge {challenge_id}")
-            return result
+            
+            if result.get('success', True):
+                logger.info(f"🚀 Successfully unlocked turbo for challenge {challenge_id}")
+                return {
+                    'success': True,
+                    'message': f'Unlocked turbo for challenge {challenge_id}',
+                    'challenge_id': challenge_id,
+                    'target_photo_id': target_photo_id,
+                    'note': 'Turbo unlocked - specific photo targeting may require additional implementation'
+                }
+            else:
+                error_msg = result.get('error', 'Turbo unlock failed')
+                logger.error(f"❌ Turbo unlock failed: {error_msg}")
+                return {'success': False, 'error': error_msg}
+                
         except Exception as e:
+            logger.error(f"❌ Exception during turbo unlock: {str(e)}")
             return {'success': False, 'error': str(e)}
     
     async def _resolve_photo_by_index(self, api_client: GuruShotsAPI, challenge_id: int, index: int) -> Optional[str]:
         """Resolve photo ID by index (0=most votes, 1=second most, etc.)"""
         try:
-            # Get current user's photos in challenge ranking
-            ranking = await api_client.get_challenge_followings(challenge_id)
+            # Get current user info to identify them in ranking
+            current_user_info = await self._get_current_user_info(api_client)
+            if not current_user_info:
+                logger.error("Could not identify current user")
+                return None
             
-            # Find current user's entries and sort by votes
-            # This is simplified - in practice you'd need to identify current user
-            # For now, return None as placeholder
-            logger.warning(f"Photo index resolution not fully implemented yet")
+            current_username = current_user_info.get('username', '').lower()
+            current_user_id = current_user_info.get('user_id')
+            
+            logger.info(f"Resolving photo index {index} for user {current_username}")
+            
+            # Get challenge ranking to find user's photos
+            ranking = await api_client.get_challenge_followings(challenge_id, limit=500)
+            
+            if not ranking.get('items'):
+                logger.error("No ranking data available")
+                return None
+            
+            # Find current user in ranking
+            user_data = None
+            for participant in ranking['items']:
+                member = participant.get('member', {})
+                participant_username = member.get('user_name', '').lower()
+                participant_user_id = member.get('id')
+                
+                # Match by username or user_id
+                if ((current_username and participant_username == current_username) or 
+                    (current_user_id and participant_user_id == current_user_id)):
+                    user_data = participant
+                    break
+            
+            if not user_data:
+                logger.error(f"Current user not found in challenge {challenge_id} ranking")
+                return None
+            
+            # Get user's photos/entries
+            entries = user_data.get('entries', [])
+            if not entries:
+                logger.error("User has no photos in this challenge")
+                return None
+            
+            # Sort entries by votes (descending: most votes first)
+            sorted_entries = sorted(entries, key=lambda x: x.get('votes', 0), reverse=True)
+            
+            # Check if index is valid
+            if index < 0 or index >= len(sorted_entries):
+                logger.error(f"Photo index {index} out of range (user has {len(sorted_entries)} photos)")
+                return None
+            
+            # Get photo ID at requested index
+            selected_photo = sorted_entries[index]
+            photo_id = selected_photo['id']
+            photo_votes = selected_photo.get('votes', 0)
+            
+            logger.info(f"✅ Resolved index [{index}] -> photo {photo_id} with {photo_votes} votes")
+            
+            return photo_id
+            
+        except Exception as e:
+            logger.error(f"Error resolving photo index {index}: {e}")
+            return None
+
+    async def _get_current_user_info(self, api_client: GuruShotsAPI) -> Optional[Dict]:
+        """Get current user information"""
+        try:
+            user_info = await api_client.get_current_user_info()
+            
+            if user_info and user_info.get('user_id'):
+                return user_info
+            else:
+                logger.error("Failed to retrieve current user information")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Error getting current user info: {e}")
+            return None
+
+    async def _get_current_user_info(self, api_client: GuruShotsAPI) -> Optional[Dict[str, Any]]:
+        """Get current user information to identify them in rankings"""
+        try:
+            # Method 1: Try to get user info from challenges page
+            # This is a common pattern in GuruShots API
+            challenges_response = await api_client.get_challenges()
+            
+            # Look for user info in challenges response
+            if challenges_response and 'user' in challenges_response:
+                user_info = challenges_response['user']
+                return {
+                    'username': user_info.get('username', ''),
+                    'user_id': user_info.get('id'),
+                    'name': user_info.get('name', '')
+                }
+            
+            # Method 2: Try to get user profile via a dummy challenge detail call
+            # Some APIs return user info in the member section
+            challenges = challenges_response.get('challenges', [])
+            if challenges:
+                # Take first challenge and get its details
+                first_challenge_url = challenges[0].get('url', '')
+                if first_challenge_url:
+                    challenge_details = await api_client.get_challenge_details(first_challenge_url)
+                    
+                    # Look for current user info in challenge details
+                    challenge_data = challenge_details.get('challenge', {})
+                    member_data = challenge_data.get('member', {})
+                    
+                    if member_data:
+                        return {
+                            'username': member_data.get('user_name', ''),
+                            'user_id': member_data.get('id'),
+                            'name': member_data.get('name', '')
+                        }
+            
+            # Method 3: Fallback - try to extract from API base response
+            # Some GuruShots endpoints include user context
+            logger.warning("Could not determine current user info from standard endpoints")
             return None
             
         except Exception as e:
-            logger.error(f"Error resolving photo index: {e}")
+            logger.error(f"Error getting current user info: {e}")
             return None
+
+    async def test_photo_index_resolution(self, profile_id: str, challenge_id: int) -> Dict:
+        """
+        Test photo index resolution for a given challenge
+        Returns user's photos sorted by votes with their indices
+        """
+        try:
+            # Get user and API client
+            user = config_manager.get_user(profile_id)
+            if not user or not user.get('xtoken'):
+                return {'success': False, 'error': f'No valid user token for profile {profile_id}'}
+            
+            api_client = GuruShotsAPI(user['xtoken'])
+            
+            # Get current user info
+            user_info = await self._get_current_user_info(api_client)
+            if not user_info:
+                return {'success': False, 'error': 'Could not identify current user'}
+            
+            # Get challenge ranking
+            ranking = await api_client.get_challenge_followings(challenge_id, limit=500)
+            if not ranking.get('items'):
+                return {'success': False, 'error': 'No ranking data available'}
+            
+            # Find user in ranking
+            current_username = user_info.get('username', '').lower()
+            current_user_id = user_info.get('user_id')
+            
+            user_data = None
+            for participant in ranking['items']:
+                member = participant.get('member', {})
+                participant_username = member.get('user_name', '').lower()
+                participant_user_id = member.get('id')
+                
+                if ((current_username and participant_username == current_username) or 
+                    (current_user_id and participant_user_id == current_user_id)):
+                    user_data = participant
+                    break
+            
+            if not user_data:
+                return {'success': False, 'error': 'User not found in challenge ranking'}
+            
+            # Get and sort user's photos
+            entries = user_data.get('entries', [])
+            if not entries:
+                return {'success': False, 'error': 'User has no photos in this challenge'}
+            
+            sorted_entries = sorted(entries, key=lambda x: x.get('votes', 0), reverse=True)
+            
+            # Format result with indices
+            photos_with_indices = []
+            for i, entry in enumerate(sorted_entries):
+                photos_with_indices.append({
+                    'index': i,
+                    'photo_id': entry['id'],
+                    'votes': entry.get('votes', 0),
+                    'boost_status': entry.get('boost', False),
+                    'guru_pick': entry.get('guru_pick', False)
+                })
+            
+            return {
+                'success': True,
+                'user_info': {
+                    'username': user_info.get('username'),
+                    'user_id': user_info.get('user_id'),
+                    'total_rank': user_data.get('total', {}).get('rank', 0),
+                    'total_votes': user_data.get('total', {}).get('votes', 0)
+                },
+                'photos': photos_with_indices,
+                'index_explanation': {
+                    '[0]': f"Photo with most votes: {photos_with_indices[0]['photo_id']} ({photos_with_indices[0]['votes']} votes)" if photos_with_indices else "No photos",
+                    '[1]': f"Photo with second most votes: {photos_with_indices[1]['photo_id']} ({photos_with_indices[1]['votes']} votes)" if len(photos_with_indices) > 1 else "Only one photo available"
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Error testing photo index resolution: {e}")
+            return {'success': False, 'error': str(e)}
+    
+    async def _get_user_photos_sorted_by_votes(self, api_client: GuruShotsAPI, 
+                                             challenge_id: int) -> List[Dict[str, Any]]:
+        """Get current user's photos in challenge sorted by votes (most votes first)"""
+        try:
+            current_user_info = await self._get_current_user_info(api_client)
+            if not current_user_info:
+                return []
+            
+            # Get challenge ranking
+            ranking = await api_client.get_challenge_followings(challenge_id, limit=500)
+            
+            # Find current user and return sorted photos
+            current_username = current_user_info.get('username', '').lower()
+            current_user_id = current_user_info.get('user_id')
+            
+            for participant in ranking.get('items', []):
+                member = participant.get('member', {})
+                participant_username = member.get('user_name', '').lower()
+                participant_user_id = member.get('id')
+                
+                if (current_username and participant_username == current_username) or \
+                   (current_user_id and participant_user_id == current_user_id):
+                    
+                    entries = participant.get('entries', [])
+                    # Sort by votes (descending)
+                    sorted_entries = sorted(entries, key=lambda x: x.get('votes', 0), reverse=True)
+                    
+                    # Add index information for logging
+                    for i, entry in enumerate(sorted_entries):
+                        entry['_index'] = i
+                        entry['_votes_rank'] = i + 1
+                    
+                    return sorted_entries
+            
+            return []
+            
+        except Exception as e:
+            logger.error(f"Error getting user photos sorted by votes: {e}")
+            return []
     
     async def _notify_action_result(self, execution_id: str, action: Dict, result: Dict):
         """Notify action completion via WebSocket"""
