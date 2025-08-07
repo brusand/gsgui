@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
-    allowedHosts: ['calounette.duckdns.org'],
+    allowedHosts: ['calounette.duckdns.org', 'calounette.ddns.net'],
     proxy: {
       '/api/v1': {
         target: 'http://127.0.0.1:8001',

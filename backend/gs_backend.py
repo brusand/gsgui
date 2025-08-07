@@ -486,7 +486,14 @@ def calculate_turbo_status(challenge_data: dict) -> str:
     try:
         # Analyser l'état du challenge pour déterminer le status turbo
         # Statut stratégie
-        turbo_status = challenge_data['member']['turbo']
+        turbo_data = challenge_data['member']['turbo']
+        
+        # Extraire le status depuis le dictionnaire turbo
+        if isinstance(turbo_data, dict):
+            turbo_status = turbo_data.get('status', 'none')
+        else:
+            turbo_status = str(turbo_data) if turbo_data else 'none'
+            
         turbo_indicators = {
             "none": "",
             "running": "🟡 Running",
@@ -1792,6 +1799,10 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
         
         scheduled_count = 0
         
+        # Récupérer le vrai nom du challenge
+        challenge_title = challenge_data.get('title', title) if challenge_data else title
+        challenge_display = f"{challenge_id} ({challenge_title})" if challenge_title != title else title
+        
         # Programmer chaque action
         for action in actions:
             execution_time = calculate_execution_time(action['timing'], challenge_data)
@@ -1830,9 +1841,9 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
                 
                 # Affichage avec l'heure absolue calculée
                 formatted_time = execution_time.strftime('%H:%M:%S')
-                print(f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {title}")
+                print(f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {challenge_display}")
                 log_and_broadcast(
-                    f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {title}",
+                    f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {challenge_display}",
                     "strategy", profile_id)
                 scheduled_count += 1
         
