@@ -4,7 +4,7 @@ API Router v1 - Regroupe tous les endpoints
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import challenges, profiles, strategies, turbo, logs, swap_and_tracking, anca_strategies
+from app.api.v1.endpoints import challenges, profiles, strategies, turbo, logs, swap_and_tracking, anca_strategies, simple_extensions
 
 api_router = APIRouter()
 
@@ -49,4 +49,10 @@ api_router.include_router(
     anca_strategies.router,
     prefix="/anca",
     tags=["anca-intelligence"]
+)
+
+api_router.include_router(
+    simple_extensions.router,
+    prefix="/simple",
+    tags=["simple-anca-strategies"]
 )
