@@ -144,6 +144,70 @@ async def get_available_strategies():
         logger.error(f"Error getting available strategies: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.post("/strategies/test-photo-index")
+async def test_photo_index_resolution(
+    profile_id: str,
+    challenge_id: int
+):
+    """
+    Test photo index resolution for debugging
+    Shows which photos correspond to index [0], [1], etc.
+    """
+    try:
+        result = await extended_strategy_executor.test_photo_index_resolution(
+            profile_id=profile_id,
+            challenge_id=challenge_id
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error testing photo index resolution: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/strategies/debug/photo-indices/{profile_id}/{challenge_id}")
+async def debug_photo_indices(profile_id: str, challenge_id: int):
+    """
+    Debug endpoint to see photo indices for a user in a challenge
+    Shows mapping of [0], [1], etc. to actual photo IDs and votes
+    """
+    try:
+        result = await extended_strategy_executor.test_photo_index_resolution(profile_id, challenge_id)
+        
+        if not result.get('success'):
+            return result
+        
+        # Create a more readable debug format
+        photos = result.get('photos', [])
+        debug_info = {
+            'challenge_id': challenge_id,
+            'user': result.get('user_info', {}),
+            'photo_count': len(photos),
+            'index_mapping': {},
+            'boost_command_examples': {},
+            'turbo_command_examples': {}
+        }
+        
+        for photo in photos:
+            index = photo['index']
+            debug_info['index_mapping'][f'[{index}]'] = {
+                'photo_id': photo['photo_id'],
+                'votes': photo['votes'],
+                'boost_status': photo['boost_status'],
+                'guru_pick': photo['guru_pick']
+            }
+            
+            # Generate example commands
+            debug_info['boost_command_examples'][f'boost,end-50m0s,{index}'] = f"Boost photo {photo['photo_id']} ({photo['votes']} votes)"
+            debug_info['turbo_command_examples'][f'turbo,end-50m0s,{index}'] = f"Turbo targeting photo {photo['photo_id']} ({photo['votes']} votes)"
+        
+        return debug_info
+        
+    except Exception as e:
+        logger.error(f"Error in debug photo indices: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Cron Job Endpoint (for testing)
 
 @router.post("/cron/anca-surveillance")
