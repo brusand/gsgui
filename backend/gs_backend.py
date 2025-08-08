@@ -1568,6 +1568,16 @@ async def update_strategies_config(request: dict):
                 f.write(content)
         
         print(f"✅ Strategies.ini mis à jour (backup: {backup_path})")
+        
+        # Recharger la configuration dans ExtendedStrategyExecutor
+        from app.services.extended_strategy_executor import extended_strategy_executor
+        reload_success = extended_strategy_executor.reload_config()
+        
+        if reload_success:
+            print("✅ Configuration ExtendedStrategyExecutor rechargée")
+        else:
+            print("⚠️ Échec du rechargement ExtendedStrategyExecutor")
+        
         return {"status": "success", "message": "Fichier strategies.ini mis à jour", "backup": backup_path}
         
     except Exception as e:
@@ -1752,18 +1762,13 @@ async def schedule_strategies_from_ini():
 
 # Ancienne fonction supprimée due aux problèmes d'indentation
 async def schedule_single_strategy(challenge_id, profile_id, challenge_title=None):
-    """Programme une stratégie spécifique pour un challenge et profil donnés"""
+    """Programme une stratégie spécifique pour un challenge et profil donnés - utilise ExtendedStrategyExecutor"""
     try:
-        global strategy_scheduler
-        
-        if not strategy_scheduler:
-            print("❌ Strategy scheduler not initialized")
-            return
-        
         print(f"🎯 Programming single strategy for challenge {challenge_id} (profile: {profile_id})")
         log_and_broadcast(
             f"🎯 Programming single strategy for challenge {challenge_id} (profile: {profile_id})",
             "strategy", profile_id)
+        
         # Charger les stratégies depuis gsgui.ini
         challenge_strategies_by_profile = load_challenge_strategies()
         
@@ -1781,76 +1786,25 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
         strategy_name = strategy_info['strategy_name']
         title = challenge_title or strategy_info.get('challenge_title', f'Challenge {challenge_id}')
         
-        print(f"🎯 {title}:")
+        # UTILISER LE NOUVEAU SYSTÈME ExtendedStrategyExecutor
+        from app.services.extended_strategy_executor import extended_strategy_executor
         
-        # Parser les actions de la stratégie
-        actions = parse_strategy_actions(strategy_name)
+        print(f"🚀 Using ExtendedStrategyExecutor for strategy '{strategy_name}' on challenge {challenge_id}")
+        log_and_broadcast(f"🚀 Using ExtendedStrategyExecutor for strategy '{strategy_name}' on challenge {challenge_id}", "strategy", profile_id)
         
-        if not actions:
-            print(f"   ⚠️ Aucune action définie pour stratégie {strategy_name}")
-            return
+        # Exécuter avec le nouveau système qui gère automatiquement NOW vs FUTURE
+        # Les photos seront récupérées FRAÎCHES au moment de l'exécution
+        execution_id = await extended_strategy_executor.execute_extended_strategy(
+            profile_id=profile_id,
+            challenge_id=challenge_id,
+            challenge_url="",  # Plus besoin d'URL, utilise get_challenges()
+            strategy_name=strategy_name
+        )
         
-        # Récupérer les données du challenge via le service
-        challenge_data = await ChallengeService.get_challenge_data(challenge_id, profile_id)
-        if challenge_data:
-            print(f"🔍 Found challenge data for {challenge_id}: {challenge_data.get('title', 'N/A')}")
-        else:
-            print(f"⚠️ Could not fetch challenge data for {challenge_id}")
+        print(f"✅ Strategy '{strategy_name}' started with execution_id: {execution_id}")
+        log_and_broadcast(f"✅ Strategy '{strategy_name}' started with execution_id: {execution_id}", "strategy", profile_id)
         
-        scheduled_count = 0
-        
-        # Récupérer le vrai nom du challenge
-        challenge_title = challenge_data.get('title', title) if challenge_data else title
-        challenge_display = f"{challenge_id} ({challenge_title})" if challenge_title != title else title
-        
-        # Programmer chaque action
-        for action in actions:
-            execution_time = calculate_execution_time(action['timing'], challenge_data)
-            
-            if execution_time is None:
-                print(f"   ❌ Impossible de calculer le timing pour {action['timing']} - action ignorée")
-                continue
-            
-            #if execution_time <= datetime.now():
-            #    print(f"   ⚠️ Action {action['timing']} dans le passé - action ignorée")
-            #    continue
-
-            if 'vote' in action['action']:
-                # Programmer le job avec APScheduler
-                if 'now' in action['timing']:
-                    job_id = f"{profile_id}_{challenge_id}_{action['timing']}_{action['votes']}"
-                    strategy_scheduler.add_job(
-                        execute_strategy_vote,
-                        'date',
-                        args=[challenge_id, title, action['votes'], profile_id],
-                        id=job_id,
-                        replace_existing=True
-                    )
-                    print(f"📅 JOB IMMÉDIAT PROGRAMMÉ: {job_id} - ARGS: {[challenge_id, title, action['votes'], profile_id]}")
-                    log_and_broadcast(f"📅 Job APScheduler immédiat programmé: {job_id}", "strategy", profile_id)
-                else:
-                    job_id = f"{profile_id}_{challenge_id}_{action['timing']}_{action['votes']}"
-                    strategy_scheduler.add_job(
-                        execute_strategy_vote,
-                        'date',
-                        run_date=execution_time,
-                        args=[challenge_id, title, action['votes'], profile_id],
-                        id=job_id,
-                        replace_existing=True
-                    )
-                
-                # Affichage avec l'heure absolue calculée
-                formatted_time = execution_time.strftime('%H:%M:%S')
-                print(f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {challenge_display}")
-                log_and_broadcast(
-                    f"   ⏰ Programmé: vote {action['votes']} à {formatted_time} pour {challenge_display}",
-                    "strategy", profile_id)
-                scheduled_count += 1
-        
-        print(f"📊 Challenge {challenge_id}: {scheduled_count} job(s) programmé(s)")
-        log_and_broadcast(
-            f"📊 Challenge {challenge_id}: {scheduled_count} job(s) programmé(s)",
-            "strategy", profile_id)
+        return execution_id
         
     except Exception as e:
         print(f"❌ Error in schedule_single_strategy: {e}")
