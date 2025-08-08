@@ -351,7 +351,7 @@ class GuruShotsAPI:
                 logger.error(f"Error during photo boost: {str(e)}")
                 return {"success": False, "error": str(e)}
 
-    async def turbo_photo(self, challenge_id: int, image_id: str) -> dict:
+    async def set_turbo(self, challenge_id: int, image_id: str) -> dict:
         """
         Set Turbo a photo in a challenge
 
@@ -399,13 +399,19 @@ class GuruShotsAPI:
             API response with swap result
         """
         url = f"{self.base_url}/submit_to_challenge"
-        images = []
+        
+        # Base payload
         payload = {
             'c_id': str(challenge_id),
             'el': 'challenges',
             'el_id': True,
         }
-        payload = {'image_ids[' + str(id) + ']': value for id, value in enumerate(image_ids)}
+        
+        # Add image_ids[0], image_ids[1], etc. to the payload
+        for idx, image_id in enumerate(image_ids):
+            payload[f'image_ids[{idx}]'] = image_id
+        
+        logger.info(f"📸 Submit payload: {payload}")
         async with aiohttp.ClientSession(
                 headers=self.headers,
                 connector=aiohttp.TCPConnector(ssl=False)
@@ -441,7 +447,7 @@ class GuruShotsAPI:
         
         payload = {
             'c_id': str(challenge_id),
-            'el': 'my_challenge_current',
+            'el': 'challenges',
             'el_id': True,
             'img_id': current_photo_id,
             'new_img_id': new_photo_id
