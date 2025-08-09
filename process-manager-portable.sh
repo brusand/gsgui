@@ -26,7 +26,7 @@ detect_environment() {
         NPM_CMD="npm"
     fi
     
-    log_info "Détection: OS=$OS, Script dir=$SCRIPT_DIR"
+    # Le log sera fait après init_config
 }
 
 # Configuration (relative au répertoire du script)
@@ -452,9 +452,10 @@ show_logs() {
 # Point d'entrée principal
 main() {
     # Initialisation
+    init_colors
     detect_environment
     init_config
-    init_colors
+    log_info "Détection: OS=$OS, Script dir=$SCRIPT_DIR"
     create_directories
     
     # Traitement des arguments
