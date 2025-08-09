@@ -18,23 +18,28 @@ import os
 import json
 from typing import Set
 import sys
+import logging
 from app.websockets.connection_manager import connection_manager
+from app.utils.logging_utils import setup_logger, log_with_profile, log_strategy_execution, log_api_call, update_challenge_titles_cache
+
+# Setup du logger principal
+logger = setup_logger("gs_backend")
 
 # Imports locaux maintenant que le fichier est dans backend/
 try:
     from app.services.gurushots_api import GuruShotsAPI
     REAL_VOTE_AVAILABLE = True
-    print("✅ GuruShotsAPI imported successfully")
+    logger.info("✅ GuruShotsAPI imported successfully")
 except ImportError as e:
-    print(f"⚠️ GuruShotsAPI import failed: {e}")
+    logger.warning(f"⚠️ GuruShotsAPI import failed: {e}")
     REAL_VOTE_AVAILABLE = False
 
 try:
     from app.services.strategy_scheduler import StrategyScheduler
     STRATEGY_SCHEDULER_AVAILABLE = True
-    print("✅ StrategyScheduler imported successfully")
+    logger.info("✅ StrategyScheduler imported successfully")
 except ImportError as e:
-    print(f"⚠️ Strategy Scheduler service not available: {e}")
+    logger.warning(f"⚠️ Strategy Scheduler service not available: {e}")
     STRATEGY_SCHEDULER_AVAILABLE = False
 
 # Helper function pour créer GuruShotsAPI
@@ -43,7 +48,7 @@ def create_gurushots_api(token):
     try:
         return GuruShotsAPI(token)
     except Exception as e:
-        print(f"⚠️ Error creating GuruShotsAPI: {e}")
+        logger.warning(f"⚠️ Error creating GuruShotsAPI: {e}")
         return None
 
 app = FastAPI(title="GSGUI Real API", version="1.0.0")
@@ -295,30 +300,38 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
     """Récupère les vrais challenges depuis l'API GuruShots"""
     try:
         headers = get_aio_headers(xtoken)
-        print(f"🔍 Fetching real challenges avec token: {xtoken[:20]}...")
+        log_api_call(logger, "get_my_active_challenges", status="called")
         
         connector = aiohttp.TCPConnector(ssl=False)
         async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
             async with session.post('https://api.gurushots.com/rest/get_my_active_challenges') as response:
-                print(f"📡 GuruShots API status: {response.status}")
+                log_api_call(logger, "get_my_active_challenges", status="success", response_data={"status": response.status})
                 
                 if response.status != 200:
-                    print(f"❌ API Error: Status {response.status}")
+                    log_api_call(logger, "get_my_active_challenges", status="failed", response_data={"status": response.status})
                     return []
                 
                 data = await response.json()
-                print(f"📊 API data keys: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
+                logger.info(f"📊 API data keys: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
                 
                 # Debug : si success=false, afficher l'erreur
                 if isinstance(data, dict) and not data.get('success', True):
                     error_code = data.get('error_code', 'unknown')
                     error_msg = data.get('error', 'No error message')
-                    print(f"❌ GuruShots API Error: {error_code} - {error_msg}")
-                    print(f"🔍 Full response: {data}")
+                    logger.error(f"❌ GuruShots API Error: {error_code} - {error_msg}")
+                    logger.debug(f"🔍 Full response: {data}")
                 
                 challenges = []
+                challenges_cache = {}  # Pour le cache des titres
+                
                 for challenge_data in data.get('challenges', []):
                     try:
+                        # Mettre à jour le cache des titres
+                        challenge_id = challenge_data.get('id')
+                        challenge_title = challenge_data.get('title', f'Challenge {challenge_id}')
+                        if challenge_id:
+                            challenges_cache[str(challenge_id)] = challenge_title
+                        
                         timeleft = challenge_data['time_left']
                         
                         # Calculer end_time comme dans gs_backend_ui.py
@@ -371,9 +384,12 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
                         print(f"Error parsing challenge {challenge_data.get('id', 'unknown')}: {e}")
                         continue
                 
+                # Mettre à jour le cache global des titres
+                update_challenge_titles_cache(challenges_cache)
+                
                 # Trier par temps restant croissant (comme gs_backend_ui.py)
                 challenges.sort(key=lambda x: x['time_left_seconds'])
-                print(f"✅ Successfully processed {len(challenges)} real challenges (triés par temps restant)")
+                logger.info(f"✅ Successfully processed {len(challenges)} real challenges (triés par temps restant)")
                 return challenges
                 
     except Exception as e:
@@ -2401,8 +2417,8 @@ async def startup_event():
             else:
                 print("⚠️ No user token found in config - using simulated voting")
         except Exception as e:
-            print(f"❌ Failed to initialize GuruShots API service: {e}")
-            print("⚠️ Falling back to simulated voting")
+            logger.error(f"❌ Failed to initialize GuruShots API service: {e}")
+            logger.warning("⚠️ Falling back to simulated voting")
     
     # Initialiser notre propre système d'exécution de stratégies
     try:
@@ -2411,13 +2427,49 @@ async def startup_event():
         strategy_scheduler.start()
         
         # Programmer les stratégies existantes
-        print("🔄 Starting strategy scheduling from .ini...")
+        logger.info("🔄 Starting strategy scheduling from .ini...")
         await schedule_strategies_from_ini()
-        print("✅ Custom Strategy Scheduler initialized with challenge titles support")
+        logger.info("✅ Custom Strategy Scheduler initialized with challenge titles support")
     except Exception as e:
-        print(f"❌ Failed to initialize Custom Strategy Scheduler: {e}")
-        print("⚠️ Strategies will be stored but not automatically executed")
+        logger.error(f"❌ Failed to initialize Custom Strategy Scheduler: {e}")
+        logger.warning("⚠️ Strategies will be stored but not automatically executed")
 
 if __name__ == "__main__":
-    print("🚀 Démarrage du backend GSGUI avec vrais challenges...")
+    # Configuration du logging avant démarrage
+    import logging.handlers
+    
+    # Setup logging rotatif
+    log_dir = "../logs"
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # Configuration du logger racine
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    
+    # Supprimer les handlers existants
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+    
+    # Handler rotatif pour backend.log
+    backend_handler = logging.handlers.RotatingFileHandler(
+        filename=os.path.join(log_dir, "backend.log"),
+        maxBytes=10 * 1024 * 1024,  # 10 MB
+        backupCount=5,
+        encoding='utf-8'
+    )
+    backend_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    ))
+    
+    # Handler console
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s'
+    ))
+    
+    # Ajouter les handlers
+    root_logger.addHandler(backend_handler)
+    root_logger.addHandler(console_handler)
+    
+    logger.info("🚀 Démarrage du backend GSGUI avec vrais challenges...")
     uvicorn.run(app, host="127.0.0.1", port=8001, log_level="info")

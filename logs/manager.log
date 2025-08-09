@@ -926,3 +926,9 @@
 [2025-08-09 10:08:32] ℹ️  Démarrage du frontend...
 [2025-08-09 10:08:35] ✅ Frontend démarré (PID: 57506)
 [2025-08-09 10:08:35] ✅ === Redémarrage terminé ===
+[2025-08-09 10:25:00] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 10:25:00] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 10:25:00] ℹ️  === Arrêt du processus de surveillance ===
+[2025-08-09 10:25:00] ⚠️  Aucun processus de surveillance en cours (pas de PID file)
+[2025-08-09 10:25:00] ℹ️  Nettoyage des processus de surveillance orphelins...
+[2025-08-09 10:25:00] ℹ️    - Arrêt du processus orphelin 63028

@@ -474,13 +474,14 @@ show_help() {
     echo "Usage: $0 [COMMANDE]"
     echo ""
     echo "Commandes disponibles:"
-    echo "  start     - Démarrer les services (défaut)"
-    echo "  stop      - Arrêter tous les services"
-    echo "  restart   - Redémarrer tous les services"
-    echo "  status    - Afficher l'état des services"
-    echo "  monitor   - Surveiller et redémarrer automatiquement"
-    echo "  logs      - Afficher les logs en temps réel"
-    echo "  help      - Afficher cette aide"
+    echo "  start        - Démarrer les services (défaut)"
+    echo "  stop         - Arrêter tous les services"
+    echo "  restart      - Redémarrer tous les services"
+    echo "  status       - Afficher l'état des services"
+    echo "  monitor      - Surveiller et redémarrer automatiquement"
+    echo "  stop_monitor - Arrêter le processus de surveillance"
+    echo "  logs         - Afficher les logs en temps réel"
+    echo "  help         - Afficher cette aide"
     echo ""
     echo "Exemples:"
     echo "  $0                # Démarre les services"
@@ -611,6 +612,55 @@ main() {
             
             # Démarrer la surveillance
             monitor_processes
+            ;;
+        "stop_monitor")
+            log_info "=== Arrêt du processus de surveillance ==="
+            
+            # Vérifier si le fichier PID du manager existe
+            if [[ -f "$MANAGER_PID_FILE" ]]; then
+                local manager_pid=$(cat "$MANAGER_PID_FILE" 2>/dev/null)
+                if [[ -n "$manager_pid" ]] && kill -0 "$manager_pid" 2>/dev/null; then
+                    log_info "Arrêt du processus de surveillance (PID: $manager_pid)..."
+                    
+                    # Envoyer SIGTERM pour un arrêt propre
+                    kill -TERM "$manager_pid" 2>/dev/null
+                    
+                    # Attendre quelques secondes
+                    sleep 3
+                    
+                    # Vérifier s'il est encore actif
+                    if kill -0 "$manager_pid" 2>/dev/null; then
+                        log_warning "Processus de surveillance encore actif, arrêt forcé..."
+                        kill -KILL "$manager_pid" 2>/dev/null
+                    fi
+                    
+                    # Nettoyer le fichier PID
+                    rm -f "$MANAGER_PID_FILE"
+                    log_success "Processus de surveillance arrêté"
+                else
+                    log_warning "Processus de surveillance arrêté (PID file existe mais processus mort)"
+                    rm -f "$MANAGER_PID_FILE"
+                fi
+            else
+                log_warning "Aucun processus de surveillance en cours (pas de PID file)"
+            fi
+            
+            # Vérifier aussi les processus par nom (sécurité)
+            local monitor_pids=$(ps aux | grep "process-manager-portable.sh.*monitor" | grep -v grep | awk '{print $2}')
+            if [[ -n "$monitor_pids" ]]; then
+                log_info "Nettoyage des processus de surveillance orphelins..."
+                for pid in $monitor_pids; do
+                    log_info "  - Arrêt du processus orphelin $pid"
+                    kill -TERM "$pid" 2>/dev/null || true
+                done
+                sleep 2
+                # Force kill si nécessaire
+                for pid in $monitor_pids; do
+                    if kill -0 "$pid" 2>/dev/null; then
+                        kill -KILL "$pid" 2>/dev/null || true
+                    fi
+                done
+            fi
             ;;
         "logs")
             show_logs
