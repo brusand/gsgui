@@ -72,7 +72,7 @@ class ExtendedStrategyExecutor:
             logger.info(f"⚡ Executing {len(now_actions)} immediate actions for strategy '{strategy_name}'")
             for action in now_actions:
                 try:
-                    result = await self._execute_single_action(api_client, challenge_id, challenge_url, action)
+                    result = await self._execute_single_action(api_client, challenge_id, challenge_url, action, profile_id)
                     now_results.append(result)
                     logger.info(f"✅ Immediate action {action['action']} completed: {result.get('success', False)}")
                 except Exception as e:
@@ -107,7 +107,7 @@ class ExtendedStrategyExecutor:
         
         return execution_id
     
-    async def _execute_single_action(self, api_client: GuruShotsAPI, challenge_id: str, challenge_url: str, action: Dict) -> Dict[str, Any]:
+    async def _execute_single_action(self, api_client: GuruShotsAPI, challenge_id: str, challenge_url: str, action: Dict, profile_id: str) -> Dict[str, Any]:
         """Execute a single action immediately"""
         action_type = action['action']
         params = action['parameters']
@@ -115,23 +115,36 @@ class ExtendedStrategyExecutor:
         logger.info(f"⚡ Executing immediate {action_type} with params {params}")
         
         try:
+            result = None
             if action_type == 'vote':
-                return await self._execute_vote_action(api_client, challenge_url, params)
+                result = await self._execute_vote_action(api_client, challenge_url, params)
             
             elif action_type == 'submit':
-                return await self._execute_submit_action(api_client, int(challenge_id), params)
+                result = await self._execute_submit_action(api_client, int(challenge_id), params)
             
             elif action_type == 'swap':
-                return await self._execute_swap_action(api_client, int(challenge_id), params)
+                result = await self._execute_swap_action(api_client, int(challenge_id), params)
             
             elif action_type == 'boost':
-                return await self._execute_boost_action(api_client, int(challenge_id), challenge_url, params)
+                result = await self._execute_boost_action(api_client, int(challenge_id), challenge_url, params)
             
             elif action_type == 'turbo':
-                return await self._execute_turbo_action(api_client, int(challenge_id), challenge_url, params)
+                result = await self._execute_turbo_action(api_client, int(challenge_id), challenge_url, params)
             
             else:
-                return {'success': False, 'error': f'Unknown action: {action_type}'}
+                result = {'success': False, 'error': f'Unknown action: {action_type}'}
+            
+            # Déclencher un refresh du frontend pour les actions réussies
+            if result and result.get('success', True):  # True par défaut si pas de champ success
+                await connection_manager.notify_challenge_update(profile_id, {
+                    "action": f"{action_type}_completed",
+                    "challenge_id": challenge_id,
+                    "strategy_type": "extended",
+                    "immediate": True
+                })
+                logger.info(f"📡 Frontend refresh déclenché pour action {action_type} sur challenge {challenge_id}")
+            
+            return result
                 
         except Exception as e:
             logger.error(f"Error executing {action_type}: {e}")
@@ -340,23 +353,37 @@ class ExtendedStrategyExecutor:
         logger.info(f"🔧 Executing {action_type} with params {params}")
         
         try:
+            result = None
             if action_type == 'vote':
-                return await self._execute_vote_action(api_client, challenge_url, params)
+                result = await self._execute_vote_action(api_client, challenge_url, params)
             
             elif action_type == 'submit':
-                return await self._execute_submit_action(api_client, challenge_id, params)
+                result = await self._execute_submit_action(api_client, challenge_id, params)
             
             elif action_type == 'swap':
-                return await self._execute_swap_action(api_client, challenge_id, params)
+                result = await self._execute_swap_action(api_client, challenge_id, params)
             
             elif action_type == 'boost':
-                return await self._execute_boost_action(api_client, challenge_id, challenge_url, params)
+                result = await self._execute_boost_action(api_client, challenge_id, challenge_url, params)
             
             elif action_type == 'turbo':
-                return await self._execute_turbo_action(api_client, challenge_id, challenge_url, params)
+                result = await self._execute_turbo_action(api_client, challenge_id, challenge_url, params)
             
             else:
-                return {'success': False, 'error': f'Unknown action: {action_type}'}
+                result = {'success': False, 'error': f'Unknown action: {action_type}'}
+            
+            # Déclencher un refresh du frontend pour les actions futures réussies
+            profile_id = context['profile_id']
+            if result and result.get('success', True):  # True par défaut si pas de champ success
+                await connection_manager.notify_challenge_update(profile_id, {
+                    "action": f"{action_type}_completed",
+                    "challenge_id": str(challenge_id),
+                    "strategy_type": "extended",
+                    "immediate": False
+                })
+                logger.info(f"📡 Frontend refresh déclenché pour action future {action_type} sur challenge {challenge_id}")
+            
+            return result
                 
         except Exception as e:
             return {'success': False, 'error': str(e)}
