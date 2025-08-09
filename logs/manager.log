@@ -570,3 +570,359 @@
 [2025-08-06 16:07:43] ✅ === Tous les services sont démarrés ===
 [2025-08-06 16:07:43] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
 [2025-08-06 16:07:43] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-09 08:41:39] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:41:39] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-09 08:41:39] ℹ️  Arrêt des processus...
+[2025-08-09 08:41:39] ⚠️  Processus frontend (PID: 27129) n'existe plus
+[2025-08-09 08:41:39] ⚠️  Processus backend (PID: 28798) n'existe plus
+[2025-08-09 08:41:39] ✅ Tous les processus ont été arrêtés
+[2025-08-09 08:41:44] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:41:44] ℹ️  Vérification des prérequis...
+[2025-08-09 08:41:44] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:41:44] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:41:44] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-09 08:41:44] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:41:44] ℹ️  Démarrage du backend...
+[2025-08-09 08:41:45] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:41:47] ❌ Échec du démarrage du backend
+[2025-08-09 08:44:07] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:44:07] ℹ️  Vérification des prérequis...
+[2025-08-09 08:44:07] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:44:07] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:44:07] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:44:07] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:44:07] ℹ️  Démarrage du backend...
+[2025-08-09 08:44:07] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:44:09] ❌ Échec du démarrage du backend
+[2025-08-09 08:45:43] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:45:43] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:45:43] ℹ️  Vérification des prérequis...
+[2025-08-09 08:45:43] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:45:43] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:45:43] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:45:43] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:45:43] ℹ️  Démarrage du backend...
+[2025-08-09 08:45:43] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:45:45] ❌ Échec du démarrage du backend
+[2025-08-09 08:46:13] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:46:13] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:46:13] ℹ️  Vérification des prérequis...
+[2025-08-09 08:46:13] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:46:13] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:46:13] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:46:13] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:46:13] ℹ️  Démarrage du backend...
+[2025-08-09 08:46:13] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:46:15] ✅ Backend démarré (PID: 42247)
+[2025-08-09 08:46:18] ℹ️  Démarrage du frontend...
+[2025-08-09 08:46:21] ✅ Frontend démarré (PID: 42287)
+[2025-08-09 08:46:21] ✅ === Tous les services sont démarrés ===
+[2025-08-09 08:46:21] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-09 08:46:21] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-09 08:50:52] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:50:52] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:50:52] ℹ️  Vérification des prérequis...
+[2025-08-09 08:50:52] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:50:52] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:50:52] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-09 08:50:52] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:50:52] ⚠️  Backend déjà en cours d'exécution (PID: 42247)
+[2025-08-09 08:50:55] ⚠️  Frontend déjà en cours d'exécution (PID: 42287)
+[2025-08-09 08:50:55] ✅ === Tous les services sont démarrés ===
+[2025-08-09 08:50:55] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-09 08:50:55] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-09 08:50:59] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:50:59] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:50:59] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-09 08:50:59] ℹ️  Arrêt des processus...
+[2025-08-09 08:50:59] ℹ️  Arrêt du processus frontend (PID: 42287)...
+[2025-08-09 08:51:00] ✅ Processus frontend arrêté proprement
+[2025-08-09 08:51:00] ℹ️  Arrêt du processus backend (PID: 42247)...
+[2025-08-09 08:51:01] ✅ Processus backend arrêté proprement
+[2025-08-09 08:51:01] ✅ Tous les processus ont été arrêtés
+[2025-08-09 08:51:05] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:51:05] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:51:05] ℹ️  Vérification des prérequis...
+[2025-08-09 08:51:05] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:51:05] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:51:05] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-09 08:51:05] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:51:05] ℹ️  Démarrage du backend...
+[2025-08-09 08:51:05] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:51:07] ❌ Échec du démarrage du backend
+[2025-08-09 08:51:45] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:51:45] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:51:45] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-09 08:51:45] ℹ️  Arrêt des processus...
+[2025-08-09 08:51:45] ✅ Tous les processus ont été arrêtés
+[2025-08-09 08:53:22] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:53:22] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:53:22] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-09 08:53:22] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-09 08:53:28] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:53:28] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:53:28] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-09 08:53:28] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-09 08:53:48] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:53:48] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:53:48] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-09 08:53:48] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-09 08:54:38] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:54:38] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:54:38] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-09 08:54:38] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-09 08:54:53] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:54:53] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:54:53] ℹ️  Vérification des services existants...
+[2025-08-09 08:54:53] ℹ️  Vérification des prérequis...
+[2025-08-09 08:54:53] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:54:53] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:54:53] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:54:53] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:54:53] ℹ️  Démarrage du backend...
+[2025-08-09 08:54:53] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:54:55] ❌ Échec du démarrage du backend
+[2025-08-09 08:55:20] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:55:20] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:55:20] ℹ️  Vérification des services existants...
+[2025-08-09 08:55:20] ℹ️  Vérification des prérequis...
+[2025-08-09 08:55:20] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:55:20] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:55:20] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:55:20] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:55:20] ℹ️  Démarrage du backend...
+[2025-08-09 08:55:20] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:55:22] ✅ Backend démarré (PID: 46967)
+[2025-08-09 08:55:25] ℹ️  Démarrage du frontend...
+[2025-08-09 08:55:28] ✅ Frontend démarré (PID: 47009)
+[2025-08-09 08:55:28] ✅ === Tous les services sont démarrés ===
+[2025-08-09 08:55:28] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-09 08:55:28] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-09 08:56:32] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:56:32] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:56:32] ℹ️  Vérification des services existants...
+[2025-08-09 08:56:32] ℹ️  Services existants détectés, arrêt en cours...
+[2025-08-09 08:56:32] ℹ️    - Backend détecté sur port 8001 (PID: 46971)
+[2025-08-09 08:56:32] ℹ️    - Backend PID file: 46967
+[2025-08-09 08:56:32] ℹ️    - Frontend PID file: 47009
+[2025-08-09 08:56:32] ℹ️  Arrêt des processus...
+[2025-08-09 08:56:32] ℹ️  Arrêt du processus frontend (PID: 47009)...
+[2025-08-09 08:56:33] ✅ Processus frontend arrêté proprement
+[2025-08-09 08:56:33] ℹ️  Arrêt du processus backend (PID: 46967)...
+[2025-08-09 08:56:34] ✅ Processus backend arrêté proprement
+[2025-08-09 08:56:34] ✅ Tous les processus ont été arrêtés
+[2025-08-09 08:56:36] ℹ️  Vérification des prérequis...
+[2025-08-09 08:56:36] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:56:36] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:56:36] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:56:36] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 08:56:36] ℹ️  Démarrage du backend...
+[2025-08-09 08:56:36] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 08:56:38] ❌ Échec du démarrage du backend
+[2025-08-09 08:58:30] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:58:30] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:58:30] ℹ️  Vérification des prérequis...
+[2025-08-09 08:58:30] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:58:30] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:58:30] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:58:30] ℹ️  === Démarrage avec surveillance automatique ===
+[2025-08-09 08:58:31] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-09 08:58:31] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-09 08:59:11] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 08:59:11] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 08:59:11] ℹ️  Vérification des prérequis...
+[2025-08-09 08:59:11] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 08:59:11] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 08:59:11] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 08:59:11] ℹ️  === Démarrage avec surveillance automatique ===
+[2025-08-09 08:59:11] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-09 08:59:11] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-09 09:00:03] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 09:00:03] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 09:00:03] ℹ️  Vérification des services existants...
+[2025-08-09 09:00:04] ℹ️  Services existants détectés, arrêt en cours...
+[2025-08-09 09:00:04] ℹ️    - Backend détecté sur port 8001 (PID: 46971)
+[2025-08-09 09:00:04] ℹ️  Arrêt des processus...
+[2025-08-09 09:00:04] ✅ Tous les processus ont été arrêtés
+[2025-08-09 09:00:06] ℹ️  Vérification des prérequis...
+[2025-08-09 09:00:06] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 09:00:06] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 09:00:06] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 09:00:06] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 09:00:06] ℹ️  Démarrage du backend...
+[2025-08-09 09:00:06] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 09:00:08] ❌ Échec du démarrage du backend
+[2025-08-09 09:01:00] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 09:01:00] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 09:01:00] ℹ️  Vérification des services existants...
+[2025-08-09 09:01:00] ℹ️  Vérification des prérequis...
+[2025-08-09 09:01:00] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 09:01:00] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 09:01:00] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 09:01:01] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 09:01:01] ℹ️  Démarrage du backend...
+[2025-08-09 09:01:01] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 09:01:03] ✅ Backend démarré (PID: 49576)
+[2025-08-09 09:01:06] ℹ️  Démarrage du frontend...
+[2025-08-09 09:01:09] ✅ Frontend démarré (PID: 49616)
+[2025-08-09 09:01:09] ✅ === Tous les services sont démarrés ===
+[2025-08-09 09:01:09] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-09 09:01:09] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-09 09:01:17] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 09:01:17] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 09:01:17] ℹ️  Vérification des prérequis...
+[2025-08-09 09:01:18] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 09:01:18] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 09:01:18] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 09:01:18] ℹ️  === Démarrage avec surveillance automatique ===
+[2025-08-09 09:01:18] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:01:18] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:01:18] ℹ️  Démarrage de la surveillance automatique...
+[2025-08-09 09:01:18] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:01:18] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:01:28] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:01:28] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:01:38] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:01:38] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:01:48] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:01:48] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:01:58] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:01:58] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:02:08] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:02:08] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:02:18] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:02:18] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:02:28] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:02:28] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:02:38] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:02:38] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:02:48] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:02:48] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:02:58] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:02:58] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:03:08] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:03:08] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:03:18] ✅ Backend actif (PID: 49576)
+[2025-08-09 09:03:18] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:03:28] ⚠️  Backend arrêté (PID file existe mais processus mort)
+[2025-08-09 09:03:28] ✅ Frontend actif (PID: 49616)
+[2025-08-09 09:08:26] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 09:08:26] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 09:08:26] ℹ️  Vérification des services existants...
+[2025-08-09 09:08:26] ℹ️  Services existants détectés, arrêt en cours...
+[2025-08-09 09:08:26] ℹ️    - Backend détecté sur port 8001 (PID: 49580)
+[2025-08-09 09:08:26] ℹ️    - Frontend PID file: 49616
+[2025-08-09 09:08:26] ℹ️  Arrêt des processus...
+[2025-08-09 09:08:26] ℹ️  Arrêt du processus frontend (PID: 49616)...
+[2025-08-09 09:08:27] ✅ Processus frontend arrêté proprement
+[2025-08-09 09:08:27] ℹ️  Nettoyage des processus orphelins sur port 8001...
+[2025-08-09 09:08:27] ℹ️    - Arrêt du processus orphelin 49580 (port 8001)
+[2025-08-09 09:08:29] ℹ️  Attente de la libération des ports...
+[2025-08-09 09:08:31] ✅ Tous les processus ont été arrêtés
+[2025-08-09 09:08:33] ℹ️  Vérification des prérequis...
+[2025-08-09 09:08:33] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 09:08:33] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 09:08:33] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 09:08:33] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 09:08:33] ℹ️  Démarrage du backend...
+[2025-08-09 09:08:33] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 09:08:35] ✅ Backend démarré (PID: 52083)
+[2025-08-09 09:08:38] ℹ️  Démarrage du frontend...
+[2025-08-09 09:08:41] ✅ Frontend démarré (PID: 52120)
+[2025-08-09 09:08:41] ✅ === Tous les services sont démarrés ===
+[2025-08-09 09:08:41] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-09 09:08:41] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-09 09:08:50] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 09:08:50] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 09:08:51] ℹ️  Vérification des prérequis...
+[2025-08-09 09:08:51] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 09:08:51] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 09:08:51] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 09:08:51] ℹ️  === Démarrage avec surveillance automatique ===
+[2025-08-09 09:08:51] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:08:51] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:08:51] ℹ️  Démarrage de la surveillance automatique...
+[2025-08-09 09:08:51] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:08:51] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:09:01] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:09:01] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:09:11] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:09:11] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:09:21] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:09:21] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:09:31] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:09:31] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:09:41] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:09:41] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:09:51] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:09:51] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:10:01] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:10:01] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:10:11] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:10:11] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:10:21] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:10:21] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:10:31] ✅ Backend actif (PID: 52083)
+[2025-08-09 09:10:31] ✅ Frontend actif (PID: 52120)
+[2025-08-09 09:10:38] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 09:10:38] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 09:10:38] ℹ️  Vérification des services existants...
+[2025-08-09 09:10:39] ℹ️  Services existants détectés, arrêt en cours...
+[2025-08-09 09:10:39] ℹ️    - Backend détecté sur port 8001 (PID: 52087)
+[2025-08-09 09:10:39] ℹ️    - Backend PID file: 52083
+[2025-08-09 09:10:39] ℹ️    - Frontend PID file: 52120
+[2025-08-09 09:10:39] ℹ️  Arrêt des processus...
+[2025-08-09 09:10:39] ℹ️  Arrêt du processus frontend (PID: 52120)...
+[2025-08-09 09:10:40] ✅ Processus frontend arrêté proprement
+[2025-08-09 09:10:40] ℹ️  Arrêt du processus backend (PID: 52083)...
+[2025-08-09 09:10:41] ✅ Processus backend arrêté proprement
+[2025-08-09 09:10:41] ℹ️  Nettoyage des processus orphelins sur port 8001...
+[2025-08-09 09:10:41] ℹ️    - Arrêt du processus orphelin 52087 (port 8001)
+[2025-08-09 09:10:41] ⚠️  Backend arrêté (pas de PID file)
+[2025-08-09 09:10:41] ⚠️  Frontend arrêté (pas de PID file)
+[2025-08-09 09:10:42] ℹ️  Attente de la libération des ports...
+[2025-08-09 09:10:44] ✅ Tous les processus ont été arrêtés
+[2025-08-09 09:10:46] ℹ️  Vérification des prérequis...
+[2025-08-09 09:10:46] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 09:10:46] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 09:10:46] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-09 09:10:46] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-09 09:10:46] ℹ️  Démarrage du backend...
+[2025-08-09 09:10:46] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 09:10:48] ✅ Backend démarré (PID: 53116)
+[2025-08-09 09:10:51] ℹ️  Démarrage du frontend...
+[2025-08-09 09:10:55] ✅ Frontend démarré (PID: 53257)
+[2025-08-09 09:10:55] ✅ === Tous les services sont démarrés ===
+[2025-08-09 09:10:55] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-09 09:10:55] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-09 09:30:10] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 09:30:10] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 09:30:10] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-09 09:30:10] ℹ️  Arrêt des processus...
+[2025-08-09 09:30:10] ℹ️  Arrêt du processus frontend (PID: 53257)...
+[2025-08-09 09:30:11] ✅ Processus frontend arrêté proprement
+[2025-08-09 09:30:11] ℹ️  Arrêt du processus backend (PID: 53116)...
+[2025-08-09 09:30:12] ✅ Processus backend arrêté proprement
+[2025-08-09 09:30:12] ℹ️  Nettoyage des processus orphelins sur port 8001...
+[2025-08-09 09:30:12] ℹ️    - Arrêt du processus orphelin 53121 (port 8001)
+[2025-08-09 09:30:13] ℹ️  Attente de la libération des ports...
+[2025-08-09 09:30:15] ✅ Tous les processus ont été arrêtés
+[2025-08-09 10:08:19] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-09 10:08:19] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-09 10:08:19] ℹ️  === Redémarrage des services GSGUI ===
+[2025-08-09 10:08:19] ℹ️  Arrêt des processus...
+[2025-08-09 10:08:20] ℹ️  Nettoyage des processus orphelins sur port 8001...
+[2025-08-09 10:08:20] ℹ️    - Arrêt du processus orphelin 54328 (port 8001)
+[2025-08-09 10:08:21] ℹ️    - Arrêt du processus orphelin 54338 (port 8001)
+[2025-08-09 10:08:23] ℹ️  Attente de la libération des ports...
+[2025-08-09 10:08:25] ✅ Tous les processus ont été arrêtés
+[2025-08-09 10:08:27] ℹ️  Vérification des prérequis...
+[2025-08-09 10:08:27] ✅ Tous les prérequis sont satisfaits
+[2025-08-09 10:08:27] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-09 10:08:27] ℹ️  npm: npm (/Users/bruno/.nvm/versions/node/v22.15.0/bin/npm)
+[2025-08-09 10:08:27] ℹ️  Démarrage du backend...
+[2025-08-09 10:08:27] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-09 10:08:29] ✅ Backend démarré (PID: 57477)
+[2025-08-09 10:08:32] ℹ️  Démarrage du frontend...
+[2025-08-09 10:08:35] ✅ Frontend démarré (PID: 57506)
+[2025-08-09 10:08:35] ✅ === Redémarrage terminé ===

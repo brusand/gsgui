@@ -101,8 +101,16 @@ class ExtendedStrategyExecutor:
         logger.info(f"🎯 Strategy '{strategy_name}' started: {len(now_actions)} immediate + {len(future_actions)} scheduled actions")
         
         # Si TOUTES les actions sont immédiates (pas d'actions futures), cleanup immédiatement
+        # IMPORTANT: Cleanup même si certaines actions ont échoué, car elles ont été tentées
         if now_actions and not future_actions:
             logger.info(f"🧹 Toutes les actions sont immédiates, cleanup immédiat pour challenge {challenge_id}")
+            await self._cleanup_completed_strategy(challenge_id, profile_id)
+        elif now_actions and future_actions:
+            logger.info(f"📝 Actions mixtes: {len(now_actions)} immédiates + {len(future_actions)} futures - cleanup après actions futures")
+        elif not now_actions and future_actions:
+            logger.info(f"📅 Seulement actions futures: {len(future_actions)} - cleanup après exécution")
+        else:
+            logger.info(f"⚠️  Aucune action valide trouvée pour '{strategy_name}' - cleanup immédiat")
             await self._cleanup_completed_strategy(challenge_id, profile_id)
         
         return execution_id

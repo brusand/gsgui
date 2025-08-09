@@ -1,3 +1,6 @@
+# Stratégies étendues avec nouvelles actions
+# Format: action, timing, param1, param2, ...
+
 [alain]
 description="Stratégie conservative - 4m - votes répartis"
 0="end-60m0s,80"
@@ -53,11 +56,11 @@ description="Stratégie conservative - 2m - votes répartis"
 3="vote, end-0m30s,10"
 4="vote, end-0m45s,10"
 
-[fill]
+[fill-now-1]
 description="Stratégie rapide - now - votes répartis"
-0="vote, now,70"
+0="vote, now, 1"
 
-[fill70]
+[fill-now-70]
 description="Stratégie rapide - now - votes répartis"
 0="vote, now,70"
 
@@ -69,3 +72,36 @@ description="Stratégie rapide - now - votes répartis"
 description="Stratégie rapide - now - votes répartis sur les 2 prochaines minutes"
 0="vote, next-1m0s,1"
 1="vote, next-2m0s,1"
+
+[turbo-0]
+description="Turbo on first photo"
+0="turbo,now, 0"
+
+[turbo-1]
+description="Turbo on second photo"
+0="turbo,now, 1"
+
+[boost-0]
+description="Boost first photo (most votes)"
+0="boost,now, 0"
+
+[boost-1]
+description="Boost second photo"
+0="boost,now, 1"
+
+[boost-2]
+description="Boost third photo"
+0="boost,now, 2"
+
+[submit-single]
+description="Submit one photo"
+0="submit,now, 47c45c875b7f58f76bc48a3b971df589"
+
+[submit-multi]
+description="Submit multiple photos"
+0="submit,now, 47c45c875b7f58f76bc48a3b971df589, fd408c1b1c4cb6dc0b11f402813282da, 7037898b192d4ec33968eee456912d7b"
+
+[swap-photos]
+description="Swap current photo with new photo"
+0="swap,now, 7037898b192d4ec33968eee456912d7b, 7aa10d0358b01c5f4797c8eca88e821c"
+
