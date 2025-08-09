@@ -463,6 +463,14 @@ main() {
     
     case "$command" in
         "start")
+            # Arrêter les services existants s'ils tournent
+            check_processes >/dev/null 2>&1
+            if [[ $? -ne 2 ]]; then
+                log_info "Services existants détectés, arrêt en cours..."
+                stop_processes
+                sleep 2
+            fi
+            
             check_requirements
             log_info "=== Démarrage des services GSGUI ==="
             start_backend
