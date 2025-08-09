@@ -301,25 +301,74 @@ start_frontend() {
     fi
 }
 
-# Arrêter les processus
+# Arrêter les processus de manière complète
 stop_processes() {
     log_info "Arrêt des processus..."
     
-    # Arrêter le frontend
+    # Arrêter le frontend (PID file + port)
     if [[ -f "$FRONTEND_PID_FILE" ]]; then
         local frontend_pid=$(cat "$FRONTEND_PID_FILE" 2>/dev/null)
-        kill_process "$frontend_pid" "frontend"
+        if [[ -n "$frontend_pid" ]]; then
+            kill_process "$frontend_pid" "frontend"
+        fi
         rm -f "$FRONTEND_PID_FILE"
     fi
     
-    # Arrêter le backend
+    # Arrêter le backend (PID file + port)
     if [[ -f "$BACKEND_PID_FILE" ]]; then
         local backend_pid=$(cat "$BACKEND_PID_FILE" 2>/dev/null)
-        kill_process "$backend_pid" "backend"
+        if [[ -n "$backend_pid" ]]; then
+            kill_process "$backend_pid" "backend"
+        fi
         rm -f "$BACKEND_PID_FILE"
     fi
     
+    # Nettoyer les processus orphelins par port (sécurité)
+    cleanup_orphan_processes
+    
     log_success "Tous les processus ont été arrêtés"
+}
+
+# Nettoyer les processus orphelins qui occupent les ports
+cleanup_orphan_processes() {
+    local cleaned=false
+    
+    # Nettoyer le port backend (8001)
+    local backend_port_pids=$(lsof -ti:8001 2>/dev/null)
+    if [[ -n "$backend_port_pids" ]]; then
+        log_info "Nettoyage des processus orphelins sur port 8001..."
+        for pid in $backend_port_pids; do
+            log_info "  - Arrêt du processus orphelin $pid (port 8001)"
+            kill -TERM "$pid" 2>/dev/null || true
+            sleep 1
+            if kill -0 "$pid" 2>/dev/null; then
+                kill -KILL "$pid" 2>/dev/null || true
+                log_info "    Processus $pid forcé à s'arrêter"
+            fi
+        done
+        cleaned=true
+    fi
+    
+    # Nettoyer le port frontend (5173)
+    local frontend_port_pids=$(lsof -ti:5173 2>/dev/null)
+    if [[ -n "$frontend_port_pids" ]]; then
+        log_info "Nettoyage des processus orphelins sur port 5173..."
+        for pid in $frontend_port_pids; do
+            log_info "  - Arrêt du processus orphelin $pid (port 5173)"
+            kill -TERM "$pid" 2>/dev/null || true
+            sleep 1
+            if kill -0 "$pid" 2>/dev/null; then
+                kill -KILL "$pid" 2>/dev/null || true
+                log_info "    Processus $pid forcé à s'arrêter"
+            fi
+        done
+        cleaned=true
+    fi
+    
+    if [[ "$cleaned" == "true" ]]; then
+        log_info "Attente de la libération des ports..."
+        sleep 2
+    fi
 }
 
 # Vérifier l'état des processus
@@ -386,11 +435,16 @@ monitor_processes() {
                 # Partiellement en cours, redémarrer ce qui manque
                 log_warning "Détection de processus manquant, redémarrage..."
                 
+                # Nettoyer d'abord les processus orphelins
+                cleanup_orphan_processes
+                
                 if [[ ! -f "$BACKEND_PID_FILE" ]] || ! kill -0 "$(cat "$BACKEND_PID_FILE" 2>/dev/null)" 2>/dev/null; then
+                    log_info "Redémarrage du backend..."
                     start_backend
                 fi
                 
                 if [[ ! -f "$FRONTEND_PID_FILE" ]] || ! kill -0 "$(cat "$FRONTEND_PID_FILE" 2>/dev/null)" 2>/dev/null; then
+                    log_info "Redémarrage du frontend..."
                     start_frontend
                 fi
                 
@@ -399,8 +453,15 @@ monitor_processes() {
             2)
                 # Tout arrêté, redémarrer tout
                 log_error "Tous les processus sont arrêtés, redémarrage complet..."
+                
+                # Nettoyer d'abord les processus orphelins
+                cleanup_orphan_processes
+                
+                log_info "Démarrage du backend..."
                 start_backend
                 sleep 3
+                
+                log_info "Démarrage du frontend..."
                 start_frontend
                 sleep 5
                 ;;
@@ -464,9 +525,39 @@ main() {
     case "$command" in
         "start")
             # Arrêter les services existants s'ils tournent
-            check_processes >/dev/null 2>&1
-            if [[ $? -ne 2 ]]; then
+            log_info "Vérification des services existants..."
+            
+            # Vérifier les ports directement (plus fiable que les PID files)
+            local backend_port_pid=$(lsof -ti:8001 2>/dev/null)
+            local frontend_port_pid=$(lsof -ti:5173 2>/dev/null)
+            
+            # Vérifier aussi les fichiers PID
+            local backend_pid=""
+            local frontend_pid=""
+            
+            if [[ -f "$BACKEND_PID_FILE" ]]; then
+                backend_pid=$(cat "$BACKEND_PID_FILE" 2>/dev/null)
+                if [[ -n "$backend_pid" ]] && ! kill -0 "$backend_pid" 2>/dev/null; then
+                    rm -f "$BACKEND_PID_FILE"
+                    backend_pid=""
+                fi
+            fi
+            
+            if [[ -f "$FRONTEND_PID_FILE" ]]; then
+                frontend_pid=$(cat "$FRONTEND_PID_FILE" 2>/dev/null)
+                if [[ -n "$frontend_pid" ]] && ! kill -0 "$frontend_pid" 2>/dev/null; then
+                    rm -f "$FRONTEND_PID_FILE"
+                    frontend_pid=""
+                fi
+            fi
+            
+            # Arrêter les services actifs (soit par port, soit par PID file)
+            if [[ -n "$backend_port_pid" || -n "$frontend_port_pid" || -n "$backend_pid" || -n "$frontend_pid" ]]; then
                 log_info "Services existants détectés, arrêt en cours..."
+                [[ -n "$backend_port_pid" ]] && log_info "  - Backend détecté sur port 8001 (PID: $backend_port_pid)"
+                [[ -n "$frontend_port_pid" ]] && log_info "  - Frontend détecté sur port 5173 (PID: $frontend_port_pid)"
+                [[ -n "$backend_pid" ]] && log_info "  - Backend PID file: $backend_pid"
+                [[ -n "$frontend_pid" ]] && log_info "  - Frontend PID file: $frontend_pid"
                 stop_processes
                 sleep 2
             fi
