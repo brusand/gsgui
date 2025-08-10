@@ -91,8 +91,23 @@ class ConnectionManager:
         try:
             await websocket.accept()
             
-            # Ajouter à la liste des connexions
-            if user_id not in self.active_connections:
+            # Fermer les anciennes connexions pour éviter les doublons
+            if user_id in self.active_connections:
+                old_connections = self.active_connections[user_id].copy()
+                for old_websocket in old_connections:
+                    try:
+                        await old_websocket.close(code=1000, reason="New connection established")
+                        logger.info(f"🔄 Closed old WebSocket connection for user {user_id}")
+                    except Exception as e:
+                        logger.warning(f"⚠️ Failed to close old connection for {user_id}: {e}")
+                    finally:
+                        # Nettoyer les métadonnées de l'ancienne connexion
+                        if old_websocket in self.connection_metadata:
+                            del self.connection_metadata[old_websocket]
+                
+                # Réinitialiser la liste de connexions
+                self.active_connections[user_id] = []
+            else:
                 self.active_connections[user_id] = []
             
             self.active_connections[user_id].append(websocket)
@@ -141,6 +156,31 @@ class ConnectionManager:
             
         except Exception as e:
             logger.error(f"Error disconnecting WebSocket for user {user_id}: {e}")
+    
+    async def _cleanup_dead_connections(self, user_id: str):
+        """Nettoie les connexions fermées pour un utilisateur"""
+        if user_id not in self.active_connections:
+            return
+            
+        dead_connections = []
+        for websocket in self.active_connections[user_id]:
+            try:
+                # Tester si la connexion est encore active
+                if websocket.client_state.DISCONNECTED:
+                    dead_connections.append(websocket)
+            except Exception:
+                # Si on ne peut pas vérifier l'état, considérer comme fermée
+                dead_connections.append(websocket)
+        
+        # Supprimer les connexions fermées
+        for dead_socket in dead_connections:
+            try:
+                self.active_connections[user_id].remove(dead_socket)
+                if dead_socket in self.connection_metadata:
+                    del self.connection_metadata[dead_socket]
+                logger.info(f"🧹 Cleaned up dead connection for user {user_id}")
+            except Exception as e:
+                logger.warning(f"⚠️ Error cleaning dead connection: {e}")
     
     async def send_personal_message(self, user_id: str, message: Dict[str, Any]):
         """Envoie un message à un utilisateur spécifique"""

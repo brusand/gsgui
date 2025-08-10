@@ -78,6 +78,15 @@
   font-size: 14px;
 }
 
+.search-input.profile-filter {
+  max-width: 200px;
+  border-color: #4a7c7e;
+}
+
+.search-input.profile-filter:focus {
+  border-color: #5a9a9d;
+}
+
 .search-input:focus {
   outline: none;
   border-color: #007acc;

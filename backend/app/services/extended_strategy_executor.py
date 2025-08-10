@@ -14,6 +14,41 @@ from configobj import ConfigObj
 from app.services.gurushots_api import GuruShotsAPI
 from app.services.config_manager import config_manager
 from app.websockets.connection_manager import connection_manager
+# Import needed for WebSocket logging to frontend
+try:
+    from app.utils.logging_utils import log_and_broadcast
+except ImportError:
+    # Fallback si pas disponible
+    def log_and_broadcast(message, level="info", profile_id=None, challenge_id=None, **kwargs):
+        from datetime import datetime
+        
+        # Ajouter horodatage et profile_id au message
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        if profile_id:
+            formatted_message = f"[{timestamp}] [{profile_id}] {message}"
+        else:
+            formatted_message = f"[{timestamp}] {message}"
+            
+        logger.info(formatted_message)
+        
+        # Diffuser via WebSocket si possible
+        try:
+            import asyncio
+            from app.websockets.connection_manager import connection_manager
+            
+            # Diffuser aux WebSockets par profil
+            if profile_id:
+                asyncio.create_task(connection_manager.notify_broadcast_log(
+                    profile_id, level, formatted_message))
+        except (ImportError, RuntimeError):
+            # Si pas de WebSocket ou de loop actif, ignorer la diffusion
+            pass
+        
+try:
+    from app.utils.logging_utils import get_challenge_title_from_cache
+except ImportError:
+    def get_challenge_title_from_cache(challenge_id):
+        return challenge_id
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +160,7 @@ class ExtendedStrategyExecutor:
         try:
             result = None
             if action_type == 'vote':
-                result = await self._execute_vote_action(api_client, challenge_url, params)
+                result = await self._execute_vote_action(api_client, challenge_url, params, profile_id, str(challenge_id))
             
             elif action_type == 'submit':
                 result = await self._execute_submit_action(api_client, int(challenge_id), params)
@@ -354,16 +389,30 @@ class ExtendedStrategyExecutor:
         api_client = context['api_client']
         challenge_id = int(context['challenge_id'])
         challenge_url = context['challenge_url']
+        profile_id = context['profile_id']
         
         action_type = action['action']
         params = action['parameters']
         
         logger.info(f"🔧 Executing {action_type} with params {params}")
         
+        # Get challenge title for better logging
+        profile_id = context['profile_id']
+        challenge_title = get_challenge_title_from_cache(str(challenge_id))
+        challenge_name = challenge_title if challenge_title != str(challenge_id) else f"Challenge {challenge_id}"
+        
+        # Log action start to frontend
+        log_and_broadcast(
+            f"🔧 Executing {action_type} action on {challenge_name}...",
+            level="info",
+            profile_id=profile_id,
+            challenge_id=str(challenge_id)
+        )
+        
         try:
             result = None
             if action_type == 'vote':
-                result = await self._execute_vote_action(api_client, challenge_url, params)
+                result = await self._execute_vote_action(api_client, challenge_url, params, profile_id, str(challenge_id))
             
             elif action_type == 'submit':
                 result = await self._execute_submit_action(api_client, challenge_id, params)
@@ -396,17 +445,65 @@ class ExtendedStrategyExecutor:
         except Exception as e:
             return {'success': False, 'error': str(e)}
     
-    async def _execute_vote_action(self, api_client: GuruShotsAPI, challenge_url: str, params: List[str]) -> Dict:
-        """Execute vote action"""
+    async def _execute_vote_action(self, api_client: GuruShotsAPI, challenge_url: str, params: List[str], profile_id: str = None, challenge_id: str = None) -> Dict:
+        """Execute vote action using the same approach as simple_vote()"""
         if not params:
             return {'success': False, 'error': 'Vote count required'}
         
         try:
             vote_count = int(params[0])
-            result = await api_client.execute_simple_vote(challenge_url, vote_count)
+            
+            # Si pas d'URL fournie, on ne peut pas voter
+            if not challenge_url:
+                return {
+                    'success': False, 
+                    'error': 'Challenge URL is required for voting',
+                    'vote_count': vote_count,
+                    'challenge_url': challenge_url
+                }
+            
+            # Utiliser le challenge_id passé en paramètre
+            if challenge_id:
+                challenge_name = get_challenge_title_from_cache(str(challenge_id))
+            else:
+                challenge_name = "Unknown Challenge"
+            
+            # Log avant l'action avec WebSocket
+            log_and_broadcast(f"🗳️ Executing vote: {vote_count} votes on {challenge_name}", "info", profile_id)
+            logger.info(f"🗳️ Executing vote: {vote_count} votes on {challenge_url}")
+            
+            # Utiliser exactement la même méthode que simple_vote() qui fonctionne
+            vote_result = await api_client.execute_simple_vote(challenge_url, vote_count)
+            
+            # Convert VoteResult object to dictionary format (comme avant)
+            result = {
+                'success': vote_result.success,
+                'message': vote_result.message,
+                'vote_count': vote_count,
+                'challenge_url': challenge_url,
+                'result_data': getattr(vote_result, 'result_data', None)
+            }
+            
+            # Log du résultat avec WebSocket
+            if result['success']:
+                log_and_broadcast(f"✅ Vote successful: {vote_count} votes cast on {challenge_name} - {result['message']}", "success", profile_id)
+                logger.info(f"✅ Vote successful: {vote_count} votes cast - {result['message']}")
+            else:
+                log_and_broadcast(f"❌ Vote failed on {challenge_name}: {result['message']}", "error", profile_id)
+                logger.error(f"❌ Vote failed: {result['message']}")
+                
             return result
+            
         except ValueError:
             return {'success': False, 'error': 'Invalid vote count'}
+        except Exception as e:
+            logger.error(f"❌ Vote execution error: {str(e)}")
+            return {
+                'success': False, 
+                'error': f'Vote execution error: {str(e)}',
+                'vote_count': vote_count if 'vote_count' in locals() else 0,
+                'challenge_url': challenge_url
+            }
     
     async def _execute_submit_action(self, api_client: GuruShotsAPI, challenge_id: int, params: List[str]) -> Dict:
         """Execute submit action - submit multiple photos with IDs passed as hard parameters"""

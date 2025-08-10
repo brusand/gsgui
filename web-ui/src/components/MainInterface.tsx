@@ -276,11 +276,30 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
             wsService.emitLocalLog(`   ⚠️ Aucune action programmée pour ${strategyName}`, 'warning');
           } else {
             actions.forEach((action: any) => {
-              const executionTime = action.execution_time || 'Heure inconnue';
-              const votes = action.votes || '80';
+              const timing = action.execution_time || action.timing || 'Heure inconnue';
               
-              // Format exact comme l'ancienne version
-              wsService.emitLocalLog(`   ⏰ ${executionTime} - Vote ${votes} pour ${challengeTitle}`, 'info');
+              // Affichage selon le type d'action
+              let actionDescription = '';
+              if (action.action === 'vote') {
+                const votes = action.votes || '80';
+                actionDescription = `Vote ${votes}`;
+              } else if (action.action === 'boost') {
+                const param = action.parameter || '0';
+                actionDescription = `Boost (param: ${param})`;
+              } else if (action.action === 'turbo') {
+                const param = action.parameter || '1';
+                actionDescription = `Turbo (param: ${param})`;
+              } else if (action.action === 'submit') {
+                const param = action.parameter || 'image';
+                actionDescription = `Submit ${param}`;
+              } else if (action.action === 'swap') {
+                const param = action.parameter || 'images';
+                actionDescription = `Swap ${param}`;
+              } else {
+                actionDescription = `${action.action} (${action.parameter || ''})`;
+              }
+              
+              wsService.emitLocalLog(`   ⏰ ${timing} - ${actionDescription} pour ${challengeTitle}`, 'info');
               totalActions++;
             });
           }

@@ -36,7 +36,7 @@ class EnhancedStrategyEngine:
     def __init__(self, gurushots_api: GuruShotsAPI, user_id: str = "strategy_user"):
         self.api = gurushots_api
         self.user_id = user_id
-        self.strategies = ConfigObj('strategies.ini')
+        self.strategies = ConfigObj('data/strategies.ini')
         
         # Active strategy executions
         self.active_strategies: Dict[str, Dict] = {}  # strategy_id -> execution context

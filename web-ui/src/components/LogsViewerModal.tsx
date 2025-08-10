@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { apiClient } from '../services/api-v2';
 import './LogsViewerModal.css';
 
 interface LogsViewerModalProps {
@@ -13,6 +12,7 @@ const LogsViewerModal: React.FC<LogsViewerModalProps> = ({ isOpen, onClose }) =>
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [profileFilter, setProfileFilter] = useState('');
   const [filteredLogs, setFilteredLogs] = useState('');
   const logsEndRef = useRef<HTMLDivElement>(null);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,18 +65,27 @@ const LogsViewerModal: React.FC<LogsViewerModalProps> = ({ isOpen, onClose }) =>
     };
   }, [isOpen, autoRefresh]);
 
-  // Effet pour filtrer les logs quand le terme de recherche change
+  // Effet pour filtrer les logs quand le terme de recherche ou le filtre profil change
   useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredLogs(logs);
-    } else {
-      const lines = logs.split('\n');
-      const filtered = lines.filter(line => 
+    const lines = logs.split('\n');
+    let filtered = lines;
+    
+    // Filtrer par terme de recherche
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(line => 
         line.toLowerCase().includes(searchTerm.toLowerCase())
-      ).join('\n');
-      setFilteredLogs(filtered);
+      );
     }
-  }, [logs, searchTerm]);
+    
+    // Filtrer par profil ID (format [profile_id])
+    if (profileFilter.trim()) {
+      filtered = filtered.filter(line => 
+        line.includes(`[${profileFilter}]`)
+      );
+    }
+    
+    setFilteredLogs(filtered.join('\n'));
+  }, [logs, searchTerm, profileFilter]);
 
   const handleRefresh = () => {
     loadLogs();
@@ -88,6 +97,11 @@ const LogsViewerModal: React.FC<LogsViewerModalProps> = ({ isOpen, onClose }) =>
 
   const clearSearch = () => {
     setSearchTerm('');
+    setProfileFilter('');
+  };
+
+  const handleProfileFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfileFilter(e.target.value);
   };
 
   const handleDownload = () => {
@@ -165,7 +179,14 @@ const LogsViewerModal: React.FC<LogsViewerModalProps> = ({ isOpen, onClose }) =>
                 onChange={handleSearchChange}
                 className="search-input"
               />
-              {searchTerm && (
+              <input
+                type="text"
+                placeholder="Filtrer par profil (ex: bruno, caloune)..."
+                value={profileFilter}
+                onChange={handleProfileFilterChange}
+                className="search-input profile-filter"
+              />
+              {(searchTerm || profileFilter) && (
                 <button onClick={clearSearch} className="btn btn-clear-search">
                   ✕
                 </button>

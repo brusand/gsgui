@@ -190,7 +190,7 @@ class ChallengeService:
                 print(f"❌ No valid token for profile {profile_id}")
                 return None
             
-            real_challenges = await fetch_real_challenges(profile['xtoken'])
+            real_challenges = await fetch_real_challenges(profile['xtoken'], profile_id)
             if not real_challenges:
                 return None
                 
@@ -227,7 +227,7 @@ async def get_challenge_title(challenge_id, profile_name=None):
             if profile_id in profiles:
                 x_token = profiles[profile_id].get('xtoken')
                 if x_token:
-                    real_challenges = await fetch_real_challenges(x_token)
+                    real_challenges = await fetch_real_challenges(x_token, profile_id)
                     challenge_titles_cache = {ch['id']: ch['title'] for ch in real_challenges}
                     cache_last_update = now
                     return challenge_titles_cache.get(challenge_id, f"Challenge {challenge_id}")
@@ -273,15 +273,24 @@ async def broadcast_log(message: str, log_type: str = "info", profile_name: str 
     websocket_connections.difference_update(disconnected)
 
 def log_and_broadcast(message: str, log_type: str = "info", profile_name: str = None):
-    """Log local + diffusion WebSocket (version synchrone)"""
-    print(message)
+    """Log local + diffusion WebSocket (version synchrone) avec horodatage et profile_id"""
+    from datetime import datetime
+    
+    # Ajouter horodatage et profile_id au message
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    if profile_name:
+        formatted_message = f"[{timestamp}] [{profile_name}] {message}"
+    else:
+        formatted_message = f"[{timestamp}] {message}"
+    
+    print(formatted_message)
     # Créer une tâche asynchrone pour la diffusion
     try:
         # Diffuser aux WebSockets par profil
         if profile_name:
             asyncio.create_task(connection_manager.notify_broadcast_log(
-                profile_name, log_type, message))
-        asyncio.create_task(broadcast_log(message, log_type, profile_name))
+                profile_name, log_type, formatted_message))
+        asyncio.create_task(broadcast_log(formatted_message, log_type, profile_name))
     except RuntimeError:
         # Si pas de loop actif, ignorer la diffusion
         pass
@@ -296,23 +305,26 @@ def get_aio_headers(xtoken: str) -> Dict[str, str]:
         'X-token': xtoken
     }
 
-async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
+async def fetch_real_challenges(xtoken: str, profile_id: str = None) -> List[Dict[str, Any]]:
     """Récupère les vrais challenges depuis l'API GuruShots"""
     try:
         headers = get_aio_headers(xtoken)
-        log_api_call(logger, "get_my_active_challenges", status="called")
+        log_api_call(logger, "get_my_active_challenges", status="called", profile_id=profile_id)
         
         connector = aiohttp.TCPConnector(ssl=False)
         async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
             async with session.post('https://api.gurushots.com/rest/get_my_active_challenges') as response:
-                log_api_call(logger, "get_my_active_challenges", status="success", response_data={"status": response.status})
+                log_api_call(logger, "get_my_active_challenges", status="success", response_data={"status": response.status}, profile_id=profile_id)
                 
                 if response.status != 200:
-                    log_api_call(logger, "get_my_active_challenges", status="failed", response_data={"status": response.status})
+                    log_api_call(logger, "get_my_active_challenges", status="failed", response_data={"status": response.status}, profile_id=profile_id)
                     return []
                 
                 data = await response.json()
-                logger.info(f"📊 API data keys: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
+                log_api_call(logger, "get_my_active_challenges", status="success", response_data={
+                    "status": response.status,
+                    "keys": list(data.keys()) if isinstance(data, dict) else "Not a dict"
+                }, profile_id=profile_id)
                 
                 # Debug : si success=false, afficher l'erreur
                 if isinstance(data, dict) and not data.get('success', True):
@@ -389,7 +401,7 @@ async def fetch_real_challenges(xtoken: str) -> List[Dict[str, Any]]:
                 
                 # Trier par temps restant croissant (comme gs_backend_ui.py)
                 challenges.sort(key=lambda x: x['time_left_seconds'])
-                logger.info(f"✅ Successfully processed {len(challenges)} real challenges (triés par temps restant)")
+                log_with_profile(logger, "info", f"✅ Successfully processed {len(challenges)} real challenges (triés par temps restant)", profile_id)
                 return challenges
                 
     except Exception as e:
@@ -454,8 +466,9 @@ def save_challenge_strategy(challenge_id: str, strategy_name: str, scheduled_at:
             }
             
             config.write()
-            display_name = challenge_title if challenge_title else f"Challenge {challenge_id}"
-            log_and_broadcast(f"💾 Saved strategy {strategy_name} for {display_name}", "success", profile_id)
+            # Utiliser le titre fourni ou l'ID
+            challenge_display_name = challenge_title if challenge_title else f"Challenge {challenge_id}"
+            log_and_broadcast(f"💾 Saved strategy {strategy_name} for {challenge_display_name}", "success", profile_id)
             return True
     except Exception as e:
         error_msg = f"❌ Error saving challenge strategy: {e}"
@@ -694,14 +707,14 @@ async def get_challenges(profile_name: str):
         print(f"🔍 Using token for {profile_name}: {x_token[:20]}...")
         
         # Récupérer les vrais challenges
-        real_challenges = await fetch_real_challenges(x_token)
+        real_challenges = await fetch_real_challenges(x_token, profile_name.lower())
         
         if not real_challenges:
             print("⚠️ No real challenges, using config token...")
             # Fallback: essayer avec le token de la config
             config_token = get_user_token_from_config()
             if config_token:
-                real_challenges = await fetch_real_challenges(config_token)
+                real_challenges = await fetch_real_challenges(config_token, profile_name.lower())
         
         # Charger les stratégies organisées par profil
         challenge_strategies_by_profile = load_challenge_strategies()
@@ -1328,30 +1341,43 @@ def parse_strategy_actions(strategy_name: str) -> List[Dict]:
                     parts = [p.strip() for p in clean_value.split(',')]
                     
                     if len(parts) >= 2:
-                        # Format: "vote, end-4m0s, 70" ou "end-4m0s, 70"
+                        # Format: "action, timing, param" ou "timing, param" (vote implicite)
                         if len(parts) == 3:
                             action_type = parts[0]
                             timing = parts[1]
-                            vote_count_str = parts[2]
+                            param_str = parts[2]
                         elif len(parts) == 2:
                             action_type = 'vote'
                             timing = parts[0]
-                            vote_count_str = parts[1]
+                            param_str = parts[1]
                         else:
                             continue
                         
-                        try:
-                            vote_count = int(vote_count_str)
-                            # Ignorer les votes négatifs (-1) qui indiquent "pas de vote"
-                            if vote_count > 0:
-                                actions.append({
-                                    'action': action_type,
-                                    'timing': timing,
-                                    'votes': vote_count,
-                                    'raw': clean_value
-                                })
-                        except ValueError:
-                            print(f"⚠️ Invalid vote count in strategy {strategy_name}: {vote_count_str}")
+                        # Traitement différent selon le type d'action
+                        if action_type.lower() == 'vote':
+                            try:
+                                vote_count = int(param_str)
+                                # Ignorer les votes négatifs (-1) qui indiquent "pas de vote"
+                                if vote_count > 0:
+                                    actions.append({
+                                        'action': 'vote',
+                                        'timing': timing,
+                                        'votes': vote_count,
+                                        'raw': clean_value
+                                    })
+                            except ValueError:
+                                print(f"⚠️ Invalid vote count in strategy {strategy_name}: {param_str}")
+                                continue
+                        elif action_type.lower() in ['boost', 'turbo', 'submit', 'swap']:
+                            # Actions non-vote: boost, turbo, submit, swap
+                            actions.append({
+                                'action': action_type.lower(),
+                                'timing': timing,
+                                'parameter': param_str,  # Photo ID, index, etc.
+                                'raw': clean_value
+                            })
+                        else:
+                            print(f"⚠️ Unknown action type in strategy {strategy_name}: {action_type}")
                             continue
             
             return actions
@@ -1386,7 +1412,7 @@ async def get_active_strategies(profile_name: Optional[str] = None):
                 if profile_id in profiles:
                     x_token = profiles[profile_id].get('xtoken')
                     if x_token:
-                        real_challenges = await fetch_real_challenges(x_token)
+                        real_challenges = await fetch_real_challenges(x_token, profile_id)
                         challenges_map = {ch['id']: ch['title'] for ch in real_challenges}
                         print(f"✅ Mapping {len(challenges_map)} challenge titles for strategies")
             except Exception as e:
@@ -1421,7 +1447,7 @@ async def get_active_strategies(profile_name: Optional[str] = None):
                         if profile_id in profiles:
                             x_token = profiles[profile_id].get('xtoken')
                             if x_token:
-                                real_challenges = await fetch_real_challenges(x_token)
+                                real_challenges = await fetch_real_challenges(x_token, profile_id)
                                 # Chercher le challenge dans la liste
                                 for challenge in real_challenges:
                                     if str(challenge.get('id')) == str(challenge_id):
@@ -1768,10 +1794,22 @@ async def schedule_strategies_from_ini():
             print(f"🎯 Processing {len(profile_strategies)} strategies for profile {profile_id}")
             for challenge_id, strategy_info in profile_strategies.items():
                 strategy_name = strategy_info['strategy_name']
+                challenge_title = strategy_info.get('challenge_title', f'Challenge {challenge_id}')
                 print(f"  - Challenge {challenge_id}: strategy {strategy_name}")
-                scheduled_count += 1
+                
+                try:
+                    # PROGRAMMER RÉELLEMENT chaque stratégie trouvée
+                    print(f"🚀 Scheduling strategy '{strategy_name}' for challenge {challenge_id} (profile: {profile_id})")
+                    execution_id = await schedule_single_strategy(challenge_id, profile_id, challenge_title)
+                    if execution_id:
+                        scheduled_count += 1
+                        print(f"✅ Strategy scheduled with execution_id: {execution_id}")
+                    else:
+                        print(f"⚠️ Strategy scheduling returned no execution_id")
+                except Exception as e:
+                    print(f"❌ Error scheduling strategy {strategy_name} for challenge {challenge_id}: {e}")
         
-        print(f"📊 Total: {scheduled_count} strategies found across {len(challenge_strategies_by_profile)} profiles")
+        print(f"📊 Total: {scheduled_count} strategies successfully scheduled across {len(challenge_strategies_by_profile)} profiles")
         
     except Exception as e:
         print(f"❌ Error in schedule_strategies_from_ini: {e}")
@@ -1805,20 +1843,61 @@ async def schedule_single_strategy(challenge_id, profile_id, challenge_title=Non
         # UTILISER LE NOUVEAU SYSTÈME ExtendedStrategyExecutor
         from app.services.extended_strategy_executor import extended_strategy_executor
         
-        print(f"🚀 Using ExtendedStrategyExecutor for strategy '{strategy_name}' on challenge {challenge_id}")
-        log_and_broadcast(f"🚀 Using ExtendedStrategyExecutor for strategy '{strategy_name}' on challenge {challenge_id}", "strategy", profile_id)
+        # Utiliser le titre du challenge si disponible
+        challenge_display_name = await get_challenge_title(challenge_id, profile_id)
+        
+        print(f"🚀 Using ExtendedStrategyExecutor for strategy '{strategy_name}' on {challenge_display_name}")
+        log_and_broadcast(f"🚀 Using ExtendedStrategyExecutor for strategy '{strategy_name}' on {challenge_display_name}", "info", profile_id)
+        
+        # Récupérer l'URL du challenge pour les actions qui en ont besoin (comme vote)
+        # Utilise exactement la même méthode que simple_vote() et fill_challenges
+        challenge_url = ""
+        try:
+            # Récupérer le profil (comme dans simple_vote)
+            profile = ProfileService.get_profile(profile_id)
+            if not profile:
+                print(f"⚠️ Profile {profile_id} not found")
+            else:
+                x_token = profile.get('xtoken')
+                if x_token:
+                    # Créer l'API comme dans simple_vote()
+                    profile_api = create_gurushots_api(x_token)
+                    if profile_api:
+                        print(f"🔍 Getting challenge URL for {challenge_id} using get_challenges()")
+                        challenges_data = await profile_api.get_challenges()
+                        print(f"🔍 get_challenges() returned {type(challenges_data)} with {len(challenges_data) if isinstance(challenges_data, list) else 'unknown'} items")
+                        
+                        # challenges_data est une liste d'objets ChallengeData (comme fill_challenges)
+                        if isinstance(challenges_data, list):
+                            print(f"🔍 Searching for challenge {challenge_id} in {len(challenges_data)} challenges...")
+                            for i, challenge_obj in enumerate(challenges_data):
+                                if hasattr(challenge_obj, 'id'):
+                                    if i < 5:  # Debug seulement les premiers 5
+                                        print(f"  Challenge {i}: ID={challenge_obj.id}, URL={getattr(challenge_obj, 'url', 'NO_URL')}")
+                                    if str(challenge_obj.id) == str(challenge_id):
+                                        # Utiliser challenge_data qui contient le dict avec l'URL
+                                        challenge_data = challenge_obj.challenge_data if hasattr(challenge_obj, 'challenge_data') else {'id': challenge_obj.id, 'url': getattr(challenge_obj, 'url', None)}
+                                        challenge_url = challenge_data.get('url', '')
+                                        print(f"✅ Found challenge {challenge_id} URL: {challenge_url}")
+                                        break
+                                
+            if not challenge_url:
+                print(f"⚠️ Could not find URL for challenge {challenge_id}")
+        except Exception as e:
+            print(f"⚠️ Warning: Could not get challenge URL for {challenge_id}: {e}")
+            import traceback
+            traceback.print_exc()
         
         # Exécuter avec le nouveau système qui gère automatiquement NOW vs FUTURE
-        # Les photos seront récupérées FRAÎCHES au moment de l'exécution
         execution_id = await extended_strategy_executor.execute_extended_strategy(
             profile_id=profile_id,
             challenge_id=challenge_id,
-            challenge_url="",  # Plus besoin d'URL, utilise get_challenges()
+            challenge_url=challenge_url,
             strategy_name=strategy_name
         )
         
-        print(f"✅ Strategy '{strategy_name}' started with execution_id: {execution_id}")
-        log_and_broadcast(f"✅ Strategy '{strategy_name}' started with execution_id: {execution_id}", "strategy", profile_id)
+        print(f"✅ Strategy '{strategy_name}' started for {challenge_display_name} with execution_id: {execution_id}")
+        log_and_broadcast(f"✅ Strategy '{strategy_name}' started for {challenge_display_name}", "success", profile_id)
         
         return execution_id
         
@@ -2261,23 +2340,54 @@ async def cleanup_expired_strategies():
 
 async def cleanup_expired_strategies_for_profile(profile_id: str):
     """Nettoie les stratégies expirées pour un profil spécifique"""
+    print(f"🔍 DEBUG: Entrée dans cleanup_expired_strategies_for_profile avec profile_id='{profile_id}'")
     try:
         print(f"🧹 Nettoyage des stratégies expirées pour profil {profile_id}...")
         
         challenge_strategies_by_profile = load_challenge_strategies()
+        print(f"🔍 DEBUG: challenge_strategies_by_profile = {challenge_strategies_by_profile}")
         if not challenge_strategies_by_profile:
             return 0
         
         cleaned_count = 0
         
+        # Charger les stratégies disponibles depuis strategies.ini
+        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
+        available_strategies = set()
+        
+        if os.path.exists(strategies_ini_path):
+            with strategies_ini_lock:
+                strategies_config = ConfigObj(strategies_ini_path, encoding='utf-8')
+                available_strategies = set(strategies_config.keys())
+                print(f"🔍 DEBUG: Stratégies disponibles: {sorted(available_strategies)}")
+        
         # Obtenir les stratégies pour ce profil uniquement
         profile_strategies = challenge_strategies_by_profile.get(profile_id.lower(), {})
+        print(f"🔍 DEBUG: Profils disponibles: {list(challenge_strategies_by_profile.keys())}")
+        print(f"🔍 DEBUG: Recherche profil: '{profile_id.lower()}'")
         
         if not profile_strategies:
             print(f"📋 Aucune stratégie trouvée pour profil {profile_id}")
             return 0
         
-        # Vérifier les challenges actifs pour ce profil
+        # ÉTAPE 1: Purger les stratégies inexistantes dans strategies.ini
+        print(f"🔍 DEBUG: Stratégies du profil {profile_id}: {profile_strategies}")
+        for challenge_id, strategy_info in list(profile_strategies.items()):
+            strategy_name = strategy_info.get('strategy_name', '')
+            print(f"🔍 DEBUG: Challenge {challenge_id}, stratégie '{strategy_name}', existe dans .ini: {strategy_name in available_strategies}")
+            if strategy_name and strategy_name not in available_strategies:
+                # Stratégie inexistante - suppression immédiate
+                challenge_title = strategy_info.get('challenge_title', f'Challenge {challenge_id}')
+                success = remove_challenge_strategy(challenge_id, profile_id)
+                if success:
+                    print(f"🗑️ Stratégie inexistante supprimée pour {profile_id}: '{strategy_name}' sur {challenge_title}")
+                    cleaned_count += 1
+        
+        # Recharger après purge des stratégies inexistantes
+        challenge_strategies_by_profile = load_challenge_strategies()
+        profile_strategies = challenge_strategies_by_profile.get(profile_id.lower(), {})
+        
+        # ÉTAPE 2: Vérifier les challenges actifs pour ce profil
         if profile_id in profiles:
             x_token = profiles[profile_id].get('xtoken')
             if x_token:
@@ -2300,27 +2410,26 @@ async def cleanup_expired_strategies_for_profile(profile_id: str):
                     active_challenge_ids = {str(ch.get('id')) for ch in challenges_list}
                     
                     for challenge_id, strategy_info in profile_strategies.items():
+                        # NOUVEAU: Vérifier d'abord s'il y a des jobs actifs pour ce challenge
+                        future_jobs = []
+                        if strategy_scheduler:
+                            for job in strategy_scheduler.get_jobs():
+                                if job.id.startswith(f'{profile_id}_{challenge_id}_'):
+                                    future_jobs.append(job)
+                        
+                        if future_jobs:
+                            # Il y a encore des jobs programmés - NE PAS SUPPRIMER
+                            print(f"⏰ Challenge {challenge_id} a {len(future_jobs)} job(s) programmé(s) - conservation")
+                            continue
+                            
+                        # Seulement maintenant vérifier si le challenge n'est plus actif
                         if str(challenge_id) not in active_challenge_ids:
-                            # Challenge expiré
+                            # Challenge expiré ET aucun job programmé
                             challenge_title = strategy_info.get('challenge_title', f'Challenge {challenge_id}')
                             success = remove_challenge_strategy(challenge_id, profile_id)
                             if success:
                                 print(f"🗑️ Challenge expiré supprimé pour {profile_id}: {challenge_title}")
                                 cleaned_count += 1
-                            
-                            # Supprimer les jobs du scheduler
-                            if strategy_scheduler:
-                                jobs_to_remove = []
-                                for job in strategy_scheduler.get_jobs():
-                                    if job.id.startswith(f'{profile_id}_{challenge_id}_'):
-                                        jobs_to_remove.append(job.id)
-                                
-                                for job_id in jobs_to_remove:
-                                    try:
-                                        strategy_scheduler.remove_job(job_id)
-                                        print(f"  🗑️ Job {job_id} supprimé du scheduler")
-                                    except Exception as job_error:
-                                        print(f"  ⚠️ Erreur suppression job {job_id}: {job_error}")
         
         print(f"✅ Profil {profile_id}: {cleaned_count} stratégie(s) expirée(s) nettoyée(s)")
         return cleaned_count
@@ -2390,7 +2499,7 @@ async def startup_event():
     """Événements de démarrage du backend"""
     global gurushots_api, strategy_scheduler
     
-    print("🚀 Backend startup - Loading strategies and turbo states...")
+    logger.info("🚀 Backend startup - Loading strategies and turbo states...")
     
     # Charger les profils depuis .ini
     load_profiles_from_ini()
@@ -2402,7 +2511,7 @@ async def startup_event():
     
     # Charger les états turbo existants
     # Plus de chargement des états turbo - calcul dynamique uniquement
-    print("📋 Turbo states calculated dynamically from API data")
+    logger.info("📋 Turbo states calculated dynamically from API data")
     
     # Initialiser le service GuruShots avec le token depuis la config
     if REAL_VOTE_AVAILABLE:
@@ -2411,11 +2520,11 @@ async def startup_event():
             if user_token:
                 gurushots_api = create_gurushots_api(user_token)
                 if not gurushots_api:
-                    print(f"⚠️ Could not create GuruShotsAPI for profile loading")
+                    logger.warning("⚠️ Could not create GuruShotsAPI for profile loading")
                     return
-                print("✅ GuruShots API service initialized with real voting capability")
+                logger.info("✅ GuruShots API service initialized with real voting capability")
             else:
-                print("⚠️ No user token found in config - using simulated voting")
+                logger.warning("⚠️ No user token found in config - using simulated voting")
         except Exception as e:
             logger.error(f"❌ Failed to initialize GuruShots API service: {e}")
             logger.warning("⚠️ Falling back to simulated voting")

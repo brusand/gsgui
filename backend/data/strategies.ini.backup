@@ -1,6 +1,20 @@
 # Stratégies étendues avec nouvelles actions
 # Format: action, timing, param1, param2, ...
 
+[colors]
+description="Challenge colors"
+0="boost, end-60m0s, 0"
+1="turbo, end-60m0s,1"
+2="vote, end-2m0s,80"
+3="vote, end-1m0s,40"
+4="vote, end-0m45s,20"
+5="vote, end-0m30s,20"
+6="vote, end-0m15s,20"
+
+[submit-minimalism]
+description="Submit photo"
+0="submit,now, e3d0632cbbe380ce79c0a439d0a0778c, f2b10b36a3f0d218d5eb500b087c9fb9"
+
 [alain]
 description="Stratégie conservative - 4m - votes répartis"
 0="end-60m0s,80"

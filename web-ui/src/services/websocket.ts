@@ -15,7 +15,16 @@ export class WebSocketService {
   // Nouvelle méthode pour se connecter avec un profile_id spécifique
   connectWithProfile(profileName: string): Promise<void> {
     const profileId = profileName.toLowerCase();
-    this.url = `/ws/logs/${profileId}`;
+    const newUrl = `/ws/logs/${profileId}`;
+    
+    // Fermer l'ancienne connexion si elle existe
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      console.log('🔄 Closing existing WebSocket connection before new profile connection');
+      this.ws.close();
+      this.ws = null;
+    }
+    
+    this.url = newUrl;
     return this.connect();
   }
 
@@ -170,11 +179,24 @@ export class WebSocketService {
   }
 
   disconnect() {
+    console.log('🔌 Disconnecting WebSocket...');
     if (this.ws) {
+      // Supprimer les event listeners pour éviter les callbacks indésirables
+      this.ws.onopen = null;
+      this.ws.onmessage = null;
+      this.ws.onclose = null;
+      this.ws.onerror = null;
+      
+      // Fermer la connexion
       this.ws.close();
       this.ws = null;
     }
+    
+    // Réinitialiser les tentatives de reconnexion
+    this.reconnectAttempts = 0;
     this.listeners.clear();
+    
+    console.log('✅ WebSocket disconnected properly');
   }
 
   // Méthode pour émettre des logs locaux (non-WebSocket)
