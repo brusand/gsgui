@@ -1295,11 +1295,11 @@ class ExtendedStrategyExecutor:
 
                             boosted = challenge_data['member']['boost']['state']
 
-                            if boosted == 'AVAILABLE': # and  challenge_data['member']['boost']['timeout'] < '1H':
+                            if boosted == 'AVAILABLE' and await self._is_challenge_ending_soon(challenge_data['member']['boost']['timeout'], 1.0): # and  challenge_data['member']['boost']['timeout'] < '1H':
                                 logger.info(f"✅ Boost Unlocked For challenge {challenge_id} ")
                                 return True
                             else:
-                                logger.info(f"✅ Boost locked For challenge {challenge_id} ")
+                                logger.info(f"✅ Boost Available but too soon For challenge {challenge_id} ")
                                 return False
                     # If not found, fallback to a reasonable default (24 hours from now)
                     logger.warning(f"⚠️ Challenge {challenge_id} not found in active challenges, using 24h fallback")
@@ -1308,7 +1308,35 @@ class ExtendedStrategyExecutor:
         except Exception as e:
             logger.error(f"❌ Error getting challenge end time via API: {e}")
             # Fallback to 24 hours from now if we can't get the real end time
-            return datetime.now() + timedelta(hours=24)
+            return False
+
+    async def _is_challenge_ending_soon(self, timeout_timestamp: int, threshold_hours: float = 1.0) -> bool:
+        """
+        Check if a challenge is ending within the specified threshold
+
+        Args:
+            timeout_timestamp: Unix timestamp indicating when the challenge ends
+            threshold_hours: Hours before end to consider "ending soon" (default: 1.0)
+
+        Returns:
+            True if challenge ends within threshold_hours, False otherwise
+        """
+        try:
+            # Convert timestamp to datetime
+            challenge_end = datetime.fromtimestamp(timeout_timestamp)
+            now = datetime.now()
+
+            # Calculate time remaining
+            time_remaining = challenge_end - now
+            remaining_hours = time_remaining.total_seconds() / 3600
+
+            logger.debug(f"Challenge ends at {challenge_end}, remaining: {remaining_hours:.2f}h")
+
+            return remaining_hours < threshold_hours and remaining_hours > 0
+
+        except (ValueError, OSError, OverflowError) as e:
+            logger.error(f"Invalid timestamp {timeout_timestamp}: {e}")
+            return False
 
     async def _get_user_photos_sorted_by_votes(self, api_client: GuruShotsAPI,
                                              challenge_id: int) -> List[Dict[str, Any]]:

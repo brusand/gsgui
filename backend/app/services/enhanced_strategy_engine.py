@@ -394,6 +394,34 @@ class EnhancedStrategyEngine:
         
         logger.info(f"📋 Created ANCA strategy: {strategy_name}")
         return strategy_name
+    
+    def is_challenge_ending_soon(self, timeout_timestamp: int, threshold_hours: float = 1.0) -> bool:
+        """
+        Check if a challenge is ending within the specified threshold
+        
+        Args:
+            timeout_timestamp: Unix timestamp indicating when the challenge ends
+            threshold_hours: Hours before end to consider "ending soon" (default: 1.0)
+        
+        Returns:
+            True if challenge ends within threshold_hours, False otherwise
+        """
+        try:
+            # Convert timestamp to datetime
+            challenge_end = datetime.fromtimestamp(timeout_timestamp)
+            now = datetime.now()
+            
+            # Calculate time remaining
+            time_remaining = challenge_end - now
+            remaining_hours = time_remaining.total_seconds() / 3600
+            
+            logger.debug(f"Challenge ends at {challenge_end}, remaining: {remaining_hours:.2f}h")
+            
+            return remaining_hours < threshold_hours and remaining_hours > 0
+            
+        except (ValueError, OSError, OverflowError) as e:
+            logger.error(f"Invalid timestamp {timeout_timestamp}: {e}")
+            return False
 
 # Global instance
 enhanced_strategy_engine = None
