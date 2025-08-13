@@ -48,7 +48,8 @@ class EnhancedStrategyEngine:
             'swap': self._execute_swap,
             'boost': self._execute_boost,
             'turbo': self._execute_turbo,
-            'fill': self._execute_fill
+            'fill': self._execute_fill,
+            'unlocked_boost': self._execute_unlocked_boost
         }
     
     async def execute_strategy(self, strategy_name: str, challenge_id: int, 
@@ -293,6 +294,16 @@ class EnhancedStrategyEngine:
         if not params:
             return {'success': False, 'error': 'Image ID parameter required'}
         
+        image_id = params[0]
+        # This would need to be implemented in GuruShotsAPI
+        logger.info(f"⚡ Would boost image {image_id} in challenge {challenge_id}")
+        return {'success': True, 'message': f'Boosted image {image_id}', 'image_id': image_id}
+
+    async def _execute_unlocked_boost(self, challenge_id: int, challenge_url: str, params: List[str]) -> Dict[str, Any]:
+        """Execute boost action"""
+        if not params:
+            return {'success': False, 'error': 'Image ID parameter required'}
+
         image_id = params[0]
         # This would need to be implemented in GuruShotsAPI
         logger.info(f"⚡ Would boost image {image_id} in challenge {challenge_id}")

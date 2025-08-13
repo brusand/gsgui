@@ -1287,3 +1287,17 @@
 [2025-08-10 12:50:11] ✅ === Tous les services sont démarrés ===
 [2025-08-10 12:50:11] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
 [2025-08-10 12:50:11] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-13 11:04:56] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-13 11:04:56] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-13 11:04:56] ❌ Commande inconnue: STOP
+[2025-08-13 11:05:01] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-13 11:05:01] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-13 11:05:01] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-13 11:05:01] ℹ️  Arrêt des processus...
+[2025-08-13 11:05:01] ⚠️  Processus frontend (PID: 41401) n'existe plus
+[2025-08-13 11:05:01] ⚠️  Processus backend (PID: 41381) n'existe plus
+[2025-08-13 11:05:01] ℹ️  Nettoyage des processus orphelins sur port 8001...
+[2025-08-13 11:05:01] ℹ️    - Arrêt du processus orphelin 67109 (port 8001)
+[2025-08-13 11:05:02] ℹ️    - Arrêt du processus orphelin 98948 (port 8001)
+[2025-08-13 11:05:03] ℹ️  Attente de la libération des ports...
+[2025-08-13 11:05:05] ✅ Tous les processus ont été arrêtés

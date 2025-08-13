@@ -1351,7 +1351,10 @@ def parse_strategy_actions(strategy_name: str) -> List[Dict]:
                             timing = parts[0]
                             param_str = parts[1]
                         else:
-                            continue
+                            action_type = parts[0]
+                            timing = parts[1]
+                            params = str(parts[2:] if len(parts) > 2 else [])
+                            #continue
                         
                         # Traitement différent selon le type d'action
                         if action_type.lower() == 'vote':
@@ -1396,96 +1399,297 @@ def parse_strategy_actions(strategy_name: str) -> List[Dict]:
 
 @app.get("/api/v1/strategies/active")
 async def get_active_strategies(profile_name: Optional[str] = None):
-    """Récupère les stratégies actives avec détails et noms des challenges"""
+    """Récupère les stratégies actives depuis APScheduler ET ExtendedStrategyExecutor"""
     try:
-        challenge_strategies_by_profile = load_challenge_strategies()
+        # Nouvelle implémentation : interroger APScheduler + ExtendedStrategyExecutor
+        detailed_strategies = []
+        total_jobs = 0
         
-        if not challenge_strategies_by_profile:
-            return {"strategies": [], "total_count": 0, "total_jobs": 0}
+        # 1. Récupérer les jobs APScheduler actifs
+        apscheduler_jobs = []
+        try:
+            if STRATEGY_SCHEDULER_AVAILABLE:
+                from app.services.strategy_scheduler import strategy_scheduler
+                if strategy_scheduler._running:
+                    jobs = strategy_scheduler.scheduler.get_jobs()
+                    for job in jobs:
+                        # Extraire les informations utiles du job
+                        job_args = job.args if hasattr(job, 'args') else []
+                        
+                        # Déterminer le type de job
+                        job_type = 'unknown'
+                        challenge_id = None
+                        strategy_name = None
+                        profile_id = None
+                        
+                        if job.id.startswith('extended_'):
+                            job_type = 'extended_action'
+                            # Format: extended_strategy_challenge_timestamp_action_index_actiontype
+                            parts = job.id.split('_')
+                            if len(parts) >= 3:
+                                strategy_name = parts[1] if len(parts) > 1 else 'unknown'
+                                challenge_id = parts[2] if len(parts) > 2 else 'unknown'
+                        elif len(job_args) >= 4:
+                            # Format standard: [profile_id, strategy_id, challenge_id, strategy_name]
+                            job_type = 'scheduled_strategy'
+                            profile_id = job_args[0] if job_args else 'unknown'
+                            challenge_id = job_args[2] if len(job_args) > 2 else 'unknown'
+                            strategy_name = job_args[3] if len(job_args) > 3 else 'unknown'
+                        
+                        job_info = {
+                            'id': job.id,
+                            'name': job.name or str(job.id),
+                            'next_run': job.next_run_time.isoformat() if job.next_run_time else None,
+                            'next_run_time_exact': job.next_run_time.strftime('%H:%M:%S') if job.next_run_time else None,
+                            'next_run_date': job.next_run_time.strftime('%Y-%m-%d') if job.next_run_time else None,
+                            'trigger': str(job.trigger),
+                            'args': job_args,
+                            'source': 'apscheduler',
+                            'job_type': job_type,
+                            'challenge_id': challenge_id,
+                            'strategy_name': strategy_name,
+                            'profile_id': profile_id
+                        }
+                        apscheduler_jobs.append(job_info)
+                        total_jobs += 1
+                    logger.info(f"✅ Found {len(apscheduler_jobs)} APScheduler jobs")
+        except Exception as e:
+            logger.error(f"❌ Error getting APScheduler jobs: {e}")
         
-        # Récupérer les challenges pour avoir les vrais noms
+        # 2. Récupérer les stratégies Extended actives
+        extended_strategies = []
+        try:
+            from app.services.extended_strategy_executor import extended_strategy_executor
+            for execution_id, context in extended_strategy_executor.active_executions.items():
+                if context['status'] == 'active':
+                    strategy_info = {
+                        'execution_id': execution_id,
+                        'challenge_id': context['challenge_id'],
+                        'strategy_name': context['strategy_name'],
+                        'profile_id': context['profile_id'],
+                        'started_at': context['started_at'].isoformat(),
+                        'status': context['status'],
+                        'actions': context['actions'],
+                        'source': 'extended_executor'
+                    }
+                    extended_strategies.append(strategy_info)
+                    total_jobs += len(context.get('actions', []))
+            logger.info(f"✅ Found {len(extended_strategies)} Extended strategies active")
+        except Exception as e:
+            logger.error(f"❌ Error getting Extended strategies: {e}")
+        
+        # 3. Récupérer le mapping des challenges pour les titres
         challenges_map = {}
         if profile_name:
             try:
-                # Récupérer le token depuis le profil
                 profile_id = profile_name.lower()
                 if profile_id in profiles:
                     x_token = profiles[profile_id].get('xtoken')
                     if x_token:
                         real_challenges = await fetch_real_challenges(x_token, profile_id)
-                        challenges_map = {ch['id']: ch['title'] for ch in real_challenges}
-                        print(f"✅ Mapping {len(challenges_map)} challenge titles for strategies")
+                        challenges_map = {str(ch['id']): ch['title'] for ch in real_challenges}
+                        logger.info(f"✅ Mapping {len(challenges_map)} challenge titles")
             except Exception as e:
-                print(f"⚠️ Could not fetch challenge titles: {e}")
+                logger.error(f"⚠️ Could not fetch challenge titles: {e}")
         
-        detailed_strategies = []
-        total_jobs = 0
-        
-        # Parcourir les profils et leurs stratégies
-        for current_profile_id, profile_strategies in challenge_strategies_by_profile.items():
+        # 4. Formater les résultats
+        for job in apscheduler_jobs:
             # Filtrer par profil si spécifié
-            if profile_name:
-                profile_id = profile_name.lower()
-                if current_profile_id != profile_id:
-                    continue  # Ignorer les stratégies des autres profils
+            if profile_name and len(job.get('args', [])) > 0:
+                job_profile = job['args'][0] if job['args'] else ''
+                if job_profile != profile_name.lower():
+                    continue
             
-            for challenge_id, strategy_info in profile_strategies.items():
-                strategy_name = strategy_info['strategy_name']
-                
-                # Parser les actions de la stratégie
-                actions = parse_strategy_actions(strategy_name)
-                total_jobs += len(actions)
-                
-                # Récupérer le vrai nom du challenge
-                challenge_title = challenges_map.get(challenge_id, f"Challenge {challenge_id}")
-                
-                # Récupérer les données du challenge pour calculer les heures d'exécution
-                challenge_data = None
-                if profile_name:
-                    profile_id = profile_name.lower()
-                    try:
-                        if profile_id in profiles:
-                            x_token = profiles[profile_id].get('xtoken')
-                            if x_token:
-                                real_challenges = await fetch_real_challenges(x_token, profile_id)
-                                # Chercher le challenge dans la liste
-                                for challenge in real_challenges:
-                                    if str(challenge.get('id')) == str(challenge_id):
-                                        challenge_data = challenge
-                                        print(f"🔍 Found challenge data for {challenge_id}: {challenge.get('title', 'N/A')}")
-                                        break
-                    except Exception as e:
-                        print(f"⚠️ Could not fetch challenge data for {challenge_id}: {e}")
-                
-                # Calculer les heures d'exécution absolues pour chaque action
-                actions_with_execution_times = []
-                for action in actions:
-                    execution_time =  calculate_execution_time(action['timing'], challenge_data) #await parse_timing_spec(challenge_data, action['timing'])#calculate_execution_time(action['timing'], challenge_data)
-                    action_with_time = action.copy()
-                    if execution_time:
-                        action_with_time['execution_time'] = execution_time.strftime('%H:%M:%S')
-                        action_with_time['execution_datetime'] = execution_time.isoformat()
-
-                    actions_with_execution_times.append(action_with_time)
-                
-                detailed_strategies.append({
-                    'challenge_id': challenge_id,
-                    'challenge_title': challenge_title,
-                    'strategy_name': strategy_name,
-                    'status': strategy_info['status'],
-                    'scheduled_at': strategy_info['scheduled_at'],
-                    'actions': actions_with_execution_times
-                })
+            # Récupérer le titre du challenge si possible
+            job_challenge_title = 'Unknown Challenge'
+            if job.get('challenge_id') and challenges_map:
+                job_challenge_title = challenges_map.get(
+                    str(job['challenge_id']), 
+                    f"Challenge {job['challenge_id']}"
+                )
+            
+            detailed_strategies.append({
+                'type': 'scheduled',
+                'source': 'apscheduler',
+                'job_id': job['id'],
+                'name': job['name'],
+                'next_execution': job['next_run'],
+                'exact_execution_time': job['next_run_time_exact'],
+                'execution_date': job['next_run_date'],
+                'trigger': job['trigger'],
+                'status': 'scheduled',
+                'job_type': job.get('job_type', 'unknown'),
+                'challenge_id': job.get('challenge_id'),
+                'challenge_title': job_challenge_title,
+                'strategy_name': job.get('strategy_name'),
+                'profile_id': job.get('profile_id')
+            })
+        
+        for strategy in extended_strategies:
+            # Filtrer par profil si spécifié
+            if profile_name and strategy['profile_id'] != profile_name.lower():
+                continue
+            
+            challenge_title = challenges_map.get(
+                str(strategy['challenge_id']), 
+                f"Challenge {strategy['challenge_id']}"
+            )
+            
+            detailed_strategies.append({
+                'type': 'extended',
+                'source': 'extended_executor',
+                'execution_id': strategy['execution_id'],
+                'challenge_id': strategy['challenge_id'],
+                'challenge_title': challenge_title,
+                'strategy_name': strategy['strategy_name'],
+                'profile_id': strategy['profile_id'],
+                'started_at': strategy['started_at'],
+                'status': strategy['status'],
+                'actions_count': len(strategy.get('actions', [])),
+                'actions': strategy.get('actions', [])
+            })
         
         return {
             "strategies": detailed_strategies,
             "total_count": len(detailed_strategies),
-            "total_jobs": total_jobs
+            "total_jobs": total_jobs,
+            "apscheduler_jobs": len(apscheduler_jobs),
+            "extended_strategies": len(extended_strategies),
+            "source": "apscheduler_real_time"
         }
         
     except Exception as e:
         print(f"❌ Error getting active strategies: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/scheduler/status")
+async def get_scheduler_status():
+    """Retourne le statut et les métriques de précision d'APScheduler"""
+    try:
+        if not STRATEGY_SCHEDULER_AVAILABLE:
+            return {
+                "running": False,
+                "error": "StrategyScheduler service not available"
+            }
+        
+        from app.services.strategy_scheduler import strategy_scheduler
+        
+        if not strategy_scheduler._running:
+            return {
+                "running": False,
+                "scheduler_state": "stopped"
+            }
+        
+        # Récupérer les jobs actifs avec leurs timing
+        jobs = strategy_scheduler.scheduler.get_jobs()
+        job_details = []
+        
+        for job in jobs:
+            next_run = job.next_run_time
+            now = datetime.now()
+            
+            if next_run:
+                time_until_run = (next_run - now).total_seconds()
+                job_info = {
+                    "id": job.id,
+                    "name": job.name,
+                    "next_run": next_run.isoformat(),
+                    "next_run_exact_time": next_run.strftime('%H:%M:%S'),
+                    "seconds_until_run": round(time_until_run, 1),
+                    "trigger_type": str(job.trigger),
+                    "misfire_grace_time": getattr(job, 'misfire_grace_time', 'default'),
+                    "coalesce": getattr(job, 'coalesce', 'default'),
+                    "max_instances": getattr(job, 'max_instances', 'default')
+                }
+                job_details.append(job_info)
+        
+        return {
+            "running": True,
+            "scheduler_state": "active",
+            "total_jobs": len(jobs),
+            "active_jobs": job_details,
+            "scheduler_config": {
+                "timezone": str(strategy_scheduler.scheduler.timezone),
+                "jobstore_type": "MemoryJobStore",
+                "executor_type": "AsyncIOExecutor"
+            },
+            "precision_monitoring": True,
+            "current_time": datetime.now().isoformat(),
+            "current_time_exact": datetime.now().strftime('%H:%M:%S.%f')
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error getting scheduler status: {e}")
+        return {
+            "running": False,
+            "error": str(e)
+        }
+
+@app.post("/api/v1/scheduler/cleanup")
+async def cleanup_scheduler_jobs():
+    """Nettoie les jobs expirés d'APScheduler"""
+    try:
+        if not STRATEGY_SCHEDULER_AVAILABLE:
+            return {
+                "success": False,
+                "error": "StrategyScheduler service not available"
+            }
+        
+        from app.services.strategy_scheduler import strategy_scheduler
+        
+        if not strategy_scheduler._running:
+            return {
+                "success": False,
+                "error": "Scheduler is not running"
+            }
+        
+        # Appeler la méthode de nettoyage
+        cleanup_result = strategy_scheduler.cleanup_expired_jobs()
+        
+        logger.info(f"🧹 Manual cleanup completed: {cleanup_result.get('cleaned_count', 0)} jobs removed")
+        
+        return cleanup_result
+        
+    except Exception as e:
+        logger.error(f"❌ Error during manual cleanup: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "cleaned_count": 0
+        }
+
+@app.get("/api/v1/scheduler/detailed-status")
+async def get_detailed_scheduler_status():
+    """Retourne le statut détaillé avec compteurs de jobs actifs/expirés"""
+    try:
+        if not STRATEGY_SCHEDULER_AVAILABLE:
+            return {
+                "success": False,
+                "error": "StrategyScheduler service not available"
+            }
+        
+        from app.services.strategy_scheduler import strategy_scheduler
+        
+        if not strategy_scheduler._running:
+            return {
+                "success": False,
+                "error": "Scheduler is not running"
+            }
+        
+        # Appeler la méthode de statut détaillé
+        status_result = strategy_scheduler.get_scheduler_status()
+        
+        return {
+            "success": True,
+            **status_result
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error getting detailed scheduler status: {e}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 @app.get("/api/v1/profiles")
 async def get_profiles():
@@ -2529,18 +2733,20 @@ async def startup_event():
             logger.error(f"❌ Failed to initialize GuruShots API service: {e}")
             logger.warning("⚠️ Falling back to simulated voting")
     
-    # Initialiser notre propre système d'exécution de stratégies
+    # Initialiser le service StrategyScheduler (instance unique)
     try:
-        from apscheduler.schedulers.asyncio import AsyncIOScheduler
-        strategy_scheduler = AsyncIOScheduler()
-        strategy_scheduler.start()
-        
-        # Programmer les stratégies existantes
-        logger.info("🔄 Starting strategy scheduling from .ini...")
-        await schedule_strategies_from_ini()
-        logger.info("✅ Custom Strategy Scheduler initialized with challenge titles support")
+        if STRATEGY_SCHEDULER_AVAILABLE:
+            from app.services.strategy_scheduler import strategy_scheduler
+            await strategy_scheduler.start()
+            
+            # Programmer les stratégies existantes
+            logger.info("🔄 Starting strategy scheduling from .ini...")
+            await schedule_strategies_from_ini()
+            logger.info("✅ StrategyScheduler service initialized")
+        else:
+            logger.warning("⚠️ StrategyScheduler service not available")
     except Exception as e:
-        logger.error(f"❌ Failed to initialize Custom Strategy Scheduler: {e}")
+        logger.error(f"❌ Failed to initialize StrategyScheduler service: {e}")
         logger.warning("⚠️ Strategies will be stored but not automatically executed")
 
 if __name__ == "__main__":

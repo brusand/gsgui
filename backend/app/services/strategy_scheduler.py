@@ -26,37 +26,113 @@ class StrategyScheduler:
     """
     
     def __init__(self):
-        # Configuration APScheduler
+        # Configuration APScheduler optimisée pour la précision
         jobstores = {
             'default': MemoryJobStore()
         }
         executors = {
-            'default': AsyncIOExecutor()
+            'default': AsyncIOExecutor()  # AsyncIOExecutor ne prend pas max_workers
         }
         job_defaults = {
-            'coalesce': False,
-            'max_instances': 3
+            'coalesce': True,      # Fusionner les jobs en retard
+            'max_instances': 1,    # Une seule instance par job pour éviter doublons
+            'misfire_grace_time': 5  # Tolérance de 5s pour les jobs en retard
         }
         
         self.scheduler = AsyncIOScheduler(
             jobstores=jobstores,
             executors=executors,
             job_defaults=job_defaults,
-            timezone='UTC'
+            timezone='UTC'  # UTC pour éviter problèmes timezone
+        )
+        
+        # Configuration précision
+        self.scheduler.configure(
+            job_defaults={
+                'coalesce': True,
+                'max_instances': 1,
+                'misfire_grace_time': 5
+            }
         )
         
         self._running = False
         logger.info("📅 StrategyScheduler initialized")
     
     async def start(self):
-        """Démarre le scheduler"""
+        """Démarre le scheduler avec optimisations de précision"""
         if not self._running:
             self.scheduler.start()
             self._running = True
-            logger.info("🚀 StrategyScheduler started")
+            
+            # Log de la précision
+            import time
+            start_time = time.time()
+            logger.info(f"🚀 StrategyScheduler started at {datetime.now().isoformat()}")
+            logger.info(f"⏱️ Scheduler precision: misfire_grace_time=5s, coalesce=True")
+            
+            # Ajouter un job de test de précision toutes les minutes
+            self.scheduler.add_job(
+                func=self._precision_test_job,
+                trigger='interval',
+                minutes=1,
+                id='precision_test',
+                name='Precision Test Job',
+                replace_existing=True
+            )
+            
+            # Ajouter un job de nettoyage des jobs expirés toutes les 30 minutes
+            self.scheduler.add_job(
+                func=self._cleanup_expired_jobs,
+                trigger='interval',
+                minutes=30,
+                id='cleanup_expired_jobs',
+                name='Cleanup Expired Jobs',
+                replace_existing=True
+            )
             
             # Restaurer les stratégies programmées au démarrage
             await self._restore_scheduled_strategies()
+    
+    def _precision_test_job(self):
+        """Job de test de précision - log l'heure exacte d'exécution"""
+        actual_time = datetime.now()
+        expected_time = actual_time.replace(second=0, microsecond=0)
+        delay = (actual_time - expected_time).total_seconds()
+        
+        if delay > 2:  # Plus de 2s de retard
+            logger.warning(f"⚠️ APScheduler delay detected: {delay:.2f}s at {actual_time.strftime('%H:%M:%S.%f')}")
+        else:
+            logger.debug(f"✅ APScheduler precision OK: {delay:.2f}s delay at {actual_time.strftime('%H:%M:%S.%f')}")
+    
+    def _cleanup_expired_jobs(self):
+        """Nettoie les jobs expirés d'APScheduler"""
+        try:
+            from datetime import timezone
+            now = datetime.now(timezone.utc)  # UTC pour correspondre à APScheduler
+            jobs = self.scheduler.get_jobs()
+            cleaned_count = 0
+            
+            for job in jobs:
+                # Ne pas supprimer les jobs système (precision test, cleanup)
+                if job.id in ['precision_test', 'cleanup_expired_jobs']:
+                    continue
+                
+                # Supprimer les jobs programmés dans le passé (mais pas exécutés à cause d'un redémarrage)
+                if job.next_run_time and job.next_run_time < now - timedelta(hours=1):
+                    try:
+                        self.scheduler.remove_job(job.id)
+                        cleaned_count += 1
+                        logger.debug(f"🧹 Cleaned expired job: {job.id} (was scheduled for {job.next_run_time})")
+                    except Exception as e:
+                        logger.error(f"Error cleaning job {job.id}: {e}")
+            
+            if cleaned_count > 0:
+                logger.info(f"🧹 Cleaned {cleaned_count} expired jobs from APScheduler")
+            else:
+                logger.debug("🧹 No expired jobs to clean")
+                
+        except Exception as e:
+            logger.error(f"Error during job cleanup: {e}")
     
     async def stop(self):
         """Arrête le scheduler"""
@@ -148,7 +224,11 @@ class StrategyScheduler:
                 args=[profile_id, strategy_id, challenge_id, strategy_name],
                 id=job_id,
                 name=f"Strategy {strategy_name} for {challenge_id}",
-                replace_existing=True
+                replace_existing=True,
+                # Optimisations précision
+                coalesce=True,
+                max_instances=1,
+                misfire_grace_time=5
             )
             
             logger.info(f"✅ Scheduled job {job_id} for {scheduled_at}")
@@ -388,6 +468,100 @@ class StrategyScheduler:
         except Exception as e:
             logger.error(f"Error in swap strategy: {e}")
             return {'success': False, 'votes_cast': 0, 'error': str(e)}
+    
+    def cleanup_expired_jobs(self) -> Dict[str, Any]:
+        """
+        Nettoie manuellement les jobs expirés - méthode publique pour l'API
+        """
+        try:
+            from datetime import timezone
+            now = datetime.now(timezone.utc)  # UTC pour correspondre à APScheduler
+            jobs = self.scheduler.get_jobs()
+            cleaned_jobs = []
+            
+            for job in jobs:
+                # Ne pas supprimer les jobs système
+                if job.id in ['precision_test', 'cleanup_expired_jobs']:
+                    continue
+                
+                # Supprimer les jobs expirés (plus d'1h dans le passé)
+                if job.next_run_time and job.next_run_time < now - timedelta(hours=1):
+                    try:
+                        self.scheduler.remove_job(job.id)
+                        cleaned_jobs.append({
+                            'job_id': job.id,
+                            'name': job.name,
+                            'next_run_time': job.next_run_time.isoformat(),
+                            'expired_hours': (now - job.next_run_time).total_seconds() / 3600
+                        })
+                        logger.info(f"🧹 Manually cleaned expired job: {job.id}")
+                    except Exception as e:
+                        logger.error(f"Error manually cleaning job {job.id}: {e}")
+            
+            return {
+                'success': True,
+                'cleaned_count': len(cleaned_jobs),
+                'cleaned_jobs': cleaned_jobs,
+                'remaining_jobs': len(self.scheduler.get_jobs()),
+                'cleanup_timestamp': now.isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error during manual job cleanup: {e}")
+            return {
+                'success': False,
+                'error': str(e),
+                'cleaned_count': 0
+            }
+    
+    def get_scheduler_status(self) -> Dict[str, Any]:
+        """
+        Retourne le statut du scheduler avec compteurs de jobs
+        """
+        try:
+            from datetime import timezone
+            jobs = self.scheduler.get_jobs()
+            now = datetime.now(timezone.utc)  # UTC pour correspondre à APScheduler
+            
+            active_jobs = []
+            expired_jobs = []
+            system_jobs = []
+            
+            for job in jobs:
+                job_info = {
+                    'id': job.id,
+                    'name': job.name,
+                    'next_run_time': job.next_run_time.isoformat() if job.next_run_time else None,
+                    'trigger': str(job.trigger)
+                }
+                
+                if job.id in ['precision_test', 'cleanup_expired_jobs']:
+                    system_jobs.append(job_info)
+                elif job.next_run_time and job.next_run_time < now - timedelta(hours=1):
+                    expired_jobs.append(job_info)
+                else:
+                    active_jobs.append(job_info)
+            
+            return {
+                'scheduler_running': self._running,
+                'total_jobs': len(jobs),
+                'active_jobs': len(active_jobs),
+                'expired_jobs': len(expired_jobs),
+                'system_jobs': len(system_jobs),
+                'jobs': {
+                    'active': active_jobs,
+                    'expired': expired_jobs,
+                    'system': system_jobs
+                },
+                'status_timestamp': now.isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting scheduler status: {e}")
+            return {
+                'scheduler_running': self._running,
+                'error': str(e)
+            }
 
 
 # Instance globale du scheduler

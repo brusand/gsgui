@@ -1528,8 +1528,12 @@ class EnhancedGSGUI(QMainWindow):
                 
                 # Afficher les stratégies dans la fenêtre de log principale
                 if hasattr(self, 'strategies_data'):
+                    # NETTOYER avant d'afficher (éviter empilement)
+                    self.log_text.clear()
+                    
                     # Récupérer les logs formatés et les afficher dans notre log
                     strategies_text = self.get_formatted_strategies_text(self.strategies_data)
+                    self.log(f"[DEBUG] Strategies text length: {len(strategies_text)}")
                     
                     # Afficher les stratégies dans la fenêtre de log principale
                     for line in strategies_text.split('\n'):
@@ -1724,63 +1728,92 @@ class EnhancedGSGUI(QMainWindow):
         self.log("📋 Chargement des stratégies en cours...")
     
     def get_formatted_strategies_text(self, strategies_data):
-        """Génère le texte formaté des stratégies (même logique que StrategiesDialog)"""
+        """Génère le texte formaté des stratégies avec heures exactes APScheduler"""
+        print(f"[DEBUG] get_formatted_strategies_text called with {len(strategies_data.get('strategies', []))} strategies")
         try:
             output = []
             timestamp = datetime.now().strftime("%H:%M:%S")
             
-            output.append("=== STRATÉGIES EN COURS ===")
+            output.append("=== STRATÉGIES EN COURS (HEURES EXACTES APScheduler) ===")
             
             strategies = strategies_data.get('strategies', [])
             total_jobs = strategies_data.get('total_jobs', 0)
+            apscheduler_jobs = strategies_data.get('apscheduler_jobs', 0)
+            extended_strategies = strategies_data.get('extended_strategies', 0)
+            source = strategies_data.get('source', 'unknown')
+            
+            # Afficher les informations de source
+            output.append(f"[{timestamp}] [bruno] 🔍 Source: {source}")
+            output.append(f"[{timestamp}] [bruno] 📊 APScheduler Jobs: {apscheduler_jobs}")
+            output.append(f"[{timestamp}] [bruno] 📊 Extended Strategies: {extended_strategies}")
+            output.append("")
             
             if not strategies:
                 output.append(f"[{timestamp}] [bruno] Aucune stratégie en cours")
             else:
-                # Grouper par challenge
+                # Traiter les différents types de stratégies
                 for strategy in strategies:
-                    challenge_id = strategy['challenge_id']
-                    strategy_name = strategy['strategy_name']
-                    actions = strategy.get('actions', [])
+                    strategy_type = strategy.get('type', 'unknown')
+                    strategy_source = strategy.get('source', 'unknown')
                     
-                    # Nom du challenge (enrichi depuis l'API)
-                    challenge_title = strategy.get('challenge_title', f"Challenge {challenge_id}")
+                    if strategy_type == 'scheduled' and strategy_source == 'apscheduler':
+                        # Job APScheduler avec heure exacte
+                        job_id = strategy.get('job_id', 'unknown')
+                        exact_time = strategy.get('exact_execution_time', 'Unknown')
+                        execution_date = strategy.get('execution_date', 'Unknown')
+                        challenge_title = strategy.get('challenge_title', 'Unknown Challenge')
+                        strategy_name = strategy.get('strategy_name', 'Unknown')
+                        
+                        output.append(f"[{timestamp}] [bruno] 🎯 {challenge_title}:")
+                        output.append(f"[{timestamp}] [bruno]    ⏰ {exact_time} ({execution_date}) - {strategy_name} (APScheduler: {job_id})")
                     
-                    output.append(f"[{timestamp}] [bruno] 🎯 {challenge_title}:")
-                    
-                    if not actions:
-                        output.append(f"[{timestamp}] [bruno]    ⚠️ Aucune action définie")
-                    else:
+                    elif strategy_type == 'extended' and strategy_source == 'extended_executor':
+                        # Stratégie Extended active
+                        challenge_id = strategy.get('challenge_id', 'unknown')
+                        challenge_title = strategy.get('challenge_title', f"Challenge {challenge_id}")
+                        strategy_name = strategy.get('strategy_name', 'Unknown')
+                        actions = strategy.get('actions', [])
+                        execution_id = strategy.get('execution_id', 'unknown')
+                        
+                        output.append(f"[{timestamp}] [bruno] 🎯 {challenge_title}:")
+                        output.append(f"[{timestamp}] [bruno]    🔄 Extended Strategy: {strategy_name} (ID: {execution_id})")
+                        
                         for action in actions:
-                            timing = action.get('timing', '')
-                            votes = action.get('votes', 0)
+                            scheduled_time = action.get('scheduled_time', '')
+                            action_type = action.get('action', 'unknown')
+                            parameters = action.get('parameters', [])
+                            executed = action.get('executed', False)
                             
-                            # Utiliser l'heure d'exécution calculée par le backend si disponible
-                            execution_time = action.get('execution_time')
-                            if execution_time:
-                                formatted_time = execution_time  # Utiliser l'heure calculée par le backend
-                            else:
-                                # Fallback à l'ancien système si pas d'heure calculée
-                                formatted_time = self.format_timing_simple(timing)
+                            # Format de l'heure depuis scheduled_time ISO
+                            try:
+                                if scheduled_time:
+                                    dt = datetime.fromisoformat(scheduled_time.replace('Z', '+00:00'))
+                                    exact_time = dt.strftime('%H:%M:%S')
+                                    exact_date = dt.strftime('%Y-%m-%d')
+                                else:
+                                    exact_time = 'Unknown'
+                                    exact_date = 'Unknown'
+                            except Exception as e:
+                                exact_time = 'Parse Error'
+                                exact_date = 'Parse Error'
                             
-                            output.append(f"[{timestamp}] [bruno]    ⏰ {formatted_time} - Vote {votes} pour {challenge_title}")
+                            status_icon = '✅' if executed else '⏰'
+                            param_text = ', '.join(str(p) for p in parameters) if parameters else ''
+                            
+                            output.append(f"[{timestamp}] [bruno]       {status_icon} {exact_time} ({exact_date}) - {action_type} {param_text}")
+                    else:
+                        # Format générique pour les autres types
+                        output.append(f"[{timestamp}] [bruno] 🔄 {strategy_type}: {strategy}")
             
-            # Résumé
+            # Résumé final
             output.append("")
-            output.append(f"[{timestamp}] [bruno] 📊 Total: {total_jobs} job(s) programmé(s)")
-            output.append("")
-            output.append(f"[{timestamp}] [bruno] 💾 Stratégies persistantes:")
-            
-            for strategy in strategies:
-                challenge_id = strategy['challenge_id']
-                strategy_name = strategy['strategy_name']
-                challenge_title = strategy.get('challenge_title', f"Challenge {challenge_id}")
-                output.append(f"[{timestamp}] [bruno]    📝 {challenge_title}: {strategy_name}")
+            output.append(f"[{timestamp}] [bruno] 📊 Total: {total_jobs} job(s) programmé(s) avec heures EXACTES")
+            output.append(f"[{timestamp}] [bruno] ✅ Toutes les heures sont directement issues d'APScheduler")
             
             return '\n'.join(output)
             
         except Exception as e:
-            return f"❌ Erreur formatage stratégies: {e}"
+            return f"❌ Erreur formatage stratégies APScheduler: {e}"
     
     def format_timing_simple(self, timing):
         """Formate le timing end-4m0s -> 00:04:00 (version simplifiée)"""

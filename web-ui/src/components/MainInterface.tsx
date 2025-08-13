@@ -276,7 +276,22 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
             wsService.emitLocalLog(`   ⚠️ Aucune action programmée pour ${strategyName}`, 'warning');
           } else {
             actions.forEach((action: any) => {
-              const timing = action.execution_time || action.timing || 'Heure inconnue';
+              // Utiliser scheduled_time de l'API et le formater en heure locale
+              let timing = 'Heure inconnue';
+              if (action.scheduled_time) {
+                try {
+                  const dt = new Date(action.scheduled_time);
+                  timing = dt.toLocaleTimeString('fr-FR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                  });
+                } catch (e) {
+                  timing = action.execution_time || action.timing || 'Heure inconnue';
+                }
+              } else {
+                timing = action.execution_time || action.timing || 'Heure inconnue';
+              }
               
               // Affichage selon le type d'action
               let actionDescription = '';
@@ -293,8 +308,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
                 const param = action.parameter || 'image';
                 actionDescription = `Submit ${param}`;
               } else if (action.action === 'swap') {
-                const param = action.parameter || 'images';
-                actionDescription = `Swap ${param}`;
+                actionDescription = `Swap images`;
               } else {
                 actionDescription = `${action.action} (${action.parameter || ''})`;
               }

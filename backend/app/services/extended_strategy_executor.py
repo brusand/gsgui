@@ -9,6 +9,8 @@ import asyncio
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Any
+from xmlrpc.client import boolean
+
 from configobj import ConfigObj
 
 from app.services.gurushots_api import GuruShotsAPI
@@ -114,7 +116,7 @@ class ExtendedStrategyExecutor:
                     logger.error(f"❌ Immediate action {action['action']} failed: {e}")
                     now_results.append({'success': False, 'error': str(e)})
         
-        # Handle FUTURE actions if any
+        # Handle FUTURE actions if any - utiliser APScheduler
         execution_id = f"{strategy_name}_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         if future_actions:
             self.active_executions[execution_id] = {
@@ -129,9 +131,9 @@ class ExtendedStrategyExecutor:
                 'api_client': api_client
             }
             
-            # Start execution task for future actions
-            asyncio.create_task(self._execute_strategy_loop(execution_id))
-            logger.info(f"📅 Scheduled {len(future_actions)} future actions for strategy '{strategy_name}'")
+            # Programmer chaque action future via APScheduler
+            await self._schedule_future_actions_with_apscheduler(execution_id, future_actions)
+            logger.info(f"📅 Scheduled {len(future_actions)} future actions via APScheduler for strategy '{strategy_name}'")
         
         logger.info(f"🎯 Strategy '{strategy_name}' started: {len(now_actions)} immediate + {len(future_actions)} scheduled actions")
         
@@ -173,7 +175,10 @@ class ExtendedStrategyExecutor:
             
             elif action_type == 'turbo':
                 result = await self._execute_turbo_action(api_client, int(challenge_id), challenge_url, params)
-            
+
+            elif action_type == 'unlocked_boost':
+                result = await self._execute_unlocked_boost_action(api_client, int(challenge_id), challenge_url, params, profile_id)
+
             else:
                 result = {'success': False, 'error': f'Unknown action: {action_type}'}
             
@@ -293,12 +298,160 @@ class ExtendedStrategyExecutor:
         logger.warning(f"Could not parse timing: {timing}")
         return None
     
-    async def _execute_strategy_loop(self, execution_id: str):
-        """Main execution loop for a strategy"""
+    async def _schedule_future_actions_with_apscheduler(self, execution_id: str, future_actions: List[Dict]):
+        """Programme les actions futures via APScheduler au lieu d'asyncio"""
+        try:
+            # Importer APScheduler
+            from app.services.strategy_scheduler import strategy_scheduler
+            
+            if not strategy_scheduler._running:
+                logger.error("❌ APScheduler not running, cannot schedule future actions")
+                return
+            
+            # Programmer chaque action individuellement
+            for i, action in enumerate(future_actions):
+                job_id = f"extended_{execution_id}_action_{i}_{action['action']}"
+                
+                # Ajouter le job à APScheduler avec optimisations précision
+                strategy_scheduler.scheduler.add_job(
+                    func=self._execute_scheduled_action,
+                    trigger='date',
+                    run_date=action['scheduled_time'],
+                    args=[execution_id, i],
+                    id=job_id,
+                    name=f"Extended {action['action']} for {execution_id}",
+                    replace_existing=True,
+                    # Optimisations précision critiques
+                    coalesce=True,         # Fusionner si en retard
+                    max_instances=1,       # Une seule instance
+                    misfire_grace_time=3   # 3s de tolérance pour actions critiques
+                )
+                
+                logger.info(f"📅 Scheduled action {action['action']} at {action['scheduled_time']} (job: {job_id})")
+            
+            logger.info(f"✅ All {len(future_actions)} actions scheduled via APScheduler")
+            
+        except Exception as e:
+            logger.error(f"❌ Error scheduling actions via APScheduler: {e}")
+            # Fallback sur l'ancienne méthode
+            asyncio.create_task(self._execute_strategy_loop_fallback(execution_id))
+    
+    async def _execute_scheduled_action(self, execution_id: str, action_index: int):
+        """Exécute une action programmée via APScheduler avec monitoring de précision"""
+        execution_start_time = datetime.now()
+        
+        try:
+            if execution_id not in self.active_executions:
+                logger.warning(f"⚠️ Execution {execution_id} not found for scheduled action {action_index}")
+                return
+            
+            context = self.active_executions[execution_id]
+            if context['status'] != 'active':
+                logger.info(f"⏹️ Execution {execution_id} no longer active, skipping action {action_index}")
+                return
+            
+            actions = context['actions']
+            if action_index >= len(actions):
+                logger.error(f"❌ Action index {action_index} out of range for {execution_id}")
+                return
+            
+            action = actions[action_index]
+            
+            # Vérifier la précision d'exécution
+            expected_time = action.get('scheduled_time')
+            if expected_time:
+                delay = (execution_start_time - expected_time).total_seconds()
+                if abs(delay) > 2:  # Plus de 2 secondes d'écart
+                    logger.warning(f"⚠️ APScheduler precision issue: {delay:.2f}s delay for {action['action']} (expected: {expected_time.strftime('%H:%M:%S')}, actual: {execution_start_time.strftime('%H:%M:%S')})")
+                else:
+                    logger.info(f"✅ APScheduler precision OK: {delay:.2f}s delay for {action['action']}")
+            
+            # Marquer comme étant en cours d'exécution
+            action['executing'] = True
+            action['actual_execution_time'] = execution_start_time.isoformat()
+            
+            logger.info(f"🚀 Executing scheduled action {action['action']} for {execution_id} at {execution_start_time.strftime('%H:%M:%S.%f')}")
+            
+            # Exécuter l'action
+            result = await self._execute_action(execution_id, action)
+            action['executed'] = True
+            action['result'] = result
+            action['executing'] = False
+            action['execution_duration'] = (datetime.now() - execution_start_time).total_seconds()
+            
+            logger.info(f"✅ Action {action['action']} completed in {action['execution_duration']:.2f}s")
+            
+            # Notifier la completion
+            await self._notify_action_result(execution_id, action, result)
+            
+            # Vérifier si toutes les actions sont terminées
+            await self._check_strategy_completion(execution_id)
+            
+        except Exception as e:
+            logger.error(f"❌ Error executing scheduled action {action_index} for {execution_id}: {e}")
+            # Marquer l'action comme échouée
+            if execution_id in self.active_executions:
+                context = self.active_executions[execution_id]
+                if action_index < len(context['actions']):
+                    context['actions'][action_index]['result'] = {'success': False, 'error': str(e)}
+                    context['actions'][action_index]['executed'] = True
+                    context['actions'][action_index]['executing'] = False
+    
+    async def _check_strategy_completion(self, execution_id: str):
+        """Vérifie si toutes les actions d'une stratégie sont terminées"""
+        try:
+            if execution_id not in self.active_executions:
+                return
+            
+            context = self.active_executions[execution_id]
+            actions = context['actions']
+            
+            # Vérifier si toutes les actions sont exécutées
+            all_executed = all(action.get('executed', False) for action in actions)
+            
+            if all_executed:
+                # Marquer la stratégie comme terminée
+                context['status'] = 'completed'
+                logger.info(f"✅ Strategy {execution_id} completed - all actions executed")
+                
+                # Cleanup de la stratégie
+                await self._cleanup_completed_strategy(context['challenge_id'], context['profile_id'])
+                
+                # Programmer la suppression de l'exécution après 5 minutes
+                from app.services.strategy_scheduler import strategy_scheduler
+                cleanup_job_id = f"cleanup_{execution_id}"
+                strategy_scheduler.scheduler.add_job(
+                    func=self._cleanup_execution_context,
+                    trigger='date',
+                    run_date=datetime.now() + timedelta(minutes=5),
+                    args=[execution_id],
+                    id=cleanup_job_id,
+                    name=f"Cleanup {execution_id}",
+                    replace_existing=True,
+                    coalesce=True,
+                    max_instances=1,
+                    misfire_grace_time=30  # Cleanup moins critique
+                )
+                logger.info(f"📅 Scheduled cleanup for {execution_id} in 5 minutes")
+            
+        except Exception as e:
+            logger.error(f"❌ Error checking strategy completion: {e}")
+    
+    def _cleanup_execution_context(self, execution_id: str):
+        """Nettoie le contexte d'exécution (appelé par APScheduler)"""
+        try:
+            if execution_id in self.active_executions:
+                del self.active_executions[execution_id]
+                logger.info(f"🧹 Cleaned up execution context for {execution_id}")
+        except Exception as e:
+            logger.error(f"❌ Error cleaning up execution context {execution_id}: {e}")
+    
+    async def _execute_strategy_loop_fallback(self, execution_id: str):
+        """Fallback execution loop si APScheduler échoue"""
         context = self.active_executions[execution_id]
         actions = context['actions']
         
-        logger.info(f"🔄 Strategy execution started for {execution_id}")
+        logger.info(f"🔄 Strategy execution started (fallback) for {execution_id}")
         
         try:
             for action in actions:
@@ -331,13 +484,13 @@ class ExtendedStrategyExecutor:
             
             # Mark as completed
             context['status'] = 'completed'
-            logger.info(f"✅ Strategy {execution_id} completed")
+            logger.info(f"✅ Strategy {execution_id} completed (fallback)")
             
             # Cleanup de la stratégie dans gsgui.ini après exécution complète
             await self._cleanup_completed_strategy(context['challenge_id'], context['profile_id'])
             
         except Exception as e:
-            logger.error(f"Strategy execution failed: {str(e)}")
+            logger.error(f"Strategy execution failed (fallback): {str(e)}")
             context['status'] = 'failed'
         
         finally:
@@ -425,7 +578,9 @@ class ExtendedStrategyExecutor:
             
             elif action_type == 'turbo':
                 result = await self._execute_turbo_action(api_client, challenge_id, challenge_url, params)
-            
+
+            elif action_type == 'unlocked_boost':
+                result = await self._execute_unlocked_boost_action(api_client, challenge_id, challenge_url, params, profile_id)
             else:
                 result = {'success': False, 'error': f'Unknown action: {action_type}'}
             
@@ -667,7 +822,81 @@ class ExtendedStrategyExecutor:
         except Exception as e:
             logger.error(f"❌ Exception during turbo unlock: {str(e)}")
             return {'success': False, 'error': str(e)}
-    
+
+    async def _execute_unlocked_boost_action(self, api_client: GuruShotsAPI, challenge_id: int, challenge_url: str,
+                                    params: List[str], profile_id: str) -> Dict:
+        """Execute unlocked action - fetch FRESH photo list at execution time for accurate targeting"""
+        try:
+            logger.info(f"🚀 Starting unlocked action for challenge {challenge_id}")
+
+            # Check if a photo index is specified for targeting
+            target_photo_id = None
+            if params and params[0].strip():
+                param = params[0].strip()
+
+                # Handle index notation
+                if param.startswith('[') and param.endswith(']'):
+                    index_str = param[1:-1]
+                else:
+                    index_str = param
+
+                if index_str.isdigit():
+                    index = int(index_str)
+                    logger.info(f"🎯 Resolving photo index [{index}] by fetching FRESH challenge data")
+
+                    # GET FRESH CHALLENGE DATA at execution time
+                    target_photo_id = await self._get_current_user_photo_by_index(api_client, challenge_id, index)
+                    if target_photo_id:
+                        logger.info(f"✅ Turbo will target photo {target_photo_id} (index [{index}] from fresh data)")
+                    else:
+                        logger.error(f"❌ Could not resolve photo index [{index}] from current challenge data")
+                        return {'success': False, 'error': f'Could not resolve photo index {index}'}
+                else:
+                    target_photo_id = param
+                    logger.info(f"🎯 Turbo will target specific photo: {target_photo_id}")
+
+            if not target_photo_id:
+                logger.error("❌ No target photo specified for turbo action")
+                return {'success': False, 'error': 'No target photo specified'}
+
+            # Use set_turbo method (unlock turbo)
+            logger.info(f"🚀 Calling set_turbo(challenge_id={challenge_id}, photo_id={target_photo_id})")
+
+            available = await self._get_challenge_boost_unlocked(api_client, challenge_id)
+            if available == True:
+                result = await self._execute_boost_action(api_client, challenge_id, challenge_url,params)
+                if result.get('success', True):
+                    logger.info(f"🚀 Successfully unlocked turbo for challenge {challenge_id}")
+                    vote_result = await api_client.execute_simple_vote(challenge_url, 100)
+                    if vote_result.get('success', True):
+                        return {
+                            'success': True,
+                            'message': f'Unlocked turbo for challenge {challenge_id} boosted and vote',
+                            'challenge_id': challenge_id,
+                            'target_photo_id': target_photo_id,
+                            'note': 'Turbo unlocked - specific photo targeting may require additional implementation'
+                        }
+                    else:
+                        error_msg = result.get('error', 'Turbo unlock failed')
+                        logger.error(f"❌ Boost, votes failed: {error_msg}")
+                        return {'success': False, 'error': error_msg}
+                else:
+                    error_msg = result.get('error', 'Turbo unlock failed')
+                    logger.error(f"❌ Turbo unlock failed: {error_msg}")
+                    return {'success': False, 'error': error_msg}
+            else:
+                #reschedule nest-15m
+                execution_id = await self.execute_extended_strategy(profile_id, str(challenge_id), str(challenge_url), 'unlocked_boost')
+                return {
+                    "success": True,
+                    "execution_id": execution_id,
+                    "message": f"Started extended strategy unlocked_boost"
+                }
+
+        except Exception as e:
+            logger.error(f"❌ Exception during turbo unlock: {str(e)}")
+            return {'success': False, 'error': str(e)}
+
     async def _resolve_photo_by_index(self, api_client: GuruShotsAPI, challenge_id: int, index: int) -> Optional[str]:
         """Resolve photo ID by index (0=most votes, 1=second most, etc.)"""
         try:
@@ -1038,8 +1267,50 @@ class ExtendedStrategyExecutor:
             logger.error(f"❌ Error getting challenge end time via API: {e}")
             # Fallback to 24 hours from now if we can't get the real end time
             return datetime.now() + timedelta(hours=24)
-    
-    async def _get_user_photos_sorted_by_votes(self, api_client: GuruShotsAPI, 
+
+    async def _get_challenge_boost_unlocked(self, api_client: GuruShotsAPI, challenge_id: int) -> boolean:
+        """Get challenge end time using direct get_my_active_challenges API call"""
+        try:
+            import aiohttp
+
+            logger.info(f"🔍 Getting challenge end time for challenge {challenge_id} via direct API call")
+
+            # Direct API call to get_my_active_challenges (like frontend does)
+            async with aiohttp.ClientSession(
+                    headers=api_client.headers,
+                    connector=aiohttp.TCPConnector(ssl=False)
+            ) as session:
+                async with session.post(f'{api_client.base_url}/get_my_active_challenges') as response:
+                    if response.status != 200:
+                        logger.error(f"❌ API Error: Status {response.status}")
+                        return False
+
+                    data = await response.json()
+
+                    # Find the specific challenge we're looking for
+                    for challenge_data in data.get('challenges', []):
+                        if str(challenge_data.get('id')) == str(challenge_id):
+                            # Get end_time from the challenge data
+                            # not MISSED
+
+                            boosted = challenge_data['member']['boost']['state']
+
+                            if boosted == 'AVAILABLE': # and  challenge_data['member']['boost']['timeout'] < '1H':
+                                logger.info(f"✅ Boost Unlocked For challenge {challenge_id} ")
+                                return True
+                            else:
+                                logger.info(f"✅ Boost locked For challenge {challenge_id} ")
+                                return False
+                    # If not found, fallback to a reasonable default (24 hours from now)
+                    logger.warning(f"⚠️ Challenge {challenge_id} not found in active challenges, using 24h fallback")
+                    return False
+
+        except Exception as e:
+            logger.error(f"❌ Error getting challenge end time via API: {e}")
+            # Fallback to 24 hours from now if we can't get the real end time
+            return datetime.now() + timedelta(hours=24)
+
+    async def _get_user_photos_sorted_by_votes(self, api_client: GuruShotsAPI,
                                              challenge_id: int) -> List[Dict[str, Any]]:
         """Get current user's photos in challenge sorted by votes (most votes first)"""
         try:
