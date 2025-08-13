@@ -630,14 +630,22 @@ class ExtendedStrategyExecutor:
             # Utiliser exactement la même méthode que simple_vote() qui fonctionne
             vote_result = await api_client.execute_simple_vote(challenge_url, vote_count)
             
-            # Convert VoteResult object to dictionary format (comme avant)
-            result = {
-                'success': vote_result.success,
-                'message': vote_result.message,
-                'vote_count': vote_count,
-                'challenge_url': challenge_url,
-                'result_data': getattr(vote_result, 'result_data', None)
-            }
+            # Convert VoteResult dataclass to dictionary format (FIX pour éviter l'erreur .get())
+            if hasattr(vote_result, 'success'):
+                result = {
+                    'success': vote_result.success,
+                    'message': getattr(vote_result, 'message', ''),
+                    'vote_count': vote_count,
+                    'challenge_url': challenge_url,
+                    'result_data': getattr(vote_result, 'result_data', None)
+                }
+            else:
+                # Si c'est déjà un dictionnaire, utiliser tel quel
+                result = vote_result
+                result.update({
+                    'vote_count': vote_count,
+                    'challenge_url': challenge_url
+                })
             
             # Log du résultat avec WebSocket
             if result['success']:
