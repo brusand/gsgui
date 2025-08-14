@@ -907,10 +907,19 @@ class ExtendedStrategyExecutor:
                 # Vérifier si le challenge est encore actif et si tous les boosts ne sont pas déjà utilisés
                 try:
                     active_challenges = await api_client.get_challenges()
-                    challenge_still_active = any(c.id == str(challenge_id) for c in active_challenges)
+                    
+                    # Debug: afficher les IDs des challenges trouvés
+                    challenge_ids = [str(c.id) for c in active_challenges]
+                    logger.info(f"🔍 DEBUG: Searching for challenge {challenge_id} (type: {type(challenge_id)}) in {len(active_challenges)} challenges")
+                    logger.info(f"🔍 DEBUG: Available challenge IDs: {challenge_ids[:10]}{'...' if len(challenge_ids) > 10 else ''}")
+                    
+                    # Comparaison robuste avec conversion en string
+                    target_id = str(challenge_id)
+                    challenge_still_active = any(str(c.id) == target_id for c in active_challenges)
                     
                     if not challenge_still_active:
                         logger.info(f"⏹️ Challenge {challenge_id} is no longer active - stopping unlocked_boost monitoring")
+                        logger.info(f"🔍 DEBUG: Target ID '{target_id}' not found in available IDs: {challenge_ids}")
                         return {
                             'success': True,
                             'message': f'Challenge {challenge_id} ended - stopped unlocked_boost monitoring',

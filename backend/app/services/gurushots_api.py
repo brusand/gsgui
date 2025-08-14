@@ -375,9 +375,9 @@ class GuruShotsAPI:
             try:
                 async with session.post(url, data=payload, headers=self.headers) as response:
                     if response.status == 200:
-                        result = await response.json()
+                        #result = await response.json()
                         logger.info(f"Photo set turbo  successfully in challenge {challenge_id}")
-                        return result
+                        return  {"success": True, "details": await response.text()}
                     else:
                         error_text = await response.text()
                         logger.error(f"Set turbo failed with status {response.status}: {error_text}")

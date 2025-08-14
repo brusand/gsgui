@@ -109,6 +109,21 @@ class StrategyScheduler:
         try:
             from datetime import timezone
             now = datetime.now(timezone.utc)  # UTC pour correspondre à APScheduler
+            
+            def safe_datetime_compare(job_time, reference_time):
+                """Safely compare datetimes, handling timezone issues"""
+                if job_time is None:
+                    return False
+                try:
+                    # Ensure both datetimes have timezone info
+                    if job_time.tzinfo is None:
+                        job_time = job_time.replace(tzinfo=timezone.utc)
+                    if reference_time.tzinfo is None:
+                        reference_time = reference_time.replace(tzinfo=timezone.utc)
+                    return job_time < reference_time
+                except Exception:
+                    return False
+            
             jobs = self.scheduler.get_jobs()
             cleaned_count = 0
             
@@ -123,7 +138,7 @@ class StrategyScheduler:
                     continue
                 
                 # Supprimer les jobs programmés dans le passé (mais pas exécutés à cause d'un redémarrage)
-                if job.next_run_time and job.next_run_time < now - timedelta(hours=1):
+                if safe_datetime_compare(job.next_run_time, now - timedelta(hours=1)):
                     try:
                         self.scheduler.remove_job(job.id)
                         cleaned_count += 1
@@ -170,7 +185,15 @@ class StrategyScheduler:
                             status = strategy_data.get('status', 'pending')
                             
                             # Ne restaurer que les stratégies en attente et futures
-                            if status == 'pending' and scheduled_at > datetime.now():
+                            # Normaliser les datetimes pour éviter les problèmes de timezone
+                            now = datetime.now()
+                            if scheduled_at.tzinfo is not None:
+                                from datetime import timezone
+                                now = now.replace(tzinfo=timezone.utc)
+                            elif now.tzinfo is not None:
+                                scheduled_at = scheduled_at.replace(tzinfo=timezone.utc)
+                                
+                            if status == 'pending' and scheduled_at > now:
                                 await self._schedule_strategy_job(
                                     profile_id=user_id,
                                     strategy_id=strategy_id,
@@ -179,7 +202,7 @@ class StrategyScheduler:
                                 restored_count += 1
                                 logger.debug(f"✅ Restored strategy {strategy_id} for {user_id}")
                             
-                            elif scheduled_at <= datetime.now() and status == 'pending':
+                            elif scheduled_at <= now and status == 'pending':
                                 # Marquer comme expirée
                                 strategy_data['status'] = 'expired'
                                 strategy_data['updated_at'] = datetime.now().isoformat()
@@ -481,6 +504,21 @@ class StrategyScheduler:
         try:
             from datetime import timezone
             now = datetime.now(timezone.utc)  # UTC pour correspondre à APScheduler
+            
+            def safe_datetime_compare(job_time, reference_time):
+                """Safely compare datetimes, handling timezone issues"""
+                if job_time is None:
+                    return False
+                try:
+                    # Ensure both datetimes have timezone info
+                    if job_time.tzinfo is None:
+                        job_time = job_time.replace(tzinfo=timezone.utc)
+                    if reference_time.tzinfo is None:
+                        reference_time = reference_time.replace(tzinfo=timezone.utc)
+                    return job_time < reference_time
+                except Exception:
+                    return False
+            
             jobs = self.scheduler.get_jobs()
             cleaned_jobs = []
             
@@ -495,7 +533,7 @@ class StrategyScheduler:
                     continue
                 
                 # Supprimer les jobs expirés (plus d'1h dans le passé)
-                if job.next_run_time and job.next_run_time < now - timedelta(hours=1):
+                if safe_datetime_compare(job.next_run_time, now - timedelta(hours=1)):
                     try:
                         self.scheduler.remove_job(job.id)
                         cleaned_jobs.append({
@@ -537,6 +575,20 @@ class StrategyScheduler:
             jobs = self.scheduler.get_jobs()
             now = datetime.now(timezone.utc)  # UTC pour correspondre à APScheduler
             
+            def safe_datetime_compare(job_time, reference_time):
+                """Safely compare datetimes, handling timezone issues"""
+                if job_time is None:
+                    return False
+                try:
+                    # Ensure both datetimes have timezone info
+                    if job_time.tzinfo is None:
+                        job_time = job_time.replace(tzinfo=timezone.utc)
+                    if reference_time.tzinfo is None:
+                        reference_time = reference_time.replace(tzinfo=timezone.utc)
+                    return job_time < reference_time
+                except Exception:
+                    return False
+            
             active_jobs = []
             expired_jobs = []
             system_jobs = []
@@ -554,7 +606,7 @@ class StrategyScheduler:
                 elif 'unlock_boost' in job.id:
                     # Toujours considérer les unlock_boost comme actifs
                     active_jobs.append(job_info)
-                elif job.next_run_time and job.next_run_time < now - timedelta(hours=1):
+                elif safe_datetime_compare(job.next_run_time, now - timedelta(hours=1)):
                     expired_jobs.append(job_info)
                 else:
                     active_jobs.append(job_info)

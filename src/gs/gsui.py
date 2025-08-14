@@ -2819,18 +2819,27 @@ class ProfileTab(QWidget):
         # Afficher par challenge
         total_jobs = 0
         for challenge_id, jobs_list in challenges_jobs.items():
+            # Validation du challenge_id
+            if not challenge_id or challenge_id == 'null':
+                self.log("⚠️ ⚠️ Challenge ID invalide détecté - ignoring")
+                continue
+                
             challenge = self.find_challenge_by_id(challenge_id)
             challenge_name = challenge.title if challenge else f"Challenge {challenge_id}"
             
-            self.log(f"🎯 {challenge_name}:")
-            for job in sorted(jobs_list, key=lambda j: j.next_run_time or datetime.now()):
-                next_run = job.next_run_time
-                if next_run:
-                    time_str = next_run.strftime("%H:%M:%S")
-                    self.log(f"   ⏰ {time_str} - {job.name}")
-                else:
-                    self.log(f"   ⏸️ {job.name} (en attente)")
-                total_jobs += 1
+            # Ne pas afficher si le nom est invalide
+            if challenge_name and challenge_name != 'null' and challenge_name != 'Challenge null':
+                self.log(f"🎯 {challenge_name}:")
+                for job in sorted(jobs_list, key=lambda j: j.next_run_time or datetime.now()):
+                    next_run = job.next_run_time
+                    if next_run:
+                        time_str = next_run.strftime("%H:%M:%S")
+                        self.log(f"   ⏰ {time_str} - {job.name}")
+                    else:
+                        self.log(f"   ⏸️ {job.name} (en attente)")
+                    total_jobs += 1
+            else:
+                self.log(f"⚠️ ⚠️ Challenge invalide ignoré: {challenge_id}")
         
         self.log(f"📊 Total: {total_jobs} job(s) programmé(s)")
         
@@ -2840,10 +2849,18 @@ class ProfileTab(QWidget):
             if scheduled_strategies:
                 self.log("💾 Stratégies persistantes:")
                 for challenge_id_str, strategy_data in scheduled_strategies.items():
-                    if isinstance(strategy_data, dict):
+                    if isinstance(strategy_data, dict) and challenge_id_str and challenge_id_str != 'null':
                         strategy_name = strategy_data.get('strategy_name', 'Inconnue')
-                        challenge_title = strategy_data.get('challenge_title', f'Challenge {challenge_id_str}')
-                        self.log(f"   📝 {challenge_title}: {strategy_name}")
+                        challenge_title = strategy_data.get('challenge_title')
+                        
+                        # Validation du challenge_title
+                        if not challenge_title or challenge_title == 'null' or challenge_title == challenge_id_str:
+                            # Essayer de trouver le vrai nom du challenge
+                            challenge = self.find_challenge_by_id(challenge_id_str)
+                            challenge_title = challenge.title if challenge else f"Challenge {challenge_id_str}"
+                        
+                        if challenge_title and challenge_title != 'null':
+                            self.log(f"   📝 {challenge_title}: {strategy_name}")
         except Exception as e:
             self.log(f"⚠️ Erreur lecture stratégies persistantes: {e}")
     

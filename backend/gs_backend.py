@@ -447,6 +447,20 @@ def load_challenge_strategies():
 def save_challenge_strategy(challenge_id: str, strategy_name: str, scheduled_at: str, profile_id: str = "bruno", challenge_title: str = None):
     """Sauvegarde une stratégie pour un challenge dans gsgui.ini sous le profil"""
     try:
+        # Récupérer le vrai titre du challenge s'il n'est pas fourni ou s'il est générique
+        if not challenge_title or challenge_title == f"Challenge {challenge_id}" or challenge_title == challenge_id:
+            try:
+                # Récupérer le vrai titre depuis le cache ou l'API
+                import asyncio
+                real_title = asyncio.run(get_challenge_title(challenge_id, profile_id))
+                if real_title and real_title != challenge_id:
+                    challenge_title = real_title
+                else:
+                    challenge_title = f"Challenge {challenge_id}"
+            except Exception as e:
+                print(f"⚠️ Could not get challenge title for {challenge_id}: {e}")
+                challenge_title = f"Challenge {challenge_id}"
+        
         with gsgui_ini_lock:
             config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
             
@@ -461,7 +475,7 @@ def save_challenge_strategy(challenge_id: str, strategy_name: str, scheduled_at:
             # Sauvegarder la stratégie sous le profil
             config['players'][profile_id]['scheduled_strategies'][challenge_id] = {
                 'strategy_name': strategy_name,
-                'challenge_title': challenge_title or f"Challenge {challenge_id}",
+                'challenge_title': challenge_title,
                 'scheduled_at': scheduled_at
             }
             
@@ -788,7 +802,7 @@ async def schedule_strategy(profile_id: str, request: ScheduleStrategyRequest):
             await schedule_single_strategy(request.challenge_id, profile_id, request.challenge_title)
             
             # Utiliser le titre du challenge si disponible
-            display_name = request.challenge_title if request.challenge_title else f"challenge {request.challenge_id}"
+            display_name = await get_challenge_title(request.challenge_id, profile_id)
             message = f"✅ Strategy {request.strategy_name} scheduled for {display_name}"
             log_and_broadcast(message, "success", profile_id)
         else:
@@ -2289,6 +2303,13 @@ async def parse_timing_spec(challenge, timing_spec):
             target_time = now_rounded + timedelta(seconds=offset)
             return target_time
 
+        elif timing_spec.startswith("at-"):
+            # Format: at-01h02 (programmation à une heure absolue)
+            time_str = timing_spec[3:]  # Retirer "at-"
+            target_time = parse_time(time_str)
+            if target_time is None:
+                return None
+            return target_time
         elif ":" in timing_spec:
             # Format absolu: HH:MM:SS ou HH:MM
             try:
@@ -2337,6 +2358,44 @@ def parse_time_offset(time_str):
     except:
         return None
 
+def parse_time(time_str):
+    """Parse un temps absolu comme '01h02' et retourne la prochaine occurrence de cette heure"""
+    try:
+        import re
+        from datetime import datetime, timedelta
+        
+        # Format: XhY ou XhYm (par exemple: '01h02' ou '23h45m')
+        hours_match = re.search(r'(\d{1,2})h', time_str)
+        if not hours_match:
+            return None
+            
+        hours = int(hours_match.group(1))
+        if hours < 0 or hours > 23:
+            return None
+            
+        # Minutes (optionnel, par défaut 0)
+        minutes = 0
+        minutes_match = re.search(r'(\d{1,2})(?:m|$)', time_str.replace(f'{hours}h', ''))
+        if minutes_match:
+            minutes = int(minutes_match.group(1))
+            if minutes < 0 or minutes > 59:
+                return None
+        
+        # Calculer la prochaine occurrence de cette heure
+        now = datetime.now()
+        target_today = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
+        
+        # Si l'heure est déjà passée aujourd'hui, programmer pour demain
+        if target_today <= now:
+            target_time = target_today + timedelta(days=1)
+        else:
+            target_time = target_today
+            
+        return target_time
+        
+    except Exception as e:
+        logger.error(f"Erreur parsing time '{time_str}': {e}")
+        return None
 
 async def execute_strategy_vote(challenge_id, challenge_title, vote_count, profile_id):
     """Exécute un vote programmé par une stratégie"""
