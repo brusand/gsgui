@@ -904,13 +904,38 @@ class ExtendedStrategyExecutor:
                     logger.error(f"❌ Turbo unlock failed: {error_msg}")
                     return {'success': False, 'error': error_msg}
             else:
-                #reschedule nest-15m
-                execution_id = await self.execute_extended_strategy(profile_id, str(challenge_id), str(challenge_url), 'unlocked_boost')
-                return {
-                    "success": True,
-                    "execution_id": execution_id,
-                    "message": f"Started extended strategy unlocked_boost"
-                }
+                # Vérifier si le challenge est encore actif et si tous les boosts ne sont pas déjà utilisés
+                try:
+                    active_challenges = await api_client.get_challenges()
+                    challenge_still_active = any(c.id == str(challenge_id) for c in active_challenges)
+                    
+                    if not challenge_still_active:
+                        logger.info(f"⏹️ Challenge {challenge_id} is no longer active - stopping unlocked_boost monitoring")
+                        return {
+                            'success': True,
+                            'message': f'Challenge {challenge_id} ended - stopped unlocked_boost monitoring',
+                            'challenge_id': challenge_id,
+                            'stopped': True
+                        }
+                    
+                    
+                    logger.info(f"🔄 Challenge {challenge_id} still active, boost not yet unlocked - rescheduling in 2 minutes")
+                    #reschedule next-2m
+                    execution_id = await self.execute_extended_strategy(profile_id, str(challenge_id), str(challenge_url), 'unlocked_boost')
+                    return {
+                        "success": True,
+                        "execution_id": execution_id,
+                        "message": f"Started extended strategy unlocked_boost"
+                    }
+                except Exception as check_error:
+                    logger.error(f"❌ Error checking if challenge {challenge_id} is active: {check_error}")
+                    # En cas d'erreur, on arrête plutôt que de continuer en boucle
+                    return {
+                        'success': False,
+                        'error': f'Could not verify if challenge {challenge_id} is still active: {check_error}',
+                        'challenge_id': challenge_id,
+                        'stopped': True
+                    }
 
         except Exception as e:
             logger.error(f"❌ Exception during turbo unlock: {str(e)}")
