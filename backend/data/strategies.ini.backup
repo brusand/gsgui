@@ -36,9 +36,9 @@ description="Challenge colors"
 description="Submit photo"
 0="submit,now, e3d0632cbbe380ce79c0a439d0a0778c, f2b10b36a3f0d218d5eb500b087c9fb9"
 
-[unlock-boost]
+[unlocked_boost]
 description="Stratégie Unlock Boost"
-0="unlocked_boost, next-1m0s, 0"
+0="unlocked_boost, next-2m0s, 0"
 
 [alain]
 description="Stratégie conservative - 4m - votes répartis"

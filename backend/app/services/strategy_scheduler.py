@@ -117,6 +117,11 @@ class StrategyScheduler:
                 if job.id in ['precision_test', 'cleanup_expired_jobs']:
                     continue
                 
+                # Ne pas supprimer les jobs unlock_boost récurrents (ils se reprogramment)
+                if 'unlock_boost' in job.id:
+                    logger.debug(f"🔒 Preserving unlock_boost job: {job.id}")
+                    continue
+                
                 # Supprimer les jobs programmés dans le passé (mais pas exécutés à cause d'un redémarrage)
                 if job.next_run_time and job.next_run_time < now - timedelta(hours=1):
                     try:
@@ -484,6 +489,11 @@ class StrategyScheduler:
                 if job.id in ['precision_test', 'cleanup_expired_jobs']:
                     continue
                 
+                # Ne pas supprimer les jobs unlock_boost récurrents (ils se reprogramment)
+                if 'unlock_boost' in job.id:
+                    logger.debug(f"🔒 Preserving unlock_boost job: {job.id}")
+                    continue
+                
                 # Supprimer les jobs expirés (plus d'1h dans le passé)
                 if job.next_run_time and job.next_run_time < now - timedelta(hours=1):
                     try:
@@ -514,6 +524,10 @@ class StrategyScheduler:
                 'cleaned_count': 0
             }
     
+    def get_jobs(self):
+        """Expose get_jobs method from scheduler for backward compatibility"""
+        return self.scheduler.get_jobs()
+    
     def get_scheduler_status(self) -> Dict[str, Any]:
         """
         Retourne le statut du scheduler avec compteurs de jobs
@@ -537,6 +551,9 @@ class StrategyScheduler:
                 
                 if job.id in ['precision_test', 'cleanup_expired_jobs']:
                     system_jobs.append(job_info)
+                elif 'unlock_boost' in job.id:
+                    # Toujours considérer les unlock_boost comme actifs
+                    active_jobs.append(job_info)
                 elif job.next_run_time and job.next_run_time < now - timedelta(hours=1):
                     expired_jobs.append(job_info)
                 else:

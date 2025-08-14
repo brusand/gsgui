@@ -515,11 +515,22 @@ class ExtendedStrategyExecutor:
             # Importer la fonction de suppression
             from gs_backend import remove_challenge_strategy, log_and_broadcast
             
-            # Supprimer la stratégie du fichier gsgui.ini
-            success = remove_challenge_strategy(challenge_id, profile_id)
+            # Pour les stratégies auto-reprogrammables comme unlocked_boost, 
+            # ne pas supprimer du .ini car elles vont continuer en boucle
+            # Récupérer le nom de la stratégie depuis l'execution_id
+            strategy_name = execution_id.split('_')[0] if execution_id else ''
+            is_auto_recurring = strategy_name == 'unlocked_boost'
+            
+            success = True
+            if not is_auto_recurring:
+                # Supprimer la stratégie du fichier gsgui.ini (sauf si auto-récurrente)
+                success = remove_challenge_strategy(challenge_id, profile_id)
             
             if success:
-                cleanup_message = f"🧹 Stratégie extended terminée et nettoyée pour challenge {challenge_id}"
+                if is_auto_recurring:
+                    cleanup_message = f"🔄 Stratégie récurrente {strategy_name} continuée pour challenge {challenge_id}"
+                else:
+                    cleanup_message = f"🧹 Stratégie extended terminée et nettoyée pour challenge {challenge_id}"
                 logger.info(cleanup_message)
                 log_and_broadcast(cleanup_message, "cleanup", profile_id)
                 
