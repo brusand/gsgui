@@ -332,9 +332,12 @@ class ExtendedStrategyExecutor:
                 logger.error("❌ APScheduler not running, cannot schedule future actions")
                 return
             
-            # Programmer chaque action individuellement
+            # Programmer chaque action individuellement avec profile_id
             for i, action in enumerate(future_actions):
-                job_id = f"extended_{execution_id}_action_{i}_{action['action']}"
+                # Extraire profile_id du contexte
+                context = self.active_executions[execution_id]
+                profile_id = context['profile_id']
+                job_id = f"{profile_id}_extended_{execution_id}_action_{i}_{action['action']}"
                 
                 # Ajouter le job à APScheduler avec optimisations précision
                 strategy_scheduler.scheduler.add_job(
@@ -343,7 +346,7 @@ class ExtendedStrategyExecutor:
                     run_date=action['scheduled_time'],
                     args=[execution_id, i],
                     id=job_id,
-                    name=f"Extended {action['action']} for {execution_id}",
+                    name=f"Extended {action['action']} for {execution_id} (profile: {profile_id})",
                     replace_existing=True,
                     # Optimisations précision critiques
                     coalesce=True,         # Fusionner si en retard
@@ -443,14 +446,14 @@ class ExtendedStrategyExecutor:
                 
                 # Programmer la suppression de l'exécution après 5 minutes
                 from app.services.strategy_scheduler import strategy_scheduler
-                cleanup_job_id = f"cleanup_{execution_id}"
+                cleanup_job_id = f"{context['profile_id']}_cleanup_{execution_id}"
                 strategy_scheduler.scheduler.add_job(
                     func=self._cleanup_execution_context,
                     trigger='date',
                     run_date=datetime.now() + timedelta(minutes=5),
                     args=[execution_id],
                     id=cleanup_job_id,
-                    name=f"Cleanup {execution_id}",
+                    name=f"Cleanup {execution_id} (profile: {context['profile_id']})",
                     replace_existing=True,
                     coalesce=True,
                     max_instances=1,
@@ -972,7 +975,7 @@ class ExtendedStrategyExecutor:
                     # Programme directement le prochain job unlocked_boost au lieu de relancer toute une stratégie
                     from app.services.strategy_scheduler import strategy_scheduler
                     next_run_time = datetime.now() + timedelta(minutes=10)
-                    job_id = f"extended_unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_action_0_unlocked_boost"
+                    job_id = f"{profile_id}_extended_unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_action_0_unlocked_boost"
                     
                     strategy_scheduler.scheduler.add_job(
                         func=self._execute_action_wrapper,
@@ -980,7 +983,7 @@ class ExtendedStrategyExecutor:
                         run_date=next_run_time,
                         args=[challenge_id, 'unlocked_boost', params, profile_id, challenge_url],
                         id=job_id,
-                        name=f"Extended unlocked_boost for unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                        name=f"Extended unlocked_boost for unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')} (profile: {profile_id})",
                         replace_existing=True,  # Important: remplace l'ancien job
                         coalesce=True,
                         max_instances=1,
@@ -1013,9 +1016,14 @@ class ExtendedStrategyExecutor:
         """Wrapper pour exécuter une action isolée depuis APScheduler"""
         job_id = None
         try:
-            # Récupérer le job_id depuis APScheduler
+            # Récupérer le job_id depuis APScheduler (note: le timestamp exact peut différer)
             from app.services.strategy_scheduler import strategy_scheduler
-            current_job = strategy_scheduler.scheduler.get_job(f"extended_unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_action_0_unlocked_boost")
+            # Rechercher le job par pattern au lieu d'utiliser un timestamp exact
+            current_job = None
+            for job in strategy_scheduler.scheduler.get_jobs():
+                if f"{profile_id}_extended_unlocked_boost_{challenge_id}_" in job.id:
+                    current_job = job
+                    break
             if current_job:
                 job_id = current_job.id
             
@@ -1633,11 +1641,11 @@ class ExtendedStrategyExecutor:
             # Préparer les actions avec les job_ids des jobs APScheduler
             actions_data = []
             for action in actions:
-                # Générer le job_id comme APScheduler le fait
+                # Générer le job_id comme APScheduler le fait avec profile_id
                 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                 step = action.get('step', 0)
                 action_type = action.get('action', '')
-                job_id = f"extended_{strategy_name}_{challenge_id}_{timestamp}_action_{step}_{action_type}"
+                job_id = f"{profile_id}_extended_{strategy_name}_{challenge_id}_{timestamp}_action_{step}_{action_type}"
                 
                 actions_data.append({
                     'action': action_type,
@@ -1684,12 +1692,12 @@ class ExtendedStrategyExecutor:
     async def _update_action_status_from_execution(self, challenge_id: str, action: Dict, status: str, result_message: str = "", profile_id: str = "bruno"):
         """Met à jour le status d'une action basé sur son exécution"""
         try:
-            # Construire le job_id comme dans _save_strategy_hierarchical
+            # Construire le job_id comme dans _save_strategy_hierarchical avec profile_id
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             step = action.get('step', 0)
             action_type = action.get('action', '')
             strategy_name = action.get('strategy_name', 'unknown')  # Si disponible
-            job_id = f"extended_{strategy_name}_{challenge_id}_{timestamp}_action_{step}_{action_type}"
+            job_id = f"{profile_id}_extended_{strategy_name}_{challenge_id}_{timestamp}_action_{step}_{action_type}"
             
             # Fallback: essayer de trouver le job_id via l'action type et step
             if update_action_status is None:

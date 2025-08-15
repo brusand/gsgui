@@ -133,8 +133,8 @@ class StrategyScheduler:
                     continue
                 
                 # Ne pas supprimer les jobs unlock_boost récurrents (ils se reprogramment)
-                if 'unlock_boost' in job.id:
-                    logger.debug(f"🔒 Preserving unlock_boost job: {job.id}")
+                if 'unlock_boost' in job.id or 'unlocked_boost' in job.id:
+                    logger.debug(f"🔒 Preserving unlock_boost/unlocked_boost job: {job.id}")
                     continue
                 
                 # Supprimer les jobs programmés dans le passé (mais pas exécutés à cause d'un redémarrage)
@@ -528,8 +528,8 @@ class StrategyScheduler:
                     continue
                 
                 # Ne pas supprimer les jobs unlock_boost récurrents (ils se reprogramment)
-                if 'unlock_boost' in job.id:
-                    logger.debug(f"🔒 Preserving unlock_boost job: {job.id}")
+                if 'unlock_boost' in job.id or 'unlocked_boost' in job.id:
+                    logger.debug(f"🔒 Preserving unlock_boost/unlocked_boost job: {job.id}")
                     continue
                 
                 # Supprimer les jobs expirés (plus d'1h dans le passé)
@@ -603,7 +603,7 @@ class StrategyScheduler:
                 
                 if job.id in ['precision_test', 'cleanup_expired_jobs']:
                     system_jobs.append(job_info)
-                elif 'unlock_boost' in job.id:
+                elif 'unlock_boost' in job.id or 'unlocked_boost' in job.id:
                     # Toujours considérer les unlock_boost comme actifs
                     active_jobs.append(job_info)
                 elif safe_datetime_compare(job.next_run_time, now - timedelta(hours=1)):
