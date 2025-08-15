@@ -632,6 +632,149 @@ class StrategyScheduler:
                 'error': str(e)
             }
 
+    def get_strategies_status(self) -> Dict[str, Any]:
+        """
+        Retourne le statut organisé par stratégies (nouvelle structure hiérarchique)
+        """
+        try:
+            from datetime import timezone
+            import re
+            jobs = self.scheduler.get_jobs()
+            now = datetime.now(timezone.utc)
+            
+            strategies = {}
+            system_jobs = []
+            
+            def safe_datetime_compare(job_time, reference_time):
+                """Safely compare datetimes, handling timezone issues"""
+                if job_time is None:
+                    return False
+                try:
+                    if job_time.tzinfo is None:
+                        job_time = job_time.replace(tzinfo=timezone.utc)
+                    if reference_time.tzinfo is None:
+                        reference_time = reference_time.replace(tzinfo=timezone.utc)
+                    return job_time < reference_time
+                except Exception:
+                    return False
+            
+            for job in jobs:
+                # Jobs système séparés
+                if job.id in ['precision_test', 'cleanup_expired_jobs']:
+                    system_jobs.append({
+                        'id': job.id,
+                        'name': job.name,
+                        'next_run_time': job.next_run_time.isoformat() if job.next_run_time else None,
+                        'trigger': str(job.trigger)
+                    })
+                    continue
+                
+                # Extraction des informations de stratégie depuis job.id
+                # Format typique: "extended_unlocked_boost_106517_20250815_114358_action_0_unlocked_boost"
+                challenge_id = None
+                strategy_name = None
+                action_name = None
+                
+                # Pattern pour extraire challenge_id et strategy_name
+                patterns = [
+                    r'extended_([^_]+)_(\d+)_\d+_action_\d+_(.+)',  # extended strategy
+                    r'([^_]+)_(\d+)_\d+',  # simple strategy
+                    r'.*_(\d{6})_.*'  # fallback pour challenge ID
+                ]
+                
+                for pattern in patterns:
+                    match = re.search(pattern, job.id)
+                    if match:
+                        if len(match.groups()) >= 3:
+                            strategy_name = match.group(1)
+                            challenge_id = match.group(2)
+                            action_name = match.group(3)
+                        elif len(match.groups()) >= 2:
+                            strategy_name = match.group(1)
+                            challenge_id = match.group(2)
+                            action_name = strategy_name
+                        else:
+                            challenge_id = match.group(1)
+                        break
+                
+                if not challenge_id:
+                    # Si on ne peut pas extraire, mettre dans "unknown"
+                    challenge_id = "unknown"
+                    strategy_name = "unknown"
+                    action_name = job.name or job.id
+                
+                # Statut du job
+                is_expired = safe_datetime_compare(job.next_run_time, now - timedelta(hours=1))
+                job_status = "expired" if is_expired else "scheduled"
+                
+                # Initialiser la stratégie si nécessaire
+                strategy_key = f"challenge_{challenge_id}"
+                if strategy_key not in strategies:
+                    strategies[strategy_key] = {
+                        "challenge_id": challenge_id,
+                        "strategy_name": strategy_name or "unknown",
+                        "strategy_status": "active",  # active, completed, failed
+                        "jobs": [],
+                        "total_jobs": 0,
+                        "scheduled_jobs": 0,
+                        "expired_jobs": 0,
+                        "last_activity": None
+                    }
+                
+                # Ajouter le job à la stratégie
+                job_info = {
+                    "job_id": job.id,
+                    "action": action_name or "unknown",
+                    "status": job_status,
+                    "next_run": job.next_run_time.isoformat() if job.next_run_time else None,
+                    "trigger": str(job.trigger),
+                    "job_name": job.name
+                }
+                
+                strategies[strategy_key]["jobs"].append(job_info)
+                strategies[strategy_key]["total_jobs"] += 1
+                
+                if job_status == "scheduled":
+                    strategies[strategy_key]["scheduled_jobs"] += 1
+                elif job_status == "expired":
+                    strategies[strategy_key]["expired_jobs"] += 1
+                
+                # Mettre à jour last_activity
+                if job.next_run_time:
+                    if not strategies[strategy_key]["last_activity"] or job.next_run_time > datetime.fromisoformat(strategies[strategy_key]["last_activity"].replace('Z', '+00:00')):
+                        strategies[strategy_key]["last_activity"] = job.next_run_time.isoformat()
+            
+            # Déterminer le statut des stratégies
+            for strategy_key, strategy in strategies.items():
+                if strategy["expired_jobs"] > 0 and strategy["scheduled_jobs"] == 0:
+                    strategy["strategy_status"] = "expired"
+                elif strategy["scheduled_jobs"] > 0:
+                    strategy["strategy_status"] = "active"
+                else:
+                    strategy["strategy_status"] = "completed"
+                
+                # Calculer le progress
+                if strategy["total_jobs"] > 0:
+                    strategy["progress"] = f"{strategy['total_jobs'] - strategy['scheduled_jobs']}/{strategy['total_jobs']}"
+                else:
+                    strategy["progress"] = "0/0"
+            
+            return {
+                'scheduler_running': self._running,
+                'total_strategies': len(strategies),
+                'total_jobs': len(jobs) - len(system_jobs),
+                'strategies': strategies,
+                'system_jobs': system_jobs,
+                'status_timestamp': now.isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting strategies status: {e}")
+            return {
+                'scheduler_running': self._running,
+                'error': str(e)
+            }
+
 
 # Instance globale du scheduler
 strategy_scheduler = StrategyScheduler()

@@ -18,6 +18,7 @@ interface ActionButtonsProps {
   onSelectAll: () => void;
   onSelectNone: () => void;
   onShowLogs: () => void;
+  onShowStrategies: () => void;
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({
@@ -33,7 +34,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   onEditStrategies,
   onSelectAll,
   onSelectNone,
-  onShowLogs
+  onShowLogs,
+  onShowStrategies
 }) => {
   const [showVoteDialog, setShowVoteDialog] = useState<boolean>(false);
   const [showStrategyDialog, setShowStrategyDialog] = useState<boolean>(false);
@@ -155,6 +157,16 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           title="Éditer les stratégies disponibles"
         >
           ✏️ Edition
+        </button>
+
+        {/* Bouton Stratégies Schedulées */}
+        <button
+          onClick={onShowStrategies}
+          disabled={isLoading}
+          className="btn btn-info"
+          title="Voir les stratégies schedulées et leurs jobs"
+        >
+          📊 Stratégies
         </button>
 
         {/* Bouton Logs */}

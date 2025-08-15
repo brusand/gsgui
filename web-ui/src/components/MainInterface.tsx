@@ -4,6 +4,7 @@ import ActionButtons from './ActionButtons';
 import LogsPanel from './LogsPanel';
 import StrategyEditor from './StrategyEditor';
 import LogsViewerModal from './LogsViewerModal';
+import StrategiesPanel from './StrategiesPanel';
 import type { Challenge, Strategy } from '../types/api';
 import { apiClient } from '../services/api-v2';
 import { wsService } from '../services/websocket';
@@ -25,6 +26,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
   const [isStrategyEditorOpen, setIsStrategyEditorOpen] = useState(false);
   const [strategyEditorContent, setStrategyEditorContent] = useState('');
   const [isLogsViewerOpen, setIsLogsViewerOpen] = useState(false);
+  const [isStrategiesPanelOpen, setIsStrategiesPanelOpen] = useState(false);
 
   // Helper functions pour récupérer les détails des stratégies depuis strategies.ini
   // Commenté temporairement - pas utilisé actuellement
@@ -436,6 +438,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onSelectAll={handleSelectAll}
           onSelectNone={handleSelectNone}
           onShowLogs={handleShowLogs}
+          onShowStrategies={() => setIsStrategiesPanelOpen(!isStrategiesPanelOpen)}
         />
 
         <ChallengeTable
@@ -444,6 +447,11 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onSelectionChange={handleChallengeSelection}
           onSelectAll={handleSelectAll}
           onSelectNone={handleSelectNone}
+        />
+
+        <StrategiesPanel 
+          profileName={profileName} 
+          isVisible={isStrategiesPanelOpen}
         />
 
         <LogsPanel profileName={profileName} />

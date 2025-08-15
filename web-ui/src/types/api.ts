@@ -47,3 +47,42 @@ export interface WebSocketMessage {
   data: any;
   timestamp: string;
 }
+
+// Types pour les stratégies hiérarchiques
+export interface ScheduledJob {
+  job_id: string;
+  action: string;
+  status: 'scheduled' | 'expired' | 'running';
+  next_run: string | null;
+  trigger: string;
+  job_name: string;
+}
+
+export interface StrategyStatus {
+  challenge_id: string;
+  strategy_name: string;
+  strategy_status: 'active' | 'completed' | 'expired' | 'failed';
+  jobs: ScheduledJob[];
+  total_jobs: number;
+  scheduled_jobs: number;
+  expired_jobs: number;
+  last_activity: string | null;
+  progress: string;
+}
+
+export interface SystemJob {
+  id: string;
+  name: string;
+  next_run_time: string | null;
+  trigger: string;
+}
+
+export interface StrategiesStatusResponse {
+  success: boolean;
+  scheduler_running: boolean;
+  total_strategies: number;
+  total_jobs: number;
+  strategies: { [key: string]: StrategyStatus };
+  system_jobs: SystemJob[];
+  status_timestamp: string;
+}

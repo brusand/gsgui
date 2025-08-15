@@ -165,6 +165,12 @@ class GSGUIApiClient {
     return response.data;
   }
 
+  // Scheduler - Statut des stratégies hiérarchique
+  async getStrategiesStatus(): Promise<any> {
+    const response = await this.api.get('/scheduler/strategies');
+    return response.data;
+  }
+
   // Health check
   async healthCheck(): Promise<boolean> {
     try {

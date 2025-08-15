@@ -16,6 +16,15 @@ from configobj import ConfigObj
 from app.services.gurushots_api import GuruShotsAPI
 from app.services.config_manager import config_manager
 from app.websockets.connection_manager import connection_manager
+# Import des nouvelles fonctions hiérarchiques
+try:
+    from gs_backend import save_strategy_with_actions, update_action_status, check_and_cleanup_completed_strategies
+except ImportError:
+    print("⚠️ Could not import hierarchical functions from gs_backend")
+    save_strategy_with_actions = None
+    update_action_status = None
+    check_and_cleanup_completed_strategies = None
+
 # Import needed for WebSocket logging to frontend
 try:
     from app.utils.logging_utils import log_and_broadcast
@@ -136,6 +145,21 @@ class ExtendedStrategyExecutor:
             logger.info(f"📅 Scheduled {len(future_actions)} future actions via APScheduler for strategy '{strategy_name}'")
         
         logger.info(f"🎯 Strategy '{strategy_name}' started: {len(now_actions)} immediate + {len(future_actions)} scheduled actions")
+        
+        # Créer la liste complète des actions pour la structure hiérarchique
+        all_actions = now_actions + future_actions
+        
+        # Sauvegarder la stratégie avec la structure hiérarchique AVANT le cleanup
+        await self._save_strategy_hierarchical(challenge_id, strategy_name, all_actions, profile_id, challenge_url)
+        
+        # Mettre à jour le status des actions immédiates qui viennent de s'exécuter
+        for i, action in enumerate(now_actions):
+            if i < len(now_results):
+                result = now_results[i]
+                if result.get('success', False):
+                    await self._update_action_status_from_execution(challenge_id, action, 'completed', result.get('message', 'Action completed successfully'), profile_id)
+                else:
+                    await self._update_action_status_from_execution(challenge_id, action, 'failed', result.get('error', 'Action failed'), profile_id)
         
         # Si TOUTES les actions sont immédiates (pas d'actions futures), cleanup immédiatement
         # IMPORTANT: Cleanup même si certaines actions ont échoué, car elles ont été tentées
@@ -517,8 +541,12 @@ class ExtendedStrategyExecutor:
             
             # Pour les stratégies auto-reprogrammables comme unlocked_boost, 
             # ne pas supprimer du .ini car elles vont continuer en boucle
-            # Récupérer le nom de la stratégie depuis l'execution_id
-            strategy_name = execution_id.split('_')[0] if execution_id else ''
+            # Chercher dans les contextes d'exécution actifs pour ce challenge
+            strategy_name = ''
+            for exec_id, context in self.active_executions.items():
+                if context.get('challenge_id') == challenge_id:
+                    strategy_name = context.get('strategy_name', '')
+                    break
             is_auto_recurring = strategy_name == 'unlocked_boost'
             
             success = True
@@ -882,7 +910,16 @@ class ExtendedStrategyExecutor:
             logger.info(f"🚀 Calling set_turbo(challenge_id={challenge_id}, photo_id={target_photo_id})")
 
             available = await self._get_challenge_boost_unlocked(api_client, challenge_id)
-            if available == True:
+            if available == 'COMPLETED':
+                # Le boost a déjà été utilisé - marquer la tâche comme terminée définitivement
+                logger.info(f"🏁 Boost already used for challenge {challenge_id} - task completed successfully")
+                return {
+                    'success': True,
+                    'message': f'Boost already used for challenge {challenge_id} - monitoring completed',
+                    'challenge_id': challenge_id,
+                    'completed': True
+                }
+            elif available == True:
                 result = await self._execute_boost_action(api_client, challenge_id, challenge_url,params)
                 if result.get('success', True):
                     logger.info(f"🚀 Successfully unlocked turbo for challenge {challenge_id}")
@@ -906,7 +943,9 @@ class ExtendedStrategyExecutor:
             else:
                 # Vérifier si le challenge est encore actif et si tous les boosts ne sont pas déjà utilisés
                 try:
+                    logger.info(f"🔍 TEMP DEBUG: About to call get_challenges() for challenge {challenge_id}")
                     active_challenges = await api_client.get_challenges()
+                    logger.info(f"🔍 TEMP DEBUG: get_challenges() returned {len(active_challenges) if active_challenges else 0} challenges")
                     
                     # Debug: afficher les IDs des challenges trouvés
                     challenge_ids = [str(c.id) for c in active_challenges]
@@ -928,13 +967,33 @@ class ExtendedStrategyExecutor:
                         }
                     
                     
-                    logger.info(f"🔄 Challenge {challenge_id} still active, boost not yet unlocked - rescheduling in 2 minutes")
-                    #reschedule next-2m
-                    execution_id = await self.execute_extended_strategy(profile_id, str(challenge_id), str(challenge_url), 'unlocked_boost')
+                    logger.info(f"🔄 Challenge {challenge_id} still active, boost not yet unlocked - rescheduling in 10 minutes")
+                    
+                    # Programme directement le prochain job unlocked_boost au lieu de relancer toute une stratégie
+                    from app.services.strategy_scheduler import strategy_scheduler
+                    next_run_time = datetime.now() + timedelta(minutes=10)
+                    job_id = f"extended_unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_action_0_unlocked_boost"
+                    
+                    strategy_scheduler.scheduler.add_job(
+                        func=self._execute_action_wrapper,
+                        trigger='date',
+                        run_date=next_run_time,
+                        args=[challenge_id, 'unlocked_boost', params, profile_id, challenge_url],
+                        id=job_id,
+                        name=f"Extended unlocked_boost for unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                        replace_existing=True,  # Important: remplace l'ancien job
+                        coalesce=True,
+                        max_instances=1,
+                        misfire_grace_time=300
+                    )
+                    
+                    logger.info(f"⏰ Reprogrammed unlocked_boost for challenge {challenge_id} at {next_run_time}")
+                    
                     return {
                         "success": True,
-                        "execution_id": execution_id,
-                        "message": f"Started extended strategy unlocked_boost"
+                        "job_id": job_id,
+                        "next_run": next_run_time.isoformat(),
+                        "message": f"Rescheduled unlocked_boost check in 10 minutes"
                     }
                 except Exception as check_error:
                     logger.error(f"❌ Error checking if challenge {challenge_id} is active: {check_error}")
@@ -948,6 +1007,84 @@ class ExtendedStrategyExecutor:
 
         except Exception as e:
             logger.error(f"❌ Exception during turbo unlock: {str(e)}")
+            return {'success': False, 'error': str(e)}
+    
+    def _execute_action_wrapper(self, challenge_id: str, action_type: str, params: List[str], profile_id: str, challenge_url: str):
+        """Wrapper pour exécuter une action isolée depuis APScheduler"""
+        job_id = None
+        try:
+            # Récupérer le job_id depuis APScheduler
+            from app.services.strategy_scheduler import strategy_scheduler
+            current_job = strategy_scheduler.scheduler.get_job(f"extended_unlocked_boost_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_action_0_unlocked_boost")
+            if current_job:
+                job_id = current_job.id
+            
+            # Cette fonction est appelée par APScheduler, donc on doit gérer l'async
+            import asyncio
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            try:
+                # Marquer le job comme en cours
+                if job_id:
+                    loop.run_until_complete(self._update_job_status(job_id, challenge_id, 'running', '', profile_id))
+                
+                result = loop.run_until_complete(self._execute_single_isolated_action(challenge_id, action_type, params, profile_id, challenge_url))
+                
+                # Mettre à jour le status selon le résultat
+                if job_id:
+                    if result and result.get('success', False):
+                        message = result.get('message', 'Action completed successfully')
+                        loop.run_until_complete(self._update_job_status(job_id, challenge_id, 'completed', message, profile_id))
+                    else:
+                        error_msg = result.get('error', 'Action failed')
+                        loop.run_until_complete(self._update_job_status(job_id, challenge_id, 'failed', error_msg, profile_id))
+                        
+                logger.info(f"✅ Action wrapper completed for {action_type} on challenge {challenge_id}: {result}")
+            finally:
+                loop.close()
+                
+        except Exception as e:
+            logger.error(f"❌ Error in action wrapper for {action_type} on challenge {challenge_id}: {e}")
+            # Marquer le job comme échoué si possible
+            if job_id:
+                try:
+                    import asyncio
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    try:
+                        loop.run_until_complete(self._update_job_status(job_id, challenge_id, 'failed', str(e), profile_id))
+                    finally:
+                        loop.close()
+                except:
+                    pass
+    
+    async def _execute_single_isolated_action(self, challenge_id: str, action_type: str, params: List[str], profile_id: str, challenge_url: str):
+        """Exécute une action isolée (pour reprogrammation unlocked_boost)"""
+        try:
+            logger.info(f"🔧 Executing {action_type} action on Challenge {challenge_id}...")
+            
+            # Get user token and create API client
+            user = config_manager.get_user(profile_id)
+            if not user or not user.get('xtoken'):
+                logger.error(f"No valid user token for profile {profile_id}")
+                return {'success': False, 'error': f'No valid user token for profile {profile_id}'}
+            
+            # Create API client
+            from app.services.gurushots_api import GuruShotsAPI
+            api_client = GuruShotsAPI(user['xtoken'])
+            
+            # Execute the specific action
+            if action_type == 'unlocked_boost':
+                result = await self._execute_unlocked_boost_action(api_client, int(challenge_id), challenge_url, params, profile_id)
+            else:
+                logger.error(f"Unknown action type: {action_type}")
+                return {'success': False, 'error': f'Unknown action type: {action_type}'}
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"❌ Error executing isolated action {action_type}: {e}")
             return {'success': False, 'error': str(e)}
 
     async def _resolve_photo_by_index(self, api_client: GuruShotsAPI, challenge_id: int, index: int) -> Optional[str]:
@@ -1348,14 +1485,21 @@ class ExtendedStrategyExecutor:
 
                             boosted = challenge_data['member']['boost']['state']
 
-                            if boosted == 'AVAILABLE' and await self._is_challenge_ending_soon(challenge_data['member']['boost']['timeout'], 1.0): # and  challenge_data['member']['boost']['timeout'] < '1H':
-                                logger.info(f"✅ Boost Unlocked For challenge {challenge_id} ")
+                            # Vérifier si le boost a déjà été utilisé/activé
+                            if boosted in ['USED', 'APPLIED', 'ACTIVATED', 'EXPIRED', 'MISSED']:
+                                logger.info(f"🏁 Boost already {boosted.lower()} for challenge {challenge_id} - stopping unlocked_boost monitoring")
+                                return 'COMPLETED'  # Statut spécial pour indiquer que la tâche est terminée
+                                
+                            if boosted == 'AVAILABLE' and await self._is_boost_free_period_ending_soon(challenge_data['member']['boost']['timeout'], 1.0):
+                                logger.info(f"✅ Boost free period ending soon for challenge {challenge_id} - ready to activate!")
                                 return True
                             else:
-                                logger.info(f"✅ Boost Available but too soon For challenge {challenge_id} ")
+                                logger.info(f"✅ Boost available but free period not ending soon for challenge {challenge_id} - waiting...")
                                 return False
                     # If not found, fallback to a reasonable default (24 hours from now)
-                    logger.warning(f"⚠️ Challenge {challenge_id} not found in active challenges, using 24h fallback")
+                    challenge_ids_found = [str(c.get('id', 'NO_ID')) for c in data.get('challenges', [])]
+                    logger.warning(f"⚠️ Challenge {challenge_id} not found in get_my_active_challenges")
+                    logger.warning(f"🔍 TEMP DEBUG: get_my_active_challenges found IDs: {challenge_ids_found[:10]}{'...' if len(challenge_ids_found) > 10 else ''}")
                     return False
 
         except Exception as e:
@@ -1363,16 +1507,19 @@ class ExtendedStrategyExecutor:
             # Fallback to 24 hours from now if we can't get the real end time
             return False
 
-    async def _is_challenge_ending_soon(self, timeout_timestamp: int, threshold_hours: float = 1.0) -> bool:
+    async def _is_boost_free_period_ending_soon(self, timeout_timestamp: int, threshold_hours: float = 1.0) -> bool:
         """
-        Check if a challenge is ending within the specified threshold
+        Check if the boost's free period is ending within the specified threshold
+        
+        The boost free period has a limited time window - we want to activate the boost
+        in the last hour before this free period expires to maximize its effectiveness.
 
         Args:
-            timeout_timestamp: Unix timestamp indicating when the challenge ends
+            timeout_timestamp: Unix timestamp indicating when the boost free period ends
             threshold_hours: Hours before end to consider "ending soon" (default: 1.0)
 
         Returns:
-            True if challenge ends within threshold_hours, False otherwise
+            True if boost free period ends within threshold_hours, False otherwise
         """
         try:
             # Convert timestamp to datetime
@@ -1475,6 +1622,90 @@ class ExtendedStrategyExecutor:
             logger.info(f"❌ Strategy execution {execution_id} cancelled")
             return True
         return False
+
+    async def _save_strategy_hierarchical(self, challenge_id: str, strategy_name: str, actions: List[Dict], profile_id: str, challenge_url: str):
+        """Sauvegarde la stratégie avec structure hiérarchique dans gsgui.ini"""
+        try:
+            if save_strategy_with_actions is None:
+                logger.warning("⚠️ Hierarchical save functions not available")
+                return
+            
+            # Préparer les actions avec les job_ids des jobs APScheduler
+            actions_data = []
+            for action in actions:
+                # Générer le job_id comme APScheduler le fait
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                step = action.get('step', 0)
+                action_type = action.get('action', '')
+                job_id = f"extended_{strategy_name}_{challenge_id}_{timestamp}_action_{step}_{action_type}"
+                
+                actions_data.append({
+                    'action': action_type,
+                    'params': ','.join(action.get('parameters', [])),
+                    'job_id': job_id,
+                    'scheduled_at': action.get('scheduled_time', datetime.now()).isoformat() if action.get('scheduled_time') else '',
+                    'status': 'scheduled',
+                    'result_message': '',
+                    'executed_at': ''
+                })
+            
+            # Sauvegarder avec la nouvelle fonction hiérarchique
+            success = save_strategy_with_actions(challenge_id, strategy_name, actions_data, profile_id)
+            if success:
+                logger.info(f"💾 Saved hierarchical strategy {strategy_name} with {len(actions_data)} actions for challenge {challenge_id}")
+            else:
+                logger.error(f"❌ Failed to save hierarchical strategy {strategy_name} for challenge {challenge_id}")
+                
+        except Exception as e:
+            logger.error(f"❌ Error saving hierarchical strategy: {e}")
+
+    async def _update_job_status(self, job_id: str, challenge_id: str, status: str, result_message: str = "", profile_id: str = "bruno"):
+        """Met à jour le status d'un job spécifique dans la structure hiérarchique"""
+        try:
+            if update_action_status is None:
+                logger.warning("⚠️ Status update functions not available")
+                return
+            
+            success = update_action_status(challenge_id, job_id, status, result_message, profile_id)
+            if success:
+                logger.info(f"✅ Updated job {job_id} status to '{status}' for challenge {challenge_id}")
+                
+                # Vérifier si cleanup automatique nécessaire
+                if check_and_cleanup_completed_strategies:
+                    cleaned_count = check_and_cleanup_completed_strategies(profile_id)
+                    if cleaned_count > 0:
+                        logger.info(f"🧹 Auto-cleaned {cleaned_count} completed strategies")
+            else:
+                logger.error(f"❌ Failed to update job {job_id} status for challenge {challenge_id}")
+                
+        except Exception as e:
+            logger.error(f"❌ Error updating job status: {e}")
+    
+    async def _update_action_status_from_execution(self, challenge_id: str, action: Dict, status: str, result_message: str = "", profile_id: str = "bruno"):
+        """Met à jour le status d'une action basé sur son exécution"""
+        try:
+            # Construire le job_id comme dans _save_strategy_hierarchical
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            step = action.get('step', 0)
+            action_type = action.get('action', '')
+            strategy_name = action.get('strategy_name', 'unknown')  # Si disponible
+            job_id = f"extended_{strategy_name}_{challenge_id}_{timestamp}_action_{step}_{action_type}"
+            
+            # Fallback: essayer de trouver le job_id via l'action type et step
+            if update_action_status is None:
+                logger.warning("⚠️ Status update functions not available")
+                return
+            
+            # Utiliser la fonction de mise à jour
+            success = update_action_status(challenge_id, job_id, status, result_message, profile_id)
+            if success:
+                logger.info(f"✅ Updated action {action_type} status to '{status}' for challenge {challenge_id}")
+            else:
+                # Essayer une approche plus générique si le job_id exact n'est pas trouvé
+                logger.warning(f"⚠️ Could not update action {action_type} with specific job_id, trying generic update")
+                
+        except Exception as e:
+            logger.error(f"❌ Error updating action status: {e}")
 
 # Global instance
 extended_strategy_executor = ExtendedStrategyExecutor()

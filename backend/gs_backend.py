@@ -411,7 +411,7 @@ async def fetch_real_challenges(xtoken: str, profile_id: str = None) -> List[Dic
         return []
 
 def load_challenge_strategies():
-    """Charge les stratégies stockées depuis gsgui.ini organisées par profil"""
+    """Charge les stratégies stockées depuis gsgui.ini organisées par profil (structure hiérarchique)"""
     try:
         with gsgui_ini_lock:
             config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
@@ -426,11 +426,26 @@ def load_challenge_strategies():
                     profile_strategies = {}
                     for challenge_id, strategy_data in profile_data['scheduled_strategies'].items():
                         if isinstance(strategy_data, dict):
+                            # Parser les actions depuis la structure hiérarchique
+                            actions = []
+                            for key, value in strategy_data.items():
+                                if isinstance(value, dict) and key.startswith('action'):
+                                    actions.append({
+                                        'action': value.get('action', ''),
+                                        'params': value.get('params', ''),
+                                        'job_id': value.get('job_id', ''),
+                                        'scheduled_at': value.get('scheduled_at', ''),
+                                        'status': value.get('status', 'scheduled'),
+                                        'result_message': value.get('result_message', ''),
+                                        'executed_at': value.get('executed_at', '')
+                                    })
+                            
                             profile_strategies[challenge_id] = {
                                 'strategy_name': strategy_data.get('strategy_name', ''),
-                                'scheduled_at': strategy_data.get('scheduled_at', ''),
                                 'challenge_title': strategy_data.get('challenge_title', f'Challenge {challenge_id}'),
-                                'status': 'pending',
+                                'strategy_status': strategy_data.get('strategy_status', 'active'),
+                                'started_at': strategy_data.get('started_at', ''),
+                                'actions': actions,
                                 'profile_id': profile_id
                             }
                     
@@ -438,10 +453,15 @@ def load_challenge_strategies():
                         challenge_strategies_by_profile[profile_id] = profile_strategies
             
             total_strategies = sum(len(strategies) for strategies in challenge_strategies_by_profile.values())
-            print(f"📋 Loaded {total_strategies} challenge strategies from gsgui.ini across {len(challenge_strategies_by_profile)} profiles")
+            total_actions = sum(
+                len(strategy.get('actions', [])) 
+                for strategies in challenge_strategies_by_profile.values() 
+                for strategy in strategies.values()
+            )
+            print(f"📋 Loaded {total_strategies} hierarchical strategies with {total_actions} actions from gsgui.ini across {len(challenge_strategies_by_profile)} profiles")
             return challenge_strategies_by_profile
     except Exception as e:
-        print(f"❌ Error loading challenge strategies: {e}")
+        print(f"❌ Error loading hierarchical strategies: {e}")
         return {}
 
 def save_challenge_strategy(challenge_id: str, strategy_name: str, scheduled_at: str, profile_id: str = "bruno", challenge_title: str = None):
@@ -488,6 +508,150 @@ def save_challenge_strategy(challenge_id: str, strategy_name: str, scheduled_at:
         error_msg = f"❌ Error saving challenge strategy: {e}"
         log_and_broadcast(error_msg, "error", profile_id)
         return False
+
+def save_strategy_with_actions(challenge_id: str, strategy_name: str, actions: list, profile_id: str = "bruno", challenge_title: str = None):
+    """Sauvegarde une stratégie avec sa structure hiérarchique complète d'actions dans gsgui.ini"""
+    try:
+        # Récupérer le vrai titre du challenge
+        if not challenge_title or challenge_title == f"Challenge {challenge_id}" or challenge_title == challenge_id:
+            try:
+                import asyncio
+                real_title = asyncio.run(get_challenge_title(challenge_id, profile_id))
+                if real_title and real_title != challenge_id:
+                    challenge_title = real_title
+                else:
+                    challenge_title = f"Challenge {challenge_id}"
+            except Exception as e:
+                print(f"⚠️ Could not get challenge title for {challenge_id}: {e}")
+                challenge_title = f"Challenge {challenge_id}"
+        
+        with gsgui_ini_lock:
+            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            
+            # S'assurer que la structure existe
+            if 'players' not in config:
+                config['players'] = {}
+            if profile_id not in config['players']:
+                config['players'][profile_id] = {}
+            if 'scheduled_strategies' not in config['players'][profile_id]:
+                config['players'][profile_id]['scheduled_strategies'] = {}
+            
+            # Créer la structure hiérarchique pour la stratégie
+            strategy_data = {
+                'strategy_name': strategy_name,
+                'challenge_title': challenge_title,
+                'strategy_status': 'active',
+                'started_at': datetime.now().isoformat()
+            }
+            
+            # Ajouter les actions avec leur structure complète
+            for i, action in enumerate(actions):
+                action_key = f"action{i+1}"
+                strategy_data[action_key] = {
+                    'action': action.get('action', ''),
+                    'params': action.get('params', ''),
+                    'job_id': action.get('job_id', ''),
+                    'scheduled_at': action.get('scheduled_at', ''),
+                    'status': action.get('status', 'scheduled'),
+                    'result_message': action.get('result_message', ''),
+                    'executed_at': action.get('executed_at', '')
+                }
+            
+            # Sauvegarder la stratégie
+            config['players'][profile_id]['scheduled_strategies'][challenge_id] = strategy_data
+            config.write()
+            
+            challenge_display_name = challenge_title if challenge_title else f"Challenge {challenge_id}"
+            log_and_broadcast(f"💾 Saved hierarchical strategy {strategy_name} with {len(actions)} actions for {challenge_display_name}", "success", profile_id)
+            return True
+            
+    except Exception as e:
+        error_msg = f"❌ Error saving hierarchical strategy: {e}"
+        log_and_broadcast(error_msg, "error", profile_id)
+        return False
+
+def update_action_status(challenge_id: str, job_id: str, status: str, result_message: str = "", profile_id: str = "bruno"):
+    """Met à jour le status d'une action spécifique dans gsgui.ini"""
+    try:
+        with gsgui_ini_lock:
+            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            
+            if ('players' in config and profile_id in config['players'] and 
+                'scheduled_strategies' in config['players'][profile_id] and
+                challenge_id in config['players'][profile_id]['scheduled_strategies']):
+                
+                strategy_data = config['players'][profile_id]['scheduled_strategies'][challenge_id]
+                
+                # Chercher l'action avec ce job_id
+                updated = False
+                for key, value in strategy_data.items():
+                    if isinstance(value, dict) and key.startswith('action') and value.get('job_id') == job_id:
+                        value['status'] = status
+                        value['result_message'] = result_message
+                        if status in ['completed', 'failed']:
+                            value['executed_at'] = datetime.now().isoformat()
+                        updated = True
+                        break
+                
+                if updated:
+                    # Vérifier si toutes les actions sont terminées pour mettre à jour le status de la stratégie
+                    all_actions_final = True
+                    final_states = ['completed', 'failed', 'expired']
+                    
+                    for key, value in strategy_data.items():
+                        if isinstance(value, dict) and key.startswith('action'):
+                            if value.get('status') not in final_states:
+                                all_actions_final = False
+                                break
+                    
+                    if all_actions_final:
+                        strategy_data['strategy_status'] = 'completed'
+                        log_and_broadcast(f"✅ Strategy {strategy_data.get('strategy_name')} completed - all actions finished", "success", profile_id)
+                    
+                    config.write()
+                    return True
+                else:
+                    print(f"⚠️ Job {job_id} not found in strategy {challenge_id}")
+                    
+        return False
+        
+    except Exception as e:
+        error_msg = f"❌ Error updating action status: {e}"
+        log_and_broadcast(error_msg, "error", profile_id)
+        return False
+
+def check_and_cleanup_completed_strategies(profile_id: str = "bruno"):
+    """Vérifie et nettoie automatiquement les stratégies complètement terminées"""
+    try:
+        with gsgui_ini_lock:
+            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            
+            if ('players' in config and profile_id in config['players'] and 
+                'scheduled_strategies' in config['players'][profile_id]):
+                
+                strategies_to_remove = []
+                strategies = config['players'][profile_id]['scheduled_strategies']
+                
+                for challenge_id, strategy_data in strategies.items():
+                    if strategy_data.get('strategy_status') == 'completed':
+                        strategies_to_remove.append(challenge_id)
+                
+                # Supprimer les stratégies complètes
+                for challenge_id in strategies_to_remove:
+                    strategy_name = strategies[challenge_id].get('strategy_name', 'unknown')
+                    del strategies[challenge_id]
+                    log_and_broadcast(f"🧹 Auto-cleaned completed strategy {strategy_name} for challenge {challenge_id}", "success", profile_id)
+                
+                if strategies_to_remove:
+                    config.write()
+                    return len(strategies_to_remove)
+                    
+        return 0
+        
+    except Exception as e:
+        error_msg = f"❌ Error in auto-cleanup: {e}"
+        log_and_broadcast(error_msg, "error", profile_id)
+        return 0
 
 def remove_challenge_strategy(challenge_id: str, profile_id: str = None):
     """Supprime une stratégie d'un challenge depuis gsgui.ini pour un profil donné"""
@@ -744,7 +908,7 @@ async def get_challenges(profile_name: str):
             if challenge_id in profile_strategies:
                 strategy_info = profile_strategies[challenge_id]
                 challenge['selected_strategy'] = strategy_info['strategy_name']
-                challenge['strategy_status'] = strategy_info['status']
+                challenge['strategy_status'] = strategy_info['strategy_status']
             else:
                 challenge['selected_strategy'] = None
                 challenge['strategy_status'] = None
@@ -852,6 +1016,71 @@ async def cancel_strategy(profile_id: str, strategy_id: str):
             "cancelled_count": cancelled_count
         }
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/v1/profiles/{profile_id}/strategies/{challenge_id}/clean")
+async def clean_strategy_for_challenge(profile_id: str, challenge_id: str):
+    """Nettoie complètement une stratégie pour un challenge (tous jobs + .ini)"""
+    try:
+        profile_id = profile_id.lower()
+        
+        if not STRATEGY_SCHEDULER_AVAILABLE:
+            return {
+                "success": False,
+                "message": "StrategyScheduler non disponible",
+                "removed_jobs": 0,
+                "cleaned_ini": False
+            }
+        
+        # 1. Supprimer TOUS les jobs APScheduler liés à ce challenge/profil 
+        # (même les unlocked_boost en cours)
+        jobs_removed = 0
+        jobs = strategy_scheduler.scheduler.get_jobs()
+        
+        for job in jobs:
+            # Ne pas toucher aux jobs système
+            if job.id in ['precision_test', 'cleanup_expired_jobs']:
+                continue
+                
+            # Supprimer tous les jobs qui contiennent le challenge_id
+            if challenge_id in job.id and profile_id in job.id:
+                try:
+                    strategy_scheduler.scheduler.remove_job(job.id)
+                    jobs_removed += 1
+                    logger.info(f"🧹 Force removed job: {job.id}")
+                except Exception as job_error:
+                    logger.error(f"⚠️ Erreur suppression job {job.id}: {job_error}")
+        
+        # 2. Supprimer de gsgui.ini
+        cleaned_ini = remove_challenge_strategy(challenge_id, profile_id)
+        
+        # 3. Supprimer de la mémoire
+        memory_removed = 0
+        strategies_to_remove = []
+        for strategy_id, strategy_data in strategies.items():
+            if (strategy_data.get('challenge_id') == challenge_id and 
+                strategy_data.get('profile_id') == profile_id):
+                strategies_to_remove.append(strategy_id)
+        
+        for strategy_id in strategies_to_remove:
+            del strategies[strategy_id]
+            memory_removed += 1
+        
+        cleanup_message = f"🧹 Stratégie forcément nettoyée pour challenge {challenge_id}: {jobs_removed} job(s), ini={cleaned_ini}, mémoire={memory_removed}"
+        logger.info(cleanup_message)
+        log_and_broadcast(cleanup_message, "cleanup", profile_id)
+        
+        return {
+            "success": True,
+            "message": f"Stratégie complètement nettoyée pour challenge {challenge_id}",
+            "removed_jobs": jobs_removed,
+            "cleaned_ini": cleaned_ini,
+            "cleaned_memory": memory_removed,
+            "challenge_id": challenge_id
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur clean_strategy_for_challenge: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/profiles/{profile_id}/turbo/execute")
@@ -1705,6 +1934,103 @@ async def get_detailed_scheduler_status():
             "error": str(e)
         }
 
+@app.get("/api/v1/scheduler/strategies")
+async def get_strategies_status():
+    """Retourne le statut organisé par stratégies (nouvelle structure hiérarchique)"""
+    try:
+        if not STRATEGY_SCHEDULER_AVAILABLE:
+            return {
+                "success": False,
+                "message": "StrategyScheduler non disponible",
+                "scheduler_running": False,
+                "total_strategies": 0,
+                "total_jobs": 0,
+                "strategies": {},
+                "system_jobs": []
+            }
+        
+        from app.services.strategy_scheduler import strategy_scheduler
+        
+        if not strategy_scheduler._running:
+            return {
+                "success": False,
+                "error": "Scheduler is not running",
+                "scheduler_running": False,
+                "total_strategies": 0,
+                "total_jobs": 0,
+                "strategies": {},
+                "system_jobs": []
+            }
+        
+        # Appeler la nouvelle méthode de statut par stratégies
+        strategies_result = strategy_scheduler.get_strategies_status()
+        
+        return {
+            "success": True,
+            **strategies_result
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error getting strategies status: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "scheduler_running": False,
+            "total_strategies": 0,
+            "total_jobs": 0,
+            "strategies": {},
+            "system_jobs": []
+        }
+
+@app.delete("/api/v1/scheduler/jobs/all")
+async def clear_all_scheduler_jobs():
+    """Supprime TOUS les jobs d'APScheduler (sauf système)"""
+    try:
+        if not STRATEGY_SCHEDULER_AVAILABLE:
+            return {
+                "success": False,
+                "message": "StrategyScheduler non disponible",
+                "removed_jobs": 0
+            }
+        
+        # Récupérer tous les jobs APScheduler
+        jobs = strategy_scheduler.scheduler.get_jobs()
+        
+        # Filtrer pour garder seulement les jobs système
+        system_jobs = ['Precision Test Job', 'Cleanup Expired Jobs']
+        jobs_to_remove = []
+        
+        for job in jobs:
+            if job.name not in system_jobs:
+                jobs_to_remove.append(job)
+        
+        # Supprimer les jobs non-système
+        removed_count = 0
+        for job in jobs_to_remove:
+            try:
+                strategy_scheduler.scheduler.remove_job(job.id)
+                logger.info(f"🧹 Removed APScheduler job: {job.id}")
+                removed_count += 1
+            except Exception as e:
+                logger.error(f"❌ Error removing job {job.id}: {e}")
+        
+        logger.info(f"✅ Cleared {removed_count} APScheduler jobs, kept {len(system_jobs)} system jobs")
+        
+        return {
+            "success": True,
+            "message": f"Supprimé {removed_count} jobs APScheduler",
+            "removed_jobs": removed_count,
+            "kept_system_jobs": len(system_jobs)
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error clearing APScheduler jobs: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "removed_jobs": 0
+        }
+
 @app.get("/api/v1/profiles")
 async def get_profiles():
     """Récupère la liste des profils depuis gsgui.ini"""
@@ -2009,8 +2335,9 @@ async def schedule_strategies_from_ini():
         
         scheduled_count = 0
         for profile_id, profile_strategies in challenge_strategies_by_profile.items():
-            print(f"🎯 Processing {len(profile_strategies)} strategies for profile {profile_id}")
-            for challenge_id, strategy_info in profile_strategies.items():
+            active_strategies = {k: v for k, v in profile_strategies.items() if v.get('strategy_status', 'active') == 'active'}
+            print(f"🎯 Processing {len(active_strategies)} active strategies for profile {profile_id} (skipping {len(profile_strategies) - len(active_strategies)} completed)")
+            for challenge_id, strategy_info in active_strategies.items():
                 strategy_name = strategy_info['strategy_name']
                 challenge_title = strategy_info.get('challenge_title', f'Challenge {challenge_id}')
                 print(f"  - Challenge {challenge_id}: strategy {strategy_name}")
