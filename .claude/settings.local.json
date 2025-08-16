@@ -67,7 +67,8 @@
       "Bash(node:*)",
       "Bash(sqlite3:*)",
       "mcp__filesystem__list_allowed_directories",
-      "Bash(./process-manager-portable.sh stop:*)"
+      "Bash(./process-manager-portable.sh stop:*)",
+      "Bash(open http://localhost:3000)"
     ]
   },
   "enableAllProjectMcpServers": false,

@@ -1492,17 +1492,30 @@ class ExtendedStrategyExecutor:
                             # not MISSED
 
                             boosted = challenge_data['member']['boost']['state']
+                            boost_timeout = challenge_data['member']['boost']['timeout']
 
                             # Vérifier si le boost a déjà été utilisé/activé
                             if boosted in ['USED', 'APPLIED', 'ACTIVATED', 'EXPIRED', 'MISSED']:
                                 logger.info(f"🏁 Boost already {boosted.lower()} for challenge {challenge_id} - stopping unlocked_boost monitoring")
                                 return 'COMPLETED'  # Statut spécial pour indiquer que la tâche est terminée
+                            
+                            # Vérifier si le boost est encore dans sa période gratuite
+                            if boosted == 'AVAILABLE':
+                                is_still_free = await self._is_boost_still_in_free_period(boost_timeout)
                                 
-                            if boosted == 'AVAILABLE' and await self._is_boost_free_period_ending_soon(challenge_data['member']['boost']['timeout'], 1.0):
-                                logger.info(f"✅ Boost free period ending soon for challenge {challenge_id} - ready to activate!")
-                                return True
+                                if not is_still_free:
+                                    logger.info(f"🔄 Boost free period ended for challenge {challenge_id} - boost is now paid again, stopping unlocked_boost monitoring")
+                                    return 'COMPLETED'  # Arrêter la surveillance car le boost est redevenu payant
+                                
+                                # Le boost est encore gratuit, vérifier si la période gratuite se termine bientôt
+                                if await self._is_boost_free_period_ending_soon(boost_timeout, 1.0):
+                                    logger.info(f"✅ Boost free period ending soon for challenge {challenge_id} - ready to activate!")
+                                    return True
+                                else:
+                                    logger.info(f"✅ Boost available and still free for challenge {challenge_id} - waiting...")
+                                    return False
                             else:
-                                logger.info(f"✅ Boost available but free period not ending soon for challenge {challenge_id} - waiting...")
+                                logger.info(f"⏳ Boost not available (state: {boosted}) for challenge {challenge_id} - waiting...")
                                 return False
                     # If not found, fallback to a reasonable default (24 hours from now)
                     challenge_ids_found = [str(c.get('id', 'NO_ID')) for c in data.get('challenges', [])]
@@ -1513,6 +1526,36 @@ class ExtendedStrategyExecutor:
         except Exception as e:
             logger.error(f"❌ Error getting challenge end time via API: {e}")
             # Fallback to 24 hours from now if we can't get the real end time
+            return False
+
+    async def _is_boost_still_in_free_period(self, timeout_timestamp: int) -> bool:
+        """
+        Check if the boost is still in its free period.
+        
+        According to the boost lifecycle: payant → gratuit → payant
+        The timeout_timestamp indicates when the free period ends.
+        
+        Args:
+            timeout_timestamp: Unix timestamp indicating when the boost free period ends
+            
+        Returns:
+            True if boost is still in free period, False if it has become paid again
+        """
+        try:
+            # Convert timestamp to datetime
+            free_period_end = datetime.fromtimestamp(timeout_timestamp)
+            now = datetime.now()
+            
+            # If current time is past the timeout, boost has returned to paid status
+            is_still_free = now < free_period_end
+            
+            if not is_still_free:
+                logger.info(f"🔄 Boost free period ended at {free_period_end}, boost is now paid again")
+            
+            return is_still_free
+            
+        except (ValueError, OSError, OverflowError) as e:
+            logger.error(f"Invalid timestamp {timeout_timestamp}: {e}")
             return False
 
     async def _is_boost_free_period_ending_soon(self, timeout_timestamp: int, threshold_hours: float = 1.0) -> bool:

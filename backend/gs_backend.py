@@ -1901,6 +1901,120 @@ async def cleanup_scheduler_jobs():
             "cleaned_count": 0
         }
 
+@app.post("/api/v1/scheduler/deep-purge")
+async def deep_purge_scheduler_and_strategies(profile_id: str = "all"):
+    """
+    Purge profonde : supprime TOUS les jobs APScheduler et stratégies du .ini
+    Paramètres:
+    - profile_id: "all" pour tous les profils, ou un profil spécifique (ex: "bruno")
+    """
+    try:
+        if not STRATEGY_SCHEDULER_AVAILABLE:
+            return {
+                "success": False,
+                "error": "StrategyScheduler service not available"
+            }
+        
+        from app.services.strategy_scheduler import strategy_scheduler
+        
+        if not strategy_scheduler._running:
+            return {
+                "success": False,
+                "error": "Scheduler is not running"
+            }
+        
+        purge_result = {
+            "success": True,
+            "apscheduler_jobs_removed": 0,
+            "ini_strategies_removed": 0,
+            "profiles_processed": [],
+            "errors": []
+        }
+        
+        # 1. PURGE APScheduler - Supprimer TOUS les jobs (sauf système)
+        jobs = strategy_scheduler.get_jobs()
+        for job in jobs:
+            # Préserver uniquement les jobs système
+            if job.id in ['precision_test', 'cleanup_expired_jobs']:
+                continue
+            
+            # Si un profil spécifique est demandé, filtrer par profil
+            if profile_id != "all":
+                if not job.id.startswith(f"{profile_id}_"):
+                    continue
+            
+            try:
+                strategy_scheduler.scheduler.remove_job(job.id)
+                purge_result["apscheduler_jobs_removed"] += 1
+                logger.info(f"🗑️ Removed APScheduler job: {job.id}")
+            except Exception as e:
+                error_msg = f"Error removing job {job.id}: {e}"
+                purge_result["errors"].append(error_msg)
+                logger.error(error_msg)
+        
+        # 2. PURGE gsgui.ini - Supprimer toutes les stratégies
+        profiles_to_process = [profile_id] if profile_id != "all" else list(profiles.keys())
+        
+        for pid in profiles_to_process:
+            try:
+                purge_result["profiles_processed"].append(pid)
+                
+                # Charger directement le fichier de configuration
+                config_file_path = 'data/gsgui.ini'
+                config = ConfigObj(config_file_path, encoding='utf-8')
+                
+                if pid not in config:
+                    continue
+                
+                strategies_removed = 0
+                user_config = config[pid]
+                
+                # Supprimer toutes les stratégies programmées
+                if 'scheduled_strategies' in user_config:
+                    strategies_count = len(user_config['scheduled_strategies'])
+                    user_config['scheduled_strategies'] = {}
+                    strategies_removed += strategies_count
+                
+                # Supprimer toutes les stratégies hiérarchiques
+                sections_to_remove = []
+                for section_name in user_config.keys():
+                    if section_name.startswith('[[[[') and section_name.endswith(']]]]'):
+                        sections_to_remove.append(section_name)
+                
+                for section_name in sections_to_remove:
+                    del user_config[section_name]
+                    strategies_removed += 1
+                
+                # Sauvegarder les modifications
+                config.write()
+                
+                purge_result["ini_strategies_removed"] += strategies_removed
+                logger.info(f"🗑️ Removed {strategies_removed} strategies from {pid} profile")
+                
+            except Exception as e:
+                error_msg = f"Error purging strategies for profile {pid}: {e}"
+                purge_result["errors"].append(error_msg)
+                logger.error(error_msg)
+        
+        # 3. Logs de résumé
+        logger.info(f"🧹 DEEP PURGE COMPLETED:")
+        logger.info(f"  - APScheduler jobs removed: {purge_result['apscheduler_jobs_removed']}")
+        logger.info(f"  - INI strategies removed: {purge_result['ini_strategies_removed']}")
+        logger.info(f"  - Profiles processed: {purge_result['profiles_processed']}")
+        if purge_result["errors"]:
+            logger.warning(f"  - Errors encountered: {len(purge_result['errors'])}")
+        
+        return purge_result
+        
+    except Exception as e:
+        logger.error(f"❌ Error during deep purge: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "apscheduler_jobs_removed": 0,
+            "ini_strategies_removed": 0
+        }
+
 @app.get("/api/v1/scheduler/detailed-status")
 async def get_detailed_scheduler_status():
     """Retourne le statut détaillé avec compteurs de jobs actifs/expirés"""

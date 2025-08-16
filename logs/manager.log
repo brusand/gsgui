@@ -1301,3 +1301,44 @@
 [2025-08-13 11:05:02] ℹ️    - Arrêt du processus orphelin 98948 (port 8001)
 [2025-08-13 11:05:03] ℹ️  Attente de la libération des ports...
 [2025-08-13 11:05:05] ✅ Tous les processus ont été arrêtés
+[2025-08-14 13:44:08] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-14 13:44:08] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-14 13:44:08] ❌ Commande inconnue: stOP
+[2025-08-14 13:44:12] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-14 13:44:12] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-14 13:44:12] ℹ️  === Arrêt des services GSGUI ===
+[2025-08-14 13:44:12] ℹ️  Arrêt des processus...
+[2025-08-14 13:44:12] ℹ️  Nettoyage des processus orphelins sur port 8001...
+[2025-08-14 13:44:12] ℹ️    - Arrêt du processus orphelin 31439 (port 8001)
+[2025-08-14 13:44:13] ℹ️    - Arrêt du processus orphelin 51518 (port 8001)
+[2025-08-14 13:44:14] ℹ️    - Arrêt du processus orphelin 77766 (port 8001)
+[2025-08-14 13:44:15] ℹ️  Attente de la libération des ports...
+[2025-08-14 13:44:17] ✅ Tous les processus ont été arrêtés
+[2025-08-14 13:44:21] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-14 13:44:21] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-14 13:44:21] ℹ️  Vérification des services existants...
+[2025-08-14 13:44:21] ℹ️  Vérification des prérequis...
+[2025-08-14 13:44:21] ✅ Tous les prérequis sont satisfaits
+[2025-08-14 13:44:21] ℹ️  Python: /Users/bruno/gsgui/venv/bin/python (environnement virtuel)
+[2025-08-14 13:44:21] ℹ️  npm: npm (/usr/local/bin/npm)
+[2025-08-14 13:44:21] ℹ️  === Démarrage des services GSGUI ===
+[2025-08-14 13:44:21] ℹ️  Démarrage du backend...
+[2025-08-14 13:44:21] ℹ️  Utilisation de l'environnement virtuel: /Users/bruno/gsgui/venv/bin/activate
+[2025-08-14 13:44:23] ✅ Backend démarré (PID: 33224)
+[2025-08-14 13:44:26] ℹ️  Démarrage du frontend...
+[2025-08-14 13:44:29] ✅ Frontend démarré (PID: 33234)
+[2025-08-14 13:44:29] ✅ === Tous les services sont démarrés ===
+[2025-08-14 13:44:29] ℹ️  Utilisez './process-manager-portable.sh status' pour vérifier l'état
+[2025-08-14 13:44:29] ℹ️  Utilisez './process-manager-portable.sh monitor' pour surveillance automatique
+[2025-08-14 13:44:40] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-14 13:44:40] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-14 13:44:41] ℹ️  === État des services GSGUI ===
+[2025-08-14 13:44:41] ✅ Backend actif (PID: 33224)
+[2025-08-14 13:44:41] ✅ Frontend actif (PID: 33234)
+[2025-08-14 13:44:41] ✅ Tous les services sont actifs
+[2025-08-14 13:46:44] ℹ️  Détection: OS=macos, Script dir=/Users/bruno/gsgui
+[2025-08-14 13:46:44] ℹ️  Répertoires créés: /Users/bruno/gsgui/pids, /Users/bruno/gsgui/logs
+[2025-08-14 13:46:44] ℹ️  === État des services GSGUI ===
+[2025-08-14 13:46:44] ✅ Backend actif (PID: 33224)
+[2025-08-14 13:46:44] ✅ Frontend actif (PID: 33234)
+[2025-08-14 13:46:44] ✅ Tous les services sont actifs

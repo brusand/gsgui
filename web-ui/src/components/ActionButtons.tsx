@@ -19,6 +19,7 @@ interface ActionButtonsProps {
   onSelectNone: () => void;
   onShowLogs: () => void;
   onShowStrategies: () => void;
+  onDeepPurge: () => void;
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({
@@ -35,7 +36,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   onSelectAll,
   onSelectNone,
   onShowLogs,
-  onShowStrategies
+  onShowStrategies,
+  onDeepPurge
 }) => {
   const [showVoteDialog, setShowVoteDialog] = useState<boolean>(false);
   const [showStrategyDialog, setShowStrategyDialog] = useState<boolean>(false);
@@ -177,6 +179,22 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           title="Voir les logs du frontend dans une fenêtre dédiée"
         >
           📋 Logs
+        </button>
+
+        {/* Bouton Purge Profonde */}
+        <button
+          onClick={onDeepPurge}
+          disabled={isLoading}
+          className="btn btn-danger"
+          title="⚠️ ATTENTION: Supprime TOUTES les stratégies et jobs APScheduler. Action irréversible!"
+          style={{ 
+            backgroundColor: '#dc3545', 
+            borderColor: '#dc3545',
+            fontWeight: 'bold',
+            marginLeft: '10px'
+          }}
+        >
+          🗑️ Purge Profonde
         </button>
       </div>
 

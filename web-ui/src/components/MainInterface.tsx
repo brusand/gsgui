@@ -408,6 +408,80 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
     setIsLogsViewerOpen(true);
   };
 
+  const handleDeepPurge = async () => {
+    const confirmed = confirm(
+      `⚠️ ATTENTION - PURGE PROFONDE ⚠️\n\n` +
+      `Cette action va SUPPRIMER DÉFINITIVEMENT :\n` +
+      `• TOUTES les stratégies en cours pour le profil "${profileName}"\n` +
+      `• TOUS les jobs APScheduler associés\n` +
+      `• TOUTES les données du fichier gsgui.ini\n\n` +
+      `Cette action est IRRÉVERSIBLE !\n\n` +
+      `Êtes-vous ABSOLUMENT sûr de vouloir continuer ?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const doubleConfirm = confirm(
+      `🚨 DERNIÈRE CONFIRMATION 🚨\n\n` +
+      `Vous allez DÉTRUIRE toutes les stratégies du profil "${profileName}".\n\n` +
+      `Tapez "SUPPRIMER" dans le prochain dialogue pour confirmer.`
+    );
+
+    if (!doubleConfirm) {
+      return;
+    }
+
+    const finalConfirm = prompt(
+      `Pour confirmer la purge profonde, tapez exactement : SUPPRIMER`
+    );
+
+    if (finalConfirm !== "SUPPRIMER") {
+      alert("❌ Action annulée - Le texte de confirmation ne correspond pas.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Appeler l'API de purge profonde
+      const response = await fetch(`http://localhost:8001/api/v1/scheduler/deep-purge?profile_id=${profileName}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(
+          `✅ PURGE PROFONDE TERMINÉE\n\n` +
+          `Jobs APScheduler supprimés: ${result.apscheduler_jobs_removed}\n` +
+          `Stratégies INI supprimées: ${result.ini_strategies_removed}\n` +
+          `Profils traités: ${result.profiles_processed.join(', ')}\n` +
+          `${result.errors.length > 0 ? `\nErreurs: ${result.errors.length}` : ''}`
+        );
+        
+        // Rafraîchir l'interface
+        await refreshChallenges();
+        setSelectedChallenges(new Set());
+      } else {
+        throw new Error(result.error || 'Erreur inconnue lors de la purge');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la purge profonde:', error);
+      alert(`❌ Erreur lors de la purge profonde:\n${error}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="main-interface">
       <header className="main-header">
@@ -439,6 +513,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onSelectNone={handleSelectNone}
           onShowLogs={handleShowLogs}
           onShowStrategies={() => setIsStrategiesPanelOpen(!isStrategiesPanelOpen)}
+          onDeepPurge={handleDeepPurge}
         />
 
         <ChallengeTable
