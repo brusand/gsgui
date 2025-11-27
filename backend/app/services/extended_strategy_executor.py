@@ -913,16 +913,8 @@ class ExtendedStrategyExecutor:
             logger.info(f"🚀 Calling set_turbo(challenge_id={challenge_id}, photo_id={target_photo_id})")
 
             available = await self._get_challenge_boost_unlocked(api_client, challenge_id)
-            if available == 'COMPLETED':
-                # Le boost a déjà été utilisé - marquer la tâche comme terminée définitivement
-                logger.info(f"🏁 Boost already used for challenge {challenge_id} - task completed successfully")
-                return {
-                    'success': True,
-                    'message': f'Boost already used for challenge {challenge_id} - monitoring completed',
-                    'challenge_id': challenge_id,
-                    'completed': True
-                }
-            elif available == True:
+
+            if available == 'BOOST':
                 result = await self._execute_boost_action(api_client, challenge_id, challenge_url,params)
                 if result.get('success', True):
                     logger.info(f"🚀 Successfully unlocked turbo for challenge {challenge_id}")
@@ -933,17 +925,29 @@ class ExtendedStrategyExecutor:
                             'message': f'Unlocked turbo for challenge {challenge_id} boosted and vote',
                             'challenge_id': challenge_id,
                             'target_photo_id': target_photo_id,
-                            'note': 'Turbo unlocked - specific photo targeting may require additional implementation'
+                            'note': 'Turbo unlocked - specific photo targeting may require additional implementation',
+                            'completed': True
                         }
                     else:
                         error_msg = result.get('error', 'Turbo unlock failed')
                         logger.error(f"❌ Boost, votes failed: {error_msg}")
-                        return {'success': False, 'error': error_msg}
+                        return {'success': False, 'error': error_msg, 'completed': True}
                 else:
                     error_msg = result.get('error', 'Turbo unlock failed')
                     logger.error(f"❌ Turbo unlock failed: {error_msg}")
-                    return {'success': False, 'error': error_msg}
-            else:
+                    return {'success': False, 'error': error_msg, 'completed': True}
+
+            if available == 'USED':
+                # Le boost a déjà été utilisé - marquer la tâche comme terminée définitivement
+                logger.info(f"🏁 Boost already used for challenge {challenge_id} - task completed successfully")
+                return {
+                    'success': True,
+                    'message': f'Boost already used for challenge {challenge_id} - monitoring completed',
+                    'challenge_id': challenge_id,
+                    'completed': True
+                }
+
+            if available == 'LOCKED':
                 # Vérifier si le challenge est encore actif et si tous les boosts ne sont pas déjà utilisés
                 try:
                     logger.info(f"🔍 TEMP DEBUG: About to call get_challenges() for challenge {challenge_id}")
@@ -1466,7 +1470,7 @@ class ExtendedStrategyExecutor:
             # Fallback to 24 hours from now if we can't get the real end time
             return datetime.now() + timedelta(hours=24)
 
-    async def _get_challenge_boost_unlocked(self, api_client: GuruShotsAPI, challenge_id: int) -> boolean:
+    async def _get_challenge_boost_unlocked(self, api_client: GuruShotsAPI, challenge_id: int) -> str:
         """Get challenge end time using direct get_my_active_challenges API call"""
         try:
             import aiohttp
@@ -1495,33 +1499,31 @@ class ExtendedStrategyExecutor:
                             boost_timeout = challenge_data['member']['boost']['timeout']
 
                             # Vérifier si le boost a déjà été utilisé/activé
-                            if boosted in ['USED', 'APPLIED', 'ACTIVATED', 'EXPIRED', 'MISSED']:
+                            if boosted in ['USED',  'MISSED']:
                                 logger.info(f"🏁 Boost already {boosted.lower()} for challenge {challenge_id} - stopping unlocked_boost monitoring")
-                                return 'COMPLETED'  # Statut spécial pour indiquer que la tâche est terminée
-                            
+                                return 'USED'  # Statut spécial pour indiquer que la tâche est terminée
+
+                            if boosted in ['LOCKED']:
+                                logger.info(f"🏁 Boost locked for challenge {challenge_id} - stopping unlocked_boost monitoring")
+                                return 'LOCKED'  #
+
                             # Vérifier si le boost est encore dans sa période gratuite
                             if boosted == 'AVAILABLE':
-                                is_still_free = await self._is_boost_still_in_free_period(boost_timeout)
-                                
-                                if not is_still_free:
-                                    logger.info(f"🔄 Boost free period ended for challenge {challenge_id} - boost is now paid again, stopping unlocked_boost monitoring")
-                                    return 'COMPLETED'  # Arrêter la surveillance car le boost est redevenu payant
-                                
                                 # Le boost est encore gratuit, vérifier si la période gratuite se termine bientôt
                                 if await self._is_boost_free_period_ending_soon(boost_timeout, 1.0):
                                     logger.info(f"✅ Boost free period ending soon for challenge {challenge_id} - ready to activate!")
-                                    return True
+                                    return 'BOOST'
                                 else:
                                     logger.info(f"✅ Boost available and still free for challenge {challenge_id} - waiting...")
-                                    return False
+                                    return 'FREE'
                             else:
                                 logger.info(f"⏳ Boost not available (state: {boosted}) for challenge {challenge_id} - waiting...")
-                                return False
+                                return 'LOCKED'
                     # If not found, fallback to a reasonable default (24 hours from now)
                     challenge_ids_found = [str(c.get('id', 'NO_ID')) for c in data.get('challenges', [])]
                     logger.warning(f"⚠️ Challenge {challenge_id} not found in get_my_active_challenges")
                     logger.warning(f"🔍 TEMP DEBUG: get_my_active_challenges found IDs: {challenge_ids_found[:10]}{'...' if len(challenge_ids_found) > 10 else ''}")
-                    return False
+                    return 'LOCKED'
 
         except Exception as e:
             logger.error(f"❌ Error getting challenge end time via API: {e}")
