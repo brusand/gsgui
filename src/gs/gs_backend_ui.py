@@ -834,7 +834,7 @@ class EnhancedGSGUI(QMainWindow):
         """Initialise l'état de l'auto-refresh (par défaut OFF)"""
         try:
             # Auto-refresh désactivé par défaut - peut être activé manuellement
-            self.log("📖 Auto-refresh: OFF (par défaut)")
+            self.log("📖 Boost detector: OFF (par défaut)")
         except Exception as e:
             self.log(f"⚠️ Erreur initialisation auto-refresh: {e}")
     
@@ -843,9 +843,9 @@ class EnhancedGSGUI(QMainWindow):
         try:
             # État conservé en mémoire pour la session actuelle
             status = "ON" if self.auto_refresh_enabled else "OFF"
-            self.log(f"💾 Auto-refresh state: {status}")
+            self.log(f"💾 Boost detector state: {status}")
         except Exception as e:
-            self.log(f"⚠️ Erreur sauvegarde auto-refresh: {e}")
+            self.log(f"⚠️ Erreur sauvegarde Boost detector: {e}")
     
     def refresh_challenges(self):
         """Rafraîchit les challenges"""
@@ -1035,7 +1035,7 @@ class EnhancedGSGUI(QMainWindow):
         """Démarre l'auto-refresh après la première connexion réussie"""
         if self.auto_refresh_enabled and not self.auto_refresh_timer.isActive():
             self.auto_refresh_timer.start(60000)  # 1 minute
-            self.log("⏰ Auto-refresh activé (1 min)")
+            self.log("⏰ Boost detector activé (1 min)")
     
     def toggle_auto_refresh(self):
         """Active/désactive l'auto-refresh"""
@@ -1045,12 +1045,12 @@ class EnhancedGSGUI(QMainWindow):
             # Activer auto-refresh
             if not self.auto_refresh_timer.isActive():
                 self.auto_refresh_timer.start(60000)  # 1 minute
-            self.log("✅ Auto-refresh activé (1 min)")
+            self.log("✅ Boost detector (1 min)")
         else:
             # Désactiver auto-refresh
             if self.auto_refresh_timer.isActive():
                 self.auto_refresh_timer.stop()
-            self.log("❌ Auto-refresh désactivé")
+            self.log("❌ Boost detector désactivé")
         
         # Sauvegarder l'état
         self.save_auto_refresh_state()

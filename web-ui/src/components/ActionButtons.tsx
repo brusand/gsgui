@@ -20,6 +20,9 @@ interface ActionButtonsProps {
   onShowLogs: () => void;
   onShowStrategies: () => void;
   onDeepPurge: () => void;
+  onToggleAutoRefresh: () => void;
+  autoRefreshEnabled: boolean;
+  autoRefreshInterval: number;
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({
@@ -37,7 +40,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   onSelectNone,
   onShowLogs,
   onShowStrategies,
-  onDeepPurge
+  onDeepPurge,
+  onToggleAutoRefresh,
+  autoRefreshEnabled,
+  autoRefreshInterval
 }) => {
   const [showVoteDialog, setShowVoteDialog] = useState<boolean>(false);
   const [showStrategyDialog, setShowStrategyDialog] = useState<boolean>(false);
@@ -104,6 +110,16 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           title="Recharger les challenges depuis GuruShots"
         >
           {isLoading ? '⏳' : '🔄'} Refresh
+        </button>
+
+        {/* Bouton Boost Detector */}
+        <button
+          onClick={onToggleAutoRefresh}
+          disabled={isLoading}
+          className={`btn ${autoRefreshEnabled ? 'btn-success' : 'btn-secondary'}`}
+          title={`Boost detector ${autoRefreshEnabled ? 'activé' : 'désactivé'} (toutes les ${autoRefreshInterval} minutes)`}
+        >
+          {autoRefreshEnabled ? '⚡' : '🔍'} Boost detector ({autoRefreshInterval}m) {autoRefreshEnabled ? 'ON' : 'OFF'}
         </button>
       </div>
 

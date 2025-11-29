@@ -1,78 +1,15 @@
 # Stratégies étendues avec nouvelles actions
 # Format: action, timing, param1, param2, ...
-[cleaner-pour effacer une strategie en cours-En gros effacer la colonne stratégie]
-description="Cleaner"
-0="vote, now, 1"
-
-[Aurelie - pour le challenge Détails]
-description="team"
-0="submit, end-20m0s, dd0832eb4c32c5317ccf4d62b6129468"
-1="submit, end-19m0s, 7a3584d5b7c4a199ad367b01274e6c67"
-2="turbo, end-18m0s, dd0832eb4c32c5317ccf4d62b6129468"
-3="boost, end-17m0s, 7a3584d5b7c4a199ad367b01274e6c67"
-4="vote, end-3m30s, 100"
-5="vote, end-2m0s,80"
-6="vote, end-1m0s,40"
-7="vote, end-0m45s,20"
-8="vote, end-0m30s,20"
-9="vote, end-0m15s,20"
-
-[zoo aux fills : entree d une nouvelle photo + votes massifs à 4m de la fin du challenge zoo]
-description="zoo"
-0="submit, next-1m0s, f37502f3eceb3e959a46ff35980a7a01"
-1="vote, next-2m0s, 100"
-
-
-[Swap belle et t es toi : exemple de swap à 13 minutes de la fin]
-description="Strategie de fin"
-0="swap, end-13m0s, d4e68b101bc322b7d571ef99fd9adf4d, d6b2fbd120804480f34a1972aa9c6865"
-
-
-
-[Un Shot sinon rien : Strategie de fin de challenge pour Color Shot]
-description="Challenge colors"
-0="boost, end-60m0s, 0"
-1="turbo, end-60m0s,1"
-2="vote, end-2m0s,80"
-3="vote, end-1m0s,40"
-4="vote, end-0m45s,20"
-5="vote, end-0m30s,20"
-6="vote, end-0m15s,20"
-
-[unlocked_boost-now]
-description="Stratégie Unlock Boost"
-0="unlocked_boost, now, 0"
+[cleaner]
+description="Pour effacer une strategie en cours-En gros effacer la colonne stratégie]"
+0="vote, now, 0"
 
 [unlocked_boost]
-description="Stratégie Unlock Boost"
+description="Stratégie Surveille et active les Boosts GRATOS"
 0="unlocked_boost, next-10m0s, 0"
 
-[Alain Parfait pour bonnet de nuit, réveil 1h avant la fin puis votes à 3 min de la fin]
-description="Stratégie vote à 1h de la fin puis votes à 4m"
-0="vote,end-60m0s,100"
-1="vote, end-3m0s,100"
-2="vote, end-2m0s,20"
-3="vote, end-1m0s,40"
-4="vote, end-0m45s,20"
-5="vote, end-0m30s,20"
-6="vote, end-0m15s,20"
-
-[Bruno]
-description="Stratégie Bruno - turbo 13m - votes répartis"
-0="turbo,end-13m0s, 0"
-1="vote,end-3m0s,100"
-
-
-[caloune]
-description="Stratégie conservative - 4m - votes répartis"
-0="vote, end-4m0s,1"
-1="vote, end-3m0s,1"
-2="vote, end-2m0s,1"
-3="vote, end-1m0s,1"
-4="vote, end-0m30s,20"
-
-[4m Strategie de votes à partir de 4m de la fin d un challenge]
-description="end : avant la fin, next: dans les prochaines minutes  4m0 : 4 minutues et 0 secondes"
+[4m]
+description="votes 4m avant la fin, end : avant la fin, next: dans les prochaines minutes  4m0 : 4 minutues et 0 secondes"
 0="vote, end-4m0s,80"
 1="vote, end-3m0s,40"
 2="vote, end-2m0s,40"
@@ -82,8 +19,8 @@ description="end : avant la fin, next: dans les prochaines minutes  4m0 : 4 minu
 6="vote, end-0m45s,20"
 
 
-[3m Strategie de votes à partir de 3m de la fin d un challenge]
-description="Stratégie conservative - 3m - votes répartis"
+[3m]
+description="Strategie de votes à partir de 3m de la fin d un challenge"
 0="vote, end-3m0s,70"
 1="vote, end-2m0s,40"
 2="vote, end-1m0s,40"
@@ -93,60 +30,89 @@ description="Stratégie conservative - 3m - votes répartis"
 6="vote, end-0m45s,20"
 
 
-[2m - Strategie de votes à partir de 2m de la fin d un challenge]
-description="Stratégie conservative - 2m - votes répartis"
+[2m]
+description="Strategie de votes à partir de 2m de la fin d un challenge"
 0="vote, end-2m0s,80"
 1="vote, end-1m0s,40"
 2="vote, end-0m15s,10"
 3="vote, end-0m30s,10"
 4="vote, end-0m45s,10"
 
+
+[Alain Parfait]
+description=" Pour bonnet de nuit, réveil 1h avant la fin puis votes à 3 min de la fin"
+0="vote,end-60m0s,100"
+1="vote, end-3m0s,100"
+2="vote, end-2m0s,20"
+3="vote, end-1m0s,40"
+4="vote, end-0m45s,20"
+5="vote, end-0m30s,20"
+6="vote, end-0m15s,20"
+
+[caloune]
+description="Stratégie votes à 4m de la fin"
+0="vote, end-4m0s,1"
+1="vote, end-3m0s,1"
+2="vote, end-2m0s,1"
+3="vote, end-1m0s,1"
+4="vote, end-0m30s,20"
+
 [fill-now-1]
-description="Stratégie rapide - now - votes répartis"
+description="Stratégie de 1 vote immédiat"
 0="vote, now, 1"
 
-[fill-now-70]
-description="Stratégie rapide - now - votes répartis"
-0="vote, now,70"
-
-[fill - 100 votes maintenant]
-description="Stratégie rapide - now - votes répartis"
+[fill-now-100]
+description="Stratégie 100 votes rapides, immédiat"
 0="vote, now, 100"
 
-[fill - 1 vote dans une minute puis 1 vote dans 2 minutes]
-description="Stratégie rapide - now - votes répartis sur les 2 prochaines minutes"
+[fill-1m-2m]
+description="Strategie de votes dans 1m et 2m suivntes"
 0="vote, next-1m0s,1"
 1="vote, next-2m0s,1"
 
-[turbotage MAINTENANT de la photo du slot 0 la premiere en partant de la gauche, celle qui a le plus de votes]
-description="Turbo on first photo"
+
+[programation-turbotage-20m0s-0]
+description="Programamtion turbotage de la photo du slot 0 la premiere en partant de la gauche, celle qui a le plus de votes"
+0="turbo,end-20m0s, 0"
+
+[programation-turbotage-20m0s-1]
+description="Programamtion turbotage de la photo du slot 1 la deuxieme en partant de la gauche, celle qui a le plus de votes"
+0="turbo,end-20m0s, 1"
+
+[programation-turbotage-20m0s-photo]
+description="Programamtion turbotage de la photo numéro 01232341234343431 (de la gallerie)"
+0="turbo,end-20m0s, 01232341234343431"
+
+
+[turbotage-immediat-0]
+description="turbotage MAINTENANT de la photo du slot 0 la premiere en partant de la gauche, celle qui a le plus de votes"
 0="turbo,now, 0"
 
-[turbotage MAINTENANT de la photo du slot 1 la deuxieme en partant de la gauche, celle qui a le plus de votes]
-description="Turbo on second photo"
+[turbotage-immediat-1]
+description="turbotage MAINTENANT de la photo du slot 1 la deuxieme en partant de la gauche, celle qui a le plus de votes"
 0="turbo,now, 1"
 
-[boost MAINTENANT de la photo du slot 0 la premiere en partant de la gauche, celle qui a le plus de votes]
-description="Boost first photo (most votes)"
+[boost-immediat-0]
+description="BOOST MAINTENANT de la photo du slot 0 la premiere en partant de la gauche, celle qui a le plus de votes"
 0="boost,now, 0"
 
-[boost MAINTENANT de la photo du slot 1 la deuxieme en partant de la gauche, celle qui a le plus de votes]
-description="Boost second photo"
+[boost-immediat-1]
+description="BOOST MAINTENANT de la photo du slot 1 la deuxieme en partant de la gauche, celle qui a le plus de votes"
 0="boost,now, 1"
 
-[boost MAINTENANT de la photo du slot 2 la troisieme en partant de la gauche, celle qui a le plus de votes]
-description="Boost third photo"
+[boost-immediat-2]
+description="boost MAINTENANT de la photo du slot 2 la troisieme en partant de la gauche, celle qui a le plus de votes"
 0="boost,now, 2"
 
-[publication d une photo - aller récupérer son numéro dans votre gallerie]
-description="Submit one photo"
+[publication-photo]
+description="Publication d une photo - aller récupérer son numéro dans votre gallerie]"
 0="submit,now, 47c45c875b7f58f76bc48a3b971df589"
 
-[publication de plusieures photos - aller récupérer leurs numéros dans votre gallerie]
-description="Submit multiple photos"
+[publication-photos]
+description= "Programmation de publication de plusieures photos - aller récupérer leurs numéros dans votre gallerie"
 0="submit,now, 47c45c875b7f58f76bc48a3b971df589, fd408c1b1c4cb6dc0b11f402813282da, 7037898b192d4ec33968eee456912d7b"
 
-[exemple de swap : premier numéro photo à swaper, le deuxieme numéro la nouvelle ]
-description="Swap current photo with new photo"
-0="swap,now, 7037898b192d4ec33968eee456912d7b, 7aa10d0358b01c5f4797c8eca88e821c"
+[programmation-swap]
+description="xemple de swap : premier numéro photo à swaper, le deuxieme numéro la nouvelle"
+0="swap,end-30m0s, 7037898b192d4ec33968eee456912d7b, 7aa10d0358b01c5f4797c8eca88e821c"
 

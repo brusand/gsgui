@@ -42,7 +42,7 @@ class Challenge(Base):
     selected_strategy = Column(String(100))
     status = Column(String(50), default="")  # "", "active", "completed", "failed"
     turbo_status = Column(String(50), default="")  # "", "success", "failed"
-    
+    boost_status = Column(String(50), default="")  # "", "locked", "boosting", "boosted", "missed", "3H", "15M",..."
     # Processus en cours
     current_process_id = Column(String(255))
     process_start_time = Column(DateTime)
@@ -84,6 +84,7 @@ class Challenge(Base):
             "selected_strategy": self.selected_strategy,
             "status": self.status,
             "turbo_status": self.turbo_status,
+            "boost_status": self.boost_status,
             "current_process_id": self.current_process_id,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None

@@ -70,6 +70,7 @@ class TurboHistoryEntry(BaseModel):
     successful_pairs: int
     photo_pairs: List[Dict[str, Any]] = Field(default_factory=list)
     execution_duration: Optional[float] = None  # seconds
+    boost: Optional[str] = None  # Boost status (e.g., "active", "inactive", "used")
 
 
 class TurboHistoryResponse(BaseModel):

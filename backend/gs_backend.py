@@ -3,7 +3,7 @@
 Backend API avec vrais challenges GuruShots
 """
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
@@ -781,6 +781,65 @@ def determine_turbo_status(challenge: Dict, challenge_data: Dict) -> str:
     # Par défaut, pas de turbo disponible
     return "none"
 
+
+def get_real_boost_status(challenge_data: Dict) -> str:
+    """Extrait l'état boost réel depuis les données GuruShots API avec temps restant"""
+    try:
+        # Vérifier member.boost.state (structure officielle GuruShots)
+        #"boost": {
+        #    "state": "AVAILABLE",
+        #    "timeout": 1764324941
+        #},
+        if 'member' in challenge_data and 'boost' in challenge_data['member']:
+            boost_data = challenge_data['member']['boost']
+            if isinstance(boost_data, dict) and 'state' in boost_data:
+                state = boost_data['state']
+                timeout = boost_data.get('timeout')
+
+                # Calculer le temps restant UNIQUEMENT si status est AVAILABLE et timeout not None
+                time_remaining_str = ""
+                if state == "AVAILABLE" and timeout is not None and isinstance(timeout, (int, float)):
+                    import time
+                    now = int(time.time())
+                    remaining_seconds = timeout - now
+
+                    if remaining_seconds > 0:
+                        if remaining_seconds < 60:
+                            time_remaining_str = f" ({remaining_seconds}s)"
+                        elif remaining_seconds < 3600:
+                            minutes = remaining_seconds // 60
+                            time_remaining_str = f" ({minutes}m)"
+                        else:
+                            hours = remaining_seconds // 3600
+                            minutes = (remaining_seconds % 3600) // 60
+                            time_remaining_str = f" ({hours}h{minutes:02d}m)"
+                    else:
+                        time_remaining_str = " (expired)"
+
+                # Retourner l'état avec le temps restant (seulement pour AVAILABLE)
+                if state in ["LOCKED", "MISSED", "AVAILABLE", "USED"]:
+                    result = state.lower() + time_remaining_str
+                    print(f"🚀 Boost state: {state} | timeout: {timeout} | result: {result}")
+                    return result
+
+                # Gérer d'autres états possibles
+                return state.lower()
+
+        # Fallback: Si pas de données boost dans member
+        return "unknown"
+
+    except Exception as e:
+        print(f"❌ Error extracting boost status: {e}")
+        return "unknown"
+
+def determine_boost_status(challenge: Dict, challenge_data: Dict) -> str:
+    """Détermine l'état turbo dynamiquement depuis les données API"""
+
+    # 1. PRIORITÉ: États réels depuis l'API GuruShots
+    api_status = get_real_boost_status(challenge_data)
+    return api_status
+
+
 def get_user_token_from_config() -> Optional[str]:
     """Récupère le token depuis la config"""
     try:
@@ -916,7 +975,9 @@ async def get_challenges(profile_name: str):
             # États turbo intelligents avec données originales
             original_data = challenge.get('_original_data', {})
             challenge['turbo_status'] = determine_turbo_status(challenge, original_data)
-            
+            # États boost intelligents avec données originales
+            challenge['boost_status'] = determine_boost_status(challenge, original_data)
+
             # Nettoyer les données internes
             if '_original_data' in challenge:
                 del challenge['_original_data']
@@ -930,6 +991,71 @@ async def get_challenges(profile_name: str):
     except Exception as e:
         print(f"❌ Error in get_challenges: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# AUTO-REFRESH ENDPOINTS
+# ============================================================================
+
+@app.post("/api/v1/challenges/{profile_id}/auto-refresh/toggle")
+async def toggle_auto_refresh(
+    profile_id: str,
+    enabled: bool = Query(..., description="Enable or disable auto-refresh"),
+    interval_minutes: int = Query(10, ge=1, le=60, description="Refresh interval in minutes")
+):
+    """Active/désactive l'auto-refresh global pour un profil"""
+    try:
+        from app.services.auto_refresh_scheduler import auto_refresh_scheduler
+
+        if auto_refresh_scheduler is None:
+            raise HTTPException(status_code=503, detail="Auto-refresh scheduler not initialized")
+
+        if enabled:
+            success = await auto_refresh_scheduler.enable_auto_refresh(profile_id, interval_minutes)
+        else:
+            success = await auto_refresh_scheduler.disable_auto_refresh(profile_id)
+
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to toggle auto-refresh")
+
+        status = auto_refresh_scheduler.get_status(profile_id)
+
+        return {
+            "success": True,
+            "profile_id": profile_id,
+            **status
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error toggling auto-refresh: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/v1/challenges/{profile_id}/auto-refresh/status")
+async def get_auto_refresh_status(profile_id: str):
+    """Récupère le statut de l'auto-refresh pour un profil"""
+    try:
+        from app.services.auto_refresh_scheduler import auto_refresh_scheduler
+
+        if auto_refresh_scheduler is None:
+            raise HTTPException(status_code=503, detail="Auto-refresh scheduler not initialized")
+
+        status = auto_refresh_scheduler.get_status(profile_id)
+
+        return {
+            "success": True,
+            "profile_id": profile_id,
+            **status
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error getting auto-refresh status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/api/v1/profiles/{profile_id}/strategies")
 async def schedule_strategy(profile_id: str, request: ScheduleStrategyRequest):
@@ -3238,11 +3364,23 @@ async def startup_event():
         if STRATEGY_SCHEDULER_AVAILABLE:
             from app.services.strategy_scheduler import strategy_scheduler
             await strategy_scheduler.start()
-            
+
             # Programmer les stratégies existantes
             logger.info("🔄 Starting strategy scheduling from .ini...")
             await schedule_strategies_from_ini()
             logger.info("✅ StrategyScheduler service initialized")
+
+            # Initialiser le service AutoRefreshScheduler
+            try:
+                from app.services.auto_refresh_scheduler import init_auto_refresh_scheduler
+                auto_refresh_sched = init_auto_refresh_scheduler(strategy_scheduler)
+
+                # Restaurer les auto-refresh depuis la config
+                await auto_refresh_sched.restore_from_config()
+                logger.info("✅ AutoRefreshScheduler service initialized")
+            except Exception as e:
+                logger.error(f"❌ Failed to initialize AutoRefreshScheduler: {e}")
+                logger.warning("⚠️ Auto-refresh feature will not be available")
         else:
             logger.warning("⚠️ StrategyScheduler service not available")
     except Exception as e:

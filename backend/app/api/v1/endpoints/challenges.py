@@ -386,3 +386,96 @@ async def execute_turbo(
     except Exception as e:
         logger.error(f"❌ Error executing turbo: {e}")
         raise HTTPException(status_code=500, detail=f"Error executing turbo: {str(e)}")
+
+
+# ============================================================================
+# AUTO-REFRESH ENDPOINTS
+# ============================================================================
+
+@router.post("/{profile_id}/auto-refresh/toggle")
+async def toggle_auto_refresh(
+    profile_id: str,
+    enabled: bool = Query(..., description="Enable or disable auto-refresh"),
+    interval_minutes: int = Query(10, ge=1, le=60, description="Refresh interval in minutes (1-60)")
+):
+    """
+    Active/désactive l'auto-refresh global pour un profil
+
+    Args:
+        profile_id: ID du profil
+        enabled: True pour activer, False pour désactiver
+        interval_minutes: Intervalle de rafraîchissement en minutes (défaut: 10)
+
+    Returns:
+        Statut de l'auto-refresh avec prochaine exécution
+    """
+    try:
+        from app.services.auto_refresh_scheduler import auto_refresh_scheduler
+
+        if auto_refresh_scheduler is None:
+            raise HTTPException(
+                status_code=503,
+                detail="Auto-refresh scheduler not initialized"
+            )
+
+        if enabled:
+            success = await auto_refresh_scheduler.enable_auto_refresh(
+                profile_id, interval_minutes
+            )
+        else:
+            success = await auto_refresh_scheduler.disable_auto_refresh(profile_id)
+
+        if not success:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to toggle auto-refresh"
+            )
+
+        status = auto_refresh_scheduler.get_status(profile_id)
+
+        return {
+            "success": True,
+            "profile_id": profile_id,
+            **status
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error toggling auto-refresh: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/{profile_id}/auto-refresh/status")
+async def get_auto_refresh_status(profile_id: str):
+    """
+    Récupère le statut de l'auto-refresh pour un profil
+
+    Args:
+        profile_id: ID du profil
+
+    Returns:
+        Statut actuel de l'auto-refresh
+    """
+    try:
+        from app.services.auto_refresh_scheduler import auto_refresh_scheduler
+
+        if auto_refresh_scheduler is None:
+            raise HTTPException(
+                status_code=503,
+                detail="Auto-refresh scheduler not initialized"
+            )
+
+        status = auto_refresh_scheduler.get_status(profile_id)
+
+        return {
+            "success": True,
+            "profile_id": profile_id,
+            **status
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error getting auto-refresh status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

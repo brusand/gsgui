@@ -27,6 +27,8 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
   const [strategyEditorContent, setStrategyEditorContent] = useState('');
   const [isLogsViewerOpen, setIsLogsViewerOpen] = useState(false);
   const [isStrategiesPanelOpen, setIsStrategiesPanelOpen] = useState(false);
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState(10);
 
   // Helper functions pour récupérer les détails des stratégies depuis strategies.ini
   // Commenté temporairement - pas utilisé actuellement
@@ -107,12 +109,22 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
       refreshChallenges();
     };
 
+    const handleChallengesRefreshed = (data: any) => {
+      // Auto-refresh depuis le scheduler - mettre à jour directement les challenges
+      if (data.challenges && Array.isArray(data.challenges)) {
+        console.log(`🔄 Auto-Refresh: ${data.challenges.length} challenges mis à jour`);
+        setChallenges(data.challenges);
+      }
+    };
+
     wsService.on('log', handleLogMessage);
     wsService.on('challenge_update', handleChallengeUpdate);
+    wsService.on('challenges_refreshed', handleChallengesRefreshed);
 
     return () => {
       wsService.off('log', handleLogMessage);
       wsService.off('challenge_update', handleChallengeUpdate);
+      wsService.off('challenges_refreshed', handleChallengesRefreshed);
     };
   }, [profileName]);
 
@@ -482,6 +494,68 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
     }
   };
 
+  const handleToggleAutoRefresh = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(
+        `http://localhost:8001/api/v1/challenges/${profileName}/auto-refresh/toggle?enabled=${!autoRefreshEnabled}&interval_minutes=${autoRefreshInterval}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        setAutoRefreshEnabled(result.enabled);
+        setAutoRefreshInterval(result.interval_minutes);
+
+        console.log(
+          `Auto-refresh ${result.enabled ? 'activé' : 'désactivé'} (${result.interval_minutes}m)`,
+          result.next_run ? `Prochaine exécution: ${result.next_run}` : ''
+        );
+      } else {
+        throw new Error('Échec du toggle auto-refresh');
+      }
+    } catch (error) {
+      console.error('Erreur lors du toggle auto-refresh:', error);
+      alert(`❌ Erreur lors du toggle auto-refresh:\n${error}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Charger le statut de l'auto-refresh au démarrage
+  useEffect(() => {
+    const loadAutoRefreshStatus = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8001/api/v1/challenges/${profileName}/auto-refresh/status`
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setAutoRefreshEnabled(result.enabled);
+            setAutoRefreshInterval(result.interval_minutes);
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement du statut auto-refresh:', error);
+      }
+    };
+
+    loadAutoRefreshStatus();
+  }, [profileName]);
+
   return (
     <div className="main-interface">
       <header className="main-header">
@@ -514,6 +588,9 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onShowLogs={handleShowLogs}
           onShowStrategies={() => setIsStrategiesPanelOpen(!isStrategiesPanelOpen)}
           onDeepPurge={handleDeepPurge}
+          onToggleAutoRefresh={handleToggleAutoRefresh}
+          autoRefreshEnabled={autoRefreshEnabled}
+          autoRefreshInterval={autoRefreshInterval}
         />
 
         <ChallengeTable

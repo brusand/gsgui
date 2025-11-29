@@ -2235,7 +2235,7 @@ class ProfileTab(QWidget):
         row1.addWidget(none_button)
         
         # Auto refresh
-        self.auto_refresh_button = QPushButton("🔄 Auto: ON")
+        self.auto_refresh_button = QPushButton("🔄 Boost detector: ON")
         self.auto_refresh_button.setStyleSheet(button_style)
         self.auto_refresh_button.setCheckable(True)
         self.auto_refresh_button.setChecked(True)
@@ -2266,7 +2266,7 @@ class ProfileTab(QWidget):
         else:
             auto_optimize_enabled = bool(auto_optimize_raw)
             
-        auto_optimize_text = "🤖 Auto: ON" if auto_optimize_enabled else "🤖 Auto: OFF"
+        auto_optimize_text = "🤖 Boost detector: ON" if auto_optimize_enabled else "🤖 Boost detector: OFF"
         self.auto_optimize_button = QPushButton(auto_optimize_text)
         auto_optimize_color = '#27ae60' if auto_optimize_enabled else '#e67e22'
         self.auto_optimize_button.setStyleSheet(button_style.replace('#3498db', auto_optimize_color).replace('#2980b9', '#229954' if auto_optimize_enabled else '#d35400').replace('#21618c', '#1e8449' if auto_optimize_enabled else '#a93226'))
@@ -2635,9 +2635,9 @@ class ProfileTab(QWidget):
     def toggle_auto_refresh(self):
         """Toggle auto refresh"""
         self.auto_refresh_enabled = self.auto_refresh_button.isChecked()
-        text = "🔄 Auto: ON" if self.auto_refresh_enabled else "⏸️ Auto: OFF"
+        text = "🔄 Boost detector: ON" if self.auto_refresh_enabled else "⏸️ Boost detector: OFF"
         self.auto_refresh_button.setText(text)
-        self.log(f"Auto refresh: {'ON' if self.auto_refresh_enabled else 'OFF'}")
+        self.log(f"Boost detector: {'ON' if self.auto_refresh_enabled else 'OFF'}")
     
     def update_countdown(self):
         """Met à jour le countdown des challenges"""
@@ -3960,7 +3960,7 @@ class ProfileTab(QWidget):
         except Exception as e:
             self.log(f"❌ Erreur export CSV: {e}")
 
-    def save_turbo_history(self, challenge_id, challenge_title, time_left, first_id, first_data, second_id, second_data, winner_id, algorithm, strategy_description, success):
+    def save_turbo_history(self, challenge_id, challenge_title, time_left, first_id, first_data, second_id, second_data, winner_id, algorithm, strategy_description, success, boost=None):
         """Sauvegarde l'historique d'une comparaison turbo pour l'apprentissage IA"""
         try:
             # Vérifier si l'historisation est activée
@@ -4032,6 +4032,7 @@ class ProfileTab(QWidget):
                 'algorithm': algorithm,
                 'strategy_description': strategy_description,
                 'success': success,
+                'boost': boost,
                 'photo1': {
                     'id': first_id,
                     'ratio': first_data.get('ratio', 0) if first_data else 0,
@@ -5009,7 +5010,7 @@ class ProfileTab(QWidget):
             self.config.write()
             
             # Mettre à jour l'interface
-            text = "🤖 Auto: ON" if new_state else "🤖 Auto: OFF"
+            text = "🤖 Boost detector: ON" if new_state else "🤖 Boost detector: OFF"
             self.auto_optimize_button.setText(text)
             
             # Mettre à jour les couleurs

@@ -11,6 +11,7 @@ export interface Challenge {
   gps: number;
   selected_strategy?: string;
   turbo_status: 'none' | 'running' | 'completed' | 'failed' | 'timer' | 'unknown' | 'pending' | 'available' | 'won' | 'used';
+  boost_status?: string;
   status: 'active' | 'fill' | 'scheduled' | 'expired';
   url: string;
   // Legacy fields for compatibility

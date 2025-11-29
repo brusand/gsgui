@@ -84,6 +84,7 @@
 .gps-col { width: 60px; }
 .strategy-col { width: 100px; }
 .turbo-col { width: 80px; }
+.boost-col { width: 100px; }
 
 .title-cell {
   display: flex;
@@ -129,6 +130,14 @@
   font-size: 0.8em;
   padding: 2px 4px;
   border-radius: 2px;
+}
+
+.boost-cell {
+  text-align: center;
+  font-size: 0.8em;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-weight: 500;
 }
 
 .empty-state {

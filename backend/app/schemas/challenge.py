@@ -35,7 +35,7 @@ class ChallengeUpdate(BaseModel):
     selected_strategy: Optional[str] = None
     status: Optional[str] = None
     turbo_status: Optional[str] = None
-
+    boost_status: Optional[str] = None
 
 class ChallengeResponse(ChallengeBase):
     """Schema for Challenge API responses"""
@@ -47,6 +47,7 @@ class ChallengeResponse(ChallengeBase):
     selected_strategy: Optional[str] = None
     status: str
     turbo_status: str
+    boost_status: str
     current_process_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime

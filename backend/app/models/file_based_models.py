@@ -252,6 +252,7 @@ class TurboHistory(BaseModel):
     is_photo1_winner: bool
     timestamp: str
     user_id: str
+    boost: Optional[str] = None
     
     @classmethod
     def create(cls, user_id: str, turbo_data: Dict[str, Any]) -> 'TurboHistory':
@@ -288,9 +289,10 @@ class TurboHistory(BaseModel):
             'photo2_found': self.photo2_found,
             'winner_id': self.winner_id,
             'is_photo1_winner': self.is_photo1_winner,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'boost': self.boost
         }
-        
+
         return config_manager.save_turbo_history(self.user_id, turbo_data)
     
     @classmethod
@@ -324,7 +326,8 @@ class TurboHistory(BaseModel):
                 photo2_found=entry['photo2']['found'],
                 winner_id=entry['winner']['id'],
                 is_photo1_winner=entry['winner']['is_photo1'],
-                timestamp=entry['timestamp']
+                timestamp=entry['timestamp'],
+                boost=entry.get('boost')
             )
             
             history_entries.append(history_entry)

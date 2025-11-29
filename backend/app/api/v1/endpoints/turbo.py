@@ -196,7 +196,8 @@ async def get_turbo_history(
                     pairs_processed=turbo_data.get('pairs_processed', 0),
                     successful_pairs=turbo_data.get('successful_pairs', 0),
                     photo_pairs=turbo_data.get('photo_pairs', []),
-                    execution_duration=turbo_data.get('execution_duration')
+                    execution_duration=turbo_data.get('execution_duration'),
+                    boost=turbo_data.get('boost')
                 )
                 entries.append(entry)
                 
