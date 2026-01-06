@@ -25,6 +25,11 @@ from app.utils.logging_utils import setup_logger, log_with_profile, log_strategy
 # Setup du logger principal
 logger = setup_logger("gs_backend")
 
+# Configuration des chemins relatifs au projet (backend est un sous-dossier)
+BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
+GSGUI_INI_PATH = os.path.join(PROJECT_ROOT, 'data', 'gsgui.ini')
+
 # Imports locaux maintenant que le fichier est dans backend/
 try:
     from app.services.gurushots_api import GuruShotsAPI
@@ -137,7 +142,7 @@ class ProfileService:
         """Récupère un profil par son ID depuis gsgui.ini"""
         try:
             with gsgui_ini_lock:
-                config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+                config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
                 
                 if 'players' not in config:
                     return None
@@ -161,7 +166,7 @@ class ProfileService:
         """Récupère tous les profils depuis gsgui.ini"""
         try:
             with gsgui_ini_lock:
-                config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+                config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
                 
                 profiles_dict = {}
                 if 'players' in config:
@@ -414,7 +419,7 @@ def load_challenge_strategies():
     """Charge les stratégies stockées depuis gsgui.ini organisées par profil (structure hiérarchique)"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
             challenge_strategies_by_profile = {}
             
             if 'players' not in config:
@@ -482,7 +487,7 @@ def save_challenge_strategy(challenge_id: str, strategy_name: str, scheduled_at:
                 challenge_title = f"Challenge {challenge_id}"
         
         with gsgui_ini_lock:
-            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
             
             # S'assurer que la structure existe
             if 'players' not in config:
@@ -526,7 +531,7 @@ def save_strategy_with_actions(challenge_id: str, strategy_name: str, actions: l
                 challenge_title = f"Challenge {challenge_id}"
         
         with gsgui_ini_lock:
-            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
             
             # S'assurer que la structure existe
             if 'players' not in config:
@@ -574,7 +579,7 @@ def update_action_status(challenge_id: str, job_id: str, status: str, result_mes
     """Met à jour le status d'une action spécifique dans gsgui.ini"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
             
             if ('players' in config and profile_id in config['players'] and 
                 'scheduled_strategies' in config['players'][profile_id] and
@@ -624,7 +629,7 @@ def check_and_cleanup_completed_strategies(profile_id: str = "bruno"):
     """Vérifie et nettoie automatiquement les stratégies complètement terminées"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
             
             if ('players' in config and profile_id in config['players'] and 
                 'scheduled_strategies' in config['players'][profile_id]):
@@ -657,7 +662,7 @@ def remove_challenge_strategy(challenge_id: str, profile_id: str = None):
     """Supprime une stratégie d'un challenge depuis gsgui.ini pour un profil donné"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
             
             if 'players' not in config:
                 return False
@@ -844,7 +849,7 @@ def get_user_token_from_config() -> Optional[str]:
     """Récupère le token depuis la config"""
     try:
         with gsgui_ini_lock:
-            config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+            config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
             if 'players' in config and config['players']:
                 player = list(config['players'].keys())[0]
                 return config['players'][player].get('xtoken')
@@ -868,7 +873,7 @@ async def register_profile(request: ProfileRegisterRequest):
         try:
             from configobj import ConfigObj
             with gsgui_ini_lock:
-                config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+                config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
                 if 'players' in config and profile_id in config['players']:
                     x_token = config['players'][profile_id].get('xtoken')
                     print(f"✅ Token trouvé pour {profile_id}: {x_token[:20] if x_token else 'None'}...")
@@ -885,7 +890,7 @@ async def register_profile(request: ProfileRegisterRequest):
             # Sauvegarder le nouveau token dans gsgui.ini
             try:
                 with gsgui_ini_lock:
-                    config = ConfigObj('./data/gsgui.ini', encoding='utf-8')
+                    config = ConfigObj(GSGUI_INI_PATH, encoding='utf-8')
                     if 'players' not in config:
                         config['players'] = {}
                     if profile_id not in config['players']:
@@ -1001,7 +1006,7 @@ async def get_challenges(profile_name: str):
 async def toggle_auto_refresh(
     profile_id: str,
     enabled: bool = Query(..., description="Enable or disable auto-refresh"),
-    interval_minutes: int = Query(10, ge=1, le=60, description="Refresh interval in minutes")
+    interval_minutes: int = Query(5, ge=1, le=60, description="Refresh interval in minutes")
 ):
     """Active/désactive l'auto-refresh global pour un profil"""
     try:
@@ -2086,7 +2091,7 @@ async def deep_purge_scheduler_and_strategies(profile_id: str = "all"):
                 purge_result["profiles_processed"].append(pid)
                 
                 # Charger directement le fichier de configuration
-                config_file_path = 'data/gsgui.ini'
+                config_file_path = GSGUI_INI_PATH
                 config = ConfigObj(config_file_path, encoding='utf-8')
                 
                 if pid not in config:
@@ -2276,7 +2281,7 @@ async def get_profiles():
     """Récupère la liste des profils depuis gsgui.ini"""
     try:
         with gsgui_ini_lock:
-            gsgui_ini_path = "./data/gsgui.ini"
+            gsgui_ini_path = GSGUI_INI_PATH
             config = ConfigObj(gsgui_ini_path, encoding='utf-8')
             
             profiles_data = []
@@ -2300,7 +2305,7 @@ async def add_profile(profile_name: str, xtoken: str):
     """Ajoute un nouveau profil dans gsgui.ini"""
     try:
         with gsgui_ini_lock:
-            gsgui_ini_path = "./data/gsgui.ini"
+            gsgui_ini_path = GSGUI_INI_PATH
             config = ConfigObj(gsgui_ini_path, encoding='utf-8')
             
             # Créer la section players si elle n'existe pas

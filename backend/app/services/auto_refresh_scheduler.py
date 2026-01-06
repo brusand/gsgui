@@ -23,7 +23,7 @@ class AutoRefreshScheduler:
     async def enable_auto_refresh(
         self,
         profile_id: str,
-        interval_minutes: int = 10
+        interval_minutes: int = 5
     ) -> bool:
         """Active l'auto-refresh pour un profil"""
         try:
@@ -87,7 +87,7 @@ class AutoRefreshScheduler:
 
         return {
             "enabled": job is not None,
-            "interval_minutes": user_data.get('auto_refresh_interval', 10),
+            "interval_minutes": user_data.get('auto_refresh_interval', 5),
             "next_run": job.next_run_time.isoformat() if job and job.next_run_time else None
         }
 
@@ -180,8 +180,10 @@ class AutoRefreshScheduler:
                         if challenge_dict and 'member' in challenge_dict and 'ranking' in challenge_dict['member'] and 'entries' in challenge_dict['member']['ranking']:
                             items = challenge_dict['member']['ranking']['entries']
                             if items and len(items) > 0:
-                                photo_id = items[0].get('id')
-
+                                if items[0].get('turbo',False): #alreadyturboted
+                                    photo_id = items[1].get('id')
+                                else:
+                                    photo_id = items[0].get('id')
                         if not photo_id:
                             logger.warning(f"⚠️ Impossible de trouver photo_id pour challenge {boost['id']}, skip boost")
                             await self._send_log_to_ui(
@@ -247,6 +249,19 @@ class AutoRefreshScheduler:
                     challenge.challenge_data if hasattr(challenge, 'challenge_data') else challenge
                     for challenge in challenges
                 ]
+
+                # Récupérer les stratégies schedulées pour ce profil
+                user_data = config_manager.get_user(profile_id)
+                scheduled_strategies = user_data.get('scheduled_strategies', {}) if user_data else {}
+
+                # Merger les informations de stratégie avec les challenges
+                for challenge_dict in challenges_dict:
+                    challenge_id = str(challenge_dict.get('id'))
+                    if challenge_id in scheduled_strategies:
+                        strategy_info = scheduled_strategies[challenge_id]
+                        challenge_dict['selected_strategy'] = strategy_info.get('strategy_name', '')
+                        challenge_dict['strategy_status'] = strategy_info.get('strategy_status', '')
+                        challenge_dict['strategy_started_at'] = strategy_info.get('started_at', '')
 
                 await connection_manager.send_personal_message(
                     profile_id,

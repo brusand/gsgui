@@ -10,7 +10,7 @@ const LogsViewerModal: React.FC<LogsViewerModalProps> = ({ isOpen, onClose }) =>
   const [logs, setLogs] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [autoRefresh, setAutoRefresh] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [profileFilter, setProfileFilter] = useState('');
   const [filteredLogs, setFilteredLogs] = useState('');

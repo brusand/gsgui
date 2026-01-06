@@ -28,7 +28,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
   const [isLogsViewerOpen, setIsLogsViewerOpen] = useState(false);
   const [isStrategiesPanelOpen, setIsStrategiesPanelOpen] = useState(false);
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
-  const [autoRefreshInterval, setAutoRefreshInterval] = useState(10);
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState(5);
 
   // Helper functions pour récupérer les détails des stratégies depuis strategies.ini
   // Commenté temporairement - pas utilisé actuellement
@@ -458,7 +458,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
       setIsLoading(true);
       
       // Appeler l'API de purge profonde
-      const response = await fetch(`http://localhost:8001/api/v1/scheduler/deep-purge?profile_id=${profileName}`, {
+      const response = await fetch(`/api/v1/scheduler/deep-purge?profile_id=${profileName}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -499,7 +499,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
       setIsLoading(true);
 
       const response = await fetch(
-        `http://localhost:8001/api/v1/challenges/${profileName}/auto-refresh/toggle?enabled=${!autoRefreshEnabled}&interval_minutes=${autoRefreshInterval}`,
+        `/api/v1/challenges/${profileName}/auto-refresh/toggle?enabled=${!autoRefreshEnabled}&interval_minutes=${autoRefreshInterval}`,
         {
           method: 'POST',
           headers: {
@@ -538,7 +538,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
     const loadAutoRefreshStatus = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8001/api/v1/challenges/${profileName}/auto-refresh/status`
+          `/api/v1/challenges/${profileName}/auto-refresh/status`
         );
 
         if (response.ok) {

@@ -8,10 +8,16 @@ import logging
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 from configobj import ConfigObj
-from threading import Lock
+from threading import RLock  # Reentrant Lock pour éviter deadlocks
 import uuid
 
 logger = logging.getLogger(__name__)
+
+# Configuration des chemins relatifs au projet (backend/app/services est un sous-dossier)
+BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
+DEFAULT_GSGUI_INI = os.path.join(PROJECT_ROOT, 'data', 'gsgui.ini')
+DEFAULT_STRATEGIES_INI = os.path.join(PROJECT_ROOT, 'data', 'strategies.ini')
 
 
 class ConfigManager:
@@ -19,11 +25,11 @@ class ConfigManager:
     Gestionnaire de configuration utilisant les fichiers .ini
     Compatible avec le format de gsui.py pour une migration transparente
     """
-    
-    def __init__(self, config_file: str = "data/gsgui.ini", strategies_file: str = "data/strategies.ini"):
-        self.config_file = config_file
-        self.strategies_file = strategies_file
-        self._lock = Lock()  # Thread safety pour les écritures
+
+    def __init__(self, config_file: str = None, strategies_file: str = None):
+        self.config_file = config_file if config_file is not None else DEFAULT_GSGUI_INI
+        self.strategies_file = strategies_file if strategies_file is not None else DEFAULT_STRATEGIES_INI
+        self._lock = RLock()  # Reentrant Lock pour thread safety sans deadlocks
         
         # Chargement initial
         self._load_configs()
@@ -189,32 +195,68 @@ class ConfigManager:
     
     def save_user_challenge(self, user_id: str, challenge_id: str, challenge_data: Dict[str, Any]) -> bool:
         """Sauvegarde un challenge pour un utilisateur"""
-        try:
-            if user_id not in self.config.get('players', {}):
+        # LOCK GLOBAL pour éviter race condition entre les auto-refresh de différents profils
+        # qui s'exécutent en parallèle et écrasent les modifications des autres
+        with self._lock:
+            try:
+                # IMPORTANT: Recharger le config depuis le fichier pour avoir les dernières scheduled_strategies
+                # Car le strategy_scheduler peut avoir modifié le fichier directement
+                self._load_configs()
+
+                if user_id not in self.config.get('players', {}):
+                    return False
+
+                if 'challenges' not in self.config['players'][user_id]:
+                    self.config['players'][user_id]['challenges'] = {}
+
+                # Déterminer le strategy_name à utiliser (priorité: scheduled_strategies > existant > fourni > vide)
+                strategy_name = ''
+
+                # 1. Vérifier si une stratégie est schedulée pour ce challenge
+                scheduled_strategies = self.config['players'][user_id].get('scheduled_strategies', {})
+
+                # Debug: afficher les clés disponibles
+                logger.info(f"🔍 Looking for challenge {challenge_id} (type: {type(challenge_id)})")
+                logger.info(f"🔍 Scheduled strategies keys: {list(scheduled_strategies.keys())}")
+
+                # Essayer avec le challenge_id tel quel et aussi en convertissant
+                if challenge_id in scheduled_strategies:
+                    strategy_name = scheduled_strategies[challenge_id].get('strategy_name', '')
+                    logger.info(f"✅ Found strategy in scheduled_strategies: '{strategy_name}'")
+                elif str(challenge_id) in scheduled_strategies:
+                    strategy_name = scheduled_strategies[str(challenge_id)].get('strategy_name', '')
+                    logger.info(f"✅ Found strategy in scheduled_strategies (str): '{strategy_name}'")
+
+                # 2. Sinon, préserver le strategy_name existant si le challenge existe déjà
+                if not strategy_name and challenge_id in self.config['players'][user_id]['challenges']:
+                    strategy_name = self.config['players'][user_id]['challenges'][challenge_id].get('strategy_name', '')
+                    logger.info(f"✅ Found existing strategy in challenges: '{strategy_name}'")
+
+                # 3. Sinon, utiliser celui fourni dans challenge_data
+                if not strategy_name:
+                    strategy_name = challenge_data.get('selected_strategy', '')
+                    if strategy_name:
+                        logger.info(f"✅ Using strategy from challenge_data: '{strategy_name}'")
+
+                # Sauvegarder avec le format de gsui.py
+                challenge_section = {
+                    'strategy_name': strategy_name,
+                    'challenge_title': challenge_data.get('title', ''),
+                    'scheduled_at': challenge_data.get('scheduled_at', datetime.now().isoformat()),
+                    'status': challenge_data.get('status', ''),
+                    'votes': challenge_data.get('votes', 0),
+                    'rank': challenge_data.get('rank', 0)
+                }
+
+                self.config['players'][user_id]['challenges'][challenge_id] = challenge_section
+                self._save_config()
+
+                logger.info(f"💾 Challenge {challenge_id} saved for user {user_id} with strategy '{strategy_name}'")
+                return True
+
+            except Exception as e:
+                logger.error(f"Error saving challenge {challenge_id} for user {user_id}: {e}")
                 return False
-            
-            if 'challenges' not in self.config['players'][user_id]:
-                self.config['players'][user_id]['challenges'] = {}
-            
-            # Sauvegarder avec le format de gsui.py
-            challenge_section = {
-                'strategy_name': challenge_data.get('selected_strategy', ''),
-                'challenge_title': challenge_data.get('title', ''),
-                'scheduled_at': challenge_data.get('scheduled_at', datetime.now().isoformat()),
-                'status': challenge_data.get('status', ''),
-                'votes': challenge_data.get('votes', 0),
-                'rank': challenge_data.get('rank', 0)
-            }
-            
-            self.config['players'][user_id]['challenges'][challenge_id] = challenge_section
-            self._save_config()
-            
-            logger.debug(f"Challenge {challenge_id} saved for user {user_id}")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error saving challenge {challenge_id} for user {user_id}: {e}")
-            return False
     
     def get_user_challenges(self, user_id: str) -> Dict[str, Any]:
         """Récupère tous les challenges d'un utilisateur"""
