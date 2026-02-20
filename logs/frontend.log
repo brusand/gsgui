@@ -19449,3 +19449,9 @@ Error: connect ECONNREFUSED 127.0.0.1:8001
 15:12:45 [vite] http proxy error: /api/v1/profiles
 Error: connect ECONNREFUSED 127.0.0.1:8001
     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+15:41:50 [vite] ws proxy socket error:
+Error: read ETIMEDOUT
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+16:11:11 [vite] ws proxy socket error:
+Error: read ETIMEDOUT
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
