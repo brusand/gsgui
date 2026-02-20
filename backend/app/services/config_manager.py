@@ -13,11 +13,10 @@ import uuid
 
 logger = logging.getLogger(__name__)
 
-# Configuration des chemins relatifs au projet (backend/app/services est un sous-dossier)
-BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
-DEFAULT_GSGUI_INI = os.path.join(PROJECT_ROOT, 'data', 'gsgui.ini')
-DEFAULT_STRATEGIES_INI = os.path.join(PROJECT_ROOT, 'data', 'strategies.ini')
+# Configuration des chemins relatifs depuis la racine du projet (working directory)
+# Le backend est lancé depuis la racine du projet par process-manager-portable.sh
+DEFAULT_GSGUI_INI = './data/gsgui.ini'
+DEFAULT_STRATEGIES_INI = './data/strategies.ini'
 
 
 class ConfigManager:
@@ -30,14 +29,29 @@ class ConfigManager:
         self.config_file = config_file if config_file is not None else DEFAULT_GSGUI_INI
         self.strategies_file = strategies_file if strategies_file is not None else DEFAULT_STRATEGIES_INI
         self._lock = RLock()  # Reentrant Lock pour thread safety sans deadlocks
-        
+
+        # DEBUG: Afficher les chemins absolus réels utilisés
+        import os
+        abs_config = os.path.abspath(self.config_file)
+        abs_strategies = os.path.abspath(self.strategies_file)
+        cwd = os.getcwd()
+        logger.info(f"📂 ConfigManager paths:")
+        logger.info(f"   CWD: {cwd}")
+        logger.info(f"   gsgui.ini: {abs_config}")
+        logger.info(f"   strategies.ini: {abs_strategies}")
+        logger.info(f"   File exists: {os.path.exists(abs_config)}")
+
         # Chargement initial
         self._load_configs()
-        logger.info(f"✅ ConfigManager initialized with {config_file} and {strategies_file}")
+        logger.info(f"✅ ConfigManager initialized")
     
     def _load_configs(self):
         """Charge les fichiers de configuration"""
         try:
+            # DEBUG: Vérifier le chemin absolu au moment du chargement
+            abs_path = os.path.abspath(self.config_file)
+            logger.info(f"📖 Loading config from: {abs_path} (exists: {os.path.exists(abs_path)})")
+
             # Configuration principale (gsgui.ini)
             if os.path.exists(self.config_file):
                 self.config = ConfigObj(self.config_file, encoding='utf-8')
@@ -98,6 +112,9 @@ class ConfigManager:
         """Sauvegarde la configuration principale"""
         with self._lock:
             try:
+                # DEBUG: Vérifier le chemin absolu au moment de la sauvegarde
+                abs_path = os.path.abspath(self.config_file)
+                logger.info(f"💾 Saving config to: {abs_path}")
                 self.config.write()
                 logger.debug(f"Configuration saved to {self.config_file}")
             except Exception as e:
@@ -209,34 +226,37 @@ class ConfigManager:
                 if 'challenges' not in self.config['players'][user_id]:
                     self.config['players'][user_id]['challenges'] = {}
 
+                # DEBUG: Vérifier scheduled_strategies AVANT toute modification
+                scheduled_strategies = self.config['players'][user_id].get('scheduled_strategies', {})
+                logger.info(f"🔍 [save_user_challenge] BEFORE save - scheduled_strategies keys for {user_id}: {list(scheduled_strategies.keys())}")
+
                 # Déterminer le strategy_name à utiliser (priorité: scheduled_strategies > existant > fourni > vide)
                 strategy_name = ''
 
                 # 1. Vérifier si une stratégie est schedulée pour ce challenge
-                scheduled_strategies = self.config['players'][user_id].get('scheduled_strategies', {})
 
                 # Debug: afficher les clés disponibles
-                logger.info(f"🔍 Looking for challenge {challenge_id} (type: {type(challenge_id)})")
-                logger.info(f"🔍 Scheduled strategies keys: {list(scheduled_strategies.keys())}")
+                logger.debug(f"Looking for challenge {challenge_id} (type: {type(challenge_id)})")
+                logger.debug(f"Scheduled strategies keys: {list(scheduled_strategies.keys())}")
 
                 # Essayer avec le challenge_id tel quel et aussi en convertissant
                 if challenge_id in scheduled_strategies:
                     strategy_name = scheduled_strategies[challenge_id].get('strategy_name', '')
-                    logger.info(f"✅ Found strategy in scheduled_strategies: '{strategy_name}'")
+                    logger.debug(f"Found strategy in scheduled_strategies: '{strategy_name}'")
                 elif str(challenge_id) in scheduled_strategies:
                     strategy_name = scheduled_strategies[str(challenge_id)].get('strategy_name', '')
-                    logger.info(f"✅ Found strategy in scheduled_strategies (str): '{strategy_name}'")
+                    logger.debug(f"Found strategy in scheduled_strategies (str): '{strategy_name}'")
 
                 # 2. Sinon, préserver le strategy_name existant si le challenge existe déjà
                 if not strategy_name and challenge_id in self.config['players'][user_id]['challenges']:
                     strategy_name = self.config['players'][user_id]['challenges'][challenge_id].get('strategy_name', '')
-                    logger.info(f"✅ Found existing strategy in challenges: '{strategy_name}'")
+                    logger.debug(f"Found existing strategy in challenges: '{strategy_name}'")
 
                 # 3. Sinon, utiliser celui fourni dans challenge_data
                 if not strategy_name:
                     strategy_name = challenge_data.get('selected_strategy', '')
                     if strategy_name:
-                        logger.info(f"✅ Using strategy from challenge_data: '{strategy_name}'")
+                        logger.debug(f"Using strategy from challenge_data: '{strategy_name}'")
 
                 # Sauvegarder avec le format de gsui.py
                 challenge_section = {
@@ -249,9 +269,19 @@ class ConfigManager:
                 }
 
                 self.config['players'][user_id]['challenges'][challenge_id] = challenge_section
+
+                # DEBUG: Vérifier scheduled_strategies AVANT write
+                scheduled_strategies_before_write = self.config['players'][user_id].get('scheduled_strategies', {})
+                logger.info(f"🔍 [save_user_challenge] BEFORE write - scheduled_strategies keys: {list(scheduled_strategies_before_write.keys())}")
+
                 self._save_config()
 
-                logger.info(f"💾 Challenge {challenge_id} saved for user {user_id} with strategy '{strategy_name}'")
+                # DEBUG: Vérifier scheduled_strategies APRÈS write (relire le fichier)
+                self._load_configs()
+                scheduled_strategies_after_write = self.config['players'][user_id].get('scheduled_strategies', {})
+                logger.info(f"🔍 [save_user_challenge] AFTER write - scheduled_strategies keys: {list(scheduled_strategies_after_write.keys())}")
+
+                logger.debug(f"Challenge {challenge_id} saved for user {user_id} with strategy '{strategy_name}'")
                 return True
 
             except Exception as e:
@@ -477,22 +507,58 @@ class ConfigManager:
             return False
     
     def update_user(self, user_id: str, updates: Dict[str, Any]) -> bool:
-        """Met à jour un utilisateur existant"""
+        """Met à jour un utilisateur existant (mise à jour partielle des clés de premier niveau)"""
         try:
             with self._lock:
                 players = self.config.get('players', {})
                 if user_id not in players:
                     logger.warning(f"User {user_id} not found for update")
                     return False
-                
-                players[user_id].update(updates)
+
+                # DEBUG: Vérifier scheduled_strategies AVANT update
+                scheduled_before = players[user_id].get('scheduled_strategies', {})
+                logger.info(f"🔍 [update_user] BEFORE update - scheduled_strategies keys for {user_id}: {list(scheduled_before.keys())}")
+
+                # Mise à jour partielle : ne modifie que les clés présentes dans updates
+                for key, value in updates.items():
+                    players[user_id][key] = value
+
+                # DEBUG: Vérifier scheduled_strategies APRÈS update mais AVANT write
+                scheduled_after_update = players[user_id].get('scheduled_strategies', {})
+                logger.info(f"🔍 [update_user] AFTER update, BEFORE write - scheduled_strategies keys: {list(scheduled_after_update.keys())}")
+
                 self.config.write()
-                logger.info(f"✅ User {user_id} updated")
+
+                # DEBUG: Vérifier scheduled_strategies APRÈS write
+                self._load_configs()
+                scheduled_after_write = self.config['players'][user_id].get('scheduled_strategies', {})
+                logger.info(f"🔍 [update_user] AFTER write - scheduled_strategies keys: {list(scheduled_after_write.keys())}")
+
+                logger.debug(f"✅ User {user_id} updated with keys: {list(updates.keys())}")
                 return True
         except Exception as e:
             logger.error(f"Error updating user {user_id}: {e}")
             return False
-    
+
+    def update_user_section(self, user_id: str, section_name: str, section_data: Dict[str, Any]) -> bool:
+        """Met à jour une section spécifique d'un utilisateur (ex: scheduled_strategies, turbo_history)"""
+        try:
+            with self._lock:
+                players = self.config.get('players', {})
+                if user_id not in players:
+                    logger.warning(f"User {user_id} not found for section update")
+                    return False
+
+                # Remplacer complètement la section
+                players[user_id][section_name] = section_data
+
+                self.config.write()
+                logger.debug(f"✅ User {user_id} section '{section_name}' updated")
+                return True
+        except Exception as e:
+            logger.error(f"Error updating user {user_id} section {section_name}: {e}")
+            return False
+
     def get_user_challenges(self, user_id: str) -> Dict[str, Any]:
         """Récupère les challenges/stratégies d'un utilisateur"""
         try:
@@ -526,7 +592,7 @@ class ConfigManager:
     def reload_configs(self):
         """Recharge les configurations depuis les fichiers"""
         self._load_configs()
-        logger.info("📁 Configurations reloaded")
+        logger.debug("Configurations reloaded")
     
     def backup_configs(self, backup_suffix: Optional[str] = None) -> bool:
         """Crée une sauvegarde des fichiers de configuration"""

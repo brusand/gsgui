@@ -71,7 +71,7 @@
       "Bash(open http://localhost:3000)"
     ]
   },
-  "enableAllProjectMcpServers": false,
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "filesystem",
     "gitmcp"

@@ -32,7 +32,7 @@ class AutoRefreshScheduler:
             # Supprimer l'ancien job s'il existe
             if self.scheduler.get_job(job_id):
                 self.scheduler.remove_job(job_id)
-                logger.info(f"🗑️ Removed existing auto-refresh job for {profile_id}")
+                logger.debug(f"Removed existing auto-refresh job for {profile_id}")
 
             # Ajouter le nouveau job avec interval trigger
             self.scheduler.add_job(
@@ -45,13 +45,15 @@ class AutoRefreshScheduler:
                 replace_existing=True
             )
 
-            # Sauvegarder la config
-            user_data = config_manager.get_user(profile_id) or {}
-            user_data['auto_refresh_enabled'] = True
-            user_data['auto_refresh_interval'] = interval_minutes
-            config_manager.update_user(profile_id, user_data)
+            # Sauvegarder la config (ne passer que les clés modifiées pour éviter d'écraser scheduled_strategies)
+            user_data = config_manager.get_user(profile_id)
+            updates = {'auto_refresh_enabled': True}
+            # Ne pas écraser auto_refresh_interval s'il existe déjà
+            if not user_data or 'auto_refresh_interval' not in user_data:
+                updates['auto_refresh_interval'] = interval_minutes
+            config_manager.update_user(profile_id, updates)
 
-            logger.info(f"✅ Auto-refresh enabled for {profile_id} (every {interval_minutes}m)")
+            logger.debug(f"Auto-refresh enabled for {profile_id} (every {interval_minutes}m)")
             return True
 
         except Exception as e:
@@ -65,12 +67,11 @@ class AutoRefreshScheduler:
 
             if self.scheduler.get_job(job_id):
                 self.scheduler.remove_job(job_id)
-                logger.info(f"🛑 Auto-refresh disabled for {profile_id}")
+                logger.debug(f"Auto-refresh disabled for {profile_id}")
 
-            # Mettre à jour la config
-            user_data = config_manager.get_user(profile_id) or {}
-            user_data['auto_refresh_enabled'] = False
-            config_manager.update_user(profile_id, user_data)
+            # Mettre à jour la config (ne passer que les clés modifiées)
+            updates = {'auto_refresh_enabled': False}
+            config_manager.update_user(profile_id, updates)
 
             return True
 
@@ -97,13 +98,13 @@ class AutoRefreshScheduler:
         1 seul call API GuruShots
         """
         try:
-            logger.info(f"🔄 Auto-refreshing challenges for {profile_id}")
+            logger.debug(f"Auto-refreshing challenges for {profile_id}")
 
             # Envoyer log de début dans l'UI
             await self._send_log_to_ui(
                 profile_id,
                 "info",
-                f"🔄 Auto-Refresh démarré (toutes les {config_manager.get_user(profile_id).get('auto_refresh_interval', 10)} minutes)"
+                f"🔄 Auto-Refresh démarré (toutes les {config_manager.get_user(profile_id).get('auto_refresh_interval', 5)} minutes)"
             )
 
             # Récupérer l'API instance
@@ -124,13 +125,14 @@ class AutoRefreshScheduler:
                 f"✅ {len(challenges)} challenges récupérés depuis GuruShots"
             )
 
-            # Identifier les boosts disponibles avec timeout <= 15m
+            # Identifier les boosts disponibles (AVAILABLE = gratuit, à activer immédiatement)
             import time
-            urgent_boosts = []
+            available_boosts = []
             for challenge in challenges:
                 try:
-                    # ChallengeData a un attribut challenge_data qui contient le dict complet
                     challenge_dict = challenge.challenge_data if hasattr(challenge, 'challenge_data') else challenge
+                    challenge_id = challenge.id if hasattr(challenge, 'id') else challenge_dict.get('id')
+                    challenge_title = challenge.title if hasattr(challenge, 'title') else challenge_dict.get('title', 'Unknown')
 
                     if 'member' in challenge_dict and 'boost' in challenge_dict['member']:
                         boost_data = challenge_dict['member']['boost']
@@ -138,29 +140,37 @@ class AutoRefreshScheduler:
                             state = boost_data.get('state')
                             timeout = boost_data.get('timeout')
 
+                            # Logger tous les états de boost pour le diagnostic
+                            if state and state != 'LOCKED':
+                                remaining_info = ''
+                                if timeout is not None:
+                                    remaining_seconds = timeout - int(time.time())
+                                    remaining_info = f' | remaining: {int(remaining_seconds / 60)}m'
+                                logger.info(f"🔍 [{profile_id}] Boost state for '{challenge_title}' (ID: {challenge_id}): {state}{remaining_info}")
+
                             if state == 'AVAILABLE' and timeout is not None:
                                 now = int(time.time())
                                 remaining_seconds = timeout - now
                                 remaining_minutes = remaining_seconds / 60
 
                                 if 0 < remaining_minutes <= 15:
-                                    urgent_boosts.append({
-                                        'id': challenge.id if hasattr(challenge, 'id') else challenge_dict.get('id'),
-                                        'title': challenge.title if hasattr(challenge, 'title') else challenge_dict.get('title', 'Unknown'),
+                                    available_boosts.append({
+                                        'id': challenge_id,
+                                        'title': challenge_title,
                                         'remaining_minutes': int(remaining_minutes)
                                     })
                 except Exception as e:
                     challenge_id = challenge.id if hasattr(challenge, 'id') else 'unknown'
                     logger.warning(f"⚠️ Error checking boost for challenge {challenge_id}: {e}")
 
-            # Logger et activer automatiquement les boosts urgents
-            if urgent_boosts:
-                for boost in urgent_boosts:
-                    logger.warning(f"⚡ BOOST URGENT: Challenge '{boost['title']}' (ID: {boost['id']}) - Boost available expire dans {boost['remaining_minutes']}m")
+            # Activer automatiquement les boosts disponibles (gratuits)
+            if available_boosts:
+                for boost in available_boosts:
+                    logger.warning(f"⚡ [{profile_id}] BOOST GRATUIT: Challenge '{boost['title']}' (ID: {boost['id']}) - expire dans {boost['remaining_minutes']}m")
                     await self._send_log_to_ui(
                         profile_id,
                         "warning",
-                        f"⚡ BOOST URGENT: '{boost['title']}' expire dans {boost['remaining_minutes']}m"
+                        f"⚡ BOOST GRATUIT: '{boost['title']}' expire dans {boost['remaining_minutes']}m"
                     )
 
                     # Appeler boost_photo automatiquement avec le vrai photo_id
@@ -179,11 +189,16 @@ class AutoRefreshScheduler:
 
                         if challenge_dict and 'member' in challenge_dict and 'ranking' in challenge_dict['member'] and 'entries' in challenge_dict['member']['ranking']:
                             items = challenge_dict['member']['ranking']['entries']
-                            if items and len(items) > 0:
-                                if items[0].get('turbo',False): #alreadyturboted
-                                    photo_id = items[1].get('id')
-                                else:
-                                    photo_id = items[0].get('id')
+                            # Logger les entries pour diagnostic
+                            logger.info(f"🔍 [{profile_id}] Boost entries for challenge {boost['id']}: {len(items)} photos, turbo states: {[item.get('turbo', False) for item in items]}")
+                            # Chercher la première photo non-turbo
+                            for item in items:
+                                if not item.get('turbo', False):
+                                    photo_id = item.get('id')
+                                    break
+                            # Si toutes les photos sont turbo, log explicite
+                            if not photo_id and items:
+                                logger.warning(f"⚠️ [{profile_id}] Toutes les photos sont déjà turbo pour challenge {boost['id']}")
                         if not photo_id:
                             logger.warning(f"⚠️ Impossible de trouver photo_id pour challenge {boost['id']}, skip boost")
                             await self._send_log_to_ui(
@@ -286,7 +301,7 @@ class AutoRefreshScheduler:
                     f"⚠️ Notification WebSocket échouée: {ws_error}"
                 )
 
-            logger.info(f"✅ Auto-refreshed {len(challenges)} challenges for {profile_id}")
+            logger.debug(f"Auto-refreshed {len(challenges)} challenges for {profile_id}")
 
         except Exception as e:
             logger.error(f"❌ Auto-refresh failed for {profile_id}: {e}")
@@ -316,13 +331,23 @@ class AutoRefreshScheduler:
         try:
             users = config_manager.list_users()
 
+            # Initialiser auto_refresh_interval pour tous les profils s'ils ne l'ont pas
+            for user_id in users:
+                user_data = config_manager.get_user(user_id)
+                if user_data and 'auto_refresh_interval' not in user_data:
+                    updates = {'auto_refresh_interval': 5}
+                    config_manager.update_user(user_id, updates)
+                    logger.debug(f"Initialized auto_refresh_interval=5 for {user_id}")
+
+            # Restaurer les auto-refresh actifs
             for user_id in users:
                 user_data = config_manager.get_user(user_id)
 
                 if user_data and user_data.get('auto_refresh_enabled'):
-                    interval = int(user_data.get('auto_refresh_interval', 10))
+                    # Lire l'intervalle existant (maintenant garanti d'exister)
+                    interval = int(user_data.get('auto_refresh_interval', 5))
                     await self.enable_auto_refresh(user_id, interval)
-                    logger.info(f"♻️ Restored auto-refresh for {user_id}")
+                    logger.debug(f"Restored auto-refresh for {user_id} with interval {interval}m")
 
         except Exception as e:
             logger.error(f"❌ Failed to restore auto-refresh: {e}")

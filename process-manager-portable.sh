@@ -45,8 +45,8 @@ init_config() {
     
     BACKEND_DIR="$SCRIPT_DIR/backend"
     FRONTEND_DIR="$SCRIPT_DIR/web-ui"
-    
-    BACKEND_CMD="$PYTHON_CMD gs_backend.py"
+
+    BACKEND_CMD="$PYTHON_CMD backend/gs_backend.py"
     FRONTEND_CMD="$NPM_CMD run dev"
     PID_DIR="$SCRIPT_DIR/pids"
     LOG_DIR="$SCRIPT_DIR/logs"
@@ -228,10 +228,10 @@ start_backend() {
         fi
         rm -f "$BACKEND_PID_FILE"
     fi
-    
+
     log_info "Démarrage du backend..."
-    cd "$BACKEND_DIR"
-    
+    cd "$SCRIPT_DIR"
+
     # Préparer la commande avec environnement virtuel si nécessaire
     local full_cmd
     if [[ -n "$VENV_PATH" ]]; then
@@ -240,13 +240,13 @@ start_backend() {
     else
         full_cmd="$BACKEND_CMD"
     fi
-    
+
     # Démarrer en arrière-plan avec redirection des logs
     nohup bash -c "$full_cmd" >> "$BACKEND_LOG" 2>&1 &
     local backend_pid=$!
-    
+
     echo "$backend_pid" > "$BACKEND_PID_FILE"
-    
+
     # Vérifier que le processus a bien démarré
     sleep 2
     if kill -0 "$backend_pid" 2>/dev/null; then

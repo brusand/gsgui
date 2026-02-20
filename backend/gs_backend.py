@@ -25,10 +25,9 @@ from app.utils.logging_utils import setup_logger, log_with_profile, log_strategy
 # Setup du logger principal
 logger = setup_logger("gs_backend")
 
-# Configuration des chemins relatifs au projet (backend est un sous-dossier)
-BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
-GSGUI_INI_PATH = os.path.join(PROJECT_ROOT, 'data', 'gsgui.ini')
+# Configuration des chemins relatifs depuis la racine du projet
+# Le backend est lancé depuis la racine du projet par process-manager-portable.sh
+GSGUI_INI_PATH = './data/gsgui.ini'
 
 # Imports locaux maintenant que le fichier est dans backend/
 try:
@@ -122,8 +121,8 @@ strategy_scheduler = None
 gsgui_ini_lock = threading.Lock()
 strategies_ini_lock = threading.Lock()
 backend_config_lock = threading.Lock()
-BACKEND_STRATEGIES_FILE = os.path.join(os.path.dirname(__file__), "data", "backend_strategies.ini")
-BACKEND_TURBO_FILE = "backend_turbo.ini"
+BACKEND_STRATEGIES_FILE = "./backend/data/backend_strategies.ini"
+BACKEND_TURBO_FILE = "./backend/backend_turbo.ini"
 
 # WebSocket connections for real-time logs
 websocket_connections: Set[WebSocket] = set()
@@ -1695,7 +1694,7 @@ def parse_strategy_actions(strategy_name: str) -> List[Dict]:
     """Parse les actions d'une stratégie depuis strategies.ini dans le format original"""
     try:
         with strategies_ini_lock:
-            strategies_config = ConfigObj(os.path.join(os.path.dirname(__file__), "data", "strategies.ini"), encoding='utf-8')
+            strategies_config = ConfigObj("./data/strategies.ini", encoding='utf-8')
             if strategy_name not in strategies_config:
                 return []
             
@@ -2338,8 +2337,8 @@ async def add_profile(profile_name: str, xtoken: str):
 async def get_strategies_list():
     """Récupère la liste des noms de stratégies depuis strategies.ini"""
     try:
-        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
-        
+        strategies_ini_path = "./data/strategies.ini"
+
         if not os.path.exists(strategies_ini_path):
             raise HTTPException(status_code=404, detail="Fichier strategies.ini non trouvé")
         
@@ -2365,8 +2364,8 @@ async def get_strategies_list():
 async def get_strategies_config():
     """Récupère le contenu du fichier strategies.ini"""
     try:
-        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
-        
+        strategies_ini_path = "./data/strategies.ini"
+
         with strategies_ini_lock:
             with open(strategies_ini_path, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -2385,9 +2384,9 @@ async def update_strategies_config(request: dict):
         content = request.get("content", "")
         if not content:
             raise HTTPException(status_code=400, detail="Missing content field")
-            
-        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
-        
+
+        strategies_ini_path = "./data/strategies.ini"
+
         with strategies_ini_lock:
             # Sauvegarder le fichier original
             import shutil
@@ -3185,11 +3184,12 @@ async def cleanup_expired_strategies_for_profile(profile_id: str):
             return 0
         
         cleaned_count = 0
-        
+
+
         # Charger les stratégies disponibles depuis strategies.ini
-        strategies_ini_path = os.path.join(os.path.dirname(__file__), "data", "strategies.ini")
+        strategies_ini_path = "./data/strategies.ini"
         available_strategies = set()
-        
+
         if os.path.exists(strategies_ini_path):
             with strategies_ini_lock:
                 strategies_config = ConfigObj(strategies_ini_path, encoding='utf-8')
