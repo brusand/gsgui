@@ -1,0 +1,6 @@
+/.venv/
+/backend/backend.log
+**/logs/*
+/mcp-servers/
+**/__pycache__/*
+*.log
