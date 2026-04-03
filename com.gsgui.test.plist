@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.gsgui.test</string>
+    <key>Program</key>
+    <string>/Volumes/SSD/devs/gsgui/test-launchd.sh</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Volumes/SSD/devs/gsgui/logs/test-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Volumes/SSD/devs/gsgui/logs/test-stderr.log</string>
+</dict>
+</plist>
