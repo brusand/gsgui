@@ -752,11 +752,14 @@ class ExtendedStrategyExecutor:
         """Execute swap action"""
         if len(params) < 2:
             return {'success': False, 'error': 'Two image IDs required for swap'}
-        
+
         current_photo_id, new_photo_id = params[0], params[1]
         result = await api_client.swap_photo(challenge_id, current_photo_id, new_photo_id)
-        
-        logger.info(f"🔄 Swapped {current_photo_id} -> {new_photo_id} in challenge {challenge_id}")
+
+        if result.get('success', True):
+            # Log IMPORTANT - Action de swap exécutée
+            strategy_logger.info(f"🔄 SWAP executed: {current_photo_id} → {new_photo_id} in challenge {challenge_id}")
+
         return result
     
     async def _execute_boost_action(self, api_client: GuruShotsAPI, challenge_id: int, 
