@@ -12,14 +12,25 @@ from functools import lru_cache
 _challenge_titles_cache: Dict[str, str] = {}
 
 def setup_logger(name: str) -> logging.Logger:
-    """Setup a logger with consistent formatting"""
+    """Setup a logger with consistent formatting - DÉSACTIVÉ par défaut"""
     logger = logging.getLogger(name)
-    
-    # Si le logger n'a pas de handlers, utiliser la config par défaut
-    if not logger.handlers:
-        # Utiliser le logger racine configuré dans main.py
+
+    # Tous les loggers sont désactivés par défaut (sauf strategy_actions)
+    if name == 'strategy_actions':
         logger.setLevel(logging.INFO)
-    
+    else:
+        logger.setLevel(logging.CRITICAL)  # Désactiver les logs normaux
+
+    return logger
+
+def get_strategy_logger() -> logging.Logger:
+    """
+    Récupère le logger spécial pour les actions importantes (vote, submit, turbo)
+    Ce logger est toujours actif même quand tous les autres sont désactivés
+    """
+    logger = logging.getLogger('strategy_actions')
+    logger.setLevel(logging.INFO)
+    logger.propagate = True  # Propager vers le logger racine pour utiliser ses handlers
     return logger
 
 def update_challenge_titles_cache(challenges_data: Dict[str, Any]):

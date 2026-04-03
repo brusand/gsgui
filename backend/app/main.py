@@ -22,15 +22,15 @@ def setup_rotating_logs():
     log_dir = "../logs"
     os.makedirs(log_dir, exist_ok=True)
     
-    # Configuration du logger racine
+    # Configuration du logger racine - DÉSACTIVÉ sauf pour actions importantes
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
-    
+    root_logger.setLevel(logging.CRITICAL)  # Désactiver tous les logs par défaut
+
     # Supprimer les handlers existants
     for handler in root_logger.handlers[:]:
         root_logger.removeHandler(handler)
-    
-    # Handler rotatif pour backend.log
+
+    # Handler rotatif pour backend.log (uniquement pour les logs critiques et actions importantes)
     backend_handler = logging.handlers.RotatingFileHandler(
         filename=os.path.join(log_dir, "backend.log"),
         maxBytes=10 * 1024 * 1024,  # 10 MB
@@ -40,17 +40,22 @@ def setup_rotating_logs():
     backend_handler.setFormatter(logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     ))
-    
+
     # Handler console (pour voir les logs en temps réel)
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(logging.Formatter(
         '%(asctime)s - %(levelname)s - %(message)s'
     ))
-    
+
     # Ajouter les handlers
     root_logger.addHandler(backend_handler)
     root_logger.addHandler(console_handler)
-    
+
+    # Logger spécial pour les actions importantes (vote, submit, turbo)
+    strategy_logger = logging.getLogger('strategy_actions')
+    strategy_logger.setLevel(logging.INFO)
+    strategy_logger.propagate = True
+
     return root_logger
 
 logger = setup_rotating_logs()

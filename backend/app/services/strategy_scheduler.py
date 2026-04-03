@@ -14,9 +14,11 @@ from apscheduler.executors.asyncio import AsyncIOExecutor
 
 from app.services.config_manager import config_manager
 from app.services.gurushots_api import GuruShotsAPI
+from app.utils.logging_utils import get_strategy_logger
 # from app.websockets.connection_manager import connection_manager  # Désactivé pour backend monolithique
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # Logger normal (désactivé)
+strategy_logger = get_strategy_logger()  # Logger spécial pour actions importantes
 
 
 class StrategyScheduler:
@@ -301,30 +303,31 @@ class StrategyScheduler:
         Exécute une stratégie programmée
         Équivalent de schedule_multiple_votes() dans gsui.py
         """
-        logger.info(f"🚀 Executing strategy {strategy_name} for challenge {challenge_id} (profile: {profile_id})")
-        
+        # Log IMPORTANT - utiliser le logger spécial
+        strategy_logger.info(f"🚀 [{profile_id}] Executing strategy {strategy_name} for challenge {challenge_id}")
+
         execution_start = datetime.now()
         success = False
         votes_cast = 0
         error_message = None
         result_data = {}
-        
+
         try:
             # Mettre à jour le statut à 'running'
             await self._update_strategy_status(profile_id, strategy_id, 'running')
-            
+
             # Récupérer les informations utilisateur
             user = config_manager.get_user(profile_id)
             if not user:
                 raise Exception(f"Profile {profile_id} not found")
-            
+
             xtoken = user.get('xtoken')
             if not xtoken:
                 raise Exception(f"No xtoken found for profile {profile_id}")
-            
+
             # Créer le client API GuruShots
             api_client = GuruShotsAPI(xtoken)
-            
+
             # Exécuter la stratégie selon son type
             if strategy_name == '4m':
                 result = await self._execute_4m_strategy(api_client, challenge_id)
@@ -336,22 +339,24 @@ class StrategyScheduler:
                 result = await self._execute_swap_strategy(api_client, challenge_id)
             else:
                 raise Exception(f"Unknown strategy type: {strategy_name}")
-            
+
             success = result.get('success', False)
             votes_cast = result.get('votes_cast', 0)
             result_data = result.get('result_data', {})
-            
+
             # Mettre à jour le statut final
             final_status = 'completed' if success else 'failed'
             await self._update_strategy_status(profile_id, strategy_id, final_status)
-            
-            logger.info(f"✅ Strategy execution completed: {votes_cast} votes cast, success: {success}")
-            
+
+            # Log IMPORTANT - utiliser le logger spécial
+            strategy_logger.info(f"✅ [{profile_id}] Strategy execution completed: {votes_cast} votes cast, success: {success}")
+
         except Exception as e:
             error_message = str(e)
             success = False
             await self._update_strategy_status(profile_id, strategy_id, 'failed')
-            logger.error(f"❌ Strategy execution failed: {error_message}")
+            # Log IMPORTANT - utiliser le logger spécial
+            strategy_logger.error(f"❌ [{profile_id}] Strategy execution failed: {error_message}")
         
         finally:
             execution_end = datetime.now()
@@ -396,105 +401,107 @@ class StrategyScheduler:
         """
         Exécute la stratégie '4m' - vote toutes les 4 minutes
         """
-        logger.info(f"⏰ Executing 4m strategy for challenge {challenge_id}")
-        
         total_votes = 0
         challenge_url = f"https://gurushots.com/challenge/{challenge_id}"
-        
+
         try:
             # Récupérer les informations du challenge pour connaître le temps restant
             vote_panel = await api_client.get_vote_panel(challenge_url, limit=50)
-            
+
             if not vote_panel.success:
                 return {'success': False, 'votes_cast': 0, 'error': 'Could not get vote panel'}
-            
+
             # Calculer combien de cycles de 4 minutes on peut faire
             # Pour simplifier, on fait juste un vote pour cette implémentation
             vote_result = await api_client.execute_simple_vote(challenge_url, vote_count=10)
-            
+
             if vote_result.success:
                 total_votes = 10  # Nombre de votes cast
-                
+                # Log IMPORTANT - Action de vote exécutée
+                strategy_logger.info(f"🗳️  VOTE executed: {total_votes} votes on challenge {challenge_id}")
+
             return {
                 'success': vote_result.success,
                 'votes_cast': total_votes,
                 'result_data': vote_result.result_data
             }
-            
+
         except Exception as e:
-            logger.error(f"Error in 4m strategy: {e}")
             return {'success': False, 'votes_cast': total_votes, 'error': str(e)}
     
     async def _execute_fill_strategy(self, api_client: GuruShotsAPI, challenge_id: str) -> Dict[str, Any]:
         """
         Exécute la stratégie 'fill' - utilise tous les votes restants
         """
-        logger.info(f"🔄 Executing fill strategy for challenge {challenge_id}")
-        
         challenge_url = f"https://gurushots.com/challenge/{challenge_id}"
-        
+
         try:
             # Utiliser tous les votes disponibles (max 80 par défaut dans gsui.py)
             vote_result = await api_client.execute_simple_vote(challenge_url, vote_count=80)
-            
+
             votes_cast = 80 if vote_result.success else 0
-            
+
+            if vote_result.success:
+                # Log IMPORTANT - Action de vote exécutée
+                strategy_logger.info(f"🗳️  VOTE executed (fill): {votes_cast} votes on challenge {challenge_id}")
+
             return {
                 'success': vote_result.success,
                 'votes_cast': votes_cast,
                 'result_data': vote_result.result_data
             }
-            
+
         except Exception as e:
-            logger.error(f"Error in fill strategy: {e}")
             return {'success': False, 'votes_cast': 0, 'error': str(e)}
     
     async def _execute_boost_strategy(self, api_client: GuruShotsAPI, challenge_id: str) -> Dict[str, Any]:
         """
         Exécute la stratégie 'boost' - boost optimisé
         """
-        logger.info(f"⚡ Executing boost strategy for challenge {challenge_id}")
-        
         # Pour l'instant, implémentation simple
         challenge_url = f"https://gurushots.com/challenge/{challenge_id}"
-        
+
         try:
             vote_result = await api_client.execute_simple_vote(challenge_url, vote_count=20)
-            
+
             votes_cast = 20 if vote_result.success else 0
-            
+
+            if vote_result.success:
+                # Log IMPORTANT - Action de vote exécutée
+                strategy_logger.info(f"🗳️  VOTE executed (boost): {votes_cast} votes on challenge {challenge_id}")
+
             return {
                 'success': vote_result.success,
                 'votes_cast': votes_cast,
                 'result_data': vote_result.result_data
             }
-            
+
         except Exception as e:
-            logger.error(f"Error in boost strategy: {e}")
             return {'success': False, 'votes_cast': 0, 'error': str(e)}
     
     async def _execute_swap_strategy(self, api_client: GuruShotsAPI, challenge_id: str) -> Dict[str, Any]:
         """
         Exécute la stratégie 'swap' - échange de photos stratégique
         """
-        logger.info(f"🔄 Executing swap strategy for challenge {challenge_id}")
-        
         # Pour l'instant, implémentation basique
         challenge_url = f"https://gurushots.com/challenge/{challenge_id}"
-        
+
         try:
             vote_result = await api_client.execute_simple_vote(challenge_url, vote_count=15)
-            
+
             votes_cast = 15 if vote_result.success else 0
-            
+
+            if vote_result.success:
+                # Log IMPORTANT - Action de vote exécutée
+                strategy_logger.info(f"🗳️  VOTE executed (swap): {votes_cast} votes on challenge {challenge_id}")
+
             return {
                 'success': vote_result.success,
                 'votes_cast': votes_cast,
                 'result_data': vote_result.result_data
             }
-            
+
         except Exception as e:
-            logger.error(f"Error in swap strategy: {e}")
             return {'success': False, 'votes_cast': 0, 'error': str(e)}
     
     def cleanup_expired_jobs(self) -> Dict[str, Any]:

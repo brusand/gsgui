@@ -16,6 +16,7 @@ from configobj import ConfigObj
 from app.services.gurushots_api import GuruShotsAPI
 from app.services.config_manager import config_manager
 from app.websockets.connection_manager import connection_manager
+from app.utils.logging_utils import get_strategy_logger
 # Import des nouvelles fonctions hiérarchiques
 try:
     from gs_backend import save_strategy_with_actions, update_action_status, check_and_cleanup_completed_strategies
@@ -61,7 +62,8 @@ except ImportError:
     def get_challenge_title_from_cache(challenge_id):
         return challenge_id
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # Logger normal (désactivé)
+strategy_logger = get_strategy_logger()  # Logger spécial pour actions importantes
 
 class ExtendedStrategyExecutor:
     """
@@ -726,9 +728,10 @@ class ExtendedStrategyExecutor:
             
             # Use submit_photo method with ALL IDs at once (creates image_ids[0], image_ids[1], etc.)
             result = await api_client.submit_photo(challenge_id, image_ids)
-            
+
             if result.get('success', True):  # Assume success if not explicitly failed
-                logger.info(f"✅ Successfully submitted {len(image_ids)} photos to challenge {challenge_id}")
+                # Log IMPORTANT - Action de submit exécutée
+                strategy_logger.info(f"📸 SUBMIT executed: {len(image_ids)} photos to challenge {challenge_id}")
                 return {
                     'success': True,
                     'message': f'Submitted {len(image_ids)} photos to challenge {challenge_id}',
@@ -852,11 +855,11 @@ class ExtendedStrategyExecutor:
                 return {'success': False, 'error': 'No target photo specified'}
             
             # Use set_turbo method (unlock turbo)
-            logger.info(f"🚀 Calling set_turbo(challenge_id={challenge_id}, photo_id={target_photo_id})")
             result = await api_client.set_turbo(challenge_id, target_photo_id)
-            
+
             if result.get('success', True):
-                logger.info(f"🚀 Successfully unlocked turbo for challenge {challenge_id}")
+                # Log IMPORTANT - Action de turbo exécutée
+                strategy_logger.info(f"🚀 TURBO executed: unlocked for challenge {challenge_id}, photo {target_photo_id}")
                 return {
                     'success': True,
                     'message': f'Unlocked turbo for challenge {challenge_id}',
