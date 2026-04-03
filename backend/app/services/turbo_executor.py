@@ -85,16 +85,17 @@ class TurboExecutor:
                             current_algorithm = self.get_turbo_algorithm()
 
                             logger.info(f"🚀 Début turbo: {len(images)} paires à traiter")
-                            await connection_manager.notify_turbo_log(
-                                profile_id, turbo_id, 'in progress',
-                                f"🚀 Début turbo: {len(images)} paires à traiter"
-                            )
+                            # Logs désactivés pour réduire le bruit
+                            # await connection_manager.notify_turbo_log(
+                            #     profile_id, turbo_id, 'in progress',
+                            #     f"🚀 Début turbo: {len(images)} paires à traiter"
+                            # )
 
-                            logger.info(f"🎯 Algorithme: {current_algorithm}")
-                            await connection_manager.notify_turbo_log(
-                                profile_id, turbo_id, 'in progress',
-                                f"🎯 Algorithme: {current_algorithm}"
-                            )
+                            # logger.info(f"🎯 Algorithme: {current_algorithm}")
+                            # await connection_manager.notify_turbo_log(
+                            #     profile_id, turbo_id, 'in progress',
+                            #     f"🎯 Algorithme: {current_algorithm}"
+                            # )
 
                             # Étape 2: Traiter chaque paire séquentiellement
                             success_count = await self.process_turbo_pairs_sequentially(challenge_id, images,

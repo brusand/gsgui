@@ -339,9 +339,10 @@ async def execute_turbo(
         
         # Générer un ID unique pour ce turbo
         turbo_id = str(uuid.uuid4())
-        
-        logger.info(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
-        logger.info(f"   Algorithme: {request.algorithm or 'hybrid'}")
+
+        # Logs désactivés pour réduire le bruit
+        # logger.info(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
+        # logger.info(f"   Algorithme: {request.algorithm or 'hybrid'}")
         
         # Exécuter le turbo
         result = await turbo_executor.execute_turbo(

@@ -1236,14 +1236,15 @@ async def execute_turbo_complete(profile_id: str, request: TurboExecutionRequest
             if not x_token:
                 raise HTTPException(status_code=401, detail=f"No valid token for profile {profile_id}")
 
-            print(f"🚀 Démarrage turbo pour profil {profile_id}: {x_token[:20]}...")
-            log_and_broadcast(f"🚀 Démarrage turbo pour profil {profile_id}: {x_token[:20]}...", "info", profile_id)
+            # Logs désactivés pour réduire le bruit
+            # print(f"🚀 Démarrage turbo pour profil {profile_id}: {x_token[:20]}...")
+            # log_and_broadcast(f"🚀 Démarrage turbo pour profil {profile_id}: {x_token[:20]}...", "info", profile_id)
 
-            print(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
-            log_and_broadcast(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}", "info", profile_id)
+            # print(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
+            # log_and_broadcast(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}", "info", profile_id)
 
-            print(f"   Algorithme: {request.algorithm or 'hybrid'}")
-            log_and_broadcast(f"   Algorithme: {request.algorithm or 'hybrid'}", "info", profile_id)
+            # print(f"   Algorithme: {request.algorithm or 'hybrid'}")
+            # log_and_broadcast(f"   Algorithme: {request.algorithm or 'hybrid'}", "info", profile_id)
 
             # Exécuter le turbo avec le système complet
             result = await turbo_executor.execute_turbo(
@@ -1620,15 +1621,16 @@ async def execute_turbo_complete(request: TurboExecutionRequest, profile_name: s
         
         if not x_token:
             raise HTTPException(status_code=401, detail=f"No valid token for profile {profile_name}")
-        
-        print(f"🚀 Démarrage turbo pour profil {profile_name}: {x_token[:20]}...")
-        log_and_broadcast(f"🚀 Démarrage turbo pour profil {profile_name}: {x_token[:20]}...", "info", profile_name)
 
-        print(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
-        log_and_broadcast(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}", "info", profile_name)
+        # Logs désactivés pour réduire le bruit
+        # print(f"🚀 Démarrage turbo pour profil {profile_name}: {x_token[:20]}...")
+        # log_and_broadcast(f"🚀 Démarrage turbo pour profil {profile_name}: {x_token[:20]}...", "info", profile_name)
 
-        print(f"   Algorithme: {request.algorithm or 'hybrid'}")
-        log_and_broadcast(f"   Algorithme: {request.algorithm or 'hybrid'}", "info", profile_name)
+        # print(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}")
+        # log_and_broadcast(f"🚀 Démarrage turbo {turbo_id} pour challenge {request.challenge_id}", "info", profile_name)
+
+        # print(f"   Algorithme: {request.algorithm or 'hybrid'}")
+        # log_and_broadcast(f"   Algorithme: {request.algorithm or 'hybrid'}", "info", profile_name)
         if request.algorythm == '':
             request.algorythm = "[hybrid,position_aware,adaptive_time]"
         # Exécuter le turbo avec le système complet
