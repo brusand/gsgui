@@ -13,6 +13,9 @@ from xmlrpc.client import boolean
 
 from configobj import ConfigObj
 
+# Import centralized paths - ABSOLUTE PATHS regardless of CWD
+from app.utils.paths import STRATEGIES_INI_PATH_STR
+
 from app.services.gurushots_api import GuruShotsAPI
 from app.services.config_manager import config_manager
 from app.websockets.connection_manager import connection_manager
@@ -71,15 +74,15 @@ class ExtendedStrategyExecutor:
     """
     
     def __init__(self):
-        # Path relatif depuis le répertoire backend/
-        self.strategies_config = ConfigObj('data/strategies.ini')
+        # Use absolute path from centralized paths module
+        self.strategies_config = ConfigObj(STRATEGIES_INI_PATH_STR)
         self.active_executions = {}  # strategy_id -> execution context
-    
+
     def reload_config(self):
         """Recharge la configuration des stratégies depuis le fichier strategies.ini"""
         try:
             logger.info("🔄 Rechargement de la configuration strategies.ini...")
-            self.strategies_config = ConfigObj('data/strategies.ini')
+            self.strategies_config = ConfigObj(STRATEGIES_INI_PATH_STR)
             logger.info(f"✅ Configuration rechargée: {len(self.strategies_config)} stratégies disponibles")
             return True
         except Exception as e:

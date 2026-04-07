@@ -12,6 +12,9 @@ from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass
 from configobj import ConfigObj
 
+# Import centralized paths - ABSOLUTE PATHS regardless of CWD
+from app.utils.paths import STRATEGIES_INI_PATH_STR
+
 from app.services.gurushots_api import GuruShotsAPI
 from app.websockets.connection_manager import connection_manager
 
@@ -36,7 +39,7 @@ class EnhancedStrategyEngine:
     def __init__(self, gurushots_api: GuruShotsAPI, user_id: str = "strategy_user"):
         self.api = gurushots_api
         self.user_id = user_id
-        self.strategies = ConfigObj('./data/strategies.ini')
+        self.strategies = ConfigObj(STRATEGIES_INI_PATH_STR)
         
         # Active strategy executions
         self.active_strategies: Dict[str, Dict] = {}  # strategy_id -> execution context

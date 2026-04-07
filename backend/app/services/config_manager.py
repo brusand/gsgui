@@ -11,12 +11,14 @@ from configobj import ConfigObj
 from threading import RLock  # Reentrant Lock pour éviter deadlocks
 import uuid
 
+# Import centralized paths - ABSOLUTE PATHS regardless of CWD
+from app.utils.paths import GSGUI_INI_PATH_STR, STRATEGIES_INI_PATH_STR
+
 logger = logging.getLogger(__name__)
 
-# Configuration des chemins relatifs depuis la racine du projet (working directory)
-# Le backend est lancé depuis la racine du projet par process-manager-portable.sh
-DEFAULT_GSGUI_INI = './data/gsgui.ini'
-DEFAULT_STRATEGIES_INI = './data/strategies.ini'
+# Use absolute paths from centralized paths module
+DEFAULT_GSGUI_INI = GSGUI_INI_PATH_STR
+DEFAULT_STRATEGIES_INI = STRATEGIES_INI_PATH_STR
 
 
 class ConfigManager:
