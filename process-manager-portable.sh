@@ -45,20 +45,27 @@ init_config() {
     
     BACKEND_DIR="$SCRIPT_DIR/backend"
     FRONTEND_DIR="$SCRIPT_DIR/web-ui"
+    WEBANALYZER_DIR="$SCRIPT_DIR/web_analyzer"
 
     BACKEND_CMD="$PYTHON_CMD backend/gs_backend.py"
     FRONTEND_CMD="$NPM_CMD run dev"
+    COLLECTOR_CMD="$PYTHON_CMD backend/gs_collector.py --daemon"
+    WEBANALYZER_CMD="$PYTHON_CMD web_analyzer/app.py"
     PID_DIR="$SCRIPT_DIR/pids"
     LOG_DIR="$SCRIPT_DIR/logs"
-    
+
     # Fichiers PID
     BACKEND_PID_FILE="$PID_DIR/backend.pid"
     FRONTEND_PID_FILE="$PID_DIR/frontend.pid"
+    COLLECTOR_PID_FILE="$PID_DIR/collector.pid"
+    WEBANALYZER_PID_FILE="$PID_DIR/webanalyzer.pid"
     MANAGER_PID_FILE="$PID_DIR/manager.pid"
-    
+
     # Fichiers de log
     BACKEND_LOG="$LOG_DIR/backend.log"
     FRONTEND_LOG="$LOG_DIR/frontend.log"
+    COLLECTOR_LOG="$LOG_DIR/collector.log"
+    WEBANALYZER_LOG="$LOG_DIR/webanalyzer.log"
     MANAGER_LOG="$LOG_DIR/manager.log"
 }
 
@@ -301,10 +308,114 @@ start_frontend() {
     fi
 }
 
+# Démarrer le collector
+start_collector() {
+    if [[ -f "$COLLECTOR_PID_FILE" ]]; then
+        local old_pid=$(cat "$COLLECTOR_PID_FILE" 2>/dev/null)
+        if [[ -n "$old_pid" ]] && kill -0 "$old_pid" 2>/dev/null; then
+            log_warning "Collector déjà en cours d'exécution (PID: $old_pid)"
+            return 0
+        fi
+        rm -f "$COLLECTOR_PID_FILE"
+    fi
+
+    log_info "Démarrage du collector..."
+    cd "$SCRIPT_DIR"
+
+    # Préparer la commande avec environnement virtuel si nécessaire
+    local full_cmd
+    if [[ -n "$VENV_PATH" ]]; then
+        log_info "Utilisation de l'environnement virtuel: $VENV_PATH"
+        full_cmd="source '$VENV_PATH' && $COLLECTOR_CMD"
+    else
+        full_cmd="$COLLECTOR_CMD"
+    fi
+
+    # Démarrer en arrière-plan avec redirection des logs
+    nohup bash -c "$full_cmd" >> "$COLLECTOR_LOG" 2>&1 &
+    local collector_pid=$!
+
+    echo "$collector_pid" > "$COLLECTOR_PID_FILE"
+
+    # Vérifier que le processus a bien démarré
+    sleep 2
+    if kill -0 "$collector_pid" 2>/dev/null; then
+        log_success "Collector démarré (PID: $collector_pid)"
+        cd - >/dev/null
+        return 0
+    else
+        log_error "Échec du démarrage du collector"
+        rm -f "$COLLECTOR_PID_FILE"
+        cd - >/dev/null
+        return 1
+    fi
+}
+
+# Démarrer le web analyzer
+start_webanalyzer() {
+    if [[ -f "$WEBANALYZER_PID_FILE" ]]; then
+        local old_pid=$(cat "$WEBANALYZER_PID_FILE" 2>/dev/null)
+        if [[ -n "$old_pid" ]] && kill -0 "$old_pid" 2>/dev/null; then
+            log_warning "Web Analyzer déjà en cours d'exécution (PID: $old_pid)"
+            return 0
+        fi
+        rm -f "$WEBANALYZER_PID_FILE"
+    fi
+
+    log_info "Démarrage du web analyzer..."
+    cd "$SCRIPT_DIR"
+
+    # Préparer la commande avec environnement virtuel si nécessaire
+    local full_cmd
+    if [[ -n "$VENV_PATH" ]]; then
+        log_info "Utilisation de l'environnement virtuel: $VENV_PATH"
+        full_cmd="source '$VENV_PATH' && $WEBANALYZER_CMD"
+    else
+        full_cmd="$WEBANALYZER_CMD"
+    fi
+
+    # Démarrer en arrière-plan avec redirection des logs
+    nohup bash -c "$full_cmd" >> "$WEBANALYZER_LOG" 2>&1 &
+    local webanalyzer_pid=$!
+
+    echo "$webanalyzer_pid" > "$WEBANALYZER_PID_FILE"
+
+    # Vérifier que le processus a bien démarré
+    sleep 2
+    if kill -0 "$webanalyzer_pid" 2>/dev/null; then
+        log_success "Web Analyzer démarré (PID: $webanalyzer_pid) - Port 5001"
+        cd - >/dev/null
+        return 0
+    else
+        log_error "Échec du démarrage du web analyzer"
+        rm -f "$WEBANALYZER_PID_FILE"
+        cd - >/dev/null
+        return 1
+    fi
+}
+
 # Arrêter les processus de manière complète
 stop_processes() {
     log_info "Arrêt des processus..."
-    
+
+    # Arrêter le web analyzer
+    if [[ -f "$WEBANALYZER_PID_FILE" ]]; then
+        local webanalyzer_pid=$(cat "$WEBANALYZER_PID_FILE" 2>/dev/null)
+        if [[ -n "$webanalyzer_pid" ]]; then
+            kill_process "$webanalyzer_pid" "webanalyzer"
+        fi
+        rm -f "$WEBANALYZER_PID_FILE"
+    fi
+
+    # Arrêter le collector
+    if [[ -f "$COLLECTOR_PID_FILE" ]]; then
+        local collector_pid=$(cat "$COLLECTOR_PID_FILE" 2>/dev/null)
+        if [[ -n "$collector_pid" ]]; then
+            kill_process "$collector_pid" "collector"
+        fi
+        rm -f "$COLLECTOR_PID_FILE"
+    fi
+
     # Arrêter le frontend (PID file + port)
     if [[ -f "$FRONTEND_PID_FILE" ]]; then
         local frontend_pid=$(cat "$FRONTEND_PID_FILE" 2>/dev/null)
@@ -313,7 +424,7 @@ stop_processes() {
         fi
         rm -f "$FRONTEND_PID_FILE"
     fi
-    
+
     # Arrêter le backend (PID file + port)
     if [[ -f "$BACKEND_PID_FILE" ]]; then
         local backend_pid=$(cat "$BACKEND_PID_FILE" 2>/dev/null)
@@ -322,10 +433,10 @@ stop_processes() {
         fi
         rm -f "$BACKEND_PID_FILE"
     fi
-    
+
     # Nettoyer les processus orphelins par port (sécurité)
     cleanup_orphan_processes
-    
+
     log_success "Tous les processus ont été arrêtés"
 }
 
@@ -364,7 +475,23 @@ cleanup_orphan_processes() {
         done
         cleaned=true
     fi
-    
+
+    # Nettoyer le port web analyzer (5001)
+    local webanalyzer_port_pids=$(lsof -ti:5001 2>/dev/null)
+    if [[ -n "$webanalyzer_port_pids" ]]; then
+        log_info "Nettoyage des processus orphelins sur port 5001..."
+        for pid in $webanalyzer_port_pids; do
+            log_info "  - Arrêt du processus orphelin $pid (port 5001)"
+            kill -TERM "$pid" 2>/dev/null || true
+            sleep 1
+            if kill -0 "$pid" 2>/dev/null; then
+                kill -KILL "$pid" 2>/dev/null || true
+                log_info "    Processus $pid forcé à s'arrêter"
+            fi
+        done
+        cleaned=true
+    fi
+
     if [[ "$cleaned" == "true" ]]; then
         log_info "Attente de la libération des ports..."
         sleep 2
@@ -404,10 +531,40 @@ check_processes() {
         log_warning "Frontend arrêté (pas de PID file)"
     fi
     
+    # Vérifier le collector
+    local collector_running=false
+    if [[ -f "$COLLECTOR_PID_FILE" ]]; then
+        local collector_pid=$(cat "$COLLECTOR_PID_FILE" 2>/dev/null)
+        if [[ -n "$collector_pid" ]] && kill -0 "$collector_pid" 2>/dev/null; then
+            collector_running=true
+            log_success "Collector actif (PID: $collector_pid)"
+        else
+            log_warning "Collector arrêté (PID file existe mais processus mort)"
+            rm -f "$COLLECTOR_PID_FILE"
+        fi
+    else
+        log_warning "Collector arrêté (pas de PID file)"
+    fi
+
+    # Vérifier le web analyzer
+    local webanalyzer_running=false
+    if [[ -f "$WEBANALYZER_PID_FILE" ]]; then
+        local webanalyzer_pid=$(cat "$WEBANALYZER_PID_FILE" 2>/dev/null)
+        if [[ -n "$webanalyzer_pid" ]] && kill -0 "$webanalyzer_pid" 2>/dev/null; then
+            webanalyzer_running=true
+            log_success "Web Analyzer actif (PID: $webanalyzer_pid) - Port 5001"
+        else
+            log_warning "Web Analyzer arrêté (PID file existe mais processus mort)"
+            rm -f "$WEBANALYZER_PID_FILE"
+        fi
+    else
+        log_warning "Web Analyzer arrêté (pas de PID file)"
+    fi
+
     # Retourner les états
-    if $backend_running && $frontend_running; then
+    if $backend_running && $frontend_running && $collector_running && $webanalyzer_running; then
         return 0  # Tout va bien
-    elif $backend_running || $frontend_running; then
+    elif $backend_running || $frontend_running || $collector_running || $webanalyzer_running; then
         return 1  # Partiellement en cours
     else
         return 2  # Tout arrêté
@@ -442,12 +599,22 @@ monitor_processes() {
                     log_info "Redémarrage du backend..."
                     start_backend
                 fi
-                
+
                 if [[ ! -f "$FRONTEND_PID_FILE" ]] || ! kill -0 "$(cat "$FRONTEND_PID_FILE" 2>/dev/null)" 2>/dev/null; then
                     log_info "Redémarrage du frontend..."
                     start_frontend
                 fi
-                
+
+                if [[ ! -f "$COLLECTOR_PID_FILE" ]] || ! kill -0 "$(cat "$COLLECTOR_PID_FILE" 2>/dev/null)" 2>/dev/null; then
+                    log_info "Redémarrage du collector..."
+                    start_collector
+                fi
+
+                if [[ ! -f "$WEBANALYZER_PID_FILE" ]] || ! kill -0 "$(cat "$WEBANALYZER_PID_FILE" 2>/dev/null)" 2>/dev/null; then
+                    log_info "Redémarrage du web analyzer..."
+                    start_webanalyzer
+                fi
+
                 sleep 5
                 ;;
             2)
@@ -460,9 +627,17 @@ monitor_processes() {
                 log_info "Démarrage du backend..."
                 start_backend
                 sleep 3
-                
+
                 log_info "Démarrage du frontend..."
                 start_frontend
+                sleep 3
+
+                log_info "Démarrage du collector..."
+                start_collector
+                sleep 2
+
+                log_info "Démarrage du web analyzer..."
+                start_webanalyzer
                 sleep 5
                 ;;
         esac
@@ -568,6 +743,10 @@ main() {
             start_backend
             sleep 3
             start_frontend
+            sleep 2
+            start_collector
+            sleep 2
+            start_webanalyzer
             log_success "=== Tous les services sont démarrés ==="
             log_info "Utilisez '$0 status' pour vérifier l'état"
             log_info "Utilisez '$0 monitor' pour surveillance automatique"
@@ -585,6 +764,10 @@ main() {
             start_backend
             sleep 3
             start_frontend
+            sleep 2
+            start_collector
+            sleep 2
+            start_webanalyzer
             log_success "=== Redémarrage terminé ==="
             ;;
         "status")
@@ -608,8 +791,12 @@ main() {
                 sleep 3
                 start_frontend
                 sleep 2
+                start_collector
+                sleep 2
+                start_webanalyzer
+                sleep 2
             fi
-            
+
             # Démarrer la surveillance
             monitor_processes
             ;;
