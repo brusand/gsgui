@@ -567,6 +567,21 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
             <button onClick={onDisconnect} className="btn btn-disconnect">
               🚪 Déconnexion
             </button>
+            <a
+              href="http://localhost:5001"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-analyzer"
+              style={{
+                marginLeft: '10px',
+                textDecoration: 'none',
+                backgroundColor: '#000',
+                color: '#fff',
+                border: '1px solid #333'
+              }}
+            >
+              📊 Web Analyzer
+            </a>
           </div>
         </div>
       </header>

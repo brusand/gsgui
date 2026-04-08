@@ -772,32 +772,33 @@ class ExtendedStrategyExecutor:
             logger.info(f"🚀 Starting boost action for challenge {challenge_id}")
             
             if not params:
-                return {'success': False, 'error': 'Image ID or index required for boost'}
-            
-            # Check if a photo index is specified for targeting
-            target_photo_id = None
-            param = params[0].strip()
-            
-            # Handle index notation
-            if param.startswith('[') and param.endswith(']'):
-                index_str = param[1:-1]
-            else:
-                index_str = param
-            
-            if index_str.isdigit():
-                index = int(index_str)
-                logger.info(f"🎯 Resolving photo index [{index}] by fetching FRESH challenge data for boost")
-                
-                # GET FRESH CHALLENGE DATA at execution time (same as turbo)
-                target_photo_id = await self._get_current_user_photo_by_index(api_client, challenge_id, index)
-                if target_photo_id:
-                    logger.info(f"✅ Boost will target photo {target_photo_id} (index [{index}] from fresh data)")
+                target_photo_id = await self._get_current_user_photo_first_available_index(api_client, challenge_id)
+
+
+            else: # Check if a photo index is specified for targeting
+                target_photo_id = None
+                param = params[0].strip()
+
+                # Handle index notation
+                if param.startswith('[') and param.endswith(']'):
+                    index_str = param[1:-1]
                 else:
-                    logger.error(f"❌ Could not resolve photo index [{index}] from current challenge data")
-                    return {'success': False, 'error': f'Could not resolve photo index {index}'}
-            else:
-                target_photo_id = param
-                logger.info(f"🎯 Boost will target specific photo: {target_photo_id}")
+                    index_str = param
+
+                if index_str.isdigit():
+                    index = int(index_str)
+                    logger.info(f"🎯 Resolving photo index [{index}] by fetching FRESH challenge data for boost")
+
+                    # GET FRESH CHALLENGE DATA at execution time (same as turbo)
+                    target_photo_id = await self._get_current_user_photo_by_index(api_client, challenge_id, index)
+                    if target_photo_id:
+                        logger.info(f"✅ Boost will target photo {target_photo_id} (index [{index}] from fresh data)")
+                    else:
+                        logger.error(f"❌ Could not resolve photo index [{index}] from current challenge data")
+                        return {'success': False, 'error': f'Could not resolve photo index {index}'}
+                else:
+                    target_photo_id = param
+                    logger.info(f"🎯 Boost will target specific photo: {target_photo_id}")
             
             if not target_photo_id:
                 logger.error("❌ No target photo specified for boost action")
@@ -855,7 +856,9 @@ class ExtendedStrategyExecutor:
                 else:
                     target_photo_id = param
                     logger.info(f"🎯 Turbo will target specific photo: {target_photo_id}")
-            
+            else:
+                target_photo_id = await self._get_current_user_photo_first_available_index(api_client, challenge_id)
+
             if not target_photo_id:
                 logger.error("❌ No target photo specified for turbo action")
                 return {'success': False, 'error': 'No target photo specified'}
@@ -1380,7 +1383,73 @@ class ExtendedStrategyExecutor:
         except Exception as e:
             logger.error(f"Error resolving photo index {index} with URL: {e}")
             return None
-    
+
+    async def _get_current_user_photo_first_available_index(self, api_client: GuruShotsAPI, challenge_id: int) -> \
+    Optional[str]:
+        """Get current user's photo ID by index using direct get_my_active_challenges API call - FRESH DATA"""
+        try:
+            import aiohttp
+
+            logger.info(
+                f"🔍 Calling get_my_active_challenges API directly to resolve photo  for challenge {challenge_id}")
+
+            # Direct API call to get_my_active_challenges (like frontend does)
+            async with aiohttp.ClientSession(
+                    headers=api_client.headers,
+                    connector=aiohttp.TCPConnector(ssl=False)
+            ) as session:
+                async with session.post(f'{api_client.base_url}/get_my_active_challenges') as response:
+                    if response.status != 200:
+                        logger.error(f"❌ API Error: Status {response.status}")
+                        return None
+
+                    data = await response.json()
+                    logger.info(f"📊 API Response received, looking for challenge {challenge_id}")
+
+                    # Find the specific challenge in the response
+                    target_challenge = None
+                    for challenge_data in data.get('challenges', []):
+                        if str(challenge_data.get('id')) == str(challenge_id):
+                            target_challenge = challenge_data
+                            logger.info(f"✅ Found challenge {challenge_id}: {challenge_data.get('title', 'No title')}")
+                            break
+
+                    if not target_challenge:
+                        logger.error(f"❌ Challenge {challenge_id} not found in active challenges")
+                        return None
+
+                    # Get user's entries directly from the API response
+                    user_entries = target_challenge.get('member', []).get('ranking', []).get('entries', [])
+
+                    if not user_entries:
+                        logger.error(f"❌ No user entries found in challenge {challenge_id}")
+                        return None
+
+                    # Sort entries by votes (descending: most votes first)
+                    # sorted_entries = sorted(user_entries, key=lambda x: x.get('votes', 0), reverse=True)
+
+                    # Check if index is valid
+                    # if index < 0 or index >= len(sorted_entries):
+                    #    logger.error(f"❌ Photo index {index} out of range (user has {len(sorted_entries)} photos)")
+                    #    return None
+
+                    # Get photo ID at requested index
+                    for item in user_entries:
+                        if not item.get('turbo', False) and not item.get('boosted', False):
+                            selected_photo = item
+                            break
+                    photo_id = selected_photo['id']
+                    photo_votes = selected_photo.get('votes', 0)
+
+                    logger.info(
+                        f"✅ Resolved index -> photo {photo_id} with {photo_votes} votes (DIRECT API CALL)")
+
+                    return photo_id
+
+        except Exception as e:
+            logger.error(f"❌ Error calling get_my_active_challenges API : {e}")
+            return None
+
     async def _get_current_user_photo_by_index(self, api_client: GuruShotsAPI, challenge_id: int, index: int) -> Optional[str]:
         """Get current user's photo ID by index using direct get_my_active_challenges API call - FRESH DATA"""
         try:

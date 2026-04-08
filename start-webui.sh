@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Script pour démarrer le serveur Web UI
-cd /Users/bruno/gsgui/web-ui
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR/web-ui"
 
 echo "🚀 Démarrage du serveur Web UI..."
 echo "📁 Répertoire: $(pwd)"

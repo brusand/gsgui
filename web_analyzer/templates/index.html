@@ -1,0 +1,2614 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuruShots Analyzer Web - Plotly Interactive</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .innovation-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 10px;
+        }
+
+        /* ── Tab Bar ── */
+        .tab-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            gap: 0;
+            padding: 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 16px 24px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .tab-btn.active {
+            color: #ff6b6b;
+            border-bottom-color: #4ecdc4;
+            background: linear-gradient(to bottom, rgba(78,205,196,0.05), transparent);
+        }
+
+        .tab-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            font-size: 0.72em;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        /* ── Tab Panels ── */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ── Shared Control Primitives ── */
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-item label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select, button {
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        select {
+            background: white;
+            min-width: 200px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 150px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            min-width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #495057, #343a40);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary.refreshing {
+            animation: spin 1s linear infinite;
+            pointer-events: none;
+        }
+
+        .entry-controls, .ranking-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            border-color: #4ecdc4;
+            background: #f0fdfd;
+        }
+
+        .checkbox-item input[type="checkbox"],
+        .checkbox-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+        }
+
+        /* Slider de zoom temporel */
+        #timeZoom {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        #timeZoom::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+        }
+
+        #timeZoom::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+        }
+
+        #timeZoomValue {
+            min-width: 100px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .checkbox-item.entry-0 { border-left: 5px solid #ff6b6b; }
+        .checkbox-item.entry-1 { border-left: 5px solid #4ecdc4; }
+        .checkbox-item.entry-2 { border-left: 5px solid #45b7d1; }
+        .checkbox-item.entry-3 { border-left: 5px solid #f9ca24; }
+
+        .content {
+            padding: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4ecdc4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #dc3545;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #28a745;
+            margin: 20px 0;
+        }
+
+        .result-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .stats {
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+
+        /* ── Modal Ajout Challenge ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+        }
+
+        .modal h3 {
+            font-size: 1.3em;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .modal p.modal-hint {
+            font-size: 0.88em;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .modal-input:focus {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 3px rgba(78,205,196,0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-modal-cancel {
+            background: #e9ecef;
+            color: #495057;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+
+        .btn-modal-cancel:hover { background: #dee2e6; }
+
+        .btn-modal-submit {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .btn-modal-submit:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.88em;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .btn-add {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .btn-refresh-card {
+            background: none;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.82em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-scheduler-start {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-scheduler-start:hover { background: #218838; }
+
+        .btn-scheduler-stop {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-scheduler-stop:hover { background: #c82333; }
+
+        .btn-monitor-start, .btn-monitor-stop {
+            border: none;
+            padding: 5px 11px;
+            border-radius: 6px;
+            font-size: 0.78em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-monitor-start { background: #e8f5e9; color: #2e7d32; }
+        .btn-monitor-start:hover { background: #c8e6c9; }
+        .btn-monitor-stop  { background: #fce4ec; color: #c62828; }
+        .btn-monitor-stop:hover  { background: #f8bbd0; }
+
+        .collecting-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            box-shadow: 0 0 0 0 rgba(40,167,69,0.5);
+            animation: pulse-dot 1.4s infinite;
+            flex-shrink: 0;
+        }
+        .collecting-dot.paused {
+            background: #adb5bd;
+            box-shadow: none;
+            animation: none;
+        }
+        @keyframes pulse-dot {
+            0%   { box-shadow: 0 0 0 0 rgba(40,167,69,0.5); }
+            70%  { box-shadow: 0 0 0 6px rgba(40,167,69,0); }
+            100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+        }
+
+        .scheduler-status {
+            font-size: 0.78em;
+            color: #6c757d;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 3px 10px;
+        }
+
+        .next-collection {
+            color: #28a745;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .btn-purge {
+            background: none;
+            border: 1.5px solid #dc3545;
+            color: #dc3545;
+            padding: 7px 12px;
+            border-radius: 7px;
+            font-size: 0.78em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-purge:hover { background: #dc3545; color: white; }
+
+        .btn-xmode {
+            background: #fff;
+            color: #495057;
+            border: 1.5px solid #adb5bd;
+            padding: 7px 14px;
+            border-radius: 7px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-xmode:hover { background: #e9ecef; }
+        .btn-xmode.active { background: #667eea; color: white; border-color: #667eea; }
+
+        .btn-refresh-card:hover {
+            border-color: #4ecdc4;
+            color: #4ecdc4;
+        }
+
+        .global-stats-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.85em;
+            color: #495057;
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .global-stats-row span { font-weight: 600; color: #333; }
+
+        /* ── Tab 2 — Monitoring ── */
+        .monitoring-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 30px 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .monitoring-header h2 {
+            font-size: 1.6em;
+            color: #333;
+        }
+
+        .monitoring-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 0 30px 30px;
+        }
+
+        .monitoring-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .monitoring-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+        }
+
+        .monitoring-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .monitoring-title {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .time-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.82em;
+            font-weight: 700;
+        }
+
+        .time-badge.urgent { background: #f8d7da; color: #721c24; }
+        .time-badge.warning { background: #fff3cd; color: #856404; }
+        .time-badge.ok { background: #d4edda; color: #155724; }
+        .time-badge.ended { background: #e9ecef; color: #6c757d; }
+
+        .monitoring-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85em;
+            color: #6c757d;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .monitoring-meta span { display: flex; align-items: center; gap: 4px; }
+
+        .my-stats {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .rank-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .votes-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .top3-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+            margin-bottom: 14px;
+        }
+
+        .top3-table th {
+            text-align: left;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .top3-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .top3-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .top3-rank {
+            font-weight: 700;
+            color: #667eea;
+            width: 36px;
+        }
+
+        .monitoring-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-analyse {
+            background: linear-gradient(45deg, #4ecdc4, #667eea);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-analyse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 30px;
+            color: #6c757d;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .monitoring-chart {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 8px;
+            max-height: 0;
+            transition: max-height 0.3s ease, margin-bottom 0.3s ease;
+            margin-bottom: 0;
+        }
+        .monitoring-chart.open {
+            max-height: 200px;
+            margin-bottom: 12px;
+        }
+
+        .btn-delete-card {
+            background: none;
+            border: 1px solid #dee2e6;
+            color: #adb5bd;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.82em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-delete-card:hover { border-color: #dc3545; color: #dc3545; background: #fff5f5; }
+
+        .btn-chart-toggle {
+            background: none;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.78em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-chart-toggle:hover { background: #f1f3f5; color: #343a40; }
+
+        /* ── Challenges terminés ── */
+        .ended-section {
+            border-bottom: 1px solid #e9ecef;
+        }
+        .ended-header {
+            width: 100%;
+            background: #f8f9fa;
+            border: none;
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 0.92em;
+            font-weight: 600;
+            color: #495057;
+            text-align: left;
+        }
+        .ended-header:hover { background: #e9ecef; }
+        .ended-count {
+            background: #6c757d;
+            color: white;
+            border-radius: 10px;
+            padding: 1px 8px;
+            font-size: 0.78em;
+        }
+        .ended-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 30px;
+            background: #fdfdfd;
+        }
+        .ended-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 14px 18px;
+            width: 280px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .ended-card-title {
+            font-weight: 700;
+            font-size: 0.88em;
+            color: #343a40;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ended-card-stats {
+            font-size: 0.8em;
+            color: #6c757d;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .ended-mini-chart {
+            width: 100%;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        /* ── Tab 3 — Analyses ── */
+        .analyses-controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        /* ── Sub-tabs (Analyses) ── */
+        .sub-tab-bar {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #e9ecef;
+            padding: 0 30px;
+            background: white;
+        }
+        .sub-tab-btn {
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 12px 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .sub-tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
+        .sub-tab-btn:hover:not(.active) { color: #495057; background: #f8f9fa; }
+
+        .sub-panel { display: none; padding: 20px 30px; }
+        .sub-panel.active { display: block; }
+
+        .followings-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+        .followings-table th {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+        }
+        .followings-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f3f5;
+            vertical-align: middle;
+        }
+        .followings-table tr:hover td { background: #f8f9fa; }
+        .photo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: #e9ecef;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.78em;
+            margin: 1px;
+        }
+        .photo-badge.boosted { background: #fff3cd; color: #856404; }
+
+        .link-photo-chart {
+            font-size: 0.75em;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .link-photo-chart:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .entry-controls {
+                justify-content: center;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .tab-btn {
+                padding: 12px 14px;
+                font-size: 0.9em;
+            }
+
+            .monitoring-card-top {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div style="position: absolute; top: 20px; right: 30px;">
+                <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer"
+                   style="background: white; color: #ff6b6b; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s;"
+                   onmouseover="this.style.transform='scale(1.05)'"
+                   onmouseout="this.style.transform='scale(1)'">
+                    🎯 Retour GSGUI
+                </a>
+            </div>
+            <h1>GuruShots Analyzer</h1>
+            <p>Analyse interactive des stratégies par entries<span class="innovation-badge">Innovation</span></p>
+        </div>
+
+        <!-- Sticky Tab Bar -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="monitoring" onclick="app.switchTab('monitoring')">
+                📡 Monitoring
+                <span class="tab-badge" id="badge-monitoring">0</span>
+            </button>
+            <button class="tab-btn" data-tab="analyses" onclick="app.switchTab('analyses')">
+                📊 Analyses
+            </button>
+        </div>
+
+        <!-- Modal Ajout Challenge -->
+        <!-- Modal graphique photos d'un following -->
+        <div class="modal-overlay" id="photoChartModal" onclick="if(event.target===this)app.closePhotoChart()">
+            <div class="modal" style="max-width:860px; width:95%;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <h3 id="photoChartTitle" style="margin:0;font-size:1.1em;">Évolution des photos</h3>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <button class="btn-xmode" id="btnPhotoXMode" onclick="app.togglePhotoChartXMode()">📅 Date/heure</button>
+                        <button onclick="app.closePhotoChart()" style="background:none;border:none;font-size:1.4em;cursor:pointer;color:#6c757d;">×</button>
+                    </div>
+                </div>
+                <div id="photoChartContainer" style="width:100%;height:340px;"></div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="addChallengeModal">
+            <div class="modal">
+                <h3>Ajouter un challenge</h3>
+                <p class="modal-hint">Saisissez l'URL du challenge GuruShots (ex : <em>12-hours105</em>)</p>
+                <input type="text" class="modal-input" id="challengeUrlInput"
+                       placeholder="challenge-url-slug"
+                       onkeydown="if(event.key==='Enter') app.submitAddChallenge()">
+                <div class="modal-error" id="modalError"></div>
+                <div class="modal-actions">
+                    <button class="btn-modal-cancel" onclick="app.closeAddModal()">Annuler</button>
+                    <button class="btn-modal-submit" id="modalSubmitBtn" onclick="app.submitAddChallenge()">Ajouter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ TAB 1 — MONITORING ═══════════ -->
+        <div id="panel-monitoring" class="tab-panel active">
+            <div class="monitoring-header">
+                <h2>Challenges en cours</h2>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <span id="schedulerStatus" class="scheduler-status" title="Statut APScheduler"></span>
+                    <button class="btn-scheduler-start" onclick="app.schedulerStartAll()" title="Démarrer la collecte de tous les challenges">▶ Tous</button>
+                    <button class="btn-scheduler-stop" onclick="app.schedulerStopAll()" title="Stopper la collecte de tous les challenges">⏹ Stop</button>
+                    <button class="btn-xmode" id="btnXMode" onclick="app.toggleChartXMode()" title="Basculer l'axe X des graphiques">📅 Date/heure</button>
+                    <button class="btn-add" onclick="app.openAddModal()">+ Ajouter</button>
+                    <button class="btn-purge" onclick="app.purgeTables()" title="Purger et recréer les tables (challenges, snapshots, followings)">🗑 Purge</button>
+                    <button class="btn-secondary" id="refreshMonitoringBtn" onclick="app.loadMonitoring()" title="Actualiser">
+                        🔄
+                    </button>
+                </div>
+            </div>
+
+            <div id="monitoringLoading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Chargement du monitoring...</p>
+            </div>
+            <div id="monitoringError" class="error" style="display:none; margin: 0 30px;"></div>
+
+            <div class="monitoring-list" id="monitoringList"></div>
+        </div>
+
+        <!-- ═══════════ TAB 3 — ANALYSES ═══════════ -->
+        <div id="panel-analyses" class="tab-panel">
+
+            <!-- ── Sélecteurs de challenge ── -->
+            <div style="padding:14px 20px 10px; border-bottom:1px solid #e9ecef;">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:180px;">
+                        <label style="font-weight:600; white-space:nowrap; color:#28a745; font-size:.85em;">🟢 En cours</label>
+                        <select id="challengeSelectActive" style="flex:1;">
+                            <option value="">Sélectionnez...</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:180px;">
+                        <label style="font-weight:600; white-space:nowrap; color:#6c757d; font-size:.85em;">🏁 Terminés</label>
+                        <select id="challengeSelectEnded" style="flex:1;">
+                            <option value="">Sélectionnez...</option>
+                        </select>
+                    </div>
+                    <button class="btn-secondary" id="refreshChallengesBtn" title="Actualiser la liste des challenges">🔄</button>
+                    <button class="btn-secondary" id="deleteChallengeBtn" title="Supprimer le challenge sélectionné" style="background: linear-gradient(45deg, #dc3545, #c82333); display: none;">🗑️</button>
+                </div>
+            </div>
+
+            <!-- ── Sub-onglets Analyses ── -->
+            <div class="sub-tab-bar">
+                <button class="sub-tab-btn active" data-subtab="evolution" onclick="app.switchSubTab('evolution')">📈 Évolution</button>
+                <button class="sub-tab-btn" data-subtab="followings" onclick="app.switchSubTab('followings')">👥 Followings</button>
+            </div>
+
+            <!-- Panneau Évolution -->
+            <div id="sub-panel-evolution" class="sub-panel active">
+                <div style="display:flex; justify-content:flex-end; padding:8px 12px 0;">
+                    <button class="btn-xmode" id="btnEvolutionXMode" onclick="app.toggleEvolutionXMode()" style="display:none;">📅 Date/heure</button>
+                </div>
+                <p id="evolution-placeholder" style="color:#6c757d; padding:20px 12px;">Sélectionnez un challenge pour afficher l'évolution.</p>
+                <div id="evolution-chart" style="width:100%; height:300px;"></div>
+            </div>
+
+            <!-- Panneau Followings -->
+            <div id="sub-panel-followings" class="sub-panel">
+                <p id="followings-placeholder" style="color:#6c757d;">Sélectionnez un challenge pour afficher les followings.</p>
+                <div id="followings-table-container"></div>
+            </div>
+
+            <!-- Panneau Analyse détaillée (masqué) -->
+            <div id="sub-panel-detail" style="display:none;">
+
+            <div class="analyses-controls">
+                <div class="control-group">
+                    <div class="control-item">
+                        <label for="memberSelect">Membre</label>
+                        <select id="memberSelect" disabled>
+                            <option value="">Sélectionnez d'abord un challenge</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <button class="btn" id="analyzeBtn" disabled>Analyser</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-item">
+                        <label>Affichage Entries</label>
+                        <div class="entry-controls">
+                            <label class="checkbox-item entry-0">
+                                <input type="checkbox" id="entry0" checked>
+                                <span>Entry 0</span>
+                            </label>
+                            <label class="checkbox-item entry-1">
+                                <input type="checkbox" id="entry1" checked>
+                                <span>Entry 1</span>
+                            </label>
+                            <label class="checkbox-item entry-2">
+                                <input type="checkbox" id="entry2" checked>
+                                <span>Entry 2</span>
+                            </label>
+                            <label class="checkbox-item entry-3">
+                                <input type="checkbox" id="entry3" checked>
+                                <span>Entry 3</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-item">
+                        <label>Type de Ranking</label>
+                        <div class="ranking-controls">
+                            <label class="checkbox-item">
+                                <input type="radio" name="rankingType" value="total" checked>
+                                <span>Ranking Général</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="radio" name="rankingType" value="photo">
+                                <span>Ranking par Photo</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-item">
+                        <label for="timeZoom">Zoom Temporel (dernières minutes)</label>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <input type="range" id="timeZoom" min="5" max="1440" value="1440" step="5">
+                            <span id="timeZoomValue">Toute la période</span>
+                        </div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                            5min - 24h pour analyser les montées de votes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div id="loadingState" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Génération de l'analyse en cours...</p>
+                </div>
+
+                <div id="errorState" class="error" style="display: none;"></div>
+
+                <div id="resultContainer" style="display: none;">
+                    <div class="result-container">
+                        <div id="plotlyChart" style="width: 100%; height: 1200px;"></div>
+                    </div>
+
+                    <!-- Analyse Ultra-Précise -->
+                    <div id="ultraPrecisionAnalysis" class="result-container" style="margin-top: 20px;">
+                        <h3 style="padding: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; margin: 0;">
+                            ANALYSE ULTRA-PRÉCISE - Timing 15 Secondes
+                        </h3>
+                        <div id="ultraPrecisionContent" style="padding: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /sub-panel-detail -->
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Révolutionnaire:</strong> Interface 100% interactive avec Plotly |
+               <strong>Innovation:</strong> Zoom et pan natifs pour navigation fluide |
+               <strong>Moderne:</strong> Graphiques interactifs avec hover détaillé</p>
+        </div>
+    </div>
+
+    <script>
+        class GuruShotsAnalyzer {
+            constructor() {
+                this.challenges = [];
+                this.members = [];
+                this.currentChallenge = null;
+                this.currentMember = null;
+
+                // Monitoring state
+                this._monitoringData = [];
+                this._monitoringLoaded = false;
+                this._monitoringTimer = null;
+
+                this.initializeElements();
+                this.bindEvents();
+                this.loadChallenges();    // Tab Analyses — liste des challenges
+                this.loadMonitoring();    // Tab Monitoring — charge au démarrage
+            }
+
+            // ─────────────────────────────────────────
+            //  Tab switching
+            // ─────────────────────────────────────────
+            switchTab(tabName) {
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tabName);
+                });
+                document.querySelectorAll('.tab-panel').forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `panel-${tabName}`);
+                });
+                if (tabName === 'analyses') {
+                    this.switchSubTab('evolution');
+                }
+            }
+
+            // ─────────────────────────────────────────
+            //  Challenges terminés
+            // ─────────────────────────────────────────
+            async loadEndedChallenges() {
+                try {
+                    const resp = await fetch('/api/ended-challenges');
+                    const data = await resp.json();
+                    if (!data.success) return;
+
+                    const countEl = document.getElementById('endedCount');
+                    if (countEl) countEl.textContent = data.challenges.length;
+
+                    const list = document.getElementById('endedList');
+                    if (!list) return;
+
+                    if (data.challenges.length === 0) {
+                        list.innerHTML = '<p style="color:#6c757d;font-size:0.88em;">Aucun challenge terminé.</p>';
+                        return;
+                    }
+
+                    list.innerHTML = data.challenges.map(c => {
+                        const votes = c.total_votes != null ? c.total_votes.toLocaleString() : '—';
+                        const players = c.players != null ? c.players.toLocaleString() : '—';
+                        const endDate = c.end_time
+                            ? new Date(c.end_time * 1000).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' })
+                            : (c.updated_at ? c.updated_at.slice(0,10) : '—');
+                        return `
+                            <div class="ended-card">
+                                <div class="ended-card-title" title="${this._esc(c.title)}">${this._esc(c.title)}</div>
+                                <div class="ended-card-stats">
+                                    <span>🏆 ${votes} votes</span>
+                                    <span>👥 ${players}</span>
+                                    <span>📅 ${endDate}</span>
+                                </div>
+                                <div id="ended-chart-${c.id}" class="ended-mini-chart"></div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    // Mini-charts pour chaque challenge terminé
+                    for (const c of data.challenges) {
+                        this._loadEndedMiniChart(c.id);
+                    }
+                } catch(e) {
+                    console.error('loadEndedChallenges:', e);
+                }
+            }
+
+            async _loadEndedMiniChart(id) {
+                try {
+                    const resp = await fetch(`/api/monitoring/history/${id}`);
+                    const data = await resp.json();
+                    if (!data.success || data.snapshots.length < 2) return;
+                    const el = document.getElementById(`ended-chart-${id}`);
+                    if (!el) return;
+                    const snaps = data.snapshots;
+                    const x = snaps.map(s => s.timestamp);
+                    Plotly.newPlot(el, [
+                        { x, y: snaps.map(s => s.total_votes), name: 'Votes',
+                          type: 'scatter', mode: 'lines', line: { color: '#ff6b6b', width: 1.5 } }
+                    ], {
+                        margin: { t: 4, b: 20, l: 30, r: 8 }, height: 80,
+                        paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+                        showlegend: false,
+                        xaxis: { type: 'date', tickfont: { size: 8 }, showgrid: false },
+                        yaxis: { tickfont: { size: 8 }, showgrid: false }
+                    }, { displayModeBar: false, responsive: true });
+                } catch(e) {}
+            }
+
+            toggleEndedSection() {
+                const list = document.getElementById('endedList');
+                const chevron = document.getElementById('endedChevron');
+                if (!list) return;
+                const open = list.style.display !== 'none';
+                list.style.display = open ? 'none' : 'flex';
+                if (chevron) chevron.textContent = open ? '▶' : '▼';
+            }
+
+            // ─────────────────────────────────────────
+            //  Modal — Ajouter un challenge
+            // ─────────────────────────────────────────
+            openAddModal() {
+                document.getElementById('challengeUrlInput').value = '';
+                document.getElementById('modalError').style.display = 'none';
+                document.getElementById('modalSubmitBtn').disabled = false;
+                document.getElementById('addChallengeModal').classList.add('open');
+                setTimeout(() => document.getElementById('challengeUrlInput').focus(), 50);
+            }
+
+            closeAddModal() {
+                document.getElementById('addChallengeModal').classList.remove('open');
+            }
+
+            async submitAddChallenge() {
+                const input = document.getElementById('challengeUrlInput');
+                const errEl = document.getElementById('modalError');
+                const btn = document.getElementById('modalSubmitBtn');
+                const url = input.value.trim();
+
+                if (!url) {
+                    errEl.textContent = 'Veuillez saisir une URL de challenge.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.textContent = 'Ajout en cours...';
+                errEl.style.display = 'none';
+
+                try {
+                    const resp = await fetch('/api/add-challenge', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ challenge_url: url })
+                    });
+                    const data = await resp.json();
+
+                    if (!data.success) {
+                        errEl.textContent = data.error || 'Erreur inconnue';
+                        errEl.style.display = 'block';
+                        return;
+                    }
+
+                    this.closeAddModal();
+                    // Recharger le monitoring pour afficher le nouveau challenge
+                    this._monitoringLoaded = false;
+                    await this.loadMonitoring();
+
+                } catch (err) {
+                    errEl.textContent = 'Erreur réseau : ' + err.message;
+                    errEl.style.display = 'block';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Ajouter';
+                }
+            }
+
+            // ─────────────────────────────────────────
+            //  Refresh d'un challenge individuel
+            // ─────────────────────────────────────────
+            async refreshChallenge(challengeId) {
+                try {
+                    const resp = await fetch(`/api/refresh-challenge/${challengeId}`, { method: 'POST' });
+                    const data = await resp.json();
+                    if (data.success) {
+                        this._monitoringLoaded = false;
+                        await this.loadMonitoring();
+                    }
+                } catch (err) {
+                    console.error('Erreur refresh challenge:', err);
+                }
+            }
+
+            // ─────────────────────────────────────────
+            //  Scheduler controls
+            // ─────────────────────────────────────────
+            async _updateSchedulerStatus() {
+                try {
+                    const resp = await fetch('/api/scheduler/status');
+                    const data = await resp.json();
+                    const el = document.getElementById('schedulerStatus');
+                    if (!el) return;
+                    if (data.running) {
+                        el.textContent = `⚙ ${data.total_challenges} actif${data.total_challenges !== 1 ? 's' : ''}`;
+                        el.style.color = '#28a745';
+                    } else {
+                        el.textContent = '⏸ Stoppé';
+                        el.style.color = '#dc3545';
+                    }
+                } catch(e) {}
+            }
+
+            async deleteChallenge(challengeId, title) {
+                if (!confirm(`Supprimer toutes les données de "${title}" ?\n\nCela supprime snapshots, followings, photos. Irréversible.`)) return;
+                try {
+                    const resp = await fetch(`/api/delete-challenge/${challengeId}`, { method: 'POST' });
+                    const data = await resp.json();
+                    if (data.success) {
+                        await this.loadMonitoring();
+                    } else {
+                        alert('Erreur : ' + data.error);
+                    }
+                } catch(e) { alert('Erreur réseau : ' + e.message); }
+            }
+
+            async purgeTables() {
+                if (!confirm('Purger toutes les tables (challenges, snapshots, followings) ? Cette action est irréversible.')) return;
+                try {
+                    const resp = await fetch('/api/purge-tables', { method: 'POST' });
+                    const data = await resp.json();
+                    if (data.success) {
+                        alert('Tables purgées et recréées.');
+                        await this.loadMonitoring();
+                    } else {
+                        alert('Erreur : ' + data.error);
+                    }
+                } catch(e) { alert('Erreur réseau : ' + e.message); }
+            }
+
+            async schedulerStartAll() {
+                try {
+                    await fetch('/api/scheduler/start-all', { method: 'POST' });
+                    await this.loadMonitoring();
+                } catch(e) { console.error(e); }
+            }
+
+            async schedulerStopAll() {
+                try {
+                    await fetch('/api/scheduler/stop-all', { method: 'POST' });
+                    await this.loadMonitoring();
+                } catch(e) { console.error(e); }
+            }
+
+            async schedulerStart(challengeId) {
+                try {
+                    await fetch(`/api/scheduler/start/${challengeId}`, { method: 'POST' });
+                    await this.loadMonitoring();
+                } catch(e) { console.error(e); }
+            }
+
+            async schedulerStop(challengeId) {
+                try {
+                    await fetch(`/api/scheduler/stop/${challengeId}`, { method: 'POST' });
+                    await this.loadMonitoring();
+                } catch(e) { console.error(e); }
+            }
+
+
+            // ─────────────────────────────────────────
+            //  Tab 2 — Monitoring
+            // ─────────────────────────────────────────
+            async loadMonitoring() {
+                const list = document.getElementById('monitoringList');
+                const loading = document.getElementById('monitoringLoading');
+                const errEl = document.getElementById('monitoringError');
+
+                list.innerHTML = '';
+                loading.style.display = 'block';
+                errEl.style.display = 'none';
+
+                // Stop any running auto-refresh timer before we start a new one
+                if (this._monitoringTimer) {
+                    clearTimeout(this._monitoringTimer);
+                    this._monitoringTimer = null;
+                }
+
+                const btn = document.getElementById('refreshMonitoringBtn');
+                btn.classList.add('refreshing');
+                btn.disabled = true;
+
+                try {
+                    const resp = await fetch('/api/monitoring');
+                    const data = await resp.json();
+
+                    if (!data.success) {
+                        throw new Error(data.error || 'Erreur inconnue');
+                    }
+
+                    this._monitoringData = data.challenges;
+                    this._monitoringLoaded = true;
+
+                    // Update badge
+                    document.getElementById('badge-monitoring').textContent = data.challenges.length;
+
+                    // Update scheduler status badge
+                    this._updateSchedulerStatus();
+
+                    if (data.challenges.length === 0) {
+                        list.innerHTML = `
+                            <div class="empty-state">
+                                <p>Aucun challenge en cours de monitoring</p>
+                            </div>`;
+                    } else {
+                        list.innerHTML = data.challenges.map(c => this._renderMonitoringCard(c)).join('');
+                        // Pre-fetch les données (pas de rendu — les charts sont repliés par défaut)
+                        this.loadCharts(data.challenges.map(c => c.id));
+                    }
+
+                    // Schedule auto-refresh toutes les 30s pour voir l'évolution
+                    this._monitoringTimer = setTimeout(() => this.loadMonitoring(), 30000);
+
+                } catch (err) {
+                    errEl.textContent = 'Erreur: ' + err.message;
+                    errEl.style.display = 'block';
+                } finally {
+                    loading.style.display = 'none';
+                    setTimeout(() => {
+                        btn.classList.remove('refreshing');
+                        btn.disabled = false;
+                    }, 400);
+                }
+            }
+
+            _renderMonitoringCard(c) {
+                // Time remaining badge
+                let timeBadgeClass = 'ok';
+                const sec = c.min_seconds_to_end;
+                if (sec <= 0) {
+                    timeBadgeClass = 'ended';
+                } else if (sec < 3600) {
+                    timeBadgeClass = 'urgent';
+                } else if (sec < 21600) {
+                    timeBadgeClass = 'warning';
+                }
+
+                const timeLabel = c.time_remaining_formatted || 'Terminé';
+
+                // Last snapshot ago
+                let lastSnapLabel = '';
+                if (c.seconds_since_last != null) {
+                    const mins = Math.floor(c.seconds_since_last / 60);
+                    lastSnapLabel = mins < 60 ? `${mins}min ago` : `${Math.floor(mins/60)}h${(mins%60).toString().padStart(2,'0')}m ago`;
+                }
+
+                // My stats
+                let myStatsHtml = '';
+                if (c.is_mine && (c.my_rank != null || c.my_votes != null)) {
+                    const rankPart = c.my_rank != null
+                        ? `<span class="rank-badge">Rang #${c.my_rank}</span>` : '';
+                    const votesPart = c.my_votes != null
+                        ? `<span class="votes-badge">${c.my_votes} votes</span>` : '';
+                    myStatsHtml = `<div class="my-stats">${rankPart}${votesPart}</div>`;
+                }
+
+                // Top 3 (uniquement si données détaillées)
+                let top3Html = '';
+                if (c.data_source === 'snapshots' && c.top3 && c.top3.length > 0) {
+                    const rows = c.top3.map(p => `
+                        <tr>
+                            <td class="top3-rank">#${p.rank}</td>
+                            <td>${this._esc(p.name)}</td>
+                            <td style="text-align:right;">${p.votes != null ? p.votes.toLocaleString() : '—'}</td>
+                        </tr>
+                    `).join('');
+                    top3Html = `
+                        <table class="top3-table">
+                            <thead>
+                                <tr>
+                                    <th>Rang</th>
+                                    <th>Membre</th>
+                                    <th style="text-align:right;">Votes</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    `;
+                }
+
+                // Données agrégées (pour les challenges ajoutés via +)
+                let globalStatsHtml = '';
+                if (c.data_source === 'global' || c.data_source === 'none') {
+                    const votesStr = c.total_votes != null ? c.total_votes.toLocaleString() + ' votes' : '—';
+                    const playersStr = c.players != null ? c.players.toLocaleString() + ' joueurs' : '—';
+                    globalStatsHtml = `
+                        <div class="global-stats-row">
+                            <div>Votes total : <span>${votesStr}</span></div>
+                            <div>Joueurs : <span>${playersStr}</span></div>
+                        </div>
+                    `;
+                }
+
+                // Bouton analyser seulement si données détaillées disponibles
+                const analyseBtn = c.data_source === 'snapshots'
+                    ? `<button class="btn-analyse" onclick="app.selectChallengeForAnalysis('${c.id}')">Analyser</button>`
+                    : '';
+
+                // Indicateur collecte + bouton contextuel
+                const collecting = c.is_collecting;
+                const dotClass = collecting ? 'collecting-dot' : 'collecting-dot paused';
+                const dotTitle = collecting ? 'Collecte active' : 'Collecte en pause';
+                const collectBtn = collecting
+                    ? `<button class="btn-monitor-stop"  onclick="app.schedulerStop('${c.id}')"  title="Stopper la collecte">⏹ Stop</button>`
+                    : `<button class="btn-monitor-start" onclick="app.schedulerStart('${c.id}')" title="Démarrer la collecte">▶ Collecte</button>`;
+
+                return `
+                    <div class="monitoring-card">
+                        <div class="monitoring-card-top">
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <span class="${dotClass}" title="${dotTitle}"></span>
+                                <div class="monitoring-title">${this._esc(c.title)}</div>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <span class="time-badge ${timeBadgeClass}">${timeLabel}</span>
+                                <button class="btn-refresh-card" onclick="app.refreshChallenge('${c.id}')" title="Rafraîchir depuis GuruShots">🔄</button>
+                                <button class="btn-delete-card" onclick="app.deleteChallenge('${c.id}', '${this._esc(c.title)}')" title="Supprimer toutes les données">🗑</button>
+                            </div>
+                        </div>
+                        <div class="monitoring-meta">
+                            ${lastSnapLabel ? `<span>Dernier snapshot: ${lastSnapLabel}</span>` : ''}
+                            <span>${c.members} participants</span>
+                            ${c.data_source === 'snapshots' ? `<span>${c.snapshots} snapshots</span>` : ''}
+                            ${c.is_collecting && c.next_collection_in != null ? `<span class="next-collection">⏱ Prochain dans ${this._fmtInterval(c.next_collection_in)}</span>` : ''}
+                        </div>
+                        ${globalStatsHtml}
+                        ${myStatsHtml}
+                        ${top3Html}
+                        <div id="chart-${c.id}" class="monitoring-chart"></div>
+                        <div class="monitoring-actions">
+                            ${analyseBtn}
+                            <button class="btn-chart-toggle" id="chart-toggle-${c.id}" onclick="app.toggleChart('${c.id}')">📈 Graphique</button>
+                            ${collectBtn}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // ─────────────────────────────────────────
+            //  Graphiques votes/players par challenge
+            // ─────────────────────────────────────────
+
+            _fmtInterval(sec) {
+                if (sec == null || sec < 0) return '—';
+                if (sec < 60) return `${sec}s`;
+                if (sec < 3600) return `${Math.floor(sec/60)}min`;
+                return `${Math.floor(sec/3600)}h${String(Math.floor((sec%3600)/60)).padStart(2,'0')}m`;
+            }
+
+            _fmtRemaining(sec) {
+                if (sec == null) return '';
+                if (sec >= 3600) return `${Math.floor(sec/3600)}h${String(Math.floor((sec%3600)/60)).padStart(2,'0')}m`;
+                if (sec >= 60)   return `${Math.floor(sec/60)}m${String(sec%60).padStart(2,'0')}s`;
+                return `${sec}s`;
+            }
+
+            _renderChart(id, snaps) {
+                const el = document.getElementById(`chart-${id}`);
+                if (!el || snaps.length < 2) return;
+
+                const mode = this._chartXMode || 'remaining';
+
+                let xValues, xaxisCfg;
+
+                if (mode === 'datetime') {
+                    xValues = snaps.map(s => s.timestamp);
+                    xaxisCfg = { title: 'Date / heure', type: 'date', tickfont: { size: 9 }, showgrid: false };
+                } else {
+                    // Valeurs numériques pour que Plotly trie correctement avant d'appliquer le reverse
+                    // Données ordonnées oldest→newest (seconds_to_end décroissant)
+                    // autorange:'reversed' met le plus grand (plus de temps) à gauche → correct chronologiquement
+                    const secVals = snaps.map(s => s.seconds_to_end ?? 0);
+                    xValues = secVals;
+
+                    // Calcul des ticks formatés
+                    const maxSec = Math.max(...secVals);
+                    const minSec = Math.min(...secVals);
+                    const span = maxSec - minSec;
+                    const tickStep = span > 7200 ? 3600 : span > 1800 ? 900 : span > 600 ? 300 : 60;
+                    const tickVals = [];
+                    const start = Math.ceil(minSec / tickStep) * tickStep;
+                    for (let v = start; v <= maxSec; v += tickStep) tickVals.push(v);
+
+                    xaxisCfg = {
+                        title: 'Temps restant',
+                        autorange: 'reversed',
+                        tickmode: 'array',
+                        tickvals: tickVals,
+                        ticktext: tickVals.map(s => this._fmtRemaining(s)),
+                        tickfont: { size: 9 },
+                        showgrid: false
+                    };
+                }
+
+                const xLabels = mode === 'datetime'
+                    ? snaps.map(s => new Date(s.timestamp).toLocaleString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}))
+                    : snaps.map(s => this._fmtRemaining(s.seconds_to_end ?? 0));
+
+                const traces = [
+                    {
+                        x: xValues, y: snaps.map(s => s.total_votes),
+                        name: 'Votes', type: 'scatter', mode: 'lines+markers',
+                        line: { color: '#ff6b6b', width: 2 },
+                        marker: { size: 4 },
+                        yaxis: 'y1',
+                        customdata: xLabels,
+                        hovertemplate: '%{customdata}<br><b>%{y:,} votes</b><extra></extra>'
+                    },
+                    {
+                        x: xValues, y: snaps.map(s => s.players),
+                        name: 'Joueurs', type: 'scatter', mode: 'lines+markers',
+                        line: { color: '#4ecdc4', width: 2, dash: 'dot' },
+                        marker: { size: 4 },
+                        yaxis: 'y2',
+                        customdata: xLabels,
+                        hovertemplate: '%{customdata}<br><b>%{y:,} joueurs</b><extra></extra>'
+                    }
+                ];
+
+                const layout = {
+                    margin: { t: 10, b: 30, l: 50, r: 50 },
+                    height: 160,
+                    paper_bgcolor: '#f8f9fa',
+                    plot_bgcolor: '#f8f9fa',
+                    showlegend: true,
+                    legend: { x: 0, y: 1, orientation: 'h', font: { size: 10 } },
+                    xaxis: xaxisCfg,
+                    yaxis:  { title: 'Votes',   titlefont: { color: '#ff6b6b', size: 10 }, tickfont: { size: 9 } },
+                    yaxis2: { title: 'Joueurs', titlefont: { color: '#4ecdc4', size: 10 }, tickfont: { size: 9 }, overlaying: 'y', side: 'right' }
+                };
+
+                Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true });
+            }
+
+            // Pre-fetch data pour tous les challenges (sans afficher)
+            async loadCharts(challengeIds) {
+                this._chartData = this._chartData || {};
+                for (const id of challengeIds) {
+                    try {
+                        const resp = await fetch(`/api/monitoring/history/${id}`);
+                        const data = await resp.json();
+                        if (!data.success || data.snapshots.length < 2) continue;
+                        this._chartData[id] = data.snapshots;
+                        // Ne rendre que si le panel est déjà ouvert
+                        const el = document.getElementById(`chart-${id}`);
+                        if (el && el.classList.contains('open')) {
+                            this._renderChart(id, data.snapshots);
+                        }
+                    } catch (err) {
+                        console.error(`Chart ${id}:`, err);
+                    }
+                }
+            }
+
+            async toggleChart(id) {
+                this._chartData = this._chartData || {};
+                const el = document.getElementById(`chart-${id}`);
+                const btn = document.getElementById(`chart-toggle-${id}`);
+                if (!el) return;
+
+                const isOpen = el.classList.contains('open');
+                if (isOpen) {
+                    el.classList.remove('open');
+                    if (btn) btn.textContent = '📈 Graphique';
+                } else {
+                    el.classList.add('open');
+                    if (btn) btn.textContent = '▲ Masquer';
+                    // Charger les données si pas encore en cache
+                    if (!this._chartData[id]) {
+                        try {
+                            const resp = await fetch(`/api/monitoring/history/${id}`);
+                            const data = await resp.json();
+                            if (data.success && data.snapshots.length >= 2) {
+                                this._chartData[id] = data.snapshots;
+                            }
+                        } catch (err) {
+                            console.error(`Chart ${id}:`, err);
+                        }
+                    }
+                    if (this._chartData[id]) {
+                        // Attendre la fin de la transition CSS avant de rendre
+                        setTimeout(() => this._renderChart(id, this._chartData[id]), 50);
+                    }
+                }
+            }
+
+            toggleChartXMode() {
+                this._chartXMode = (this._chartXMode === 'datetime') ? 'remaining' : 'datetime';
+                const btn = document.getElementById('btnXMode');
+                if (btn) {
+                    btn.textContent = this._chartXMode === 'datetime' ? '⏱ Temps restant' : '📅 Date/heure';
+                    btn.classList.toggle('active', this._chartXMode === 'datetime');
+                }
+                // Re-rendre uniquement les graphiques ouverts
+                this._chartData = this._chartData || {};
+                for (const [id, snaps] of Object.entries(this._chartData)) {
+                    const el = document.getElementById(`chart-${id}`);
+                    if (el && el.classList.contains('open')) {
+                        this._renderChart(id, snaps);
+                    }
+                }
+            }
+
+            // ─────────────────────────────────────────
+            //  Navigate to Analyses tab pre-selecting a challenge
+            // ─────────────────────────────────────────
+            selectChallengeForAnalysis(challengeId) {
+                this.switchTab('analyses');
+                setTimeout(() => {
+                    const ch = (this.challenges || []).find(c => String(c.id) === String(challengeId));
+                    if (ch?.status === 'ended') {
+                        this.challengeSelectEnded.value = challengeId;
+                        this.challengeSelectActive.value = '';
+                    } else {
+                        this.challengeSelectActive.value = challengeId;
+                        this.challengeSelectEnded.value = '';
+                    }
+                    this.onChallengeChange();
+                }, 50);
+            }
+
+            // ─────────────────────────────────────────
+            //  Tab 3 — Analyses (existing logic preserved)
+            // ─────────────────────────────────────────
+            initializeElements() {
+                this.challengeSelectActive = document.getElementById('challengeSelectActive');
+                this.challengeSelectEnded  = document.getElementById('challengeSelectEnded');
+                this.memberSelect = document.getElementById('memberSelect');
+                this.analyzeBtn = document.getElementById('analyzeBtn');
+                this.refreshChallengesBtn = document.getElementById('refreshChallengesBtn');
+                this.deleteChallengeBtn = document.getElementById('deleteChallengeBtn');
+                this.loadingState = document.getElementById('loadingState');
+                this.errorState = document.getElementById('errorState');
+                this.resultContainer = document.getElementById('resultContainer');
+                this.plotlyChart = document.getElementById('plotlyChart');
+
+                this.entryCheckboxes = {
+                    entry0: document.getElementById('entry0'),
+                    entry1: document.getElementById('entry1'),
+                    entry2: document.getElementById('entry2'),
+                    entry3: document.getElementById('entry3')
+                };
+
+                this.rankingRadios = document.querySelectorAll('input[name="rankingType"]');
+                this.timeZoomSlider = document.getElementById('timeZoom');
+                this.timeZoomValue = document.getElementById('timeZoomValue');
+            }
+
+            _getSelectedChallengeId() {
+                return this.challengeSelectActive?.value || this.challengeSelectEnded?.value || '';
+            }
+
+            _resetChallengeSelects(except) {
+                if (except !== this.challengeSelectActive) this.challengeSelectActive.value = '';
+                if (except !== this.challengeSelectEnded)  this.challengeSelectEnded.value  = '';
+            }
+
+            bindEvents() {
+                [this.challengeSelectActive, this.challengeSelectEnded].forEach(sel => {
+                    sel.addEventListener('change', () => {
+                        if (sel.value) this._resetChallengeSelects(sel);
+                        this.onChallengeChange();
+                    });
+                });
+                this.memberSelect.addEventListener('change', () => this.onMemberChange());
+                this.analyzeBtn.addEventListener('click', () => this.analyze());
+                this.refreshChallengesBtn.addEventListener('click', () => this.refreshChallenges());
+                this.deleteChallengeBtn.addEventListener('click', () => this.deleteChallenge());
+
+                Object.values(this.entryCheckboxes).forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        if (this.currentChallenge && this.currentMember) {
+                            this.analyze();
+                        }
+                    });
+                });
+
+                this.rankingRadios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        if (this.currentChallenge && this.currentMember) {
+                            this.analyze();
+                        }
+                    });
+                });
+
+                this.timeZoomSlider.addEventListener('input', () => {
+                    this.updateTimeZoomLabel();
+                    if (this.currentChallenge && this.currentMember) {
+                        this.analyze();
+                    }
+                });
+            }
+
+            async loadChallenges() {
+                try {
+                    const response = await fetch('/api/challenges');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.challenges = data.challenges;
+                        this.populateChallengeSelects();
+                    } else {
+                        this.showError('Erreur lors du chargement des challenges: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Erreur réseau: ' + error.message);
+                }
+            }
+
+            async refreshChallenges() {
+                this.refreshChallengesBtn.classList.add('refreshing');
+                this.refreshChallengesBtn.disabled = true;
+
+                const currentChallengeId = this._getSelectedChallengeId();
+
+                try {
+                    const response = await fetch('/api/challenges');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const oldChallengeCount = this.challenges.length;
+                        this.challenges = data.challenges;
+                        this.populateChallengeSelects();
+
+                        if (currentChallengeId) {
+                            const ch = this.challenges.find(c => String(c.id) === String(currentChallengeId));
+                            if (ch) {
+                                if (ch.status === 'ended') this.challengeSelectEnded.value = currentChallengeId;
+                                else this.challengeSelectActive.value = currentChallengeId;
+                            }
+                        }
+
+                        const newCount = this.challenges.length;
+                        if (newCount > oldChallengeCount) {
+                            this.showSuccess(`Actualisation réussie! ${newCount - oldChallengeCount} nouveau(x) challenge(s) détecté(s)`);
+                        } else if (newCount === oldChallengeCount) {
+                            this.showSuccess('Liste actualisée - Aucun nouveau challenge');
+                        } else {
+                            this.showSuccess(`Liste actualisée - ${newCount} challenges disponibles`);
+                        }
+                    } else {
+                        this.showError('Erreur lors de l\'actualisation: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Erreur réseau lors de l\'actualisation: ' + error.message);
+                } finally {
+                    setTimeout(() => {
+                        this.refreshChallengesBtn.classList.remove('refreshing');
+                        this.refreshChallengesBtn.disabled = false;
+                    }, 500);
+                }
+            }
+
+            populateChallengeSelects() {
+                this.challengeSelectActive.innerHTML = '<option value="">—</option>';
+                this.challengeSelectEnded.innerHTML  = '<option value="">—</option>';
+
+                this.challenges.forEach(challenge => {
+                    const option = document.createElement('option');
+                    option.value = challenge.id;
+                    const isGlobal = challenge.data_source === 'global';
+                    const info = isGlobal
+                        ? `${challenge.snapshots} collectes`
+                        : `${challenge.snapshots} snaps`;
+                    option.textContent = `${challenge.title} (${info})`;
+                    if (isGlobal) option.style.color = '#6c757d';
+                    if (challenge.status === 'ended') {
+                        this.challengeSelectEnded.appendChild(option);
+                    } else {
+                        this.challengeSelectActive.appendChild(option);
+                    }
+                });
+            }
+
+            async onChallengeChange() {
+                const challengeId = this._getSelectedChallengeId();
+
+                if (!challengeId) {
+                    this.memberSelect.innerHTML = '<option value="">Sélectionnez d\'abord un challenge</option>';
+                    this.memberSelect.disabled = true;
+                    this.analyzeBtn.disabled = true;
+                    this.deleteChallengeBtn.style.display = 'none';
+                    this.currentChallenge = null;
+                    this.hideResult();
+                    return;
+                }
+
+                this.currentChallenge = challengeId;
+                this.memberSelect.innerHTML = '<option value="">Chargement des membres...</option>';
+                this.memberSelect.disabled = true;
+                this.deleteChallengeBtn.style.display = 'block';
+
+                try {
+                    const response = await fetch(`/api/members/${challengeId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.members = data.members;
+                        this.populateMemberSelect();
+                        this.memberSelect.disabled = false;
+                    } else {
+                        this.showError('Erreur lors du chargement des membres: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Erreur réseau: ' + error.message);
+                }
+
+                // Recharger le sous-onglet actif si c'est évolution ou followings
+                const activeSubTab = document.querySelector('.sub-tab-btn.active')?.dataset?.subtab;
+                if (activeSubTab === 'evolution') this.loadEvolutionChart(challengeId);
+                if (activeSubTab === 'followings') this.loadFollowings(challengeId);
+            }
+
+            populateMemberSelect() {
+                this.memberSelect.innerHTML = '<option value="">Sélectionnez un membre...</option>';
+
+                this.members.forEach(member => {
+                    const option = document.createElement('option');
+                    option.value = member.id;
+                    option.textContent = `${member.name} (#${member.rank_range[0]}, +${member.vote_gain}v, ${member.appearances} app.)`;
+                    this.memberSelect.appendChild(option);
+                });
+            }
+
+            onMemberChange() {
+                const memberId = this.memberSelect.value;
+
+                if (!memberId) {
+                    this.analyzeBtn.disabled = true;
+                    this.currentMember = null;
+                    this.hideResult();
+                    return;
+                }
+
+                this.currentMember = memberId;
+                this.analyzeBtn.disabled = false;
+            }
+
+            updateTimeZoomLabel() {
+                const minutes = parseInt(this.timeZoomSlider.value);
+                if (minutes >= 1440) {
+                    this.timeZoomValue.textContent = 'Toute la période';
+                } else if (minutes >= 60) {
+                    const hours = Math.floor(minutes / 60);
+                    const remainingMinutes = minutes % 60;
+                    if (remainingMinutes === 0) {
+                        this.timeZoomValue.textContent = `${hours}h`;
+                    } else {
+                        this.timeZoomValue.textContent = `${hours}h${remainingMinutes}m`;
+                    }
+                } else {
+                    this.timeZoomValue.textContent = `${minutes}min`;
+                }
+            }
+
+            getRankingType() {
+                const selectedRadio = document.querySelector('input[name="rankingType"]:checked');
+                return selectedRadio ? selectedRadio.value : 'total';
+            }
+
+            getTimeZoomMinutes() {
+                return parseInt(this.timeZoomSlider.value);
+            }
+
+            getVisibleEntries() {
+                const visible = [];
+                if (this.entryCheckboxes.entry0.checked) visible.push('Entry_0');
+                if (this.entryCheckboxes.entry1.checked) visible.push('Entry_1');
+                if (this.entryCheckboxes.entry2.checked) visible.push('Entry_2');
+                if (this.entryCheckboxes.entry3.checked) visible.push('Entry_3');
+                return visible;
+            }
+
+            async analyze() {
+                if (!this.currentChallenge || !this.currentMember) {
+                    this.showError('Veuillez sélectionner un challenge et un membre');
+                    return;
+                }
+
+                this.showLoading();
+
+                try {
+                    const visibleEntries = this.getVisibleEntries();
+
+                    const response = await fetch('/api/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            challenge_id: this.currentChallenge,
+                            member_id: this.currentMember,
+                            visible_entries: visibleEntries,
+                            ranking_type: this.getRankingType(),
+                            time_zoom_minutes: this.getTimeZoomMinutes()
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.showResult(data.plotly_json);
+                    } else {
+                        this.showError('Erreur lors de l\'analyse: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Erreur réseau: ' + error.message);
+                }
+            }
+
+            async deleteChallenge() {
+                if (!this.currentChallenge) {
+                    this.showError('Aucun challenge sélectionné');
+                    return;
+                }
+
+                const _ch = (this.challenges || []).find(c => String(c.id) === String(this.currentChallenge));
+                const challengeTitle = _ch?.title || this.currentChallenge;
+
+                const confirmed = confirm(
+                    `ATTENTION\n\n` +
+                    `Êtes-vous sûr de vouloir SUPPRIMER définitivement toutes les données du challenge :\n\n` +
+                    `"${challengeTitle}"\n\n` +
+                    `Cette action est IRRÉVERSIBLE et supprimera :\n` +
+                    `• Tous les snapshots collectés\n` +
+                    `• Toutes les données des participants\n` +
+                    `• Tous les événements détectés\n` +
+                    `• Le challenge lui-même\n\n` +
+                    `Continuer ?`
+                );
+
+                if (!confirmed) return;
+
+                this.deleteChallengeBtn.style.background = 'linear-gradient(45deg, #666, #444)';
+                this.deleteChallengeBtn.innerHTML = '⏳';
+                this.deleteChallengeBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`/api/delete-challenge/${this.currentChallenge}`, {
+                        method: 'DELETE'
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const details = data.deleted;
+                        this.showSuccess(
+                            `Challenge "${challengeTitle}" supprimé avec succès !\n\n` +
+                            `Données supprimées :\n` +
+                            `• ${details.snapshots} snapshots\n` +
+                            `• ${details.participant_snapshots} participant snapshots\n` +
+                            `• ${details.photo_snapshots} photo snapshots\n` +
+                            `• ${details.events} événements\n` +
+                            `• ${details.members_affected} membres affectés`
+                        );
+
+                        this.currentChallenge = null;
+                        this.challengeSelectActive.value = '';
+                        this.challengeSelectEnded.value  = '';
+                        this.memberSelect.innerHTML = '<option value="">Sélectionnez d\'abord un challenge</option>';
+                        this.memberSelect.disabled = true;
+                        this.analyzeBtn.disabled = true;
+                        this.deleteChallengeBtn.style.display = 'none';
+                        this.hideResult();
+
+                        await this.loadChallenges();
+                    } else {
+                        this.showError('Erreur lors de la suppression: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Erreur réseau lors de la suppression: ' + error.message);
+                } finally {
+                    this.deleteChallengeBtn.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+                    this.deleteChallengeBtn.innerHTML = '🗑️';
+                    this.deleteChallengeBtn.disabled = false;
+                }
+            }
+
+            showLoading() {
+                this.loadingState.style.display = 'block';
+                this.errorState.style.display = 'none';
+                this.resultContainer.style.display = 'none';
+            }
+
+            showError(message) {
+                this.loadingState.style.display = 'none';
+                this.errorState.style.display = 'block';
+                this.errorState.textContent = '❌ ' + message;
+                this.errorState.className = 'error';
+                this.resultContainer.style.display = 'none';
+            }
+
+            showSuccess(message) {
+                this.loadingState.style.display = 'none';
+                this.errorState.style.display = 'block';
+                this.errorState.textContent = message;
+                this.errorState.className = 'success';
+                this.resultContainer.style.display = 'none';
+
+                setTimeout(() => {
+                    this.errorState.style.display = 'none';
+                }, 3000);
+            }
+
+            showResult(plotlyData) {
+                this.loadingState.style.display = 'none';
+                this.errorState.style.display = 'none';
+                this.resultContainer.style.display = 'block';
+
+                const config = {
+                    responsive: true,
+                    displayModeBar: true,
+                    modeBarButtonsToAdd: ['select2d', 'lasso2d'],
+                    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
+                    displaylogo: false
+                };
+
+                Plotly.newPlot('plotlyChart', plotlyData.data, plotlyData.layout, config);
+
+                this.loadUltraPrecisionAnalysis();
+            }
+
+            async loadUltraPrecisionAnalysis() {
+                if (!this.currentChallenge) return;
+
+                try {
+                    const response = await fetch(`/api/ultra-precision/${this.currentChallenge}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.displayUltraPrecisionAnalysis(data);
+                    }
+                } catch (error) {
+                    console.error('Erreur analyse ultra-précise:', error);
+                }
+            }
+
+            displayUltraPrecisionAnalysis(data) {
+                const content = document.getElementById('ultraPrecisionContent');
+
+                let html = `
+                    <div style="margin-bottom: 20px;">
+                        <h4>${data.total_events} événements critiques détectés</h4>
+                        <p style="color: #666;">Analyse avec timing ultra-précis (15 secondes) selon la stratégie Juan Rodriguez</p>
+                    </div>
+                `;
+
+                const eventsByPhase = {};
+                data.critical_events.forEach(event => {
+                    if (!eventsByPhase[event.phase]) {
+                        eventsByPhase[event.phase] = [];
+                    }
+                    eventsByPhase[event.phase].push(event);
+                });
+
+                Object.entries(eventsByPhase).forEach(([phase, events]) => {
+                    html += `
+                        <div style="margin: 20px 0; border-left: 4px solid #4ecdc4; padding-left: 15px;">
+                            <h5 style="color: #333;">${phase}: ${events.length} événements</h5>
+                            <div style="display: grid; gap: 10px; margin-top: 10px;">
+                    `;
+
+                    events.slice(0, 5).forEach((event) => {
+                        const voteSymbol = event.vote_change > 0 ? '🚀' : '💀';
+                        const rankSymbol = event.rank_change > 0 ? '📈' : '📉';
+                        const bgColor = event.vote_change > 0 ? '#d4edda' : '#f8d7da';
+
+                        html += `
+                            <div style="background: ${bgColor}; padding: 10px; border-radius: 5px; font-size: 14px;">
+                                <strong>${event.member}</strong> | ${event.time_formatted} |
+                                ${voteSymbol}${event.vote_change > 0 ? '+' : ''}${event.vote_change}v |
+                                ${rankSymbol}#${event.new_rank} |
+                                <span style="color: #666;">${event.event_type}</span>
+                            </div>
+                        `;
+                    });
+
+                    html += `</div></div>`;
+                });
+
+                content.innerHTML = html;
+            }
+
+            hideResult() {
+                this.loadingState.style.display = 'none';
+                this.errorState.style.display = 'none';
+                this.resultContainer.style.display = 'none';
+            }
+
+            // ─────────────────────────────────────────
+            //  Sub-tabs (Analyses)
+            // ─────────────────────────────────────────
+            switchSubTab(subtab) {
+                document.querySelectorAll('.sub-tab-btn').forEach(b =>
+                    b.classList.toggle('active', b.dataset.subtab === subtab));
+                document.querySelectorAll('.sub-panel').forEach(p =>
+                    p.classList.toggle('active', p.id === `sub-panel-${subtab}`));
+                // Charger le contenu si un challenge est sélectionné
+                const cid = this._getSelectedChallengeId();
+                if (cid) {
+                    if (subtab === 'evolution') this.loadEvolutionChart(cid);
+                    if (subtab === 'followings') this.loadFollowings(cid);
+                }
+            }
+
+            async loadEvolutionChart(challengeId) {
+                const el = document.getElementById('evolution-chart');
+                const placeholder = document.getElementById('evolution-placeholder');
+                const btn = document.getElementById('btnEvolutionXMode');
+                if (!el) return;
+                if (placeholder) placeholder.style.display = 'none';
+                if (btn) btn.style.display = 'none';
+                try {
+                    const resp = await fetch(`/api/monitoring/history/${challengeId}`);
+                    const data = await resp.json();
+                    if (!data.success || data.snapshots.length < 2) {
+                        el.innerHTML = '<p style="color:#6c757d;padding:20px;">Pas encore assez de données.</p>';
+                        return;
+                    }
+                    this._evolutionSnaps = data.snapshots;
+                    if (!this._evolutionXMode) this._evolutionXMode = 'remaining';
+                    if (btn) {
+                        btn.style.display = 'block';
+                        btn.textContent = this._evolutionXMode === 'datetime' ? '⏱ Temps restant' : '📅 Date/heure';
+                        btn.classList.toggle('active', this._evolutionXMode === 'datetime');
+                    }
+                    this._renderEvolutionChart();
+                } catch(e) { console.error('loadEvolutionChart:', e); }
+            }
+
+            _renderEvolutionChart() {
+                const el = document.getElementById('evolution-chart');
+                if (!el || !this._evolutionSnaps) return;
+                const snaps = this._evolutionSnaps;
+                const mode = this._evolutionXMode || 'remaining';
+
+                let xVals, xaxisCfg;
+                if (mode === 'datetime') {
+                    xVals = snaps.map(s => s.timestamp);
+                    xaxisCfg = { title: 'Date / heure', type: 'date' };
+                } else {
+                    const secVals = snaps.map(s => s.seconds_to_end ?? 0);
+                    const maxSec = Math.max(...secVals), minSec = Math.min(...secVals);
+                    const span = maxSec - minSec;
+                    const step = span > 7200 ? 3600 : span > 1800 ? 900 : span > 600 ? 300 : 60;
+                    const tickVals = [];
+                    for (let v = Math.ceil(minSec/step)*step; v <= maxSec; v += step) tickVals.push(v);
+                    xVals = secVals;
+                    xaxisCfg = { title: 'Temps restant', autorange: 'reversed',
+                                 tickmode: 'array', tickvals: tickVals,
+                                 ticktext: tickVals.map(s => this._fmtRemaining(s)) };
+                }
+
+                const xLabels = mode === 'datetime'
+                    ? snaps.map(s => new Date(s.timestamp).toLocaleString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}))
+                    : snaps.map(s => this._fmtRemaining(s.seconds_to_end ?? 0));
+
+                Plotly.newPlot(el, [
+                    { x: xVals, y: snaps.map(s => s.total_votes), name: 'Votes',
+                      type: 'scatter', mode: 'lines+markers', line: { color: '#ff6b6b', width: 2 }, yaxis: 'y1',
+                      customdata: xLabels,
+                      hovertemplate: '%{customdata}<br><b>%{y:,} votes</b><extra></extra>' },
+                    { x: xVals, y: snaps.map(s => s.players), name: 'Joueurs',
+                      type: 'scatter', mode: 'lines+markers', line: { color: '#4ecdc4', width: 2, dash: 'dot' }, yaxis: 'y2',
+                      customdata: xLabels,
+                      hovertemplate: '%{customdata}<br><b>%{y:,} joueurs</b><extra></extra>' }
+                ], {
+                    margin: { t: 20, b: 50, l: 60, r: 60 }, height: 300,
+                    paper_bgcolor: 'white', plot_bgcolor: '#f8f9fa',
+                    showlegend: true,
+                    xaxis: xaxisCfg,
+                    yaxis:  { title: 'Votes',   titlefont: { color: '#ff6b6b' } },
+                    yaxis2: { title: 'Joueurs', titlefont: { color: '#4ecdc4' }, overlaying: 'y', side: 'right' }
+                }, { displayModeBar: false, responsive: true });
+            }
+
+            toggleEvolutionXMode() {
+                this._evolutionXMode = (this._evolutionXMode === 'datetime') ? 'remaining' : 'datetime';
+                const btn = document.getElementById('btnEvolutionXMode');
+                if (btn) {
+                    btn.textContent = this._evolutionXMode === 'datetime' ? '⏱ Temps restant' : '📅 Date/heure';
+                    btn.classList.toggle('active', this._evolutionXMode === 'datetime');
+                }
+                this._renderEvolutionChart();
+            }
+
+            async loadFollowings(challengeId) {
+                const container = document.getElementById('followings-table-container');
+                const placeholder = document.getElementById('followings-placeholder');
+                if (!container) return;
+                if (placeholder) placeholder.style.display = 'none';
+                container.innerHTML = '<p style="color:#6c757d;">Chargement...</p>';
+                try {
+                    const resp = await fetch(`/api/followings/${challengeId}`);
+                    const data = await resp.json();
+                    if (!data.success) { container.innerHTML = `<p style="color:#dc3545;">${data.error}</p>`; return; }
+                    if (!data.members.length) { container.innerHTML = '<p style="color:#6c757d;">Aucun following collecté pour ce challenge.</p>'; return; }
+
+                    const cid = challengeId;
+                    const rows = data.members.map(m => {
+                        const photos = m.photos.map(p => {
+                            const cls = p.boosted ? 'photo-badge boosted' : 'photo-badge';
+                            const boost = p.boosted ? ' 🚀' : '';
+                            return `<span class="${cls}">#${p.rank} ${p.votes?.toLocaleString()}${boost}</span>`;
+                        }).join('');
+                        const nameCell = `<div>${this._esc(m.name || m.member_id)}</div>
+                            <a href="#" class="link-photo-chart" onclick="event.preventDefault();app.openPhotoChart('${cid}','${m.member_id}','${this._esc(m.name||m.member_id)}')">📊 évolution photos</a>`;
+                        return `<tr>
+                            <td><strong>#${m.total_rank ?? '—'}</strong></td>
+                            <td>${nameCell}</td>
+                            <td>${m.total_votes?.toLocaleString() ?? '—'}</td>
+                            <td>${m.percent != null ? m.percent + '%' : '—'}</td>
+                            <td><span style="font-size:0.8em;color:#6c757d;">${m.level_name || '—'}</span></td>
+                            <td>${photos}</td>
+                        </tr>`;
+                    }).join('');
+
+                    container.innerHTML = `
+                        <p style="font-size:0.8em;color:#6c757d;margin-bottom:8px;">
+                            Dernier snapshot : ${data.last_snapshot ? data.last_snapshot.slice(0,16).replace('T',' ') : '—'} — ${data.members.length} followings
+                        </p>
+                        <div style="overflow-x:auto;">
+                        <table class="followings-table">
+                            <thead><tr>
+                                <th>Rang</th><th>Membre</th><th>Votes</th><th>%</th><th>Niveau</th><th>Photos</th>
+                            </tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                        </div>`;
+                } catch(e) { container.innerHTML = `<p style="color:#dc3545;">Erreur: ${e.message}</p>`; }
+            }
+
+            // ─────────────────────────────────────────
+            //  Modal graphique photos following
+            // ─────────────────────────────────────────
+            async openPhotoChart(challengeId, memberId, memberName) {
+                document.getElementById('photoChartTitle').textContent = `📸 ${memberName} — évolution des photos`;
+                document.getElementById('photoChartModal').classList.add('open');
+                // Réinitialiser le mode X et le bouton
+                this._photoChartXMode = 'remaining';
+                const modeBtn = document.getElementById('btnPhotoXMode');
+                if (modeBtn) { modeBtn.textContent = '📅 Date/heure'; modeBtn.classList.remove('active'); }
+
+                const el = document.getElementById('photoChartContainer');
+                el.innerHTML = '<p style="color:#6c757d;padding:20px;">Chargement...</p>';
+
+                try {
+                    const resp = await fetch(`/api/followings/${challengeId}/member/${memberId}/photos`);
+                    const data = await resp.json();
+                    if (!data.success) { el.innerHTML = `<p style="color:#dc3545;">${data.error}</p>`; return; }
+                    if (!Object.keys(data.photos).length) {
+                        el.innerHTML = '<p style="color:#6c757d;padding:20px;">Aucune donnée photo disponible.</p>';
+                        return;
+                    }
+                    // Stocker les données brutes pour la bascule
+                    this._photoChartData = data;
+                    this._renderPhotoChart();
+                } catch(e) { el.innerHTML = `<p style="color:#dc3545;">Erreur: ${e.message}</p>`; }
+            }
+
+            _renderPhotoChart() {
+                const el = document.getElementById('photoChartContainer');
+                if (!el || !this._photoChartData) return;
+                const data = this._photoChartData;
+                const mode = this._photoChartXMode || 'remaining';
+                const palette = ['#e63946','#2a9d8f','#f4a261','#457b9d','#a8dadc','#e9c46a','#8338ec','#fb5607','#3a86ff','#ffbe0b'];
+                const photoIds = Object.keys(data.photos);
+
+                const traces = photoIds.map((photoId, idx) => {
+                    const pts = data.photos[photoId];
+                    const color = palette[idx % palette.length];
+                    const xVals = mode === 'datetime'
+                        ? pts.map(p => p.timestamp)
+                        : pts.map(p => p.seconds_to_end ?? 0);
+                    const xLabels = mode === 'datetime'
+                        ? pts.map(p => new Date(p.timestamp).toLocaleString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}))
+                        : pts.map(p => this._fmtRemaining(p.seconds_to_end ?? 0));
+                    return {
+                        x: xVals,
+                        y: pts.map(p => p.votes),
+                        name: `Photo ${idx + 1}`,
+                        type: 'scatter', mode: 'lines+markers', connectgaps: false,
+                        line: { color, width: 2 },
+                        marker: { size: 5,
+                            color: pts.map(p => p.boosted ? '#ffd700' : color),
+                            line: { width: pts.map(p => p.boosted ? 2 : 0), color: '#ff6b00' } },
+                        hovertemplate: `Photo ${idx+1}<br>%{y:,} votes<br>Rang #%{customdata[0]}<br>%{customdata[1]}<extra></extra>`,
+                        customdata: pts.map((p, i) => [p.rank, xLabels[i]])
+                    };
+                });
+
+                let xaxisCfg;
+                if (mode === 'datetime') {
+                    xaxisCfg = { title: 'Date / heure', type: 'date', tickfont: { size: 9 } };
+                } else {
+                    const allSec = traces.flatMap(t => t.x).filter(v => v != null && v > 0);
+                    const maxSec = Math.max(...allSec), minSec = Math.min(...allSec);
+                    const span = maxSec - minSec;
+                    const step = span > 7200 ? 3600 : span > 1800 ? 900 : span > 600 ? 300 : 60;
+                    const tickVals = [];
+                    for (let v = Math.ceil(minSec/step)*step; v <= maxSec; v += step) tickVals.push(v);
+                    xaxisCfg = {
+                        title: 'Temps restant', autorange: 'reversed',
+                        tickmode: 'array', tickvals: tickVals,
+                        ticktext: tickVals.map(s => this._fmtRemaining(s)),
+                        tickfont: { size: 9 }
+                    };
+                }
+
+                Plotly.newPlot(el, traces, {
+                    margin: { t: 10, b: 50, l: 60, r: 20 }, height: 320,
+                    paper_bgcolor: 'white', plot_bgcolor: '#f8f9fa',
+                    showlegend: true, legend: { orientation: 'h', y: -0.2 },
+                    xaxis: xaxisCfg,
+                    yaxis: { title: 'Votes', tickfont: { size: 9 } }
+                }, { displayModeBar: false, responsive: true });
+            }
+
+            togglePhotoChartXMode() {
+                this._photoChartXMode = (this._photoChartXMode === 'datetime') ? 'remaining' : 'datetime';
+                const btn = document.getElementById('btnPhotoXMode');
+                if (btn) {
+                    btn.textContent = this._photoChartXMode === 'datetime' ? '⏱ Temps restant' : '📅 Date/heure';
+                    btn.classList.toggle('active', this._photoChartXMode === 'datetime');
+                }
+                this._renderPhotoChart();
+            }
+
+            closePhotoChart() {
+                document.getElementById('photoChartModal').classList.remove('open');
+                this._photoChartData = null;
+                Plotly.purge(document.getElementById('photoChartContainer'));
+            }
+
+            // ─────────────────────────────────────────
+            //  Utility
+            // ─────────────────────────────────────────
+            _esc(str) {
+                if (!str) return '';
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+        }
+
+        // Bootstrap
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new GuruShotsAnalyzer();
+            app.updateTimeZoomLabel();
+
+            // Fermer le modal en cliquant sur l'overlay
+            document.getElementById('addChallengeModal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) app.closeAddModal();
+            });
+        });
+    </script>
+</body>
+</html>

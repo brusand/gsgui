@@ -42,15 +42,22 @@ fi
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] npm trouvé: $(which npm)" >> /tmp/gsgui-launcher.log 2>&1
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] python3 trouvé: $(which python3)" >> /tmp/gsgui-launcher.log 2>&1
 
+# Lancer caffeinate pour empêcher la mise en veille
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Lancement de caffeinate (prévention de veille)..." >> /tmp/gsgui-launcher.log 2>&1
+nohup caffeinate -dis >> /tmp/gsgui-launcher.log 2>&1 &
+CAFFEINATE_PID=$!
+echo $CAFFEINATE_PID > /tmp/gsgui-caffeinate.pid
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] caffeinate lancé (PID: $CAFFEINATE_PID)" >> /tmp/gsgui-launcher.log 2>&1
+
 # Lancer le process-manager en mode start
 cd "/Volumes/SSD/devs/gsgui"
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Lancement du process-manager..." >> /tmp/gsgui-launcher.log 2>&1
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Lancement du process-manager (backend + frontend + collector)..." >> /tmp/gsgui-launcher.log 2>&1
 /bin/bash ./process-manager-portable.sh start >> /tmp/gsgui-launcher.log 2>&1
 
 # Vérifier le résultat
 if [[ $? -eq 0 ]]; then
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] GSGUI démarré avec succès" >> /tmp/gsgui-launcher.log 2>&1
-    osascript -e 'display notification "GSGUI a démarré avec succès" with title "GSGUI Launcher" sound name "Glass"' >> /tmp/gsgui-launcher.log 2>&1
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] GSGUI démarré avec succès (3 services + caffeinate)" >> /tmp/gsgui-launcher.log 2>&1
+    osascript -e 'display notification "GSGUI démarré (Backend + Frontend + Collector + Prévention veille)" with title "GSGUI Launcher" sound name "Glass"' >> /tmp/gsgui-launcher.log 2>&1
 else
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERREUR: Échec du démarrage" >> /tmp/gsgui-launcher.log 2>&1
     osascript -e 'display notification "Échec du démarrage de GSGUI" with title "GSGUI Launcher" sound name "Basso"' >> /tmp/gsgui-launcher.log 2>&1
