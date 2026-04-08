@@ -57,114 +57,30 @@ fi
 # Installer les dépendances Python avec environnement virtuel
 if [ -f "backend/requirements.txt" ]; then
     log_info "Installation des dépendances depuis backend/requirements.txt..."
-    
-    # Vérifier si on est dans un environnement virtuel
-    if [[ -z "$VIRTUAL_ENV" ]]; then
-        log_info "Création d'un environnement virtuel Python..."
-        
-        # Créer l'environnement virtuel
-        if ! python3 -m venv venv 2>/dev/null; then
-            # Fallback: essayer avec --user si venv échoue
-            log_warning "Création d'environnement virtuel échoué, essai installation avec --user..."
-            
-            # Essayer d'abord les dépendances compatibles
-            if [[ -f "backend/requirements-compatible.txt" ]]; then
-                log_info "Tentative avec requirements-compatible.txt (versions flexibles)..."
-                if pip3 install --user -r backend/requirements-compatible.txt; then
-                    log_success "Dépendances Python compatibles installées avec --user"
-                else
-                    log_warning "Échec avec requirements-compatible.txt, essai avec minimal..."
-                    if [[ -f "backend/requirements-minimal.txt" ]] && pip3 install --user -r backend/requirements-minimal.txt; then
-                        log_success "Dépendances Python minimales installées avec --user"
-                    else
-                        log_error "Échec installation dépendances"
-                        return 1
-                    fi
-                fi
-            elif [[ -f "backend/requirements-minimal.txt" ]]; then
-                log_info "Tentative avec requirements-minimal.txt (sans PostgreSQL)..."
-                if pip3 install --user -r backend/requirements-minimal.txt; then
-                    log_success "Dépendances Python minimales installées avec --user"
-                else
-                    log_error "Échec installation dépendances minimales"
-                    return 1
-                fi
-            else
-                pip3 install --user -r backend/requirements.txt
-                log_success "Dépendances Python installées avec --user"
-            fi
-        else
-            log_success "Environnement virtuel créé dans ./venv"
-            
-            # Activer l'environnement virtuel
-            if [[ -f "venv/bin/activate" ]]; then
-                source venv/bin/activate
-                log_success "Environnement virtuel activé"
-            elif [[ -f "venv/Scripts/activate" ]]; then
-                # Windows Git Bash
-                source venv/Scripts/activate
-                log_success "Environnement virtuel activé (Windows)"
-            else
-                log_error "Impossible d'activer l'environnement virtuel"
-                exit 1
-            fi
-            
-            # Mettre à jour pip et installer
-            python -m pip install --upgrade pip --quiet
-            
-            # Essayer d'abord requirements-compatible.txt si disponible
-            if [[ -f "backend/requirements-compatible.txt" ]]; then
-                log_info "Installation avec requirements-compatible.txt (versions flexibles)..."
-                if python -m pip install -r backend/requirements-compatible.txt; then
-                    log_success "Dépendances Python compatibles installées dans l'environnement virtuel"
-                else
-                    log_warning "Échec avec requirements-compatible.txt, essai avec minimal..."
-                    if [[ -f "backend/requirements-minimal.txt" ]] && python -m pip install -r backend/requirements-minimal.txt; then
-                        log_success "Dépendances Python minimales installées dans l'environnement virtuel"
-                    else
-                        log_warning "Échec avec versions allégées, essai avec requirements.txt complet..."
-                        python -m pip install -r backend/requirements.txt
-                        log_success "Dépendances Python complètes installées dans l'environnement virtuel"
-                    fi
-                fi
-            elif [[ -f "backend/requirements-minimal.txt" ]]; then
-                log_info "Installation avec requirements-minimal.txt (recommandé)..."
-                if python -m pip install -r backend/requirements-minimal.txt; then
-                    log_success "Dépendances Python minimales installées dans l'environnement virtuel"
-                else
-                    log_warning "Échec avec requirements-minimal.txt, essai avec requirements.txt complet..."
-                    python -m pip install -r backend/requirements.txt
-                    log_success "Dépendances Python complètes installées dans l'environnement virtuel"
-                fi
-            else
-                python -m pip install -r backend/requirements.txt
-                log_success "Dépendances Python installées dans l'environnement virtuel"
-            fi
-            
-            # Créer un script d'activation
-            cat > activate-env.sh << 'EOF'
-#!/bin/bash
-# Script d'activation de l'environnement virtuel GSGUI
-echo "🐍 Activation de l'environnement virtuel GSGUI..."
-if [[ -f "venv/bin/activate" ]]; then
-    source venv/bin/activate
-    echo "✅ Environnement virtuel activé"
-elif [[ -f "venv/Scripts/activate" ]]; then
-    source venv/Scripts/activate
-    echo "✅ Environnement virtuel activé (Windows)"
-else
-    echo "❌ Environnement virtuel non trouvé"
-    exit 1
-fi
-EOF
-            chmod +x activate-env.sh
-            log_info "Script d'activation créé: ./activate-env.sh"
-        fi
+
+    # Créer l'environnement virtuel s'il n'existe pas
+    if [[ ! -d "venv" ]]; then
+        log_info "Création de l'environnement virtuel Python..."
+        python3 -m venv venv
+        log_success "Environnement virtuel créé dans ./venv"
     else
-        log_info "Environnement virtuel déjà actif: $VIRTUAL_ENV"
-        python -m pip install -r backend/requirements.txt
-        log_success "Dépendances Python installées"
+        log_info "Environnement virtuel existant détecté dans ./venv"
     fi
+
+    # Déterminer le chemin Python du venv
+    if [[ -f "venv/bin/python" ]]; then
+        VENV_PYTHON="venv/bin/python"
+    elif [[ -f "venv/Scripts/python" ]]; then
+        VENV_PYTHON="venv/Scripts/python"
+    else
+        log_error "Impossible de trouver Python dans l'environnement virtuel"
+        exit 1
+    fi
+
+    # Mettre à jour pip et installer les dépendances
+    "$VENV_PYTHON" -m pip install --upgrade pip --quiet
+    "$VENV_PYTHON" -m pip install -r backend/requirements.txt
+    log_success "Dépendances Python installées dans l'environnement virtuel"
 else
     log_warning "Fichier backend/requirements.txt non trouvé"
 fi
@@ -228,20 +144,19 @@ fi
 # 5. Rendre les scripts exécutables
 log_info "Configuration des permissions des scripts..."
 
-chmod +x start-webui.sh 2>/dev/null || true
-chmod +x stop-webui.sh 2>/dev/null || true
-chmod +x process-manager.sh 2>/dev/null || true
+chmod +x process-manager-portable.sh 2>/dev/null || true
 
 echo
 log_success "🎉 Installation terminée avec succès!"
 echo
 echo "Pour démarrer l'application:"
-echo "  ./process-manager.sh start    # Démarrer les serveurs avec surveillance"
-echo "  ./start-webui.sh             # Démarrer manuellement"
+echo "  ./process-manager-portable.sh start    # Démarrer tous les services"
+echo "  ./process-manager-portable.sh monitor  # Démarrer avec surveillance automatique"
 echo
 echo "Pour arrêter l'application:"
-echo "  ./process-manager.sh stop     # Arrêter tous les processus"
-echo "  ./stop-webui.sh              # Arrêter manuellement"
+echo "  ./process-manager-portable.sh stop     # Arrêter tous les services"
 echo
-echo "Backend sera disponible sur: http://localhost:8001"
-echo "Frontend sera disponible sur: http://localhost:3000"
+echo "Services disponibles:"
+echo "  Backend      : http://localhost:8001"
+echo "  Frontend     : http://localhost:5173"
+echo "  Web Analyzer : http://localhost:5001"
