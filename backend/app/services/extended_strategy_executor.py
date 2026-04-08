@@ -208,9 +208,12 @@ class ExtendedStrategyExecutor:
             elif action_type == 'unlocked_boost':
                 result = await self._execute_unlocked_boost_action(api_client, int(challenge_id), challenge_url, params, profile_id)
 
+            elif action_type == 'revote':
+                result = await self._execute_revote_action(api_client, int(challenge_id), challenge_url, params, profile_id)
+
             else:
                 result = {'success': False, 'error': f'Unknown action: {action_type}'}
-            
+
             # Déclencher un refresh du frontend pour les actions réussies
             if result and result.get('success', True):  # True par défaut si pas de champ success
                 await connection_manager.notify_challenge_update(profile_id, {
@@ -555,7 +558,10 @@ class ExtendedStrategyExecutor:
                 if context.get('challenge_id') == challenge_id:
                     strategy_name = context.get('strategy_name', '')
                     break
-            is_auto_recurring = strategy_name == 'unlocked_boost'
+            is_auto_recurring = strategy_name == 'unlocked_boost' or any(
+                action.get('action') == 'revote' and not action.get('result', {}).get('completed', False)
+                for action in context.get('actions', [])
+            )
             
             success = True
             if not is_auto_recurring:
@@ -628,9 +634,13 @@ class ExtendedStrategyExecutor:
 
             elif action_type == 'unlocked_boost':
                 result = await self._execute_unlocked_boost_action(api_client, challenge_id, challenge_url, params, profile_id)
+
+            elif action_type == 'revote':
+                result = await self._execute_revote_action(api_client, challenge_id, challenge_url, params, profile_id)
+
             else:
                 result = {'success': False, 'error': f'Unknown action: {action_type}'}
-            
+
             # Déclencher un refresh du frontend pour les actions futures réussies
             profile_id = context['profile_id']
             if result and result.get('success', True):  # True par défaut si pas de champ success
@@ -1037,7 +1047,8 @@ class ExtendedStrategyExecutor:
             # Rechercher le job par pattern au lieu d'utiliser un timestamp exact
             current_job = None
             for job in strategy_scheduler.scheduler.get_jobs():
-                if f"{profile_id}_extended_unlocked_boost_{challenge_id}_" in job.id:
+                if (f"{profile_id}_extended_unlocked_boost_{challenge_id}_" in job.id or
+                        f"{profile_id}_extended_revote_{challenge_id}_" in job.id):
                     current_job = job
                     break
             if current_job:
@@ -1101,15 +1112,151 @@ class ExtendedStrategyExecutor:
             # Execute the specific action
             if action_type == 'unlocked_boost':
                 result = await self._execute_unlocked_boost_action(api_client, int(challenge_id), challenge_url, params, profile_id)
+            elif action_type == 'revote':
+                result = await self._execute_revote_action(api_client, int(challenge_id), challenge_url, params, profile_id)
+                if result.get('completed', False):
+                    await self._cleanup_revote_strategy(str(challenge_id), profile_id)
             else:
                 logger.error(f"Unknown action type: {action_type}")
                 return {'success': False, 'error': f'Unknown action type: {action_type}'}
-            
+
             return result
             
         except Exception as e:
             logger.error(f"❌ Error executing isolated action {action_type}: {e}")
             return {'success': False, 'error': str(e)}
+
+    async def _execute_revote_action(self, api_client, challenge_id: int, challenge_url: str,
+                                     params: List[str], profile_id: str) -> Dict:
+        """
+        Vote N times when exposure drops below a threshold.
+        Reschedules itself every 5 minutes until condition is met, challenge ends, or deadline passed.
+
+        params: ["<50", "50"] or ["<50", "50", "end-1h0m0s"]
+          - params[0]: condition, e.g. "<50" (exposure < 50%)
+          - params[1]: vote count when condition is met
+          - params[2]: optional deadline offset before challenge end (e.g. "end-1h0m0s")
+        """
+        try:
+            if len(params) < 2:
+                return {'success': False, 'error': 'revote requires: condition (e.g. <50) and vote_count'}
+
+            condition_str = params[0].strip()
+            vote_count = int(params[1].strip())
+            deadline_str = params[2].strip() if len(params) > 2 else None
+
+            # Parse condition operator and threshold
+            condition_match = re.match(r'([<>]=?)(\d+)', condition_str)
+            if not condition_match:
+                return {'success': False, 'error': f'Invalid condition: {condition_str} (use e.g. <50, >=30)'}
+            operator = condition_match.group(1)
+            threshold = int(condition_match.group(2))
+
+            # Fetch fresh challenge data
+            active_challenges = await api_client.get_challenges()
+            target = next((c for c in active_challenges if str(c.id) == str(challenge_id)), None)
+
+            if target is None:
+                logger.info(f"⏹️ Challenge {challenge_id} no longer active - stopping revote")
+                return {'success': True, 'completed': True, 'stopped': True,
+                        'message': f'Challenge {challenge_id} ended - revote stopped'}
+
+            current_exposure = target.exposure
+            challenge_end_time = target.end_time
+
+            # Check deadline: stop rescheduling if we're within deadline_delta of the end
+            if deadline_str:
+                dl_match = (re.match(r'end-(\d+)h(\d+)m(\d+)s', deadline_str) or
+                            re.match(r'end-(\d+)m(\d+)s', deadline_str))
+                if dl_match:
+                    groups = dl_match.groups()
+                    if len(groups) == 3:
+                        hours, minutes, seconds = int(groups[0]), int(groups[1]), int(groups[2])
+                    else:
+                        hours, minutes, seconds = 0, int(groups[0]), int(groups[1])
+                    deadline_delta = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+                    time_remaining = challenge_end_time - datetime.now()
+                    if time_remaining < deadline_delta:
+                        logger.info(f"⏹️ Revote deadline reached for challenge {challenge_id} "
+                                    f"(remaining={time_remaining}, limit={deadline_delta})")
+                        return {'success': True, 'completed': True, 'stopped': True,
+                                'message': f'Deadline reached - revote stopped ({time_remaining} remaining)'}
+
+            # Evaluate condition
+            ops = {'<': lambda a, b: a < b, '<=': lambda a, b: a <= b,
+                   '>': lambda a, b: a > b, '>=': lambda a, b: a >= b}
+            condition_met = ops.get(operator, lambda a, b: False)(current_exposure, threshold)
+
+            logger.info(f"🔍 Revote check challenge {challenge_id}: "
+                        f"exposure={current_exposure}%, condition={condition_str}, met={condition_met}")
+
+            if condition_met:
+                logger.info(f"✅ Revote condition met (exposure={current_exposure}% {condition_str}) "
+                            f"- voting {vote_count} times")
+                vote_result = await self._execute_vote_action(
+                    api_client, challenge_url, [str(vote_count)], profile_id, str(challenge_id))
+                return {
+                    'success': vote_result.get('success', True),
+                    'completed': True,
+                    'message': (f'Revote executed: exposure was {current_exposure}% ({condition_str}), '
+                                f'voted {vote_count} times'),
+                    'exposure_at_vote': current_exposure,
+                    'votes_cast': vote_count
+                }
+            else:
+                # Reschedule in 5 minutes
+                from app.services.strategy_scheduler import strategy_scheduler
+                next_run_time = datetime.now() + timedelta(minutes=5)
+                job_id = (f"{profile_id}_extended_revote_{challenge_id}_"
+                          f"{datetime.now().strftime('%Y%m%d_%H%M%S')}")
+                strategy_scheduler.scheduler.add_job(
+                    func=self._execute_action_wrapper,
+                    trigger='date',
+                    run_date=next_run_time,
+                    args=[str(challenge_id), 'revote', params, profile_id, challenge_url],
+                    id=job_id,
+                    name=f"Revote check for challenge {challenge_id} (profile: {profile_id})",
+                    replace_existing=True,
+                    coalesce=True,
+                    max_instances=1,
+                    misfire_grace_time=300
+                )
+                logger.info(f"⏰ Revote rescheduled for challenge {challenge_id} at {next_run_time} "
+                            f"(exposure={current_exposure}%, waiting for {condition_str})")
+                return {
+                    'success': True,
+                    'completed': False,
+                    'rescheduled': True,
+                    'next_run': next_run_time.isoformat(),
+                    'message': (f'Exposure {current_exposure}% does not meet {condition_str} '
+                                f'- checking again at {next_run_time.strftime("%H:%M")}')
+                }
+
+        except Exception as e:
+            logger.error(f"❌ Error executing revote action on challenge {challenge_id}: {e}")
+            return {'success': False, 'error': str(e)}
+
+    async def _cleanup_revote_strategy(self, challenge_id: str, profile_id: str):
+        """Nettoie la stratégie revote une fois qu'elle a voté (completed=True)."""
+        try:
+            import sys
+            import os
+            backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            if backend_dir not in sys.path:
+                sys.path.insert(0, backend_dir)
+            from gs_backend import remove_challenge_strategy, log_and_broadcast
+
+            success = remove_challenge_strategy(challenge_id, profile_id)
+            msg = f"🧹 Revote terminé et stratégie nettoyée pour challenge {challenge_id}"
+            logger.info(msg)
+            log_and_broadcast(msg, "cleanup", profile_id)
+            await connection_manager.notify_challenge_update(profile_id, {
+                "action": "strategy_cleanup_completed",
+                "challenge_id": challenge_id,
+                "strategy_type": "revote"
+            })
+        except Exception as e:
+            logger.error(f"❌ Erreur cleanup revote pour challenge {challenge_id}: {e}")
 
     async def _resolve_photo_by_index(self, api_client: GuruShotsAPI, challenge_id: int, index: int) -> Optional[str]:
         """Resolve photo ID by index (0=most votes, 1=second most, etc.)"""
