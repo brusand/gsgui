@@ -59,6 +59,14 @@ def create_gurushots_api(token):
 
 app = FastAPI(title="GSGUI Real API", version="1.0.0")
 
+# Template strategies router
+try:
+    from app.api.v1.endpoints.template_strategies import router as template_router
+    app.include_router(template_router, prefix="/api/v1")
+    logger.info("✅ Template strategies router registered")
+except Exception as _e:
+    logger.warning(f"⚠️ Template strategies router not loaded: {_e}")
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -1215,6 +1223,46 @@ async def clean_strategy_for_challenge(profile_id: str, challenge_id: str):
         logger.error(f"❌ Erreur clean_strategy_for_challenge: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/v1/profiles/{profile_id}/challenges/{challenge_id}/run-once")
+async def run_commands_once(profile_id: str, challenge_id: str, body: dict):
+    """Exécute immédiatement une liste de commandes sur un challenge sans sauvegarder dans gsgui.ini"""
+    try:
+        commands = body.get('commands', [])
+        if not commands:
+            raise HTTPException(status_code=400, detail="No commands provided")
+
+        # Récupérer l'URL du challenge
+        challenge_url = ""
+        try:
+            profile = ProfileService.get_profile(profile_id)
+            if profile:
+                x_token = profile.get('xtoken')
+                if x_token:
+                    profile_api = create_gurushots_api(x_token)
+                    if profile_api:
+                        challenges_data = await profile_api.get_challenges()
+                        for ch in (challenges_data if isinstance(challenges_data, list) else []):
+                            if str(getattr(ch, 'id', None)) == str(challenge_id):
+                                cd = ch.challenge_data if hasattr(ch, 'challenge_data') else {}
+                                challenge_url = cd.get('url', '')
+                                break
+        except Exception as e:
+            logger.warning(f"⚠️ Could not get challenge URL for {challenge_id}: {e}")
+
+        from app.services.extended_strategy_executor import extended_strategy_executor
+        execution_id = await extended_strategy_executor.execute_commands_direct(
+            profile_id=profile_id,
+            challenge_id=challenge_id,
+            challenge_url=challenge_url,
+            commands=commands
+        )
+        display = challenge_titles_cache.get(str(challenge_id), f"Challenge {challenge_id}")
+        log_and_broadcast(f"⚡ One-shot exécuté sur {display}", "success", profile_id)
+        return {"success": True, "execution_id": execution_id}
+    except Exception as e:
+        logger.error(f"❌ run_commands_once error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/v1/profiles/{profile_id}/turbo/execute")
 async def execute_turbo_complete(profile_id: str, request: TurboExecutionRequest):
         """Exécute un turbo complet avec le système d'algorithmes sophistiqués"""
@@ -1855,19 +1903,9 @@ async def get_active_strategies(profile_name: Optional[str] = None):
         except Exception as e:
             logger.error(f"❌ Error getting Extended strategies: {e}")
         
-        # 3. Récupérer le mapping des challenges pour les titres
-        challenges_map = {}
-        if profile_name:
-            try:
-                profile_id = profile_name.lower()
-                if profile_id in profiles:
-                    x_token = profiles[profile_id].get('xtoken')
-                    if x_token:
-                        real_challenges = await fetch_real_challenges(x_token, profile_id)
-                        challenges_map = {str(ch['id']): ch['title'] for ch in real_challenges}
-                        logger.info(f"✅ Mapping {len(challenges_map)} challenge titles")
-            except Exception as e:
-                logger.error(f"⚠️ Could not fetch challenge titles: {e}")
+        # 3. Récupérer le mapping des challenges depuis le cache (mis à jour lors du refresh)
+        challenges_map = {str(k): v for k, v in challenge_titles_cache.items()}
+        logger.info(f"✅ Mapping {len(challenges_map)} challenge titles (cache)")
         
         # 4. Formater les résultats
         for job in apscheduler_jobs:
@@ -3128,14 +3166,21 @@ async def cleanup_completed_strategy(challenge_id, profile_id):
 async def cleanup_existing_strategy_for_challenge(challenge_id, profile_id):
     """Nettoie une stratégie existante pour un challenge avant d'en programmer une nouvelle"""
     try:
-        # 1. Supprimer tous les jobs APScheduler pour ce challenge/profil
+        # 1. Annuler via ExtendedStrategyExecutor (gère actives_executions + APScheduler extended jobs)
         jobs_removed = 0
+        try:
+            from app.services.extended_strategy_executor import extended_strategy_executor
+            jobs_removed += await extended_strategy_executor.cancel_by_challenge(challenge_id, profile_id)
+        except Exception as ext_e:
+            print(f"⚠️ Erreur cancel_by_challenge: {ext_e}")
+
+        # 2. Supprimer les éventuels jobs APScheduler restants avec l'ancien format
         if strategy_scheduler:
             jobs_to_remove = []
             for job in strategy_scheduler.get_jobs():
                 if job.id.startswith(f'{profile_id}_{challenge_id}_'):
                     jobs_to_remove.append(job.id)
-            
+
             for job_id in jobs_to_remove:
                 try:
                     strategy_scheduler.remove_job(job_id)

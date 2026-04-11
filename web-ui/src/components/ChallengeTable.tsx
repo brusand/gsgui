@@ -8,6 +8,7 @@ interface ChallengeTableProps {
   onSelectionChange: (challengeId: string, selected: boolean) => void;
   onSelectAll: () => void;
   onSelectNone: () => void;
+  onCancelStrategy?: (challengeId: string) => void;
 }
 
 const ChallengeTable: React.FC<ChallengeTableProps> = ({
@@ -15,7 +16,8 @@ const ChallengeTable: React.FC<ChallengeTableProps> = ({
   selectedChallenges,
   onSelectionChange,
   onSelectAll,
-  onSelectNone
+  onSelectNone,
+  onCancelStrategy,
 }) => {
   // Fonction pour obtenir l'indicateur turbo selon l'état (identique à gs_backend_ui.py)
   const getTurboIndicator = (turboStatus: string) => {
@@ -168,7 +170,20 @@ const ChallengeTable: React.FC<ChallengeTableProps> = ({
                   {challenge.gps}
                 </td>
                 <td className="strategy-cell">
-                  {challenge.selected_strategy || ""}
+                  {challenge.selected_strategy ? (
+                    <span className="strategy-cell-content">
+                      <span className="strategy-name" title={challenge.selected_strategy}>
+                        {challenge.selected_strategy.split('__')[0]}
+                      </span>
+                      {onCancelStrategy && (
+                        <button
+                          className="strategy-cancel-btn"
+                          onClick={e => { e.stopPropagation(); onCancelStrategy(challenge.id); }}
+                          title={`Annuler la stratégie "${challenge.selected_strategy}"`}
+                        >🗑</button>
+                      )}
+                    </span>
+                  ) : null}
                 </td>
                 <td
                   className="turbo-cell"

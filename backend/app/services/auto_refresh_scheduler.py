@@ -100,30 +100,10 @@ class AutoRefreshScheduler:
         try:
             logger.debug(f"Auto-refreshing challenges for {profile_id}")
 
-            # Envoyer log de début dans l'UI
-            await self._send_log_to_ui(
-                profile_id,
-                "info",
-                f"🔄 Auto-Refresh démarré (toutes les {config_manager.get_user(profile_id).get('auto_refresh_interval', 5)} minutes)"
-            )
-
             # Récupérer l'API instance
             api = await self._get_api_instance(profile_id)
 
-            # 1 SEUL CALL API - Récupérer tous les challenges
-            await self._send_log_to_ui(
-                profile_id,
-                "info",
-                "📡 Appel API GuruShots en cours..."
-            )
-
             challenges = await api.get_challenges()
-
-            await self._send_log_to_ui(
-                profile_id,
-                "success",
-                f"✅ {len(challenges)} challenges récupérés depuis GuruShots"
-            )
 
             # Identifier les boosts disponibles (AVAILABLE = gratuit, à activer immédiatement)
             import time
@@ -288,11 +268,6 @@ class AutoRefreshScheduler:
                     }
                 )
 
-                await self._send_log_to_ui(
-                    profile_id,
-                    "success",
-                    f"🔄 Interface mise à jour automatiquement ({len(challenges)} challenges)"
-                )
             except Exception as ws_error:
                 logger.warning(f"⚠️ WebSocket notification failed: {ws_error}")
                 await self._send_log_to_ui(

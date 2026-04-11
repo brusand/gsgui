@@ -94,6 +94,9 @@ class ExtendedStrategyExecutor:
         """Execute an extended strategy with timing - separates NOW vs FUTURE actions"""
         
         if strategy_name not in self.strategies_config:
+            logger.info(f"🔄 Strategy '{strategy_name}' not in cache — reloading strategies.ini")
+            self.reload_config()
+        if strategy_name not in self.strategies_config:
             raise ValueError(f"Strategy '{strategy_name}' not found in strategies.ini")
         
         # Get user token
@@ -211,6 +214,11 @@ class ExtendedStrategyExecutor:
             elif action_type == 'revote':
                 result = await self._execute_revote_action(api_client, int(challenge_id), challenge_url, params, profile_id)
 
+            elif action_type == 'cancel':
+                # Annule simplement la stratégie en cours — le cleanup est déjà géré par cleanup_existing_strategy_for_challenge
+                log_and_broadcast(f"🛑 Stratégie annulée pour challenge {challenge_id}", "info", profile_id)
+                result = {'success': True, 'message': 'Strategy cancelled'}
+
             else:
                 result = {'success': False, 'error': f'Unknown action: {action_type}'}
 
@@ -233,11 +241,12 @@ class ExtendedStrategyExecutor:
     def _is_timing_format(self, text: str) -> bool:
         """Check if text looks like a timing format"""
         timing_patterns = [
-            r'end-\d+[mh]\d*s',     # end-4m0s, end-60m0s
-            r'next-\d+[mh]\d*s',    # next-1m0s, next-2h0s
-            r'now',                 # now
-            r'end-\d+m\d*s',        # end-4m0s
-            r'end-\d+h\d*m\d*s'     # end-1h30m0s
+            r'now',
+            r'end-\d+h\d+m\d+s',   # end-1h30m0s
+            r'end-\d+m\d+s',        # end-4m0s
+            r'next-\d+h\d+m\d+s',  # next-1h30m0s
+            r'next-\d+m\d+s',       # next-4m0s
+            r'at-\d{1,2}:\d{2}',    # at-14:30
         ]
         
         for pattern in timing_patterns:
@@ -263,7 +272,12 @@ class ExtendedStrategyExecutor:
             
             # Detect format: if first part looks like timing, assume vote action
             first_part = parts[0]
-            if self._is_timing_format(first_part):
+            if first_part.lower() == 'cancel':
+                # Commande cancel sans timing ni paramètres → exécution immédiate
+                action = 'cancel'
+                timing = 'now'
+                parameters = []
+            elif self._is_timing_format(first_part):
                 # Format: "timing, param1, param2, ..." - vote implicite
                 action = 'vote'
                 timing = first_part
@@ -298,35 +312,41 @@ class ExtendedStrategyExecutor:
         """Calculate when to execute based on timing specification"""
         if timing.lower() == 'now':
             return datetime.now()
-        
-        # Parse end-XmYs format (e.g., end-120m0s, end-90m0s, end-4m0s)
-        end_match = re.match(r'end-(\d+)m(\d+)s', timing)
-        if end_match:
-            minutes, seconds = int(end_match.group(1)), int(end_match.group(2))
-            delta = timedelta(minutes=minutes, seconds=seconds)
-            return challenge_end_time - delta
-        
-        # Parse end-XhYmZs format (e.g., end-1h30m0s)
-        end_hour_match = re.match(r'end-(\d+)h(\d+)m(\d+)s', timing)
+
+        # Parse at-HH:MM format (absolute time today, tomorrow if already past)
+        at_match = re.match(r'^at-(\d{1,2}):(\d{2})$', timing)
+        if at_match:
+            h, m = int(at_match.group(1)), int(at_match.group(2))
+            now = datetime.now()
+            t = now.replace(hour=h, minute=m, second=0, microsecond=0)
+            if t <= now:
+                t += timedelta(days=1)
+            return t
+
+        # Parse end-XhYmZs format before end-XmYs (more specific first)
+        end_hour_match = re.match(r'^end-(\d+)h(\d+)m(\d+)s$', timing)
         if end_hour_match:
-            hours, minutes, seconds = int(end_hour_match.group(1)), int(end_hour_match.group(2)), int(end_hour_match.group(3))
-            delta = timedelta(hours=hours, minutes=minutes, seconds=seconds)
-            return challenge_end_time - delta
-        
-        # Parse next-XmYs format (e.g., next-1m0s, next-2m0s) - from now
-        next_match = re.match(r'next-(\d+)m(\d+)s', timing)
-        if next_match:
-            minutes, seconds = int(next_match.group(1)), int(next_match.group(2))
-            delta = timedelta(minutes=minutes, seconds=seconds)
-            return datetime.now() + delta
-        
-        # Parse next-XhYmZs format (e.g., next-1h30m0s)
-        next_hour_match = re.match(r'next-(\d+)h(\d+)m(\d+)s', timing)
+            h, m, s = int(end_hour_match.group(1)), int(end_hour_match.group(2)), int(end_hour_match.group(3))
+            return challenge_end_time - timedelta(hours=h, minutes=m, seconds=s)
+
+        # Parse end-XmYs format (e.g., end-3m30s, end-0m15s)
+        end_match = re.match(r'^end-(\d+)m(\d+)s$', timing)
+        if end_match:
+            m, s = int(end_match.group(1)), int(end_match.group(2))
+            return challenge_end_time - timedelta(minutes=m, seconds=s)
+
+        # Parse next-XhYmZs format (e.g., next-1h30m0s) - delay from now
+        next_hour_match = re.match(r'^next-(\d+)h(\d+)m(\d+)s$', timing)
         if next_hour_match:
-            hours, minutes, seconds = int(next_hour_match.group(1)), int(next_hour_match.group(2)), int(next_hour_match.group(3))
-            delta = timedelta(hours=hours, minutes=minutes, seconds=seconds)
-            return datetime.now() + delta
-        
+            h, m, s = int(next_hour_match.group(1)), int(next_hour_match.group(2)), int(next_hour_match.group(3))
+            return datetime.now() + timedelta(hours=h, minutes=m, seconds=s)
+
+        # Parse next-XmYs format (e.g., next-4m0s) - delay from now
+        next_match = re.match(r'^next-(\d+)m(\d+)s$', timing)
+        if next_match:
+            m, s = int(next_match.group(1)), int(next_match.group(2))
+            return datetime.now() + timedelta(minutes=m, seconds=s)
+
         logger.warning(f"Could not parse timing: {timing}")
         return None
     
@@ -409,11 +429,17 @@ class ExtendedStrategyExecutor:
             
             # Exécuter l'action
             result = await self._execute_action(execution_id, action)
-            action['executed'] = True
             action['result'] = result
             action['executing'] = False
             action['execution_duration'] = (datetime.now() - execution_start_time).total_seconds()
-            
+
+            # Revote se re-programme lui-même → pas encore "terminé" tant que completed != True
+            if action['action'] == 'revote' and not result.get('completed', True):
+                action['executed'] = False  # toujours en cours, ne pas déclencher completion
+                logger.info(f"🔄 Revote rescheduled for {execution_id}, keeping action pending")
+            else:
+                action['executed'] = True
+
             logger.info(f"✅ Action {action['action']} completed in {action['execution_duration']:.2f}s")
             
             # Notifier la completion
@@ -433,17 +459,24 @@ class ExtendedStrategyExecutor:
                     context['actions'][action_index]['executing'] = False
     
     async def _check_strategy_completion(self, execution_id: str):
-        """Vérifie si toutes les actions d'une stratégie sont terminées"""
+        """Vérifie si toutes les actions d'une stratégie sont terminées.
+
+        Les actions 'revote' sont indépendantes et gèrent leur propre cycle de vie.
+        Elles n'entrent pas dans le calcul de complétion de la stratégie.
+        """
         try:
             if execution_id not in self.active_executions:
                 return
-            
+
             context = self.active_executions[execution_id]
             actions = context['actions']
-            
-            # Vérifier si toutes les actions sont exécutées
-            all_executed = all(action.get('executed', False) for action in actions)
-            
+
+            # Exclure revote du check : il est autonome et se re-programme seul
+            non_revote = [a for a in actions if a.get('action') != 'revote']
+
+            # Si toutes les actions non-revote sont exécutées → stratégie terminée
+            all_executed = all(action.get('executed', False) for action in non_revote) if non_revote else True
+
             if all_executed:
                 # Marquer la stratégie comme terminée
                 context['status'] = 'completed'
@@ -550,18 +583,18 @@ class ExtendedStrategyExecutor:
             # Importer la fonction de suppression
             from gs_backend import remove_challenge_strategy, log_and_broadcast
             
-            # Pour les stratégies auto-reprogrammables comme unlocked_boost, 
+            # Pour les stratégies auto-reprogrammables comme unlocked_boost,
             # ne pas supprimer du .ini car elles vont continuer en boucle
-            # Chercher dans les contextes d'exécution actifs pour ce challenge
-            strategy_name = ''
-            for exec_id, context in self.active_executions.items():
-                if context.get('challenge_id') == challenge_id:
-                    strategy_name = context.get('strategy_name', '')
+            is_auto_recurring = False
+            for exec_id, ctx in self.active_executions.items():
+                if str(ctx.get('challenge_id')) == str(challenge_id) and ctx.get('profile_id') == profile_id:
+                    sname = ctx.get('strategy_name', '')
+                    is_auto_recurring = sname == 'unlocked_boost' or any(
+                        action.get('action') == 'revote'
+                        and not action.get('result', {}).get('completed', False)
+                        for action in ctx.get('actions', [])
+                    )
                     break
-            is_auto_recurring = strategy_name == 'unlocked_boost' or any(
-                action.get('action') == 'revote' and not action.get('result', {}).get('completed', False)
-                for action in context.get('actions', [])
-            )
             
             success = True
             if not is_auto_recurring:
@@ -661,6 +694,12 @@ class ExtendedStrategyExecutor:
         """Execute vote action using the same approach as simple_vote()"""
         if not params:
             return {'success': False, 'error': 'Vote count required'}
+        try:
+            if int(params[0]) <= 0:
+                logger.info(f"⏭️ Vote count 0 skipped for challenge {challenge_id}")
+                return {'success': True, 'message': 'Skipped (vote count 0)', 'vote_count': 0}
+        except (ValueError, IndexError):
+            pass
         
         try:
             vote_count = int(params[0])
@@ -729,7 +768,7 @@ class ExtendedStrategyExecutor:
         """Execute submit action - submit multiple photos with IDs passed as hard parameters"""
         try:
             if not params:
-                return {'success': False, 'error': 'Image ID(s) required for submit'}
+                return {'success': True, 'message': 'no Image ID(s) for submit'}
             
             # All parameters are photo IDs to submit (no index resolution needed)
             image_ids = [param.strip() for param in params if param.strip()]
@@ -796,7 +835,7 @@ class ExtendedStrategyExecutor:
                     index_str = param
 
                 if index_str.isdigit():
-                    index = int(index_str)
+                    index = int(index_str) - 1
                     logger.info(f"🎯 Resolving photo index [{index}] by fetching FRESH challenge data for boost")
 
                     # GET FRESH CHALLENGE DATA at execution time (same as turbo)
@@ -853,7 +892,7 @@ class ExtendedStrategyExecutor:
                     index_str = param
                 
                 if index_str.isdigit():
-                    index = int(index_str)
+                    index = int(index_str) - 1
                     logger.info(f"🎯 Resolving photo index [{index}] by fetching FRESH challenge data")
                     
                     # GET FRESH CHALLENGE DATA at execution time
@@ -1237,23 +1276,20 @@ class ExtendedStrategyExecutor:
             return {'success': False, 'error': str(e)}
 
     async def _cleanup_revote_strategy(self, challenge_id: str, profile_id: str):
-        """Nettoie la stratégie revote une fois qu'elle a voté (completed=True)."""
+        """Arrête les jobs APScheduler revote sans toucher à la stratégie globale."""
         try:
-            import sys
-            import os
-            backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-            if backend_dir not in sys.path:
-                sys.path.insert(0, backend_dir)
-            from gs_backend import remove_challenge_strategy, log_and_broadcast
-
-            success = remove_challenge_strategy(challenge_id, profile_id)
-            msg = f"🧹 Revote terminé et stratégie nettoyée pour challenge {challenge_id}"
-            logger.info(msg)
-            log_and_broadcast(msg, "cleanup", profile_id)
+            from app.services.strategy_scheduler import strategy_scheduler
+            prefix = f"{profile_id}_extended_revote_{challenge_id}_"
+            removed = []
+            for job in strategy_scheduler.scheduler.get_jobs():
+                if job.id.startswith(prefix):
+                    job.remove()
+                    removed.append(job.id)
+            msg = f"⏹️ Revote arrêté pour challenge {challenge_id}"
+            logger.info(msg + (f" (jobs supprimés: {removed})" if removed else ""))
             await connection_manager.notify_challenge_update(profile_id, {
-                "action": "strategy_cleanup_completed",
+                "action": "revote_completed",
                 "challenge_id": challenge_id,
-                "strategy_type": "revote"
             })
         except Exception as e:
             logger.error(f"❌ Erreur cleanup revote pour challenge {challenge_id}: {e}")
@@ -1900,6 +1936,97 @@ class ExtendedStrategyExecutor:
             logger.info(f"❌ Strategy execution {execution_id} cancelled")
             return True
         return False
+
+    async def cancel_by_challenge(self, challenge_id: str, profile_id: str) -> int:
+        """Cancel all executions and APScheduler jobs for a given challenge+profile"""
+        cancelled = 0
+        # Cancel active executions in memory
+        for exec_id, ctx in list(self.active_executions.items()):
+            if str(ctx.get('challenge_id')) == str(challenge_id) and ctx.get('profile_id') == profile_id:
+                ctx['status'] = 'cancelled'
+                logger.info(f"⏹️ Cancelled execution {exec_id} for challenge {challenge_id}")
+                cancelled += 1
+        # Cancel APScheduler jobs containing this challenge_id
+        try:
+            from app.services.strategy_scheduler import strategy_scheduler
+            for job in list(strategy_scheduler.scheduler.get_jobs()):
+                if job.id.startswith(profile_id) and f'_{challenge_id}_' in job.id:
+                    job.remove()
+                    logger.info(f"🗑️ Removed job {job.id}")
+                    cancelled += 1
+        except Exception as e:
+            logger.error(f"Error removing APScheduler jobs for challenge {challenge_id}: {e}")
+        return cancelled
+
+    async def execute_commands_direct(self, profile_id: str, challenge_id: str,
+                                      challenge_url: str, commands: list) -> str:
+        """Execute a list of raw command dicts (from UI) without strategies.ini"""
+        user = config_manager.get_user(profile_id)
+        if not user or not user.get('xtoken'):
+            raise ValueError(f"No valid user token for profile {profile_id}")
+
+        api_client = GuruShotsAPI(user['xtoken'])
+        challenge_end_time = await self._get_challenge_end_time(api_client, challenge_id)
+        if challenge_end_time <= datetime.now():
+            raise ValueError("Challenge has already ended")
+
+        # Convert UI command dicts to internal action format
+        actions = []
+        for i, cmd in enumerate(commands):
+            action_type = cmd.get('type', 'vote')
+            args = cmd.get('args', {})
+            timing = args.get('timing', 'now')
+            scheduled_time = self._calculate_scheduled_time(timing, challenge_end_time)
+            if not scheduled_time:
+                logger.warning(f"Could not parse timing '{timing}' for command {i}, skipping")
+                continue
+            # Build parameters list from args (exclude timing)
+            parameters = [str(v) for k, v in args.items() if k != 'timing' and v is not None]
+            actions.append({
+                'step': i,
+                'action': action_type,
+                'timing': timing,
+                'parameters': parameters,
+                'scheduled_time': scheduled_time,
+                'executed': False,
+                'result': None
+            })
+
+        actions.sort(key=lambda a: a['scheduled_time'])
+        now_actions  = [a for a in actions if a.get('timing') == 'now']
+        future_actions = [a for a in actions if a.get('timing') != 'now']
+
+        execution_id = f"oneshot_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+        # Execute NOW actions immediately
+        for action in now_actions:
+            try:
+                result = await self._execute_single_action(api_client, challenge_id, challenge_url, action, profile_id)
+                if result and result.get('success', True):
+                    logger.info(f"✅ One-shot immediate {action['action']} done")
+                else:
+                    logger.warning(f"⚠️ One-shot immediate {action['action']} returned failure: {result}")
+            except Exception as e:
+                logger.error(f"❌ One-shot immediate {action['action']} failed: {e}")
+
+        # Schedule FUTURE actions via APScheduler
+        if future_actions:
+            self.active_executions[execution_id] = {
+                'profile_id': profile_id,
+                'challenge_id': challenge_id,
+                'challenge_url': challenge_url,
+                'strategy_name': 'oneshot',
+                'challenge_end_time': challenge_end_time,
+                'actions': future_actions,
+                'started_at': datetime.now(),
+                'status': 'active',
+                'api_client': api_client
+            }
+            await self._schedule_future_actions_with_apscheduler(execution_id, future_actions)
+            logger.info(f"📅 One-shot: {len(future_actions)} future actions scheduled")
+
+        logger.info(f"🎯 One-shot executed: {len(now_actions)} immediate + {len(future_actions)} scheduled")
+        return execution_id
 
     async def _save_strategy_hierarchical(self, challenge_id: str, strategy_name: str, actions: List[Dict], profile_id: str, challenge_url: str):
         """Sauvegarde la stratégie avec structure hiérarchique dans gsgui.ini"""

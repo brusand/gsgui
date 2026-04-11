@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ChallengeTable from './ChallengeTable';
 import ActionButtons from './ActionButtons';
 import LogsPanel from './LogsPanel';
-import StrategyEditor from './StrategyEditor';
+import StrategyEditor, { type ChallengeRef } from './StrategyEditor';
+import IniEditor from './IniEditor';
 import LogsViewerModal from './LogsViewerModal';
 import StrategiesPanel from './StrategiesPanel';
 import type { Challenge, Strategy } from '../types/api';
@@ -24,6 +25,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isStrategyEditorOpen, setIsStrategyEditorOpen] = useState(false);
+  const [isIniEditorOpen, setIsIniEditorOpen] = useState(false);
   const [strategyEditorContent, setStrategyEditorContent] = useState('');
   const [isLogsViewerOpen, setIsLogsViewerOpen] = useState(false);
   const [isStrategiesPanelOpen, setIsStrategiesPanelOpen] = useState(false);
@@ -113,7 +115,13 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
       // Auto-refresh depuis le scheduler - mettre à jour directement les challenges
       if (data.challenges && Array.isArray(data.challenges)) {
         console.log(`🔄 Auto-Refresh: ${data.challenges.length} challenges mis à jour`);
-        setChallenges(data.challenges);
+        const newChallenges = data.challenges;
+        setChallenges(newChallenges);
+        // Conserver les sélections qui existent encore dans la nouvelle liste
+        setSelectedChallenges(prev => {
+          const newIds = new Set(newChallenges.map((c: any) => c.id));
+          return new Set([...prev].filter(id => newIds.has(id)));
+        });
       }
     };
 
@@ -168,8 +176,13 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
     setIsLoading(true);
     try {
       const response = await apiClient.refreshChallenges(profileName);
-      setChallenges(response.challenges || []);
-      setSelectedChallenges(new Set()); // Reset selection
+      const newChallenges = response.challenges || [];
+      setChallenges(newChallenges);
+      // Conserver les sélections qui existent encore dans la nouvelle liste
+      setSelectedChallenges(prev => {
+        const newIds = new Set(newChallenges.map((c: any) => c.id));
+        return new Set([...prev].filter(id => newIds.has(id)));
+      });
     } catch (error) {
       console.error('Erreur refresh challenges:', error);
       setChallenges([]);
@@ -379,20 +392,19 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
     }
   };
 
+  // Bouton Stratégie → éditeur visuel
+  const handleOpenStrategyEditor = () => {
+    setIsStrategyEditorOpen(true);
+  };
+
+  // Bouton Edition → éditeur brut .ini
   const handleEditStrategies = async () => {
     try {
-      wsService.emitLocalLog('📝 Ouverture éditeur de stratégies...');
-      
-      // Récupérer le contenu du fichier strategies.ini
       const configData = await apiClient.getStrategiesConfig();
       setStrategyEditorContent(configData.content);
-      setIsStrategyEditorOpen(true);
-      
-      wsService.emitLocalLog('✅ Éditeur de stratégies ouvert', 'success');
-      
+      setIsIniEditorOpen(true);
     } catch (error) {
-      console.error('❌ Erreur ouverture éditeur:', error);
-      wsService.emitLocalLog(`❌ Erreur ouverture éditeur: ${error}`, 'error');
+      console.error('❌ Erreur ouverture éditeur .ini:', error);
     }
   };
 
@@ -595,7 +607,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onRefresh={refreshChallenges}
           onFill={handleFillAction}
           onTurbo={handleTurboAction}
-          onApplyStrategy={handleStrategyApplication}
+          onApplyStrategy={() => handleOpenStrategyEditor()}
           onShowActiveStrategies={handleShowActiveStrategies}
           onEditStrategies={handleEditStrategies}
           onSelectAll={handleSelectAll}
@@ -614,6 +626,14 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
           onSelectionChange={handleChallengeSelection}
           onSelectAll={handleSelectAll}
           onSelectNone={handleSelectNone}
+          onCancelStrategy={async (challengeId) => {
+            try {
+              await fetch(`/api/v1/profiles/${profileName.toLowerCase()}/strategies/${challengeId}/clean`, { method: 'DELETE' });
+              refreshChallenges();
+            } catch (e) {
+              console.error('Erreur annulation stratégie:', e);
+            }
+          }}
         />
 
         <StrategiesPanel 
@@ -624,9 +644,23 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
         <LogsPanel profileName={profileName} />
       </main>
 
+      {/* Éditeur visuel de stratégie */}
       <StrategyEditor
         isOpen={isStrategyEditorOpen}
         onClose={() => setIsStrategyEditorOpen(false)}
+        profileId={profileName}
+        selectedChallenges={
+          challenges
+            .filter(c => selectedChallenges.has(c.id))
+            .map((c): ChallengeRef => ({ id: c.id, title: c.title }))
+        }
+        onApplied={refreshChallenges}
+      />
+
+      {/* Éditeur brut .ini */}
+      <IniEditor
+        isOpen={isIniEditorOpen}
+        onClose={() => setIsIniEditorOpen(false)}
         onSave={handleSaveStrategies}
         initialContent={strategyEditorContent}
       />

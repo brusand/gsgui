@@ -171,6 +171,54 @@ class GSGUIApiClient {
     return response.data;
   }
 
+  // ── Template Strategies ────────────────────────────────────
+
+  async getCommandSchema(): Promise<{ schema: Record<string, any> }> {
+    const response = await this.api.get('/command-schema');
+    return response.data;
+  }
+
+  async getTemplates(includeInstances = false): Promise<{ templates: any[] }> {
+    const response = await this.api.get('/templates', { params: { instances: includeInstances } });
+    return response.data;
+  }
+
+  async getTemplate(name: string): Promise<any> {
+    const response = await this.api.get(`/templates/${encodeURIComponent(name)}`);
+    return response.data;
+  }
+
+  async cloneTemplate(name: string, profileId: string, challengeId: string): Promise<any> {
+    const response = await this.api.post(`/templates/${encodeURIComponent(name)}/clone`, {
+      profile_id: profileId,
+      challenge_id: challengeId,
+    });
+    return response.data;
+  }
+
+  async updateTemplate(name: string, description?: string, commands?: any[]): Promise<any> {
+    const response = await this.api.put(`/templates/${encodeURIComponent(name)}`, {
+      description,
+      commands,
+    });
+    return response.data;
+  }
+
+  async deleteTemplate(name: string, force = false): Promise<any> {
+    const response = await this.api.delete(`/templates/${encodeURIComponent(name)}`, {
+      params: { force },
+    });
+    return response.data;
+  }
+
+  async runCommandsOnce(profileId: string, challengeId: string, commands: any[]): Promise<any> {
+    const response = await this.api.post(
+      `/profiles/${profileId.toLowerCase()}/challenges/${challengeId}/run-once`,
+      { commands }
+    );
+    return response.data;
+  }
+
   // Health check
   async healthCheck(): Promise<boolean> {
     try {
