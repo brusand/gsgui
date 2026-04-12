@@ -1,0 +1,24 @@
+[Unit]
+Description=GSGUI - GuruShots Automation Manager
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/home/%i/gsgui
+ExecStart=/home/%i/gsgui/process-manager-portable.sh monitor
+ExecStop=/home/%i/gsgui/process-manager-portable.sh stop
+Restart=on-failure
+RestartSec=10
+
+# Environnement
+Environment=HOME=/home/%i
+Environment=PATH=/home/%i/gsgui/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Logs vers journald (lisibles avec : journalctl -u gsgui@<user>)
+StandardOutput=append:/home/%i/gsgui/logs/systemd.log
+StandardError=append:/home/%i/gsgui/logs/systemd.log
+
+[Install]
+WantedBy=multi-user.target
