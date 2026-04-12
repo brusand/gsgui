@@ -46,21 +46,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   autoRefreshInterval
 }) => {
   const [showVoteDialog, setShowVoteDialog] = useState<boolean>(false);
-  const [showStrategyDialog, setShowStrategyDialog] = useState<boolean>(false);
-
   const handleStrategyClick = () => {
-    if (selectedCount > 0) {
-      setShowStrategyDialog(true);
-    }
-  };
-
-  const handleStrategyConfirm = (strategy: string) => {
-    setShowStrategyDialog(false);
-    onApplyStrategy(strategy);
-  };
-
-  const handleStrategyCancel = () => {
-    setShowStrategyDialog(false);
+    if (selectedCount > 0) onApplyStrategy('__open_editor__');
   };
 
   const handleFillClick = (e?: React.MouseEvent) => {
@@ -233,14 +220,6 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         onCancel={handleVoteCancel}
       />
 
-      {/* Dialog de sélection de stratégie */}
-      <StrategySelectionDialog
-        isOpen={showStrategyDialog}
-        strategies={strategies}
-        selectedCount={selectedCount}
-        onConfirm={handleStrategyConfirm}
-        onCancel={handleStrategyCancel}
-      />
     </div>
   );
 };

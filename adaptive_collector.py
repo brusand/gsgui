@@ -821,8 +821,8 @@ def load_bruno_token() -> Optional[str]:
 async def main():
     """Fonction principale"""
 
-    # Utiliser la base de données du collector
-    database_path = "./gurushots_adaptive.db"
+    # Utiliser la base de données locale
+    database_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'gurushots_adaptive.db')
     logger.info(f"✅ Using database: {database_path}")
     
     # Charger token

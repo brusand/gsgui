@@ -31,8 +31,14 @@ class GuruShotsCollectorBackend:
                 load_dotenv()  # Fallback sur .env
 
         # Configuration de la base de données
-        self.db_path = os.getenv('DATABASE_PATH', 'gurushots_data.db')
-        self.db_path_local_fallback = 'gurushots_data_local.db'
+        self.db_path = os.getenv('DATABASE_PATH', 'data/gurushots_data.db')
+        self.db_path_local_fallback = 'data/gurushots_data_local.db'
+        # Résoudre les chemins relatifs depuis la racine du projet (indépendant du CWD)
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if not os.path.isabs(self.db_path):
+            self.db_path = os.path.join(project_root, self.db_path)
+        if not os.path.isabs(self.db_path_local_fallback):
+            self.db_path_local_fallback = os.path.join(project_root, self.db_path_local_fallback)
 
         # Configuration de l'API Backend (au lieu de l'API GuruShots directe)
         self.backend_api_url = "http://calounette.ddns.net/api/v1"

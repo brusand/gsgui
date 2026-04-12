@@ -1030,9 +1030,11 @@ def get_analyzer():
     global analyzer
     if analyzer is None:
         # Utiliser la base de données du collector adaptatif
+        base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         db_paths = [
-            "../gurushots_adaptive.db",
-            "./gurushots_adaptive.db",
+            os.path.join(base, 'data', 'gurushots_adaptive.db'),
+            os.path.join(base, 'gurushots_adaptive.db'),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gurushots_adaptive.db'),
         ]
 
         for db_path in db_paths:
@@ -1093,6 +1095,7 @@ class MonitoringScheduler:
             return self._db_path
         base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         for p in [
+            os.path.join(base, 'data', 'gurushots_adaptive.db'),
             os.path.join(base, 'gurushots_adaptive.db'),
             os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gurushots_adaptive.db'),
         ]:
