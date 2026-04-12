@@ -6,21 +6,26 @@
     <string>com.gsgui.manager</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
-        <string>/Users/bruno/bin/gsgui-launcher.py</string>
+        <string>/bin/bash</string>
+        <string>/Users/bruno/gsgui/process-manager-portable.sh</string>
+        <string>monitor</string>
     </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/bruno/gsgui</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/Users/bruno/Library/Logs/GSGUI/launchd.out.log</string>
+    <string>/Users/bruno/gsgui/logs/launchd.out.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/bruno/Library/Logs/GSGUI/launchd.err.log</string>
+    <string>/Users/bruno/gsgui/logs/launchd.err.log</string>
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin</string>
+        <string>/Users/bruno/gsgui/venv/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HOME</key>
+        <string>/Users/bruno</string>
     </dict>
     <key>ThrottleInterval</key>
     <integer>30</integer>
