@@ -1243,9 +1243,16 @@ class ExtendedStrategyExecutor:
                     'votes_cast': vote_count
                 }
             else:
-                # Reschedule in 5 minutes
+                # Intervalle adaptatif : plus fréquent quand on approche du seuil
+                gap = current_exposure - threshold  # positif si encore au-dessus
+                if gap <= 15:
+                    check_interval = 1   # < seuil+15% → check toutes les minutes
+                elif gap <= 30:
+                    check_interval = 2   # < seuil+30% → check toutes les 2 minutes
+                else:
+                    check_interval = 5   # loin du seuil → check toutes les 5 minutes
                 from app.services.strategy_scheduler import strategy_scheduler
-                next_run_time = datetime.now() + timedelta(minutes=5)
+                next_run_time = datetime.now() + timedelta(minutes=check_interval)
                 job_id = (f"{profile_id}_extended_revote_{challenge_id}_"
                           f"{datetime.now().strftime('%Y%m%d_%H%M%S')}")
                 strategy_scheduler.scheduler.add_job(
@@ -1261,14 +1268,15 @@ class ExtendedStrategyExecutor:
                     misfire_grace_time=300
                 )
                 logger.info(f"⏰ Revote rescheduled for challenge {challenge_id} at {next_run_time} "
-                            f"(exposure={current_exposure}%, waiting for {condition_str})")
+                            f"(exposure={current_exposure}%, gap={gap}%, interval={check_interval}min, waiting for {condition_str})")
                 return {
                     'success': True,
                     'completed': False,
                     'rescheduled': True,
                     'next_run': next_run_time.isoformat(),
                     'message': (f'Exposure {current_exposure}% does not meet {condition_str} '
-                                f'- checking again at {next_run_time.strftime("%H:%M")}')
+                                f'- checking again at {next_run_time.strftime("%H:%M:%S")} '
+                                f'(in {check_interval}min)')
                 }
 
         except Exception as e:
