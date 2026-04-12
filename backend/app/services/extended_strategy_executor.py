@@ -361,27 +361,45 @@ class ExtendedStrategyExecutor:
                 return
             
             # Programmer chaque action individuellement avec profile_id
+            context = self.active_executions[execution_id]
+            profile_id = context['profile_id']
+            challenge_id = context['challenge_id']
+            challenge_url = context['challenge_url']
+
             for i, action in enumerate(future_actions):
-                # Extraire profile_id du contexte
-                context = self.active_executions[execution_id]
-                profile_id = context['profile_id']
                 job_id = f"{profile_id}_extended_{execution_id}_action_{i}_{action['action']}"
-                
-                # Ajouter le job à APScheduler avec optimisations précision
-                strategy_scheduler.scheduler.add_job(
-                    func=self._execute_scheduled_action,
-                    trigger='date',
-                    run_date=action['scheduled_time'],
-                    args=[execution_id, i],
-                    id=job_id,
-                    name=f"Extended {action['action']} for {execution_id} (profile: {profile_id})",
-                    replace_existing=True,
-                    # Optimisations précision critiques
-                    coalesce=True,         # Fusionner si en retard
-                    max_instances=1,       # Une seule instance
-                    misfire_grace_time=3   # 3s de tolérance pour actions critiques
-                )
-                
+
+                if action['action'] == 'revote':
+                    # Le revote utilise le chemin isolé (_execute_action_wrapper) qui ne
+                    # dépend pas du contexte d'exécution (lequel est nettoyé quand la
+                    # stratégie se termine, avant que le revote ne s'exécute).
+                    strategy_scheduler.scheduler.add_job(
+                        func=self._execute_action_wrapper,
+                        trigger='date',
+                        run_date=action['scheduled_time'],
+                        args=[str(challenge_id), 'revote', action['parameters'], profile_id, challenge_url],
+                        id=job_id,
+                        name=f"Extended revote for {execution_id} (profile: {profile_id})",
+                        replace_existing=True,
+                        coalesce=True,
+                        max_instances=1,
+                        misfire_grace_time=300
+                    )
+                else:
+                    # Ajouter le job à APScheduler avec optimisations précision
+                    strategy_scheduler.scheduler.add_job(
+                        func=self._execute_scheduled_action,
+                        trigger='date',
+                        run_date=action['scheduled_time'],
+                        args=[execution_id, i],
+                        id=job_id,
+                        name=f"Extended {action['action']} for {execution_id} (profile: {profile_id})",
+                        replace_existing=True,
+                        coalesce=True,
+                        max_instances=1,
+                        misfire_grace_time=3
+                    )
+
                 logger.info(f"📅 Scheduled action {action['action']} at {action['scheduled_time']} (job: {job_id})")
             
             logger.info(f"✅ All {len(future_actions)} actions scheduled via APScheduler")
