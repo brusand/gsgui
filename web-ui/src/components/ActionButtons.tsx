@@ -47,7 +47,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 }) => {
   const [showVoteDialog, setShowVoteDialog] = useState<boolean>(false);
   const handleStrategyClick = () => {
-    if (selectedCount > 0) onApplyStrategy('__open_editor__');
+    onApplyStrategy('__open_editor__');
   };
 
   const handleFillClick = (e?: React.MouseEvent) => {
@@ -136,9 +136,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         {/* Bouton Stratégie */}
         <button
           onClick={handleStrategyClick}
-          disabled={selectedCount === 0 || isLoading}
+          disabled={isLoading}
           className="btn btn-info"
-          title={`Sélectionner et appliquer une stratégie sur ${selectedCount} challenge(s)`}
+          title={selectedCount > 0
+            ? `Appliquer une stratégie sur ${selectedCount} challenge(s) sélectionné(s)`
+            : 'Appliquer une stratégie one-shot (saisie d\'URL)'}
         >
           📅 Stratégie
           {selectedCount > 0 && ` (${selectedCount})`}

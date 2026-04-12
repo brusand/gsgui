@@ -6,6 +6,7 @@ import StrategyEditor, { type ChallengeRef } from './StrategyEditor';
 import IniEditor from './IniEditor';
 import LogsViewerModal from './LogsViewerModal';
 import StrategiesPanel from './StrategiesPanel';
+import ChallengeUrlDialog from './ChallengeUrlDialog';
 import type { Challenge, Strategy } from '../types/api';
 import { apiClient } from '../services/api-v2';
 import { wsService } from '../services/websocket';
@@ -31,6 +32,10 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
   const [isStrategiesPanelOpen, setIsStrategiesPanelOpen] = useState(false);
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
   const [autoRefreshInterval, setAutoRefreshInterval] = useState(5);
+  const [isUrlDialogOpen, setIsUrlDialogOpen] = useState(false);
+  const [urlDialogLoading, setUrlDialogLoading] = useState(false);
+  const [urlDialogError, setUrlDialogError] = useState<string | undefined>();
+  const [oneShotChallenge, setOneShotChallenge] = useState<ChallengeRef | null>(null);
 
   // Helper functions pour récupérer les détails des stratégies depuis strategies.ini
   // Commenté temporairement - pas utilisé actuellement
@@ -394,7 +399,29 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
 
   // Bouton Stratégie → éditeur visuel
   const handleOpenStrategyEditor = () => {
-    setIsStrategyEditorOpen(true);
+    if (selectedChallenges.size === 0) {
+      // Aucun challenge sélectionné → demander l'URL slug
+      setUrlDialogError(undefined);
+      setIsUrlDialogOpen(true);
+    } else {
+      setOneShotChallenge(null);
+      setIsStrategyEditorOpen(true);
+    }
+  };
+
+  const handleUrlDialogConfirm = async (challengeUrl: string) => {
+    setUrlDialogLoading(true);
+    setUrlDialogError(undefined);
+    try {
+      const data = await apiClient.getChallengeByUrl(challengeUrl, profileName);
+      setOneShotChallenge({ id: data.id, title: data.title });
+      setIsUrlDialogOpen(false);
+      setIsStrategyEditorOpen(true);
+    } catch (err: any) {
+      setUrlDialogError(err?.response?.data?.detail || err?.message || 'Challenge introuvable');
+    } finally {
+      setUrlDialogLoading(false);
+    }
   };
 
   // Bouton Edition → éditeur brut .ini
@@ -644,15 +671,26 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
         <LogsPanel profileName={profileName} />
       </main>
 
+      {/* Popup saisie URL challenge (one-shot sans sélection) */}
+      <ChallengeUrlDialog
+        isOpen={isUrlDialogOpen}
+        isLoading={urlDialogLoading}
+        error={urlDialogError}
+        onConfirm={handleUrlDialogConfirm}
+        onCancel={() => { setIsUrlDialogOpen(false); setUrlDialogError(undefined); }}
+      />
+
       {/* Éditeur visuel de stratégie */}
       <StrategyEditor
         isOpen={isStrategyEditorOpen}
-        onClose={() => setIsStrategyEditorOpen(false)}
+        onClose={() => { setIsStrategyEditorOpen(false); setOneShotChallenge(null); }}
         profileId={profileName}
         selectedChallenges={
-          challenges
-            .filter(c => selectedChallenges.has(c.id))
-            .map((c): ChallengeRef => ({ id: c.id, title: c.title }))
+          oneShotChallenge
+            ? [oneShotChallenge]
+            : challenges
+                .filter(c => selectedChallenges.has(c.id))
+                .map((c): ChallengeRef => ({ id: c.id, title: c.title }))
         }
         onApplied={refreshChallenges}
       />

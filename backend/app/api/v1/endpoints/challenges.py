@@ -272,6 +272,35 @@ async def execute_simple_vote(
         raise HTTPException(status_code=500, detail=f"Error executing simple vote: {str(e)}")
 
 
+@router.get("/by-url")
+async def get_challenge_by_url(
+    challenge_url: str = Query(..., description="URL slug du challenge, ex: frame-it-4"),
+    current_user: User = Depends(get_current_user)
+):
+    """Récupère les infos d'un challenge (id, title, url) depuis son URL slug via get_challenge."""
+    try:
+        api_client = GuruShotsAPI(current_user.xtoken)
+        data = await api_client.get_challenge_details(challenge_url.strip())
+
+        if not data or data.get('error'):
+            raise HTTPException(status_code=404, detail=f"Challenge '{challenge_url}' introuvable")
+
+        challenge = data.get('challenge', {})
+        challenge_id = challenge.get('id')
+        title = challenge.get('title') or challenge_url
+
+        if not challenge_id:
+            raise HTTPException(status_code=404, detail=f"Challenge '{challenge_url}' introuvable")
+
+        return {'id': str(challenge_id), 'title': title, 'url': challenge.get('url', challenge_url)}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error getting challenge by url '{challenge_url}': {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/{challenge_id}")
 async def get_challenge(
     challenge_id: str,

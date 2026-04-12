@@ -73,6 +73,13 @@ class GSGUIApiClient {
     return response.data;
   }
 
+  async getChallengeByUrl(challengeUrl: string, profileName?: string): Promise<{ id: string; title: string; url: string }> {
+    const params: Record<string, string> = { challenge_url: challengeUrl };
+    if (profileName) params.profile_name = profileName;
+    const response = await this.api.get<{ id: string; title: string; url: string }>('/challenges/by-url', { params });
+    return response.data;
+  }
+
   // Actions
   async fillChallenges(challengeIds: string[], votes: number = 80, profileName: string = 'bruno'): Promise<ApiResponse<void>> {
     const url = `/actions/fill?profile_name=${profileName}`;
