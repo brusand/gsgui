@@ -1007,6 +1007,59 @@ async def get_challenges(profile_name: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/v1/challenges/by-url")
+async def get_challenge_by_url(
+    challenge_url: str = Query(..., description="URL slug du challenge (ex: frame-it-4)"),
+    profile_name: str = Query(None, description="Nom du profil")
+):
+    """Récupère les infos d'un challenge par son URL slug via l'API GuruShots"""
+    try:
+        # Trouver un token valide
+        x_token = None
+        if profile_name:
+            profile_id = profile_name.lower()
+            if profile_id in profiles:
+                x_token = profiles[profile_id].get('xtoken')
+        if not x_token:
+            # Fallback: premier profil disponible
+            for p in profiles.values():
+                if p.get('xtoken'):
+                    x_token = p['xtoken']
+                    break
+        if not x_token:
+            x_token = get_user_token_from_config()
+        if not x_token:
+            raise HTTPException(status_code=401, detail="No valid token available")
+
+        headers = get_aio_headers(x_token)
+        connector = aiohttp.TCPConnector(ssl=False)
+        async with aiohttp.ClientSession(headers=headers, connector=connector) as session:
+            async with session.post(
+                'https://api.gurushots.com/rest/get_challenge',
+                data={'challenge_url': challenge_url.strip()}
+            ) as response:
+                if response.status != 200:
+                    raise HTTPException(status_code=404, detail=f"Challenge '{challenge_url}' not found")
+                data = await response.json()
+
+        challenge = data.get('challenge', {})
+        challenge_id = challenge.get('id')
+        if not challenge_id:
+            raise HTTPException(status_code=404, detail=f"Challenge '{challenge_url}' not found")
+
+        return {
+            'id': str(challenge_id),
+            'title': challenge.get('title') or challenge_url,
+            'url': challenge.get('url', challenge_url)
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error in get_challenge_by_url: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ============================================================================
 # AUTO-REFRESH ENDPOINTS
 # ============================================================================
