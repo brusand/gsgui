@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Protéodies Player</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#252525;--border:#333;
+  --text:#e8e8e8;--text2:#999;--teal:#1D9E75;--teal2:#0F6E56;
+  --red:#D85A30;--radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;padding:16px;max-width:800px;margin:0 auto}
+h1{font-size:18px;font-weight:500;color:var(--teal);margin-bottom:4px}
+.sub{font-size:12px;color:var(--text2);margin-bottom:20px}
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.card-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text2);margin-bottom:10px}
+.playlist{display:flex;flex-direction:column;gap:6px}
+.pl-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.15s}
+.pl-item.active-item{border-color:var(--teal)}
+.pl-item input[type=checkbox]{width:20px;height:20px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+.pl-label{flex:1}
+.pl-name{font-size:14px;font-weight:500;color:var(--text)}
+.pl-meta{font-size:11px;color:var(--text2);margin-top:2px}
+.pl-badge{font-size:10px;padding:2px 7px;border-radius:4px;margin-left:6px;font-weight:500}
+.ctrl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.ctrl-label{font-size:13px;color:var(--text2);min-width:60px}
+.ctrl-val{font-size:14px;font-weight:500;color:var(--text);min-width:32px;text-align:right}
+input[type=range]{flex:1;height:4px;appearance:none;background:var(--border);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:50%;background:var(--teal);cursor:pointer}
+select{background:var(--bg3);color:var(--text);border:0.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:14px;flex:1;outline:none}
+.seq-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:48px}
+.aa-cell{width:42px;height:42px;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;font-weight:500;border:0.5px solid #333;background:var(--bg3);transition:transform 0.1s}
+.aa-cell .nn{font-size:9px;color:var(--text2)}
+.aa-cell.lit{transform:scale(1.2)}
+.prog-wrap{background:var(--bg3);border-radius:4px;height:6px;margin-bottom:10px;overflow:hidden}
+.prog-bar{height:100%;background:var(--teal);width:0;border-radius:4px;transition:width 0.1s}
+.prog-info{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:14px}
+.now{padding:10px 14px;background:var(--bg3);border-radius:8px;margin-bottom:14px;border-left:3px solid var(--teal)}
+.now-title{font-size:13px;font-weight:500;color:var(--teal);margin-bottom:2px}
+.now-meta{font-size:11px;color:var(--text2)}
+canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margin-bottom:10px}
+.instr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.instr-btn{padding:10px 8px;border-radius:8px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);font-size:13px;cursor:pointer;text-align:center;transition:all 0.15s}
+.instr-btn:active{opacity:0.7}
+.instr-btn.sel{border-color:var(--teal);color:var(--teal);background:#1D9E7515}
+.instr-icon{font-size:20px;display:block;margin-bottom:3px}
+</style>
+</head>
+<body>
+
+<!-- TRANSPORT FIXE -->
+<div style="position:sticky;top:0;z-index:100;background:#0f0f0f;border-bottom:0.5px solid #333;padding:10px 0 14px;margin:-16px 0 16px;display:flex;align-items:center;gap:10px;">
+  <button id="t-play" onclick="startSession()" title="Lancer" style="width:60px;height:60px;border-radius:50%;border:none;background:#1D9E75;color:#04342C;font-size:24px;cursor:pointer;flex-shrink:0;">&#9654;</button>
+  <button id="t-pause" onclick="togglePause()" title="Pause" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;&#9646;</button>
+  <button id="t-stop" onclick="stopSession()" title="Stop" style="width:60px;height:60px;border-radius:50%;border:none;background:#D85A30;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;</button>
+  <button id="t-skip" onclick="skipNext()" title="Suivant" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">&#9654;&#9654;</button>
+  <div style="flex:1;min-width:0;padding-left:4px;">
+    <div id="t-name" style="font-size:13px;font-weight:500;color:#1D9E75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Prêt</div>
+    <div id="t-status" style="font-size:11px;color:#999;margin-top:2px;">Coche des protéodies et lance &#9654;</div>
+  </div>
+</div>
+
+<h1>🧬 Protéodies Player</h1>
+<p class="sub">Sonification de séquences peptidiques · Ajouter à l'écran d'accueil sur iPad</p>
+
+<div class="now" id="now-box" style="display:none">
+  <div class="now-title" id="now-title">—</div>
+  <div class="now-meta" id="now-meta">—</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Séquence en cours</div>
+  <canvas class="wave" id="wave" width="700" height="40"></canvas>
+  <div class="seq-wrap" id="seq-wrap"></div>
+  <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+  <div class="prog-info">
+    <span id="prog-time">0:00</span>
+    <span id="prog-loop">—</span>
+    <span id="prog-total">0:00</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Instrument</div>
+  <div class="instr-grid">
+    <div class="instr-btn sel" onclick="setInstr('flute',this)"><span class="instr-icon">🪈</span>Flûte andine</div>
+    <div class="instr-btn" onclick="setInstr('voix_f',this)"><span class="instr-icon">🎤</span>Voix femmes</div>
+    <div class="instr-btn" onclick="setInstr('voix_h',this)"><span class="instr-icon">🎵</span>Voix hommes</div>
+    <div class="instr-btn" onclick="setInstr('choeur',this)"><span class="instr-icon">🎶</span>Chœur mixte</div>
+    <div class="instr-btn" onclick="setInstr('cristal',this)"><span class="instr-icon">✨</span>Cristal</div>
+    <div class="instr-btn" onclick="setInstr('bol',this)"><span class="instr-icon">🔔</span>Bol tibétain</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Réglages</div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Tempo</span>
+    <input type="range" id="bpm" min="25" max="180" value="65" step="1" oninput="document.getElementById('bpm-val').textContent=this.value">
+    <span class="ctrl-val" id="bpm-val">65</span>
+    <span style="font-size:12px;color:var(--text2)">BPM</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Durée</span>
+    <input type="range" id="dur" min="1" max="30" value="10" step="1" oninput="onDurChange()">
+    <span class="ctrl-val" id="dur-val">10</span>
+    <span style="font-size:12px;color:var(--text2)">min</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Reverb</span>
+    <input type="range" id="rvb" min="0" max="1" value="0.45" step="0.01">
+    <span style="font-size:12px;color:var(--text2)">espace</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Gamme</span>
+    <select id="gamme" onchange="buildPlaylist()">
+      <option value="mib">Mib Lydien</option>
+      <option value="sol">Sol majeur</option>
+      <option value="la">La mineur</option>
+      <option value="ab">Ab majeur (sommeil)</option>
+    </select>
+  </div>
+  <div class="ctrl-row" style="margin-top:4px">
+    <span class="ctrl-label">Boucle</span>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <input type="checkbox" id="loop-chk" style="width:20px;height:20px;accent-color:var(--teal)" checked>
+      <span style="font-size:13px;color:var(--text2)">Répéter jusqu'à la durée cible</span>
+    </label>
+  </div>
+  <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.2s" id="diapason-box">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+      <input type="checkbox" id="diapason-chk" style="width:20px;height:20px;accent-color:#BA7517" onchange="onDiapasonChange()" checked>
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--text)">💧 Diapason de l'eau H₂O</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">La4 = <span id="diapason-freq">440.00</span> Hz · Marc Henry</div>
+      </div>
+    </label>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Playlist — cocher pour enchaîner</div>
+  <div class="playlist" id="playlist"></div>
+  <div style="display:flex;gap:8px;margin-top:10px">
+    <button onclick="selectAll(true)" style="flex:1;padding:8px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">Tout cocher</button>
+    <button onclick="selectAll(false)" style="flex:1;padding:8px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">Tout décocher</button>
+  </div>
+</div>
+
+<script>
+const PROTEODIES=[
+  // 🧬 PIEZO1
+  {id:'piezo1',    name:'PIEZO1 — GsMTx4',           seq:'GCLEFWWKCNPNDDKCCGPKLKCHAISYKECTK', cat:'🧬', desc:'Inhibiteur canal mécano-sensible'},
+  // 🧠 NEURO
+  {id:'tph1',      name:'Neuro — TPH1 Sérotonine',    seq:'WFLSQQHER',                          cat:'🧠', desc:'Tryptophane Hydroxylase — SEROT 40%'},
+  {id:'th',        name:'Neuro — TH Dopamine',         seq:'ARQHAFAQLR',                          cat:'🧠', desc:'Tyrosine Hydroxylase — 34DOPAC 25%'},
+  {id:'dbh',       name:'Neuro — DBH Noradrénaline',   seq:'HFHWHTLGM',                           cat:'🧠', desc:'Dopamine β-Hydroxylase'},
+  {id:'semax',     name:'Mémoire — Sémax',              seq:'MEHFPGP',                             cat:'🧠', desc:'Nootropique BDNF + dopamine'},
+  {id:'bdnf',      name:'Mémoire — BDNF loop2',         seq:'HSDPARRGELF',                         cat:'🧠', desc:'Facteur neurotrophique'},
+  // 🦵 GENOU
+  {id:'bpc157',    name:'Genou — BPC-157',               seq:'GEPPPGKPADDAGLV',                     cat:'🦵', desc:'Réparation articulaire'},
+  {id:'col2',      name:'Genou — Collagène II',          seq:'GPPGPQGLAGQRGIVGLPGQR',               cat:'🦵', desc:'Cartilage articulaire'},
+  {id:'pdgf',      name:'Genou — PDGF (PRP)',            seq:'TVEIHRQCPRRH',                        cat:'🦵', desc:'Facteur plasma PRP'},
+  {id:'igf1',      name:'Genou — IGF-1',                 seq:'GYGSSSRRAPQT',                        cat:'🦵', desc:'Stimule chondrocytes'},
+  {id:'bmp7',      name:'Genou — BMP-7',                 seq:'VFQQHIHI',                            cat:'🦵', desc:'Morphogène osseux'},
+  // 😴 SOMMEIL
+  {id:'dsip',      name:'Sommeil — DSIP',                seq:'WAGGDASGE',                           cat:'😴', desc:'Delta Sleep-Inducing Peptide'},
+  {id:'oxy',       name:'Sommeil — Ocytocine',           seq:'CYIQNCPLG',                           cat:'😴', desc:'Relaxation + lien'},
+  // 🍽️ BOULIMIE
+  {id:'glp1',      name:'Boulimie — GLP-1',              seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR',     cat:'🍽️', desc:'Hormone de satiété'},
+  // ❤️ TENSION
+  {id:'apelin',    name:'Tension — Apelin-13',            seq:'QRPRLSHKGPMPF',                      cat:'❤️', desc:'Vasodilatateur endogène'},
+  {id:'aqp1',      name:'Aquaporine AQP1',                seq:'CFNPAVTLGAHINPAV',                   cat:'💧', desc:'Canal eau — pression'},
+  // 🏔️ BOLIVIE
+  {id:'epo',       name:'Bolivie — EPO mimetic',          seq:'GGTYSCHFGPLTWVCK',                   cat:'🏔️', desc:'Adaptation altitude'},
+  {id:'hif',       name:'Bolivie — HIF-1α',               seq:'DLDLEMLAPF',                         cat:'🏔️', desc:'Capteur hypoxie'},
+  // 🌵 PEDRO
+  {id:'cry1',      name:'Pedro — Cryptochrome CRY1',      seq:'GKHINDMFH',                          cat:'🌵', desc:'Photorécepteur végétal'},
+  {id:'aqptip',    name:'Pedro — Aquaporine TIP1;1',      seq:'CFNPAVTLGAHINPAV',                   cat:'🌵', desc:'Canal eau végétal'},
+  {id:'pepc',      name:'Pedro — PEPC Métabolisme CAM',   seq:'SIDDQLRQA',                          cat:'🌵', desc:'PEP Carboxylase — métabolisme cactus CAM'},
+  // 🌿 PLANTES
+  {id:'psk',       name:'Plantes — PSK-α Croissance',     seq:'YIYTQ',                              cat:'🌿', desc:'Phytosulfokine — prolifération cellulaire'},
+  {id:'clv3',      name:'Plantes — CLV3 Méristème',       seq:'HEVPSGP',                            cat:'🌿', desc:'Cellules souches — pousse apicale'},
+  {id:'systemin',  name:'Plantes — Systemin',              seq:'AVQSKPPSKRDPPKMQTD',                 cat:'🌿', desc:'Signalisation croissance + défense'},
+  {id:'ralf',      name:'Plantes — RALF1 Racines',         seq:'YISYGALQKN',                        cat:'🌿', desc:'Rapid Alkalinization Factor — racines'},
+  {id:'rubisco',   name:'Plantes — Rubisco Photosynthèse', seq:'GKDNKLNELR',                        cat:'🌿', desc:'Activase Rubisco — fixation CO₂'},
+  {id:'expansin',  name:'Plantes — Expansine Paroi',       seq:'CDPYGGQNRS',                        cat:'🌿', desc:'Extension paroi cellulaire — turgescence'},
+  {id:'kin1',      name:'Plantes — Cytokinines CKX',       seq:'MTGDNKLHEF',                        cat:'🌿', desc:'Division cellulaire — ramification'},
+];
+
+const MASS={A:89,C:121,D:133,E:147,F:165,G:75,H:155,I:131,K:146,L:131,M:149,N:132,P:115,Q:146,R:174,S:105,T:119,V:117,W:204,Y:181};
+const ORD='ACDEFGHIKLMNPQRSTVWY';
+const NAMES={A:'Ala',C:'Cys',D:'Asp',E:'Glu',F:'Phe',G:'Gly',H:'His',I:'Ile',K:'Lys',L:'Leu',M:'Met',N:'Asn',P:'Pro',Q:'Gln',R:'Arg',S:'Ser',T:'Thr',V:'Val',W:'Trp',Y:'Tyr'};
+const SCALES={
+  mib:[51,53,55,57,58,60,62,63,65,67,69,70,72,74,75,77,79,81,82,84],
+  sol:[43,45,47,48,50,52,54,55,57,59,60,62,64,67,69,71,72,74,76,79],
+  la: [45,48,50,52,53,55,57,60,62,65,67,69,72,74,77,79,81,84,86,89],
+  ab: [44,46,48,49,51,53,55,56,58,60,61,63,65,67,68,70,72,73,75,77]
+};
+const NOTE_N=['La','La#','Si','Do','Do#','Ré','Ré#','Mi','Fa','Fa#','Sol','Sol#'];
+const COLS=['#1D9E75','#185FA5','#BA7517','#D85A30','#993556','#534AB7','#3B6D11','#639922','#E24B4A','#EF9F27'];
+const CAT_COLORS={'🧬':'#534AB7','🧠':'#1D9E75','🦵':'#BA7517','😴':'#185FA5','🍽️':'#D85A30','❤️':'#993556','💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11','🌿':'#639922'};
+
+let audioCtx=null,reverbNode=null,masterGain=null;
+let playing=false,stopFlag=false,skipFlag=false;
+let paused=false,pauseResolve=null;
+let sessionStart=0,sessionDuration=0,timerInterval=null;
+let currentInstr='flute';
+
+// TRANSPORT
+function togglePause(){
+  if(!playing)return;
+  paused=!paused;
+  const btn=document.getElementById('t-pause');
+  btn.innerHTML=paused?'&#9654;':'&#9646;&#9646;';
+  btn.style.color=paused?'#1D9E75':'#999';
+  btn.style.borderColor=paused?'#1D9E75':'#333';
+  document.getElementById('t-status').textContent=paused?'En pause...':'En lecture...';
+  if(!paused&&pauseResolve){pauseResolve();pauseResolve=null;}
+}
+async function waitIfPaused(){
+  if(!paused)return;
+  await new Promise(r=>{pauseResolve=r;});
+}
+function updateTransport(name,meta){
+  document.getElementById('t-name').textContent=name||'...';
+  document.getElementById('t-status').textContent=meta||'En lecture...';
+  document.getElementById('t-play').style.opacity='0.35';
+  document.getElementById('t-play').style.pointerEvents='none';
+}
+function resetTransport(){
+  document.getElementById('t-name').textContent='Prêt';
+  document.getElementById('t-status').textContent='Session terminée ✓';
+  document.getElementById('t-play').style.opacity='1';
+  document.getElementById('t-play').style.pointerEvents='auto';
+  document.getElementById('t-pause').innerHTML='&#9646;&#9646;';
+  document.getElementById('t-pause').style.color='#999';
+  document.getElementById('t-pause').style.borderColor='#333';
+  paused=false;
+}
+
+// DIAPASON
+function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
+function onDiapasonChange(){
+  document.getElementById('diapason-freq').textContent=document.getElementById('diapason-chk').checked?'429.62':'440.00';
+  document.getElementById('diapason-box').style.borderColor=document.getElementById('diapason-chk').checked?'#BA7517':'var(--border)';
+}
+
+// HELPERS
+function setInstr(id,btn){currentInstr=id;document.querySelectorAll('.instr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function getScale(){return SCALES[document.getElementById('gamme').value]||SCALES.mib;}
+function midiFor(aa){let i=ORD.indexOf(aa);return i<0?51:getScale()[i%getScale().length];}
+function freqFor(midi){return getA4()*Math.pow(2,(midi-69)/12);}
+function noteName(midi){return NOTE_N[(midi-45+120)%12];}
+function massFor(aa){return MASS[aa]||110;}
+function velFor(aa){let m=massFor(aa);return Math.min(0.9,0.45+(m-75)/(204-75)*0.45);}
+function ticksFor(aa){let m=massFor(aa);return m<=100?0.5:m<=160?1:2;}
+
+// AUDIO
+async function initAudio(){
+  if(audioCtx)return;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  masterGain=audioCtx.createGain(); masterGain.gain.value=0.7;
+  const rvbLen=audioCtx.sampleRate*2.5;
+  const rvbBuf=audioCtx.createBuffer(2,rvbLen,audioCtx.sampleRate);
+  for(let c=0;c<2;c++){const d=rvbBuf.getChannelData(c);for(let i=0;i<rvbLen;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/rvbLen,2.5);}
+  reverbNode=audioCtx.createConvolver(); reverbNode.buffer=rvbBuf;
+  const dry=audioCtx.createGain(),wet=audioCtx.createGain();
+  masterGain.connect(dry); masterGain.connect(reverbNode); reverbNode.connect(wet);
+  dry.connect(audioCtx.destination); wet.connect(audioCtx.destination);
+  const upRvb=()=>{const v=parseFloat(document.getElementById('rvb').value);dry.gain.value=1-v*0.6;wet.gain.value=v*0.8;};
+  upRvb(); document.getElementById('rvb').addEventListener('input',upRvb);
+}
+
+function playFlute(freq,dur,vel){
+  const t=audioCtx.currentTime;
+  const osc=audioCtx.createOscillator(),osc2=audioCtx.createOscillator(),noise=audioCtx.createOscillator();
+  const lfo=audioCtx.createOscillator(),lfoG=audioCtx.createGain(),noiseG=audioCtx.createGain();
+  const g=audioCtx.createGain(),filt=audioCtx.createBiquadFilter();
+  osc.type='triangle';osc.frequency.value=freq;
+  osc2.type='sine';osc2.frequency.value=freq*2.01;
+  lfo.type='sine';lfo.frequency.value=5.5;lfoG.gain.value=freq*0.012;
+  lfo.connect(lfoG);lfoG.connect(osc.frequency);
+  noise.type='sawtooth';noise.frequency.value=freq*0.5;noiseG.gain.value=vel*0.04;
+  filt.type='bandpass';filt.frequency.value=freq*3;filt.Q.value=0.8;
+  noise.connect(noiseG);noiseG.connect(filt);
+  const mix=audioCtx.createGain();mix.gain.value=0.6;
+  osc.connect(g);osc2.connect(mix);mix.connect(g);filt.connect(g);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*0.55,t+Math.min(0.08,dur*0.2));
+  g.gain.setValueAtTime(vel*0.55,t+dur*0.6);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.96);
+  g.connect(masterGain);[osc,osc2,noise,lfo].forEach(o=>{o.start(t);o.stop(t+dur);});
+}
+
+function playVoixF(freq,dur,vel){
+  const t=audioCtx.currentTime,g=audioCtx.createGain();
+  const lfo=audioCtx.createOscillator(),lfoG=audioCtx.createGain();
+  lfo.type='sine';lfo.frequency.value=5.2;lfoG.gain.value=freq*0.015;lfo.connect(lfoG);
+  [[1,0.55],[2,0.22],[3,0.12],[4,0.06]].forEach(([h,a])=>{
+    const o=audioCtx.createOscillator(),og=audioCtx.createGain();
+    o.type='sine';o.frequency.value=freq*h;lfoG.connect(o.frequency);
+    og.gain.value=a*vel;o.connect(og);og.connect(g);o.start(t);o.stop(t+dur);
+  });
+  const f1=audioCtx.createBiquadFilter(),f2=audioCtx.createBiquadFilter();
+  f1.type='peaking';f1.frequency.value=800;f1.Q.value=4;f1.gain.value=8;
+  f2.type='peaking';f2.frequency.value=2400;f2.Q.value=3;f2.gain.value=6;
+  g.connect(f1);f1.connect(f2);f2.connect(masterGain);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*0.5,t+Math.min(0.12,dur*0.25));
+  g.gain.setValueAtTime(vel*0.5,t+dur*0.65);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.97);
+  lfo.start(t);lfo.stop(t+dur);
+}
+
+function playVoixH(freq,dur,vel){
+  const t=audioCtx.currentTime,rf=freq*0.5,g=audioCtx.createGain();
+  const lfo=audioCtx.createOscillator(),lfoG=audioCtx.createGain();
+  lfo.type='sine';lfo.frequency.value=4.8;lfoG.gain.value=rf*0.01;lfo.connect(lfoG);
+  [[1,0.6],[2,0.25],[3,0.1],[5,0.05]].forEach(([h,a])=>{
+    const o=audioCtx.createOscillator(),og=audioCtx.createGain();
+    o.type=h===1?'sawtooth':'sine';o.frequency.value=rf*h;lfoG.connect(o.frequency);
+    og.gain.value=a*vel;o.connect(og);og.connect(g);o.start(t);o.stop(t+dur);
+  });
+  const f1=audioCtx.createBiquadFilter(),f2=audioCtx.createBiquadFilter(),lp=audioCtx.createBiquadFilter();
+  f1.type='peaking';f1.frequency.value=500;f1.Q.value=3;f1.gain.value=10;
+  f2.type='peaking';f2.frequency.value=1500;f2.Q.value=2;f2.gain.value=6;
+  lp.type='lowpass';lp.frequency.value=3000;
+  g.connect(f1);f1.connect(f2);f2.connect(lp);lp.connect(masterGain);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*0.55,t+Math.min(0.15,dur*0.25));
+  g.gain.setValueAtTime(vel*0.55,t+dur*0.6);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.97);
+  lfo.start(t);lfo.stop(t+dur);
+}
+
+function playChoeur(freq,dur,vel){
+  const t=audioCtx.currentTime;
+  [{f:freq*0.5,type:'sawtooth',vol:0.35},{f:freq*0.502,type:'sine',vol:0.25},
+   {f:freq,type:'triangle',vol:0.3},{f:freq*1.003,type:'sine',vol:0.2}].forEach(({f,type,vol})=>{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    const lfo=audioCtx.createOscillator(),lg=audioCtx.createGain();
+    lfo.type='sine';lfo.frequency.value=4.5+(Math.random()*1.5);lg.gain.value=f*0.008;
+    lfo.connect(lg);lg.connect(o.frequency);o.type=type;o.frequency.value=f;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*vol,t+Math.min(0.18,dur*0.3));
+    g.gain.setValueAtTime(vel*vol,t+dur*0.62);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.97);
+    o.connect(g);g.connect(masterGain);o.start(t);o.stop(t+dur);lfo.start(t);lfo.stop(t+dur);
+  });
+}
+
+function playCristal(freq,dur,vel){
+  const t=audioCtx.currentTime;
+  [[1,0.6],[2,0.25],[4,0.1],[8,0.04]].forEach(([h,a])=>{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type='sine';o.frequency.value=freq*h;
+    g.gain.setValueAtTime(vel*a,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur*(h===1?0.95:0.5));
+    o.connect(g);g.connect(masterGain);o.start(t);o.stop(t+dur);
+  });
+}
+
+function playBol(freq,dur,vel){
+  const t=audioCtx.currentTime,f0=freq*0.92;
+  [{f:f0,a:0.6,dec:dur},{f:f0*2.76,a:0.3,dec:dur*0.7},{f:f0*5.2,a:0.12,dec:dur*0.5}].forEach(({f,a,dec})=>{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(vel*a,t);
+    g.gain.exponentialRampToValueAtTime(0.001,t+dec*0.97);o.connect(g);g.connect(masterGain);o.start(t);o.stop(t+dec);
+  });
+  const ck=audioCtx.createOscillator(),cg=audioCtx.createGain();
+  ck.type='sine';ck.frequency.value=freq*3;cg.gain.setValueAtTime(vel*0.4,t);
+  cg.gain.exponentialRampToValueAtTime(0.001,t+0.04);ck.connect(cg);cg.connect(masterGain);ck.start(t);ck.stop(t+0.04);
+}
+
+function playNote(freq,dur,vel){
+  switch(currentInstr){
+    case 'flute':   playFlute(freq,dur,vel);  break;
+    case 'voix_f':  playVoixF(freq,dur,vel);  break;
+    case 'voix_h':  playVoixH(freq,dur,vel);  break;
+    case 'choeur':  playChoeur(freq,dur,vel); break;
+    case 'cristal': playCristal(freq,dur,vel);break;
+    case 'bol':     playBol(freq,dur,vel);    break;
+    default:        playFlute(freq,dur,vel);
+  }
+}
+
+// VISUALISEUR
+function showSeq(prot){
+  const wrap=document.getElementById('seq-wrap'); wrap.innerHTML='';
+  prot.seq.split('').forEach((aa,i)=>{
+    const idx=ORD.indexOf(aa),col=COLS[idx%COLS.length];
+    const d=document.createElement('div'); d.className='aa-cell'; d.id='aa'+i;
+    d.style.borderColor=col;
+    d.title=NAMES[aa]||aa+' · '+massFor(aa)+'Da · '+noteName(midiFor(aa));
+    d.innerHTML='<span style="color:'+col+'">'+aa+'</span><span class="nn">'+noteName(midiFor(aa))+'</span>';
+    wrap.appendChild(d);
+  });
+  drawWave(prot.seq.split(''));
+  document.getElementById('now-box').style.display='block';
+  document.getElementById('now-title').textContent=prot.cat+' '+prot.name;
+  document.getElementById('now-meta').textContent=prot.desc+' · '+prot.seq.length+' acides aminés';
+  updateTransport(prot.cat+' '+prot.name, prot.desc);
+}
+
+function drawWave(seq){
+  const cv=document.getElementById('wave'),c=cv.getContext('2d');
+  c.clearRect(0,0,cv.width,cv.height); c.strokeStyle='#1D9E75'; c.lineWidth=1.5; c.beginPath();
+  for(let x=0;x<cv.width;x++){
+    const idx=Math.floor(x/cv.width*seq.length),aa=seq[idx]||'G';
+    const f=freqFor(midiFor(aa)),norm=(Math.log2(f)-Math.log2(200))/(Math.log2(900)-Math.log2(200));
+    const y=cv.height/2-Math.sin(x*0.22+norm*7)*(cv.height*0.38)*(0.35+norm*0.55);
+    x===0?c.moveTo(x,y):c.lineTo(x,y);
+  }
+  c.stroke();
+}
+
+// PLAY ONE
+async function playOne(prot){
+  const seq=prot.seq.split(''),bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
+  showSeq(prot);
+  document.querySelectorAll('.pl-item').forEach(e=>e.classList.remove('active-item'));
+  const pli=document.getElementById('pl-'+prot.id);
+  if(pli){pli.classList.add('active-item');pli.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  for(let i=0;i<seq.length;i++){
+    if(stopFlag||skipFlag)return false;
+    const aa=seq[i],dur=ticksFor(aa)*beat;
+    playNote(freqFor(midiFor(aa)),dur,velFor(aa));
+    document.querySelectorAll('.aa-cell').forEach(e=>e.classList.remove('lit'));
+    const cell=document.getElementById('aa'+i); if(cell)cell.classList.add('lit');
+    document.getElementById('prog-bar').style.width=((i+1)/seq.length*100)+'%';
+    await new Promise(r=>setTimeout(r,dur*1000));
+    await waitIfPaused();
+  }
+  document.querySelectorAll('.aa-cell').forEach(e=>e.classList.remove('lit'));
+  document.getElementById('prog-bar').style.width='0';
+  return true;
+}
+
+// SESSION
+function fmtTime(s){const m=Math.floor(s/60);return m+':'+(s%60<10?'0':'')+Math.floor(s%60);}
+function onDurChange(){
+  document.getElementById('dur-val').textContent=document.getElementById('dur').value;
+  document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);
+  buildPlaylist();
+}
+
+async function startSession(){
+  if(playing)return;
+  const queue=getQueue();
+  if(!queue.length){alert('Coche au moins une protéodie !');return;}
+  playing=true; stopFlag=false;
+  await initAudio();
+  if(audioCtx.state==='suspended')await audioCtx.resume();
+  const dur=parseInt(document.getElementById('dur').value)*60;
+  sessionDuration=dur; sessionStart=Date.now();
+  timerInterval=setInterval(()=>{
+    const el=(Date.now()-sessionStart)/1000;
+    document.getElementById('prog-time').textContent=fmtTime(el);
+    document.getElementById('prog-total').textContent=fmtTime(Math.max(0,dur-el));
+  },500);
+  const loop=document.getElementById('loop-chk').checked;
+  let loopCount=0;
+  outer:while(true){
+    loopCount++;
+    for(let i=0;i<queue.length;i++){
+      if(stopFlag)break outer;
+      skipFlag=false;
+      if((Date.now()-sessionStart)/1000>=dur)break outer;
+      document.getElementById('prog-loop').textContent='Boucle '+loopCount+' · '+(i+1)+'/'+queue.length;
+      await playOne(queue[i]);
+      if(skipFlag){skipFlag=false;continue;}
+    }
+    if(!loop)break;
+    if((Date.now()-sessionStart)/1000>=dur)break;
+  }
+  endSession();
+}
+
+function endSession(){
+  playing=false; stopFlag=false; skipFlag=false;
+  clearInterval(timerInterval);
+  document.getElementById('prog-loop').textContent='Session terminée ✓';
+  resetTransport();
+  document.getElementById('now-box').style.display='none';
+  document.getElementById('seq-wrap').innerHTML='';
+  document.querySelectorAll('.pl-item').forEach(e=>e.classList.remove('active-item'));
+}
+function stopSession(){stopFlag=true;}
+function skipNext(){skipFlag=true;}
+function getQueue(){return PROTEODIES.filter(p=>{const c=document.getElementById('chk-'+p.id);return c&&c.checked;});}
+function selectAll(v){PROTEODIES.forEach(p=>{const c=document.getElementById('chk-'+p.id);if(c)c.checked=v;});}
+
+// PLAYLIST
+function buildPlaylist(){
+  const pl=document.getElementById('playlist'); pl.innerHTML='';
+  const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
+  PROTEODIES.forEach(p=>{
+    const durS=p.seq.split('').reduce((s,a)=>s+ticksFor(a)*beat,0);
+    const durStr=durS<60?Math.round(durS)+'s':(durS/60).toFixed(1)+'min';
+    const col=CAT_COLORS[p.cat]||'#1D9E75';
+    const div=document.createElement('div'); div.className='pl-item'; div.id='pl-'+p.id;
+    div.innerHTML='<input type="checkbox" id="chk-'+p.id+'" checked>'
+      +'<div class="pl-label"><div class="pl-name"><span style="margin-right:4px">'+p.cat+'</span>'+p.name
+      +'<span class="pl-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+'aa</span></div>'
+      +'<div class="pl-meta">'+p.desc+' · '+durStr+'/boucle</div></div>';
+    pl.appendChild(div);
+  });
+}
+
+buildPlaylist();
+onDiapasonChange();
+document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);
+document.getElementById('bpm').addEventListener('change',buildPlaylist);
+</script>
+</body>
+</html>

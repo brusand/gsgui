@@ -1,9 +1,27 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import fs from 'fs'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'static-html-routes',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          if (req.url?.startsWith('/proteodies')) {
+            const filePath = path.resolve(__dirname, 'public/proteodies/index.html')
+            res.setHeader('Content-Type', 'text/html')
+            res.end(fs.readFileSync(filePath))
+            return
+          }
+          next()
+        })
+      }
+    }
+  ],
   server: {
     port: 3000,
     host: true,
