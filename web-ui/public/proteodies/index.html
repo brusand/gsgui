@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Proteodies Player</title>
+<meta name="description" content="Sonification de séquences peptidiques - 56 protéodies">
+<meta name="theme-color" content="#1D9E75">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Protéodies">
+<link rel="manifest" href="/proteodies/manifest.json">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80'%3E🧬%3C/text%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -591,6 +598,15 @@ function buildPlaylist(){
 buildFilters();
 buildPlaylist();
 document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);
+
+// Enregistrement du Service Worker pour fonctionnement hors ligne
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/proteodies/sw.js')
+      .then(reg=>console.log('Service Worker enregistré:',reg.scope))
+      .catch(err=>console.log('Erreur Service Worker:',err));
+  });
+}
 </script>
 </body>
 </html>
