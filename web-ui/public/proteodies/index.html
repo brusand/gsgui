@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>Protéodies Player</title>
+<title>Proteodies Player</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#252525;--border:#333;
-  --text:#e8e8e8;--text2:#999;--teal:#1D9E75;--teal2:#0F6E56;
-  --red:#D85A30;--radius:10px;
-  --font:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif
+  --text:#e8e8e8;--text2:#999;--teal:#1D9E75;--red:#D85A30;
+  --radius:10px;--font:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif
 }
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;padding:16px;max-width:800px;margin:0 auto}
 h1{font-size:18px;font-weight:500;color:var(--teal);margin-bottom:4px}
@@ -25,6 +24,8 @@ h1{font-size:18px;font-weight:500;color:var(--teal);margin-bottom:4px}
 .pl-name{font-size:14px;font-weight:500;color:var(--text)}
 .pl-meta{font-size:11px;color:var(--text2);margin-top:2px}
 .pl-badge{font-size:10px;padding:2px 7px;border-radius:4px;margin-left:6px;font-weight:500}
+.pl-info-btn{width:22px;height:22px;border-radius:50%;border:none;background:#333;color:#666;font-size:11px;cursor:pointer;flex-shrink:0}
+.pl-info-btn:hover{background:#444;color:#aaa}
 .ctrl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .ctrl-label{font-size:13px;color:var(--text2);min-width:60px}
 .ctrl-val{font-size:14px;font-weight:500;color:var(--text);min-width:32px;text-align:right}
@@ -47,38 +48,54 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 .instr-btn:active{opacity:0.7}
 .instr-btn.sel{border-color:var(--teal);color:var(--teal);background:#1D9E7515}
 .instr-icon{font-size:20px;display:block;margin-bottom:3px}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:#1a1a1a;border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:800px;max-height:80vh;overflow-y:auto;border-top:2px solid var(--teal)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.modal-title{font-size:16px;font-weight:500;color:var(--teal)}
+.modal-close{width:32px;height:32px;border-radius:50%;border:none;background:#333;color:#999;font-size:18px;cursor:pointer}
+.modal-body{font-size:14px;color:#ccc;line-height:1.7}
+.modal-seq{font-family:monospace;font-size:12px;color:#666;margin-top:10px;word-break:break-all;padding:8px;background:#111;border-radius:6px}
+.modal-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.modal-badge{font-size:11px;padding:3px 9px;border-radius:4px;font-weight:500}
+.filter-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.filter-btn{padding:8px 12px;border-radius:8px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);font-size:14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.filter-btn:hover{border-color:#555}
+.filter-btn.active{border-color:var(--teal);background:#1D9E7515;color:var(--teal)}
+.filter-count{font-size:11px;background:#33333388;padding:2px 6px;border-radius:4px;font-weight:500}
+.filter-info{font-size:12px;color:var(--text2);margin-bottom:10px}
 </style>
 </head>
 <body>
 
-<!-- TRANSPORT FIXE -->
+<!-- TRANSPORT -->
 <div style="position:sticky;top:0;z-index:100;background:#0f0f0f;border-bottom:0.5px solid #333;padding:10px 0 14px;margin:-16px 0 16px;display:flex;align-items:center;gap:10px;">
-  <button id="t-play" onclick="startSession()" title="Lancer" style="width:60px;height:60px;border-radius:50%;border:none;background:#1D9E75;color:#04342C;font-size:24px;cursor:pointer;flex-shrink:0;">&#9654;</button>
-  <button id="t-pause" onclick="togglePause()" title="Pause" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;&#9646;</button>
-  <button id="t-stop" onclick="stopSession()" title="Stop" style="width:60px;height:60px;border-radius:50%;border:none;background:#D85A30;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;</button>
-  <button id="t-skip" onclick="skipNext()" title="Suivant" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">&#9654;&#9654;</button>
+  <button id="t-play" onclick="startSession()" style="width:60px;height:60px;border-radius:50%;border:none;background:#1D9E75;color:#04342C;font-size:24px;cursor:pointer;flex-shrink:0;">&#9654;</button>
+  <button id="t-pause" onclick="togglePause()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;&#9646;</button>
+  <button onclick="stopSession()" style="width:60px;height:60px;border-radius:50%;border:none;background:#D85A30;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;</button>
+  <button onclick="skipNext()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">&#9654;&#9654;</button>
   <div style="flex:1;min-width:0;padding-left:4px;">
-    <div id="t-name" style="font-size:13px;font-weight:500;color:#1D9E75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Prêt</div>
-    <div id="t-status" style="font-size:11px;color:#999;margin-top:2px;">Coche des protéodies et lance &#9654;</div>
+    <div id="t-name" style="font-size:13px;font-weight:500;color:#1D9E75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Pret</div>
+    <div id="t-status" style="font-size:11px;color:#999;margin-top:2px;">Coche des proteodies et lance &#9654;</div>
   </div>
 </div>
 
-<h1>🧬 Protéodies Player</h1>
-<p class="sub">Sonification de séquences peptidiques · Ajouter à l'écran d'accueil sur iPad</p>
+<h1>&#x1F9EC; Proteodies Player</h1>
+<p class="sub">Sonification de sequences peptidiques &middot; 56 proteodies &middot; iPad ready</p>
 
 <div class="now" id="now-box" style="display:none">
-  <div class="now-title" id="now-title">—</div>
-  <div class="now-meta" id="now-meta">—</div>
+  <div class="now-title" id="now-title">&#8212;</div>
+  <div class="now-meta" id="now-meta">&#8212;</div>
 </div>
 
 <div class="card">
-  <div class="card-title">Séquence en cours</div>
+  <div class="card-title">Sequence en cours</div>
   <canvas class="wave" id="wave" width="700" height="40"></canvas>
   <div class="seq-wrap" id="seq-wrap"></div>
   <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
   <div class="prog-info">
     <span id="prog-time">0:00</span>
-    <span id="prog-loop">—</span>
+    <span id="prog-loop">&#8212;</span>
     <span id="prog-total">0:00</span>
   </div>
 </div>
@@ -86,25 +103,25 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 <div class="card">
   <div class="card-title">Instrument</div>
   <div class="instr-grid">
-    <div class="instr-btn sel" onclick="setInstr('flute',this)"><span class="instr-icon">🪈</span>Flûte andine</div>
-    <div class="instr-btn" onclick="setInstr('voix_f',this)"><span class="instr-icon">🎤</span>Voix femmes</div>
-    <div class="instr-btn" onclick="setInstr('voix_h',this)"><span class="instr-icon">🎵</span>Voix hommes</div>
-    <div class="instr-btn" onclick="setInstr('choeur',this)"><span class="instr-icon">🎶</span>Chœur mixte</div>
-    <div class="instr-btn" onclick="setInstr('cristal',this)"><span class="instr-icon">✨</span>Cristal</div>
-    <div class="instr-btn" onclick="setInstr('bol',this)"><span class="instr-icon">🔔</span>Bol tibétain</div>
+    <div class="instr-btn sel" onclick="setInstr('flute',this)"><span class="instr-icon">&#x1FAA8;</span>Flute andine</div>
+    <div class="instr-btn" onclick="setInstr('voix_f',this)"><span class="instr-icon">&#x1F3A4;</span>Voix femmes</div>
+    <div class="instr-btn" onclick="setInstr('voix_h',this)"><span class="instr-icon">&#x1F3B5;</span>Voix hommes</div>
+    <div class="instr-btn" onclick="setInstr('choeur',this)"><span class="instr-icon">&#x1F3B6;</span>Choeur mixte</div>
+    <div class="instr-btn" onclick="setInstr('cristal',this)"><span class="instr-icon">&#x2728;</span>Cristal</div>
+    <div class="instr-btn" onclick="setInstr('bol',this)"><span class="instr-icon">&#x1F514;</span>Bol tibetain</div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title">Réglages</div>
+  <div class="card-title">Reglages</div>
   <div class="ctrl-row">
     <span class="ctrl-label">Tempo</span>
-    <input type="range" id="bpm" min="25" max="180" value="65" step="1" oninput="document.getElementById('bpm-val').textContent=this.value">
+    <input type="range" id="bpm" min="25" max="180" value="65" step="1" oninput="document.getElementById('bpm-val').textContent=this.value;buildPlaylist()">
     <span class="ctrl-val" id="bpm-val">65</span>
     <span style="font-size:12px;color:var(--text2)">BPM</span>
   </div>
   <div class="ctrl-row">
-    <span class="ctrl-label">Durée</span>
+    <span class="ctrl-label">Duree</span>
     <input type="range" id="dur" min="1" max="30" value="10" step="1" oninput="onDurChange()">
     <span class="ctrl-val" id="dur-val">10</span>
     <span style="font-size:12px;color:var(--text2)">min</span>
@@ -116,7 +133,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Gamme</span>
-    <select id="gamme" onchange="buildPlaylist()">
+    <select id="gamme">
       <option value="mib">Mib Lydien</option>
       <option value="sol">Sol majeur</option>
       <option value="la">La mineur</option>
@@ -127,69 +144,107 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     <span class="ctrl-label">Boucle</span>
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
       <input type="checkbox" id="loop-chk" style="width:20px;height:20px;accent-color:var(--teal)" checked>
-      <span style="font-size:13px;color:var(--text2)">Répéter jusqu'à la durée cible</span>
+      <span style="font-size:13px;color:var(--text2)">Repeter jusqu'a la duree cible</span>
     </label>
   </div>
-  <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.2s" id="diapason-box">
+  <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid #BA7517;transition:border-color 0.2s" id="diapason-box">
     <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
-      <input type="checkbox" id="diapason-chk" style="width:20px;height:20px;accent-color:#BA7517" onchange="onDiapasonChange()" checked>
+      <input type="checkbox" id="diapason-chk" style="width:20px;height:20px;accent-color:#BA7517" checked onchange="onDiapasonChange()">
       <div>
-        <div style="font-size:13px;font-weight:500;color:var(--text)">💧 Diapason de l'eau H₂O</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px">La4 = <span id="diapason-freq">440.00</span> Hz · Marc Henry</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text)">&#x1F4A7; Diapason de l'eau H2O</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">La4 = <span id="diapason-freq">429.62</span> Hz &nbsp;&middot;&nbsp; Marc Henry</div>
       </div>
     </label>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title">Playlist — cocher pour enchaîner</div>
+  <div class="card-title">Filtres par categorie</div>
+  <div class="filter-wrap" id="filter-wrap"></div>
+  <div class="filter-info" id="filter-info">56 proteodies affichees</div>
+</div>
+
+<div class="card">
+  <div class="card-title">Playlist &#8212; cocher pour enchainer</div>
   <div class="playlist" id="playlist"></div>
   <div style="display:flex;gap:8px;margin-top:10px">
     <button onclick="selectAll(true)" style="flex:1;padding:8px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">Tout cocher</button>
-    <button onclick="selectAll(false)" style="flex:1;padding:8px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">Tout décocher</button>
+    <button onclick="selectAll(false)" style="flex:1;padding:8px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">Tout decocher</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="desc-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">&#8212;</div>
+      <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="modal-body" id="modal-body">&#8212;</div>
+    <div class="modal-seq" id="modal-seq">&#8212;</div>
+    <div class="modal-meta" id="modal-meta"></div>
   </div>
 </div>
 
 <script>
 const PROTEODIES=[
-  // 🧬 PIEZO1
-  {id:'piezo1',    name:'PIEZO1 — GsMTx4',           seq:'GCLEFWWKCNPNDDKCCGPKLKCHAISYKECTK', cat:'🧬', desc:'Inhibiteur canal mécano-sensible'},
-  // 🧠 NEURO
-  {id:'tph1',      name:'Neuro — TPH1 Sérotonine',    seq:'WFLSQQHER',                          cat:'🧠', desc:'Tryptophane Hydroxylase — SEROT 40%'},
-  {id:'th',        name:'Neuro — TH Dopamine',         seq:'ARQHAFAQLR',                          cat:'🧠', desc:'Tyrosine Hydroxylase — 34DOPAC 25%'},
-  {id:'dbh',       name:'Neuro — DBH Noradrénaline',   seq:'HFHWHTLGM',                           cat:'🧠', desc:'Dopamine β-Hydroxylase'},
-  {id:'semax',     name:'Mémoire — Sémax',              seq:'MEHFPGP',                             cat:'🧠', desc:'Nootropique BDNF + dopamine'},
-  {id:'bdnf',      name:'Mémoire — BDNF loop2',         seq:'HSDPARRGELF',                         cat:'🧠', desc:'Facteur neurotrophique'},
-  // 🦵 GENOU
-  {id:'bpc157',    name:'Genou — BPC-157',               seq:'GEPPPGKPADDAGLV',                     cat:'🦵', desc:'Réparation articulaire'},
-  {id:'col2',      name:'Genou — Collagène II',          seq:'GPPGPQGLAGQRGIVGLPGQR',               cat:'🦵', desc:'Cartilage articulaire'},
-  {id:'pdgf',      name:'Genou — PDGF (PRP)',            seq:'TVEIHRQCPRRH',                        cat:'🦵', desc:'Facteur plasma PRP'},
-  {id:'igf1',      name:'Genou — IGF-1',                 seq:'GYGSSSRRAPQT',                        cat:'🦵', desc:'Stimule chondrocytes'},
-  {id:'bmp7',      name:'Genou — BMP-7',                 seq:'VFQQHIHI',                            cat:'🦵', desc:'Morphogène osseux'},
-  // 😴 SOMMEIL
-  {id:'dsip',      name:'Sommeil — DSIP',                seq:'WAGGDASGE',                           cat:'😴', desc:'Delta Sleep-Inducing Peptide'},
-  {id:'oxy',       name:'Sommeil — Ocytocine',           seq:'CYIQNCPLG',                           cat:'😴', desc:'Relaxation + lien'},
-  // 🍽️ BOULIMIE
-  {id:'glp1',      name:'Boulimie — GLP-1',              seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR',     cat:'🍽️', desc:'Hormone de satiété'},
-  // ❤️ TENSION
-  {id:'apelin',    name:'Tension — Apelin-13',            seq:'QRPRLSHKGPMPF',                      cat:'❤️', desc:'Vasodilatateur endogène'},
-  {id:'aqp1',      name:'Aquaporine AQP1',                seq:'CFNPAVTLGAHINPAV',                   cat:'💧', desc:'Canal eau — pression'},
-  // 🏔️ BOLIVIE
-  {id:'epo',       name:'Bolivie — EPO mimetic',          seq:'GGTYSCHFGPLTWVCK',                   cat:'🏔️', desc:'Adaptation altitude'},
-  {id:'hif',       name:'Bolivie — HIF-1α',               seq:'DLDLEMLAPF',                         cat:'🏔️', desc:'Capteur hypoxie'},
-  // 🌵 PEDRO
-  {id:'cry1',      name:'Pedro — Cryptochrome CRY1',      seq:'GKHINDMFH',                          cat:'🌵', desc:'Photorécepteur végétal'},
-  {id:'aqptip',    name:'Pedro — Aquaporine TIP1;1',      seq:'CFNPAVTLGAHINPAV',                   cat:'🌵', desc:'Canal eau végétal'},
-  {id:'pepc',      name:'Pedro — PEPC Métabolisme CAM',   seq:'SIDDQLRQA',                          cat:'🌵', desc:'PEP Carboxylase — métabolisme cactus CAM'},
-  // 🌿 PLANTES
-  {id:'psk',       name:'Plantes — PSK-α Croissance',     seq:'YIYTQ',                              cat:'🌿', desc:'Phytosulfokine — prolifération cellulaire'},
-  {id:'clv3',      name:'Plantes — CLV3 Méristème',       seq:'HEVPSGP',                            cat:'🌿', desc:'Cellules souches — pousse apicale'},
-  {id:'systemin',  name:'Plantes — Systemin',              seq:'AVQSKPPSKRDPPKMQTD',                 cat:'🌿', desc:'Signalisation croissance + défense'},
-  {id:'ralf',      name:'Plantes — RALF1 Racines',         seq:'YISYGALQKN',                        cat:'🌿', desc:'Rapid Alkalinization Factor — racines'},
-  {id:'rubisco',   name:'Plantes — Rubisco Photosynthèse', seq:'GKDNKLNELR',                        cat:'🌿', desc:'Activase Rubisco — fixation CO₂'},
-  {id:'expansin',  name:'Plantes — Expansine Paroi',       seq:'CDPYGGQNRS',                        cat:'🌿', desc:'Extension paroi cellulaire — turgescence'},
-  {id:'kin1',      name:'Plantes — Cytokinines CKX',       seq:'MTGDNKLHEF',                        cat:'🌿', desc:'Division cellulaire — ramification'},
+  {id:'piezo1', name:'PIEZO1 — GsMTx4', seq:'GCLEFWWKCNPNDDKCCGPKLKCHAISYKECTK', cat:'🧬', desc:'Inhibiteur canal mécano-sensible'},
+  {id:'tph1', name:'Neuro — TPH1 Sérotonine', seq:'WFLSQQHER', cat:'🧠', desc:'Tryptophane Hydroxylase — SEROT 40%'},
+  {id:'th', name:'Neuro — TH Dopamine', seq:'ARQHAFAQLR', cat:'🧠', desc:'Tyrosine Hydroxylase — 34DOPAC 25%'},
+  {id:'dbh', name:'Neuro — DBH Noradrénaline', seq:'HFHWHTLGM', cat:'🧠', desc:'Dopamine β-Hydroxylase'},
+  {id:'semax', name:'Mémoire — Sémax', seq:'MEHFPGP', cat:'🧠', desc:'Nootropique BDNF + dopamine'},
+  {id:'bdnf', name:'Mémoire — BDNF loop2', seq:'HSDPARRGELF', cat:'🧠', desc:'Facteur neurotrophique'},
+  {id:'bpc157', name:'Genou — BPC-157', seq:'GEPPPGKPADDAGLV', cat:'🦵', desc:'Réparation articulaire'},
+  {id:'col2', name:'Genou — Collagène II', seq:'GPPGPQGLAGQRGIVGLPGQR', cat:'🦵', desc:'Cartilage articulaire'},
+  {id:'pdgf', name:'Genou — PDGF (PRP)', seq:'TVEIHRQCPRRH', cat:'🦵', desc:'Facteur plasma PRP'},
+  {id:'igf1', name:'Genou — IGF-1', seq:'GYGSSSRRAPQT', cat:'🦵', desc:'Stimule chondrocytes'},
+  {id:'bmp7', name:'Genou — BMP-7', seq:'VFQQHIHI', cat:'🦵', desc:'Morphogène osseux'},
+  {id:'dsip', name:'Sommeil — DSIP', seq:'WAGGDASGE', cat:'😴', desc:'Delta Sleep-Inducing Peptide'},
+  {id:'oxy', name:'Sommeil — Ocytocine', seq:'CYIQNCPLG', cat:'😴', desc:'Relaxation + lien social'},
+  {id:'glp1', name:'Boulimie — GLP-1', seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR', cat:'🍽️', desc:'Hormone de satiété'},
+  {id:'apelin', name:'Tension — Apelin-13', seq:'QRPRLSHKGPMPF', cat:'❤️', desc:'Vasodilatateur endogène'},
+  {id:'aqp1', name:'Aquaporine AQP1', seq:'CFNPAVTLGAHINPAV', cat:'💧', desc:'Canal eau — pression artérielle'},
+  {id:'epo', name:'Bolivie — EPO mimetic', seq:'GGTYSCHFGPLTWVCK', cat:'🏔️', desc:'Adaptation altitude'},
+  {id:'hif', name:'Bolivie — HIF-1α', seq:'DLDLEMLAPF', cat:'🏔️', desc:'Capteur hypoxie'},
+  {id:'cry1', name:'Pedro — Cryptochrome CRY1', seq:'GKHINDMFH', cat:'🌵', desc:'Photorécepteur végétal'},
+  {id:'aqptip', name:'Pedro — Aquaporine TIP1;1', seq:'CFNPAVTLGAHINPAV', cat:'🌵', desc:'Canal eau végétal'},
+  {id:'pepc', name:'Pedro — PEPC Métabolisme CAM', seq:'SIDDQLRQA', cat:'🌵', desc:'PEP Carboxylase — cactus CAM'},
+  {id:'psk', name:'Plantes — PSK-α Croissance', seq:'YIYTQ', cat:'🌿', desc:'Phytosulfokine — prolifération cellulaire'},
+  {id:'clv3', name:'Plantes — CLV3 Méristème', seq:'HEVPSGP', cat:'🌿', desc:'Cellules souches — pousse apicale'},
+  {id:'systemin', name:'Plantes — Systemin', seq:'AVQSKPPSKRDPPKMQTD', cat:'🌿', desc:'Signalisation croissance + défense'},
+  {id:'ralf', name:'Plantes — RALF1 Racines', seq:'YISYGALQKN', cat:'🌿', desc:'Rapid Alkalinization Factor'},
+  {id:'rubisco', name:'Plantes — Rubisco Photosynthèse', seq:'GKDNKLNELR', cat:'🌿', desc:'Activase Rubisco — fixation CO₂'},
+  {id:'expansin', name:'Plantes — Expansine Paroi', seq:'CDPYGGQNRS', cat:'🌿', desc:'Extension paroi cellulaire'},
+  {id:'kin1', name:'Plantes — Cytokinines CKX', seq:'MTGDNKLHEF', cat:'🌿', desc:'Division cellulaire — ramification'},
+  {id:'pr1', name:'Concombre — PR-1 Résistance', seq:'NQYRGVPSTGAKVDYR', cat:'🥒', desc:'Pathogenesis-Related 1 — résistance systémique'},
+  {id:'chi', name:'Concombre — Chitinase Antifongique', seq:'SGQFNNYSNYY', cat:'🥒', desc:'Dégrade la paroi des champignons'},
+  {id:'npr1', name:'Concombre — NPR1 SAR', seq:'DNEAKEKYF', cat:'🥒', desc:'Voie acide salicylique — immunité systémique'},
+  {id:'pdf12', name:'Concombre — Défensine PDF1.2', seq:'KTCENLADKY', cat:'🥒', desc:'Peptide antimicrobien — défense fongique'},
+  {id:'wrky30', name:'Concombre — WRKY30 Stress', seq:'WRKYGQK', cat:'🥒', desc:'Facteur transcription — réponse pathogènes'},
+  {id:'flg22', name:'Concombre — Flg22 Immunité innée', seq:'QRLSTGSRINSAKDDAAGLQIA', cat:'🥒', desc:'Flagelline — immunité innée végétale'},
+  {id:'csa', name:'Concombre — CsaMLO Oïdium', seq:'MGKDKLHEF', cat:'🥒', desc:'Gène résistance oïdium'},
+  {id:'t_pr1', name:'Tomate — PR-1 Résistance', seq:'NQYRGVPSAGAKIDYR', cat:'🍅', desc:'Pathogenesis-Related 1 — immunité tomate'},
+  {id:'t_rcr3', name:'Tomate — Rcr3 Cladosporium', seq:'GHGSCWAFSAVANQ', cat:'🍅', desc:'Protéase — résistance Cladosporium'},
+  {id:'t_pto', name:'Tomate — Pto Mildiou Bactérien', seq:'MGKKSSSEGKL', cat:'🍅', desc:'Kinase Pto — résistance Pseudomonas'},
+  {id:'t_i3', name:'Tomate — Inhibiteur Protéase I-II', seq:'RCLSYPGPCHRDDMC', cat:'🍅', desc:'Défense insectes + pathogènes'},
+  {id:'t_ver', name:'Tomate — VER2 Verticillium', seq:'DGYSHFHPLG', cat:'🍅', desc:'Résistance Verticillium dahliae'},
+  {id:'t_syst', name:'Tomate — Systémine Défense', seq:'AVQSKPPSKRDPPKMQTD', cat:'🍅', desc:'Hormone peptidique — cascade défense'},
+  {id:'t_lox', name:'Tomate — LOX Acide Jasmonique', seq:'MAPSNKL', cat:'🍅', desc:'Lipoxygénase — voie jasmonique'},
+  {id:'t_cf9', name:'Tomate — Cf-9 Récepteur', seq:'CGFQCENFP', cat:'🍅', desc:'Récepteur LRR — reconnaissance Cladosporium'},
+  {id:'endorphin', name:'Humeur — β-Endorphine', seq:'YGGFMTSEKSQTPLVT', cat:'😊', desc:'Opioïde endogène — euphorie naturelle'},
+  {id:'ananda', name:'Humeur — Anandamide FAAH', seq:'GKVITAFYNRPEDIS', cat:'😊', desc:'Endocannabinoïde — sérénité, bliss'},
+  {id:'galanin', name:'Humeur — Galanine Anxiolytique', seq:'GWTLNSAGYLLGPHAVGNHRSFSDKHGLT', cat:'😊', desc:'Neuropeptide anxiolytique — anti-stress'},
+  {id:'vip', name:'Humeur — VIP Anti-dépresseur', seq:'HSDAVFTDNYTRLRKQMAVKKYLNSILN', cat:'😊', desc:'VIP — neuroprotection, anti-dépression'},
+  {id:'subp', name:'Humeur — Substance P Antagoniste', seq:'RPKPQQFFGLM', cat:'😊', desc:'Bloque douleur émotionnelle — NK1'},
+  {id:'cryaa', name:'Yeux — αA-Crystallin', seq:'MDIAIHHPWIRRPFFPFHSP', cat:'👁️', desc:'Chaperon moléculaire — prévient cataracte'},
+  {id:'cryab', name:'Yeux — αB-Crystallin HSP20', seq:'HEERQDEHGFISR', cat:'👁️', desc:'Heat Shock Protein — anti-agrégation'},
+  {id:'crygd', name:'Yeux — γD-Crystallin', seq:'GCEWQFSC', cat:'👁️', desc:'Protéine structurelle — transparence cristallin'},
+  {id:'gpx', name:'Yeux — Glutathion Peroxydase', seq:'WNFEKFLVGP', cat:'👁️', desc:'Antioxydant majeur du cristallin'},
+  {id:'lano', name:'Yeux — Lanosterol Synthase', seq:'DCTAEAMK', cat:'👁️', desc:'Réduit agrégation crystallins — découverte 2015'},
+  {id:'sod', name:'Yeux — SOD1 Antioxydante', seq:'HVGDLGNVTADKDGVADVSIED', cat:'👁️', desc:'Superoxyde Dismutase — protection rétine'},
+  {id:'inmt', name:'Conscience — INMT DMT Endogène', seq:'LDVGCGTGLLASFL', cat:'🌌', desc:'DMT Synthase — molécule endogène de conscience'},
+  {id:'5ht2a', name:'Conscience — 5-HT2A Psychédélique', seq:'KHSRRNYH', cat:'🌌', desc:'Récepteur sérotoninergique — états modifiés'},
 ];
+const DESCRIPTIONS={"piezo1": "GsMTx4 est une toxine extraite du venin de tarentule Grammostola spatulata. Elle bloque PIEZO1, un canal ionique mécano-sensible qui s'ouvre quand la membrane cellulaire est sous tension mécanique. En s'intercalant dans la membrane lipidique autour du domaine blade du canal, elle réduit la tension locale et empêche l'ouverture. PIEZO1 est impliqué dans la douleur chronique, les maladies cardiovasculaires et certaines anémies.", "tph1": "La Tryptophane Hydroxylase 1 (TPH1) est l'enzyme clé qui catalyse la première étape de synthèse de la sérotonine : elle transforme le tryptophane en 5-hydroxytryptophane (5-HTP). Ton bilan 2018 montrait SEROT à 40% — en dessous de la norme. Cette protéodie cible l'enzyme responsable de ta production de sérotonine, impliquée dans l'humeur, le sommeil, l'appétit et la mémoire.", "th": "La Tyrosine Hydroxylase (TH) catalyse la conversion de la L-tyrosine en L-DOPA, première étape de synthèse de la dopamine. Ton bilan 2018 montrait 34DOPAC à 25% (très bas) — le 34DOPAC étant un métabolite direct de la dopamine, cela indique un faible turnover dopaminergique. La dopamine est essentielle à la motivation, la mémoire de travail, la concentration et le mouvement.", "dbh": "La Dopamine β-Hydroxylase (DBH) convertit la dopamine en noradrénaline. Ton bilan 2017 montrait NORADRE à 59% puis 128% en 2018 après Wim Hof — la méthode Wim Hof déclenche une libération massive de noradrénaline via l'activation du système sympathique. Cette enzyme régule l'équilibre dopamine/noradrénaline.", "semax": "Sémax (Met-Glu-His-Phe-Pro-Gly-Pro) est un peptide nootropique synthétique développé en Russie, dérivé de l'ACTH. Il stimule la synthèse du BDNF, améliore la transmission dopaminergique et sérotoninergique, et renforce la mémoire à court terme et la concentration. Utilisé cliniquement en Russie pour les AVC et troubles cognitifs.", "bdnf": "Le BDNF (Brain-Derived Neurotrophic Factor) est le facteur de croissance neuronal le plus important du cerveau. Son domaine loop 2 (HSDPARRGELF) est la région de liaison au récepteur TrkB. Le BDNF favorise la survie neuronale, la plasticité synaptique, la formation de nouveaux souvenirs (LTP) et la neurogenèse hippocampique.", "bpc157": "Le BPC-157 (Body Protection Compound) est un pentadécapeptide cytoprotecteur isolé du suc gastrique. Il accélère la réparation des tendons, ligaments et cartilages, stimule la production de collagène, et favorise l'angiogenèse locale. Des études montrent son efficacité sur les lésions méniscales et les arthrites.", "col2": "Le Collagène de type II est la protéine structurelle principale du cartilage articulaire — 90% du collagène cartilagineux. Sa séquence répétitive Gly-Pro-Pro forme la triple hélice caractéristique. Dans l'arthrose, c'est ce collagène qui se dégrade en premier. Cette protéodie encode le fragment de la triple hélice du cartilage.", "pdgf": "Le PDGF-BB (Platelet-Derived Growth Factor BB) est le facteur de croissance dominant des plaquettes — c'est lui qui explique l'efficacité du PRP (Plasma Riche en Plaquettes). Il stimule la prolifération des fibroblastes, chondrocytes et cellules souches mésenchymateuses. Son injection via le PRP favorise la régénération du cartilage.", "igf1": "IGF-1 (Insulin-like Growth Factor 1) est un facteur de croissance central pour les chondrocytes — les cellules qui produisent et maintiennent le cartilage. Il stimule leur prolifération, inhibe leur apoptose, et favorise la synthèse de collagène II et d'aggrécane. Son déclin avec l'âge est l'une des causes principales de l'arthrose.", "bmp7": "BMP-7 (Bone Morphogenetic Protein 7) est un morphogène osseux de la famille TGF-β. Son fragment knuckle (VFQQHIHI) est la région de liaison aux récepteurs. BMP-7 est le seul BMP à avoir prouvé son efficacité dans la régénération du cartilage articulaire en essais cliniques humains.", "dsip": "Le DSIP (Delta Sleep-Inducing Peptide) est le seul peptide endogène spécifiquement inducteur du sommeil delta (ondes lentes profondes, stade N3). Découvert en 1977 par Monnier, libéré naturellement par le thalamus. Il réduit la latence d'endormissement et augmente la proportion de sommeil profond. Le Tryptophane (W, 204Da) ouvre la mélodie — c'est le précurseur direct de la mélatonine.", "oxy": "L'Ocytocine est le neuropeptide de la relaxation, du lien social et de la confiance. Elle réduit l'activité de l'amygdale (peur/stress), abaisse le cortisol et la pression artérielle, et favorise la transition vers le sommeil. Elle est libérée lors du contact physique et du sentiment de sécurité.", "glp1": "GLP-1 (Glucagon-Like Peptide 1) est une hormone intestinale de satiété. Elle stimule la sécrétion d'insuline, ralentit la vidange gastrique, et envoie un signal de satiété au cerveau via le nerf vague. Le sémaglutide (Ozempic/Wegovy) est un analogue synthétique de GLP-1. Le Tryptophane (W, 204Da) au cœur de la séquence est la note la plus forte.", "apelin": "Apelin-13 est un peptide vasodilatateur endogène qui agit sur le récepteur APJ. Il dilate les artères et abaisse la pression artérielle sans effets indésirables. Ses niveaux sont paradoxalement bas chez les patients hypertendus. La noradrénaline élevée dans ton bilan 2018 (128%) est exactement le contexte où Apelin-13 est bénéfique.", "aqp1": "L'Aquaporine 1 (AQP1) est un canal membranaire qui transporte exclusivement les molécules d'eau. Les deux motifs NPA (Asn-Pro-Ala) de la séquence forment le filtre de sélectivité du pore. AQP1 est exprimée dans l'endothélium vasculaire et joue un rôle dans la régulation de la pression artérielle.", "epo": "EMP1 est un peptide mimétique de l'Érythropoïétine (EPO) qui se lie au récepteur EPO. L'EPO stimule la production de globules rouges — c'est l'adaptation principale à l'altitude. À Uyuni (3700m) et Sajama (4200m), ton corps va naturellement augmenter sa production d'EPO. Cette protéodie encode la région de liaison au récepteur.", "hif": "HIF-1α est le capteur moléculaire de l'hypoxie. Son domaine ODD (DLDLEMLAPF) est dégradé en normoxie. En altitude, quand l'O₂ baisse, HIF-1α s'accumule et active des centaines de gènes d'adaptation : EPO, VEGF, transporteurs de glucose. C'est le chef d'orchestre de l'acclimatation.", "cry1": "CRY1 est un photorécepteur flavoprotéine qui capte la lumière bleue (400-500nm). Son domaine FAD (GKHINDMFH) est le site de liaison du cofacteur qui absorbe les photons. Pedro utilise CRY1 pour synchroniser son métabolisme CAM avec le cycle jour/nuit.", "aqptip": "TIP1;1 est une aquaporine végétale spécifique du tonoplaste (membrane de la vacuole). Elle régule les flux d'eau entre la vacuole et le cytoplasme, contrôlant la turgescence cellulaire. Chez Pedro, elle est cruciale pour stocker l'eau pendant les sécheresses.", "pepc": "La PEP Carboxylase (PEPC) est l'enzyme signature du métabolisme CAM des cactus. La nuit, Pedro ouvre ses stomates et PEPC fixe le CO₂ en malate stocké dans la vacuole. Le jour, stomates fermés, le malate alimente la photosynthèse. SIDDQLRQA est le site de régulation circadienne.", "psk": "PSK-α (YIYTQ) est une hormone peptidique végétale sulfatée qui stimule la prolifération et la différenciation cellulaire. Elle agit via le récepteur PSKr1 et active des voies de signalisation similaires aux facteurs de croissance animaux.", "clv3": "CLV3 (HEVPSGP) est un peptide CLE qui régule la taille du méristème apical — la zone de cellules souches au sommet de la plante. Il signale via le récepteur CLV1 pour maintenir l'équilibre prolifération/différenciation. Moduler CLV3 peut augmenter la ramification et le nombre de fleurs.", "systemin": "La Systemine (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte (1991). Quand une feuille est attaquée, elle voyage dans toute la plante via le phloème et déclenche la synthèse d'acide jasmonique. C'est le signal d'alarme systémique de la plante.", "ralf": "RALF1 (YISYGALQKN) régule la croissance racinaire et l'immunité végétale. Il se lie au récepteur FER (Feronia) et inhibe les H+-ATPases, alcalinisant l'apoplasme. En faibles concentrations, il favorise le développement racinaire et l'absorption des nutriments.", "rubisco": "L'activase de la Rubisco (GKDNKLNELR) réactive la Rubisco inhibée par ses propres produits. La Rubisco est l'enzyme la plus abondante sur Terre — elle fixe le CO₂ lors de la photosynthèse. Son activase est un AAA+ ATPase qui remodèle la conformation de la Rubisco.", "expansin": "Les expansines (CDPYGGQNRS) favorisent l'extension cellulaire en rompant les liaisons hydrogène entre les microfibrilles de cellulose. Leur action est pH-dépendante et régule la turgescence, la croissance et la maturation des fruits.", "kin1": "La CKX (MTGDNKLHEF) dégrade les cytokinines — hormones qui stimulent la division cellulaire et la ramification. En inhibant CKX, on augmente les niveaux de cytokinines, ce qui donne plus de pousses latérales et une meilleure résistance au stress.", "pr1": "PR-1 est le marqueur moléculaire de la résistance systémique acquise (SAR) chez les plantes. Induit par l'acide salicylique après une première infection, il confère une résistance durable à large spectre contre champignons, bactéries et virus.", "chi": "La Chitinase (SGQFNNYSNYY) dégrade la chitine — le polysaccharide structural de la paroi des champignons. En coupant les chaînes de N-acétylglucosamine, elle détruit l'intégrité du champignon et produit des oligosaccharines qui servent de signaux d'alarme.", "npr1": "NPR1 (DNEAKEKYF) est le régulateur central de la voie de l'acide salicylique et de la SAR. En présence de SA, NPR1 se transloque du cytoplasme vers le noyau et active les gènes PR. C'est la cible privilégiée pour améliorer la résistance aux maladies.", "pdf12": "PDF1.2 (KTCENLADKY) est un peptide antimicrobien à structure stabilisée par des ponts disulfure. Il perméabilise les membranes fongiques et bactériennes. Son expression est induite par la voie jasmonate/éthylène. Actif contre Botrytis cinerea, Alternaria et Fusarium.", "wrky30": "WRKY30 (WRKYGQK) est un facteur de transcription dont le domaine WRKY se lie aux boîtes W dans les promoteurs des gènes de défense. Il orchestre la réponse aux ROS (espèces réactives de l'oxygène) et active les gènes de défense systémique.", "flg22": "Flg22 (QRLSTGSRINSAKDDAAGLQIA) est un fragment de flagelline bactérienne reconnu par le récepteur FLS2 des plantes. Cette reconnaissance déclenche la PTI (Pattern-Triggered Immunity) : cascade de phosphorylation, production de ROS et expression des gènes PR.", "csa": "CsaMLO (MGKDKLHEF) confère une résistance durable à l'oïdium (Podosphaera xanthii) chez le concombre. Les mutations perte-de-fonction de MLO donnent une résistance à large spectre utilisée depuis 50 ans en agriculture.", "t_pr1": "PR-1 de la tomate (NQYRGVPSAGAKIDYR) joue le même rôle central dans la résistance systémique. Chez la tomate, son induction marque l'activation de la SAR après infection par Cladosporium, Phytophthora ou Botrytis. Il est synergique avec la systemine.", "t_rcr3": "Rcr3 (GHGSCWAFSAVANQ) est une protéase à cystéine sécrétée dans l'apoplasme, cible de l'effecteur Avr2 de Cladosporium fulvum. Le champignon inhibe Rcr3, mais la plante utilise ce complexe comme appât pour déclencher l'hypersensibilité. Un piège moléculaire élégant.", "t_pto": "Pto (MGKKSSSEGKL) est une kinase qui reconnaît l'effecteur AvrPto de Pseudomonas syringae pv. tomato. La liaison Pto-AvrPto déclenche la réponse hypersensible (HR) : mort cellulaire programmée locale qui stoppe l'infection.", "t_i3": "L'Inhibiteur de Protéase II (RCLSYPGPCHRDDMC) inhibe les protéases digestives des insectes herbivores (trypsine, chymotrypsine). Ses ponts disulfure (Cys-Cys) lui confèrent une résistance à la digestion. Il inhibe aussi certaines protéases fongiques.", "t_ver": "VER2 (DGYSHFHPLG) est impliqué dans la résistance à Verticillium dahliae — le champignon vasculaire responsable de la verticilliose. C'est une lectine de type Jacaline qui reconnaît les structures glycaniques du champignon.", "t_syst": "La Systemine de tomate (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte par Clarence Ryan en 1991. Elle circule dans le phloème pour déclencher la synthèse d'acide jasmonique dans toute la plante après une blessure par insectes.", "t_lox": "LOX (MAPSNKL) catalyse la première étape de la voie de l'acide jasmonique — la peroxydation des acides gras. La jasmonine active la résistance aux insectes et aux champignons. LOX produit aussi des composés volatils qui alertent les plantes voisines.", "t_cf9": "Cf-9 (CGFQCENFP) est un récepteur LRR qui reconnaît l'effecteur Avr9 de Cladosporium fulvum. La liaison Cf-9/Avr9 déclenche une réponse hypersensible très rapide : les cellules infectées meurent en quelques heures, stoppant le champignon.", "endorphin": "La β-Endorphine (YGGFMTSEKSQTPLVT) est l'opioïde endogène le plus puissant — 18 à 33 fois plus actif que la morphine. Elle est libérée lors de l'effort physique intense (runner's high), du rire, des orgasmes et de la musique. Elle se lie aux récepteurs μ-opioïdes et provoque euphorie, analgésie profonde et sentiment de bien-être. Sa séquence commence par Tyr-Gly-Gly-Phe (YGGF) — le tétrapeptide commun à toutes les endorphines. Ton déficit sérotoninergique est compensé par cette voie opioïde parallèle.", "ananda": "L'Anandamide (du sanskrit 'ananda' = joie suprême) est l'endocannabinoïde endogène principal — le ligand naturel des récepteurs CB1 du cerveau. La séquence GKVITAFYNRPEDIS correspond au site actif de la FAAH, l'enzyme qui dégrade l'anandamide. En ciblant FAAH, on augmente les niveaux d'anandamide endogène : sérénité, réduction de l'anxiété et effet anti-douleur.", "galanin": "La Galanine (GWTLNSAGYLLGPHAVGNHRSFSDKHGLT) est un neuropeptide de 29 acides aminés co-libéré avec la noradrénaline et la sérotonine dans le locus coeruleus. Elle module l'anxiété, la dépression et la douleur via les récepteurs GalR1-R3. Elle potentialise l'action de la sérotonine résiduelle — très pertinent avec ton SEROT à 40%.", "vip": "Le VIP (Vasoactive Intestinal Peptide, HSDAVFTDNYTRLRKQMAVKKYLNSILN) est un neuropeptide aux propriétés anti-dépressives et neuroprotectrices. Il stimule la neurogenèse hippocampique, réduit la neuroinflammation, régule le cycle circadien et module l'axe HPA (cortisol). Il est déficient dans la dépression majeure.", "subp": "La Substance P (RPKPQQFFGLM) transmet les signaux de douleur physique ET émotionnelle via le récepteur NK1 (Neurokinin 1). Elle est libérée lors des états dépressifs et anxieux. Les antagonistes NK1 (aprépitant) sont utilisés comme antidépresseurs. Cette protéodie encode la séquence native pour moduler la voie NK1.", "cryaa": "αA-Crystallin (CRYAA) est la protéine chaperon moléculaire majeure du cristallin. Son domaine α-crystallin (MDIAIHHPWIRRPFFPFHSP) stabilise les autres crystallins et empêche leur agrégation — le mécanisme principal de la cataracte. C'est une small Heat Shock Protein (sHSP) qui maintient la transparence du cristallin en corrigeant les repliements protéiques aberrants. Ses niveaux diminuent avec l'âge, provoquant l'opacification progressive. Les mutations de CRYAA causent des cataractes congénitales.", "cryab": "αB-Crystallin (CRYAB) est une Heat Shock Protein 20 (HSP20) hautement exprimée dans le cristallin et le muscle cardiaque. Son domaine actif HEERQDEHGFISR prévient l'agrégation des protéines mal repliées lors du stress oxydatif. Elle est surexprimée en réponse au stress UV, thermique et osmotique. αB-Crystallin protège contre la cataracte liée à l'âge, au diabète et aux UV. Elle a aussi un rôle anti-apoptotique dans la rétine.", "crygd": "γD-Crystallin (CRYGD) est une protéine structurelle compacte qui représente 30% des protéines du cristallin. Son motif GCEWQFSC forme un domaine Greek key très stable. Contrairement aux α-crystallins, γD est une protéine purement structurelle sans activité chaperon. Ses mutations causent des cataractes congénitales sévères. Avec l'âge, les rayons UV provoquent des photolésions qui la rendent insoluble, formant des agrégats opaques.", "gpx": "Glutathion Peroxydase (GPX1) est l'enzyme antioxydante majeure du cristallin. Son domaine catalytique WNFEKFLVGP contient un résidu sélénocystéine qui réduit le peroxyde d'hydrogène (H₂O₂) en eau, protégeant les crystallins de l'oxydation. Le cristallin est exposé à un stress oxydatif intense via les UV et la lumière bleue. La diminution de GPX avec l'âge est un facteur majeur de cataracte. Le glutathion réduit (GSH) est son cofacteur essentiel.", "lano": "Lanosterol Synthase catalyse la production de lanosterol, un stérol qui réduit l'agrégation des crystallins. En 2015, une découverte majeure a montré que le lanosterol solubilise les agrégats de crystallins in vitro et in vivo, renversant partiellement les cataractes chez le chien et le lapin. Le domaine actif DCTAEAMK stabilise la conformation native des crystallins. Des essais cliniques humains sont en cours pour des collyres au lanosterol comme alternative à la chirurgie.", "sod": "Superoxyde Dismutase 1 (SOD1) est l'enzyme antioxydante cytosolique qui convertit le radical superoxyde (O₂⁻) en peroxyde d'hydrogène (H₂O₂), lui-même réduit par GPX. Son domaine actif HVGDLGNVTADKDGVADVSIED contient un site de liaison Cu/Zn. SOD1 protège la rétine et le cristallin contre le stress oxydatif causé par la lumière, particulièrement la lumière bleue (400-500nm). Ses niveaux diminuent avec l'âge, augmentant le risque de DMLA et de cataracte.", "inmt": "INMT (Indoléthylamine N-Méthyltransférase) est l'enzyme qui synthétise le DMT (N,N-Diméthyltryptamine) endogène dans le cerveau humain, particulièrement dans la glande pinéale. Son domaine catalytique LDVGCGTGLLASFL méthyle la tryptamine pour produire du DMT. Le DMT endogène est libéré lors du sommeil paradoxal, des expériences de mort imminente et possiblement à la naissance et à la mort. Surnommé 'la molécule de l'esprit' par Rick Strassman, le DMT induit des états de conscience non-ordinaires profonds, des visions géométriques complexes et des expériences mystiques. INMT est aussi exprimée dans les poumons, le foie et le sang.", "5ht2a": "Le récepteur 5-HT2A est le récepteur sérotoninergique principal des états modifiés de conscience induits par les psychédéliques classiques : DMT, psilocybine, LSD, mescaline. Son domaine intracellulaire KHSRRNYH active la voie Gq/phospholipase C, augmentant la plasticité neuronale et la connectivité inter-régionale. L'activation de 5-HT2A dans le cortex préfrontal et le thalamus provoque la dissolution de l'ego (ego death), les hallucinations visuelles géométriques et l'expansion de conscience. Des études récentes montrent que les psychédéliques réorganisent les réseaux neuronaux pour traiter la dépression résistante et le PTSD."};
 
 const MASS={A:89,C:121,D:133,E:147,F:165,G:75,H:155,I:131,K:146,L:131,M:149,N:132,P:115,Q:146,R:174,S:105,T:119,V:117,W:204,Y:181};
 const ORD='ACDEFGHIKLMNPQRSTVWY';
@@ -200,57 +255,33 @@ const SCALES={
   la: [45,48,50,52,53,55,57,60,62,65,67,69,72,74,77,79,81,84,86,89],
   ab: [44,46,48,49,51,53,55,56,58,60,61,63,65,67,68,70,72,73,75,77]
 };
-const NOTE_N=['La','La#','Si','Do','Do#','Ré','Ré#','Mi','Fa','Fa#','Sol','Sol#'];
+const NOTE_N=['La','La#','Si','Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#'];
 const COLS=['#1D9E75','#185FA5','#BA7517','#D85A30','#993556','#534AB7','#3B6D11','#639922','#E24B4A','#EF9F27'];
-const CAT_COLORS={'🧬':'#534AB7','🧠':'#1D9E75','🦵':'#BA7517','😴':'#185FA5','🍽️':'#D85A30','❤️':'#993556','💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11','🌿':'#639922'};
+const CAT_COLORS={
+  '🧬':'#534AB7','🧠':'#1D9E75','🦵':'#BA7517',
+  '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
+  '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
+  '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
+  '👁️':'#3B9FBF','🌌':'#8B5CF6'
+};
+const CAT_NAMES={
+  '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
+  '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
+  '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
+  '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
+  '👁️':'Yeux','🌌':'Conscience'
+};
 
-let audioCtx=null,reverbNode=null,masterGain=null;
-let playing=false,stopFlag=false,skipFlag=false;
-let paused=false,pauseResolve=null;
-let sessionStart=0,sessionDuration=0,timerInterval=null;
-let currentInstr='flute';
+let audioCtx=null,reverbNode=null,masterGain=null,dryGain=null,wetGain=null;
+let playing=false,stopFlag=false,skipFlag=false,paused=false,pauseResolve=null;
+let sessionStart=0,timerInterval=null,currentInstr='flute';
+let activeFilters=new Set();
 
-// TRANSPORT
-function togglePause(){
-  if(!playing)return;
-  paused=!paused;
-  const btn=document.getElementById('t-pause');
-  btn.innerHTML=paused?'&#9654;':'&#9646;&#9646;';
-  btn.style.color=paused?'#1D9E75':'#999';
-  btn.style.borderColor=paused?'#1D9E75':'#333';
-  document.getElementById('t-status').textContent=paused?'En pause...':'En lecture...';
-  if(!paused&&pauseResolve){pauseResolve();pauseResolve=null;}
-}
-async function waitIfPaused(){
-  if(!paused)return;
-  await new Promise(r=>{pauseResolve=r;});
-}
-function updateTransport(name,meta){
-  document.getElementById('t-name').textContent=name||'...';
-  document.getElementById('t-status').textContent=meta||'En lecture...';
-  document.getElementById('t-play').style.opacity='0.35';
-  document.getElementById('t-play').style.pointerEvents='none';
-}
-function resetTransport(){
-  document.getElementById('t-name').textContent='Prêt';
-  document.getElementById('t-status').textContent='Session terminée ✓';
-  document.getElementById('t-play').style.opacity='1';
-  document.getElementById('t-play').style.pointerEvents='auto';
-  document.getElementById('t-pause').innerHTML='&#9646;&#9646;';
-  document.getElementById('t-pause').style.color='#999';
-  document.getElementById('t-pause').style.borderColor='#333';
-  paused=false;
-}
-
-// DIAPASON
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
 function onDiapasonChange(){
   document.getElementById('diapason-freq').textContent=document.getElementById('diapason-chk').checked?'429.62':'440.00';
   document.getElementById('diapason-box').style.borderColor=document.getElementById('diapason-chk').checked?'#BA7517':'var(--border)';
 }
-
-// HELPERS
-function setInstr(id,btn){currentInstr=id;document.querySelectorAll('.instr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
 function getScale(){return SCALES[document.getElementById('gamme').value]||SCALES.mib;}
 function midiFor(aa){let i=ORD.indexOf(aa);return i<0?51:getScale()[i%getScale().length];}
 function freqFor(midi){return getA4()*Math.pow(2,(midi-69)/12);}
@@ -258,50 +289,75 @@ function noteName(midi){return NOTE_N[(midi-45+120)%12];}
 function massFor(aa){return MASS[aa]||110;}
 function velFor(aa){let m=massFor(aa);return Math.min(0.9,0.45+(m-75)/(204-75)*0.45);}
 function ticksFor(aa){let m=massFor(aa);return m<=100?0.5:m<=160?1:2;}
+function fmtTime(s){let m=Math.floor(s/60);return m+':'+(s%60<10?'0':'')+Math.floor(s%60);}
+function setInstr(id,btn){currentInstr=id;document.querySelectorAll('.instr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function onDurChange(){document.getElementById('dur-val').textContent=document.getElementById('dur').value;document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);buildPlaylist();}
+function togglePause(){
+  if(!playing)return; paused=!paused;
+  const btn=document.getElementById('t-pause');
+  btn.innerHTML=paused?'&#9654;':'&#9646;&#9646;';
+  btn.style.color=paused?'#1D9E75':'#999';
+  btn.style.borderColor=paused?'#1D9E75':'#333';
+  document.getElementById('t-status').textContent=paused?'En pause...':'En lecture...';
+  if(!paused&&pauseResolve){pauseResolve();pauseResolve=null;}
+}
+async function waitIfPaused(){if(!paused)return;await new Promise(r=>{pauseResolve=r;});}
+function updateTransport(name,meta){
+  document.getElementById('t-name').textContent=name||'...';
+  document.getElementById('t-status').textContent=meta||'En lecture...';
+  document.getElementById('t-play').style.opacity='0.35';
+  document.getElementById('t-play').style.pointerEvents='none';
+}
+function resetTransport(){
+  document.getElementById('t-name').textContent='Pret';
+  document.getElementById('t-status').textContent='Session terminee';
+  document.getElementById('t-play').style.opacity='1';
+  document.getElementById('t-play').style.pointerEvents='auto';
+  document.getElementById('t-pause').innerHTML='&#9646;&#9646;';
+  document.getElementById('t-pause').style.color='#999';
+  document.getElementById('t-pause').style.borderColor='#333';
+  paused=false;
+}
+function stopSession(){stopFlag=true;}
+function skipNext(){skipFlag=true;}
+function getQueue(){return PROTEODIES.filter(p=>{const c=document.getElementById('chk-'+p.id);return c&&c.checked;});}
+function selectAll(v){PROTEODIES.forEach(p=>{const c=document.getElementById('chk-'+p.id);if(c)c.checked=v;});}
 
-// AUDIO
 async function initAudio(){
   if(audioCtx)return;
   audioCtx=new(window.AudioContext||window.webkitAudioContext)();
   masterGain=audioCtx.createGain(); masterGain.gain.value=0.7;
-  const rvbLen=audioCtx.sampleRate*2.5;
-  const rvbBuf=audioCtx.createBuffer(2,rvbLen,audioCtx.sampleRate);
+  const rvbLen=audioCtx.sampleRate*2.5, rvbBuf=audioCtx.createBuffer(2,rvbLen,audioCtx.sampleRate);
   for(let c=0;c<2;c++){const d=rvbBuf.getChannelData(c);for(let i=0;i<rvbLen;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/rvbLen,2.5);}
   reverbNode=audioCtx.createConvolver(); reverbNode.buffer=rvbBuf;
-  const dry=audioCtx.createGain(),wet=audioCtx.createGain();
-  masterGain.connect(dry); masterGain.connect(reverbNode); reverbNode.connect(wet);
-  dry.connect(audioCtx.destination); wet.connect(audioCtx.destination);
-  const upRvb=()=>{const v=parseFloat(document.getElementById('rvb').value);dry.gain.value=1-v*0.6;wet.gain.value=v*0.8;};
-  upRvb(); document.getElementById('rvb').addEventListener('input',upRvb);
+  dryGain=audioCtx.createGain(); wetGain=audioCtx.createGain();
+  masterGain.connect(dryGain); masterGain.connect(reverbNode); reverbNode.connect(wetGain);
+  dryGain.connect(audioCtx.destination); wetGain.connect(audioCtx.destination);
+  const upR=()=>{const v=parseFloat(document.getElementById('rvb').value);dryGain.gain.value=1-v*0.6;wetGain.gain.value=v*0.8;};
+  upR(); document.getElementById('rvb').addEventListener('input',upR);
 }
 
 function playFlute(freq,dur,vel){
   const t=audioCtx.currentTime;
-  const osc=audioCtx.createOscillator(),osc2=audioCtx.createOscillator(),noise=audioCtx.createOscillator();
-  const lfo=audioCtx.createOscillator(),lfoG=audioCtx.createGain(),noiseG=audioCtx.createGain();
-  const g=audioCtx.createGain(),filt=audioCtx.createBiquadFilter();
-  osc.type='triangle';osc.frequency.value=freq;
-  osc2.type='sine';osc2.frequency.value=freq*2.01;
-  lfo.type='sine';lfo.frequency.value=5.5;lfoG.gain.value=freq*0.012;
-  lfo.connect(lfoG);lfoG.connect(osc.frequency);
-  noise.type='sawtooth';noise.frequency.value=freq*0.5;noiseG.gain.value=vel*0.04;
-  filt.type='bandpass';filt.frequency.value=freq*3;filt.Q.value=0.8;
-  noise.connect(noiseG);noiseG.connect(filt);
-  const mix=audioCtx.createGain();mix.gain.value=0.6;
-  osc.connect(g);osc2.connect(mix);mix.connect(g);filt.connect(g);
+  const o=audioCtx.createOscillator(),o2=audioCtx.createOscillator(),ns=audioCtx.createOscillator();
+  const lfo=audioCtx.createOscillator(),lg=audioCtx.createGain(),ng=audioCtx.createGain();
+  const g=audioCtx.createGain(),flt=audioCtx.createBiquadFilter();
+  o.type='triangle';o.frequency.value=freq; o2.type='sine';o2.frequency.value=freq*2.01;
+  lfo.type='sine';lfo.frequency.value=5.5;lg.gain.value=freq*0.012;lfo.connect(lg);lg.connect(o.frequency);
+  ns.type='sawtooth';ns.frequency.value=freq*0.5;ng.gain.value=vel*0.04;
+  flt.type='bandpass';flt.frequency.value=freq*3;flt.Q.value=0.8;ns.connect(ng);ng.connect(flt);
+  const mx=audioCtx.createGain();mx.gain.value=0.6;o.connect(g);o2.connect(mx);mx.connect(g);flt.connect(g);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*0.55,t+Math.min(0.08,dur*0.2));
   g.gain.setValueAtTime(vel*0.55,t+dur*0.6);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.96);
-  g.connect(masterGain);[osc,osc2,noise,lfo].forEach(o=>{o.start(t);o.stop(t+dur);});
+  g.connect(masterGain);[o,o2,ns,lfo].forEach(x=>{x.start(t);x.stop(t+dur);});
 }
-
 function playVoixF(freq,dur,vel){
   const t=audioCtx.currentTime,g=audioCtx.createGain();
-  const lfo=audioCtx.createOscillator(),lfoG=audioCtx.createGain();
-  lfo.type='sine';lfo.frequency.value=5.2;lfoG.gain.value=freq*0.015;lfo.connect(lfoG);
+  const lfo=audioCtx.createOscillator(),lg=audioCtx.createGain();
+  lfo.type='sine';lfo.frequency.value=5.2;lg.gain.value=freq*0.015;lfo.connect(lg);
   [[1,0.55],[2,0.22],[3,0.12],[4,0.06]].forEach(([h,a])=>{
     const o=audioCtx.createOscillator(),og=audioCtx.createGain();
-    o.type='sine';o.frequency.value=freq*h;lfoG.connect(o.frequency);
-    og.gain.value=a*vel;o.connect(og);og.connect(g);o.start(t);o.stop(t+dur);
+    o.type='sine';o.frequency.value=freq*h;lg.connect(o.frequency);og.gain.value=a*vel;o.connect(og);og.connect(g);o.start(t);o.stop(t+dur);
   });
   const f1=audioCtx.createBiquadFilter(),f2=audioCtx.createBiquadFilter();
   f1.type='peaking';f1.frequency.value=800;f1.Q.value=4;f1.gain.value=8;
@@ -311,15 +367,13 @@ function playVoixF(freq,dur,vel){
   g.gain.setValueAtTime(vel*0.5,t+dur*0.65);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.97);
   lfo.start(t);lfo.stop(t+dur);
 }
-
 function playVoixH(freq,dur,vel){
   const t=audioCtx.currentTime,rf=freq*0.5,g=audioCtx.createGain();
-  const lfo=audioCtx.createOscillator(),lfoG=audioCtx.createGain();
-  lfo.type='sine';lfo.frequency.value=4.8;lfoG.gain.value=rf*0.01;lfo.connect(lfoG);
+  const lfo=audioCtx.createOscillator(),lg=audioCtx.createGain();
+  lfo.type='sine';lfo.frequency.value=4.8;lg.gain.value=rf*0.01;lfo.connect(lg);
   [[1,0.6],[2,0.25],[3,0.1],[5,0.05]].forEach(([h,a])=>{
     const o=audioCtx.createOscillator(),og=audioCtx.createGain();
-    o.type=h===1?'sawtooth':'sine';o.frequency.value=rf*h;lfoG.connect(o.frequency);
-    og.gain.value=a*vel;o.connect(og);og.connect(g);o.start(t);o.stop(t+dur);
+    o.type=h===1?'sawtooth':'sine';o.frequency.value=rf*h;lg.connect(o.frequency);og.gain.value=a*vel;o.connect(og);og.connect(g);o.start(t);o.stop(t+dur);
   });
   const f1=audioCtx.createBiquadFilter(),f2=audioCtx.createBiquadFilter(),lp=audioCtx.createBiquadFilter();
   f1.type='peaking';f1.frequency.value=500;f1.Q.value=3;f1.gain.value=10;
@@ -330,43 +384,37 @@ function playVoixH(freq,dur,vel){
   g.gain.setValueAtTime(vel*0.55,t+dur*0.6);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.97);
   lfo.start(t);lfo.stop(t+dur);
 }
-
 function playChoeur(freq,dur,vel){
   const t=audioCtx.currentTime;
   [{f:freq*0.5,type:'sawtooth',vol:0.35},{f:freq*0.502,type:'sine',vol:0.25},
    {f:freq,type:'triangle',vol:0.3},{f:freq*1.003,type:'sine',vol:0.2}].forEach(({f,type,vol})=>{
     const o=audioCtx.createOscillator(),g=audioCtx.createGain();
     const lfo=audioCtx.createOscillator(),lg=audioCtx.createGain();
-    lfo.type='sine';lfo.frequency.value=4.5+(Math.random()*1.5);lg.gain.value=f*0.008;
-    lfo.connect(lg);lg.connect(o.frequency);o.type=type;o.frequency.value=f;
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*vol,t+Math.min(0.18,dur*0.3));
+    lfo.type='sine';lfo.frequency.value=4.5+Math.random()*1.5;lg.gain.value=f*0.008;lfo.connect(lg);lg.connect(o.frequency);
+    o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vel*vol,t+Math.min(0.18,dur*0.3));
     g.gain.setValueAtTime(vel*vol,t+dur*0.62);g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.97);
     o.connect(g);g.connect(masterGain);o.start(t);o.stop(t+dur);lfo.start(t);lfo.stop(t+dur);
   });
 }
-
 function playCristal(freq,dur,vel){
   const t=audioCtx.currentTime;
   [[1,0.6],[2,0.25],[4,0.1],[8,0.04]].forEach(([h,a])=>{
     const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-    o.type='sine';o.frequency.value=freq*h;
-    g.gain.setValueAtTime(vel*a,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur*(h===1?0.95:0.5));
+    o.type='sine';o.frequency.value=freq*h;g.gain.setValueAtTime(vel*a,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur*(h===1?0.95:0.5));
     o.connect(g);g.connect(masterGain);o.start(t);o.stop(t+dur);
   });
 }
-
 function playBol(freq,dur,vel){
   const t=audioCtx.currentTime,f0=freq*0.92;
-  [{f:f0,a:0.6,dec:dur},{f:f0*2.76,a:0.3,dec:dur*0.7},{f:f0*5.2,a:0.12,dec:dur*0.5}].forEach(({f,a,dec})=>{
+  [{f:f0,a:0.6,d:dur},{f:f0*2.76,a:0.3,d:dur*0.7},{f:f0*5.2,a:0.12,d:dur*0.5}].forEach(({f,a,d})=>{
     const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-    o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(vel*a,t);
-    g.gain.exponentialRampToValueAtTime(0.001,t+dec*0.97);o.connect(g);g.connect(masterGain);o.start(t);o.stop(t+dec);
+    o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(vel*a,t);g.gain.exponentialRampToValueAtTime(0.001,t+d*0.97);
+    o.connect(g);g.connect(masterGain);o.start(t);o.stop(t+d);
   });
   const ck=audioCtx.createOscillator(),cg=audioCtx.createGain();
-  ck.type='sine';ck.frequency.value=freq*3;cg.gain.setValueAtTime(vel*0.4,t);
-  cg.gain.exponentialRampToValueAtTime(0.001,t+0.04);ck.connect(cg);cg.connect(masterGain);ck.start(t);ck.stop(t+0.04);
+  ck.type='sine';ck.frequency.value=freq*3;cg.gain.setValueAtTime(vel*0.4,t);cg.gain.exponentialRampToValueAtTime(0.001,t+0.04);
+  ck.connect(cg);cg.connect(masterGain);ck.start(t);ck.stop(t+0.04);
 }
-
 function playNote(freq,dur,vel){
   switch(currentInstr){
     case 'flute':   playFlute(freq,dur,vel);  break;
@@ -379,27 +427,25 @@ function playNote(freq,dur,vel){
   }
 }
 
-// VISUALISEUR
 function showSeq(prot){
   const wrap=document.getElementById('seq-wrap'); wrap.innerHTML='';
   prot.seq.split('').forEach((aa,i)=>{
     const idx=ORD.indexOf(aa),col=COLS[idx%COLS.length];
     const d=document.createElement('div'); d.className='aa-cell'; d.id='aa'+i;
     d.style.borderColor=col;
-    d.title=NAMES[aa]||aa+' · '+massFor(aa)+'Da · '+noteName(midiFor(aa));
     d.innerHTML='<span style="color:'+col+'">'+aa+'</span><span class="nn">'+noteName(midiFor(aa))+'</span>';
     wrap.appendChild(d);
   });
   drawWave(prot.seq.split(''));
   document.getElementById('now-box').style.display='block';
   document.getElementById('now-title').textContent=prot.cat+' '+prot.name;
-  document.getElementById('now-meta').textContent=prot.desc+' · '+prot.seq.length+' acides aminés';
+  document.getElementById('now-meta').textContent=prot.desc+' · '+prot.seq.length+' aa';
   updateTransport(prot.cat+' '+prot.name, prot.desc);
 }
 
 function drawWave(seq){
   const cv=document.getElementById('wave'),c=cv.getContext('2d');
-  c.clearRect(0,0,cv.width,cv.height); c.strokeStyle='#1D9E75'; c.lineWidth=1.5; c.beginPath();
+  c.clearRect(0,0,cv.width,cv.height);c.strokeStyle='#1D9E75';c.lineWidth=1.5;c.beginPath();
   for(let x=0;x<cv.width;x++){
     const idx=Math.floor(x/cv.width*seq.length),aa=seq[idx]||'G';
     const f=freqFor(midiFor(aa)),norm=(Math.log2(f)-Math.log2(200))/(Math.log2(900)-Math.log2(200));
@@ -409,7 +455,6 @@ function drawWave(seq){
   c.stroke();
 }
 
-// PLAY ONE
 async function playOne(prot){
   const seq=prot.seq.split(''),bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
   showSeq(prot);
@@ -421,7 +466,7 @@ async function playOne(prot){
     const aa=seq[i],dur=ticksFor(aa)*beat;
     playNote(freqFor(midiFor(aa)),dur,velFor(aa));
     document.querySelectorAll('.aa-cell').forEach(e=>e.classList.remove('lit'));
-    const cell=document.getElementById('aa'+i); if(cell)cell.classList.add('lit');
+    const cell=document.getElementById('aa'+i);if(cell)cell.classList.add('lit');
     document.getElementById('prog-bar').style.width=((i+1)/seq.length*100)+'%';
     await new Promise(r=>setTimeout(r,dur*1000));
     await waitIfPaused();
@@ -431,23 +476,15 @@ async function playOne(prot){
   return true;
 }
 
-// SESSION
-function fmtTime(s){const m=Math.floor(s/60);return m+':'+(s%60<10?'0':'')+Math.floor(s%60);}
-function onDurChange(){
-  document.getElementById('dur-val').textContent=document.getElementById('dur').value;
-  document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);
-  buildPlaylist();
-}
-
 async function startSession(){
   if(playing)return;
   const queue=getQueue();
-  if(!queue.length){alert('Coche au moins une protéodie !');return;}
-  playing=true; stopFlag=false;
+  if(!queue.length){alert('Coche au moins une proteodies !');return;}
+  playing=true;stopFlag=false;
   await initAudio();
   if(audioCtx.state==='suspended')await audioCtx.resume();
   const dur=parseInt(document.getElementById('dur').value)*60;
-  sessionDuration=dur; sessionStart=Date.now();
+  sessionStart=Date.now();
   timerInterval=setInterval(()=>{
     const el=(Date.now()-sessionStart)/1000;
     document.getElementById('prog-time').textContent=fmtTime(el);
@@ -468,44 +505,92 @@ async function startSession(){
     if(!loop)break;
     if((Date.now()-sessionStart)/1000>=dur)break;
   }
-  endSession();
-}
-
-function endSession(){
-  playing=false; stopFlag=false; skipFlag=false;
+  playing=false;stopFlag=false;skipFlag=false;
   clearInterval(timerInterval);
-  document.getElementById('prog-loop').textContent='Session terminée ✓';
+  document.getElementById('prog-loop').textContent='Session terminee';
   resetTransport();
   document.getElementById('now-box').style.display='none';
   document.getElementById('seq-wrap').innerHTML='';
   document.querySelectorAll('.pl-item').forEach(e=>e.classList.remove('active-item'));
 }
-function stopSession(){stopFlag=true;}
-function skipNext(){skipFlag=true;}
-function getQueue(){return PROTEODIES.filter(p=>{const c=document.getElementById('chk-'+p.id);return c&&c.checked;});}
-function selectAll(v){PROTEODIES.forEach(p=>{const c=document.getElementById('chk-'+p.id);if(c)c.checked=v;});}
 
-// PLAYLIST
-function buildPlaylist(){
-  const pl=document.getElementById('playlist'); pl.innerHTML='';
+function showDesc(id){
+  const p=PROTEODIES.find(x=>x.id===id);if(!p)return;
+  const desc=DESCRIPTIONS[id]||p.desc;
+  const col=CAT_COLORS[p.cat]||'#1D9E75';
   const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
-  PROTEODIES.forEach(p=>{
-    const durS=p.seq.split('').reduce((s,a)=>s+ticksFor(a)*beat,0);
-    const durStr=durS<60?Math.round(durS)+'s':(durS/60).toFixed(1)+'min';
-    const col=CAT_COLORS[p.cat]||'#1D9E75';
-    const div=document.createElement('div'); div.className='pl-item'; div.id='pl-'+p.id;
-    div.innerHTML='<input type="checkbox" id="chk-'+p.id+'" checked>'
-      +'<div class="pl-label"><div class="pl-name"><span style="margin-right:4px">'+p.cat+'</span>'+p.name
-      +'<span class="pl-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+'aa</span></div>'
-      +'<div class="pl-meta">'+p.desc+' · '+durStr+'/boucle</div></div>';
-    pl.appendChild(div);
+  const durS=p.seq.split('').reduce((s,a)=>s+ticksFor(a)*beat,0);
+  const durStr=durS<60?Math.round(durS)+'s':(durS/60).toFixed(1)+'min';
+  const heavy=p.seq.split('').reduce((a,b)=>massFor(a)>=massFor(b)?a:b);
+  document.getElementById('modal-title').textContent=p.cat+' '+p.name;
+  document.getElementById('modal-body').textContent=desc;
+  document.getElementById('modal-seq').textContent='Sequence: '+p.seq;
+  document.getElementById('modal-meta').innerHTML=
+    '<span class="modal-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+' aa</span>'
+    +'<span class="modal-badge" style="background:#1D9E7522;color:#1D9E75;border:0.5px solid #1D9E75">'+durStr+'/boucle</span>'
+    +'<span class="modal-badge" style="background:#33333388;color:#aaa;border:0.5px solid #444">Note forte: '+heavy+' ('+massFor(heavy)+'Da)</span>';
+  document.getElementById('desc-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('desc-modal').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+function buildFilters(){
+  const fw=document.getElementById('filter-wrap');fw.innerHTML='';
+  const catCounts={};
+  PROTEODIES.forEach(p=>{catCounts[p.cat]=(catCounts[p.cat]||0)+1;});
+  const cats=Object.keys(catCounts).sort((a,b)=>catCounts[b]-catCounts[a]);
+  const stored=localStorage.getItem('proteodies-filters');
+  if(stored){try{activeFilters=new Set(JSON.parse(stored));}catch(e){}}
+  if(activeFilters.size===0)cats.forEach(c=>activeFilters.add(c));
+  const all=document.createElement('div');all.className='filter-btn'+(activeFilters.size===cats.length?' active':'');
+  all.innerHTML='<span style="font-weight:500">✓ Tout</span><span class="filter-count">'+PROTEODIES.length+'</span>';
+  all.onclick=()=>{
+    activeFilters.clear();cats.forEach(c=>activeFilters.add(c));
+    localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
+    buildFilters();buildPlaylist();
+  };
+  fw.appendChild(all);
+  cats.forEach(cat=>{
+    const isActive=activeFilters.has(cat);
+    const isExclusive=activeFilters.size===1&&isActive;
+    const btn=document.createElement('div');btn.className='filter-btn'+(isActive?' active':'');
+    const catName=CAT_NAMES[cat]||'';
+    btn.innerHTML='<span>'+cat+' '+catName+'</span><span class="filter-count">'+catCounts[cat]+'</span>';
+    btn.onclick=()=>{
+      if(isExclusive){
+        activeFilters.clear();cats.forEach(c=>activeFilters.add(c));
+      }else{
+        activeFilters.clear();activeFilters.add(cat);
+      }
+      localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
+      buildFilters();buildPlaylist();
+    };
+    fw.appendChild(btn);
   });
 }
 
+function buildPlaylist(){
+  const pl=document.getElementById('playlist');pl.innerHTML='';
+  const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
+  const filtered=PROTEODIES.filter(p=>activeFilters.has(p.cat));
+  filtered.forEach(p=>{
+    const durS=p.seq.split('').reduce((s,a)=>s+ticksFor(a)*beat,0);
+    const durStr=durS<60?Math.round(durS)+'s':(durS/60).toFixed(1)+'min';
+    const col=CAT_COLORS[p.cat]||'#1D9E75';
+    const div=document.createElement('div');div.className='pl-item';div.id='pl-'+p.id;
+    div.innerHTML='<input type="checkbox" id="chk-'+p.id+'" checked>'
+      +'<div class="pl-label"><div class="pl-name"><span style="margin-right:4px">'+p.cat+'</span>'+p.name
+      +'<span class="pl-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+'aa</span></div>'
+      +'<div class="pl-meta">'+p.desc+' · '+durStr+'/boucle</div></div>'
+      +'<button class="pl-info-btn" onclick="showDesc(\'' + p.id + '\')" title="Description">&#x24D8;</button>';
+    pl.appendChild(div);
+  });
+  document.getElementById('filter-info').textContent=filtered.length+' proteodies affichees sur '+PROTEODIES.length;
+}
+
+buildFilters();
 buildPlaylist();
-onDiapasonChange();
 document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);
-document.getElementById('bpm').addEventListener('change',buildPlaylist);
 </script>
 </body>
 </html>
