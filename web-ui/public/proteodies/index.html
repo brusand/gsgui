@@ -147,6 +147,14 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
       <option value="ab">Ab majeur (sommeil)</option>
     </select>
   </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Mode audio</span>
+    <select id="audio-mode" onchange="audioMode=this.value">
+      <option value="stereo">Stéréo (classique)</option>
+      <option value="binaural">Binaural 🎧 (casque requis)</option>
+      <option value="isochrone">Isochrone (pulsations)</option>
+    </select>
+  </div>
   <div class="ctrl-row" style="margin-top:4px">
     <span class="ctrl-label">Boucle</span>
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
@@ -162,6 +170,10 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
         <div style="font-size:11px;color:var(--text2);margin-top:2px">La4 = <span id="diapason-freq">429.62</span> Hz &nbsp;&middot;&nbsp; Marc Henry</div>
       </div>
     </label>
+  </div>
+  <div style="margin-top:10px;padding:10px 12px;background:#D85A3022;border-radius:8px;border:0.5px solid #D85A30" id="audio-warning">
+    <div style="font-size:12px;color:#D85A30;font-weight:500">⚠️ Modes Binaural/Isochrone</div>
+    <div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.4">Utilisation déconseillée en cas d'épilepsie. Mode Binaural : casque requis. Fréquences de battement adaptées à chaque catégorie (4-14 Hz).</div>
   </div>
 </div>
 
@@ -283,6 +295,8 @@ let audioCtx=null,reverbNode=null,masterGain=null,dryGain=null,wetGain=null;
 let playing=false,stopFlag=false,skipFlag=false,paused=false,pauseResolve=null;
 let sessionStart=0,timerInterval=null,currentInstr='flute';
 let activeFilters=new Set();
+let audioMode='stereo';
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍽️':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6};
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
 function onDiapasonChange(){
@@ -422,16 +436,56 @@ function playBol(freq,dur,vel){
   ck.type='sine';ck.frequency.value=freq*3;cg.gain.setValueAtTime(vel*0.4,t);cg.gain.exponentialRampToValueAtTime(0.001,t+0.04);
   ck.connect(cg);cg.connect(masterGain);ck.start(t);ck.stop(t+0.04);
 }
-function playNote(freq,dur,vel){
-  switch(currentInstr){
-    case 'flute':   playFlute(freq,dur,vel);  break;
-    case 'voix_f':  playVoixF(freq,dur,vel);  break;
-    case 'voix_h':  playVoixH(freq,dur,vel);  break;
-    case 'choeur':  playChoeur(freq,dur,vel); break;
-    case 'cristal': playCristal(freq,dur,vel);break;
-    case 'bol':     playBol(freq,dur,vel);    break;
-    default:        playFlute(freq,dur,vel);
+function playNote(freq,dur,vel,cat='🧬'){
+  const beatFreq=BEAT_FREQS[cat]||10;
+  if(audioMode==='binaural'){
+    const halfBeat=beatFreq/2;
+    const freqL=freq-halfBeat;
+    const freqR=freq+halfBeat;
+    playBinauralNote(freqL,freqR,dur,vel);
+  }else if(audioMode==='isochrone'){
+    playIsochroneNote(freq,dur,vel,beatFreq);
+  }else{
+    switch(currentInstr){
+      case 'flute':   playFlute(freq,dur,vel);  break;
+      case 'voix_f':  playVoixF(freq,dur,vel);  break;
+      case 'voix_h':  playVoixH(freq,dur,vel);  break;
+      case 'choeur':  playChoeur(freq,dur,vel); break;
+      case 'cristal': playCristal(freq,dur,vel);break;
+      case 'bol':     playBol(freq,dur,vel);    break;
+      default:        playFlute(freq,dur,vel);
+    }
   }
+}
+
+function playBinauralNote(freqL,freqR,dur,vel){
+  const t=audioCtx.currentTime;
+  const panL=audioCtx.createStereoPanner();panL.pan.value=-1;
+  const panR=audioCtx.createStereoPanner();panR.pan.value=1;
+  const gL=audioCtx.createGain(),gR=audioCtx.createGain();
+  const oL=audioCtx.createOscillator(),oR=audioCtx.createOscillator();
+  oL.type='sine';oL.frequency.value=freqL;
+  oR.type='sine';oR.frequency.value=freqR;
+  gL.gain.setValueAtTime(0,t);gL.gain.linearRampToValueAtTime(vel*0.5,t+0.05);
+  gL.gain.setValueAtTime(vel*0.5,t+dur*0.7);gL.gain.exponentialRampToValueAtTime(0.001,t+dur*0.98);
+  gR.gain.setValueAtTime(0,t);gR.gain.linearRampToValueAtTime(vel*0.5,t+0.05);
+  gR.gain.setValueAtTime(vel*0.5,t+dur*0.7);gR.gain.exponentialRampToValueAtTime(0.001,t+dur*0.98);
+  oL.connect(gL);gL.connect(panL);panL.connect(masterGain);
+  oR.connect(gR);gR.connect(panR);panR.connect(masterGain);
+  oL.start(t);oL.stop(t+dur);oR.start(t);oR.stop(t+dur);
+}
+
+function playIsochroneNote(freq,dur,vel,beatFreq){
+  const t=audioCtx.currentTime;
+  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  const lfo=audioCtx.createOscillator(),lg=audioCtx.createGain();
+  o.type='sine';o.frequency.value=freq;
+  lfo.type='square';lfo.frequency.value=beatFreq;
+  lg.gain.value=vel*0.3;
+  g.gain.setValueAtTime(vel*0.5,t);
+  lfo.connect(lg);lg.connect(g.gain);
+  o.connect(g);g.connect(masterGain);
+  o.start(t);o.stop(t+dur);lfo.start(t);lfo.stop(t+dur);
 }
 
 function showSeq(prot){
@@ -471,7 +525,7 @@ async function playOne(prot){
   for(let i=0;i<seq.length;i++){
     if(stopFlag||skipFlag)return false;
     const aa=seq[i],dur=ticksFor(aa)*beat;
-    playNote(freqFor(midiFor(aa)),dur,velFor(aa));
+    playNote(freqFor(midiFor(aa)),dur,velFor(aa),prot.cat);
     document.querySelectorAll('.aa-cell').forEach(e=>e.classList.remove('lit'));
     const cell=document.getElementById('aa'+i);if(cell)cell.classList.add('lit');
     document.getElementById('prog-bar').style.width=((i+1)/seq.length*100)+'%';

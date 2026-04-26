@@ -69,8 +69,10 @@ http://192.168.1.18:3000/proteodies/ ← depuis l'iPad (réseau local)
   <!-- .card Réglages -->
   Sliders : Tempo (25-180 BPM) | Durée (1-30 min) | Reverb
   Select gamme : Mib Lydien / Sol majeur / La mineur / Ab majeur
+  Select mode audio : Stéréo / Binaural 🎧 / Isochrone
   Checkbox boucle
   Checkbox diapason 429.62 Hz (COCHÉ PAR DÉFAUT)
+  Avertissement battements binauraux/isochroniques
 
   <!-- .card Playlist -->
   div#playlist (généré par buildPlaylist())
@@ -159,7 +161,72 @@ SCALES = {
 
 ---
 
-## 7. STRATÉGIE DE MISE À JOUR DU PLAYER HTML
+## 7. MODES AUDIO (Battements binauraux et isochroniques)
+
+Le player propose **3 modes de génération audio** :
+
+### **Mode 1 : Stéréo** (classique - par défaut)
+- Les deux oreilles reçoivent la même fréquence
+- Utilise les instruments (Flûte, Voix, Cristal, etc.)
+- Fonctionne avec haut-parleurs ou casque
+
+### **Mode 2 : Binaural** 🎧
+- Fréquence légèrement différente dans chaque oreille
+- Ex: Oreille gauche = freq - (beatFreq/2), Oreille droite = freq + (beatFreq/2)
+- Le cerveau perçoit un battement à la fréquence `beatFreq`
+- **NÉCESSITE UN CASQUE** (ne fonctionne pas avec haut-parleurs)
+- Induit des états de conscience spécifiques selon la fréquence de battement
+
+### **Mode 3 : Isochrone**
+- Pulsations régulières du volume (ON/OFF rapide)
+- Même fréquence dans les deux oreilles
+- Fonctionne avec **haut-parleurs ou casque**
+- Plus efficace que binaural selon certaines études
+- Utilisé pour méditation, concentration, sommeil
+
+### **Fréquences de battement par catégorie**
+
+```javascript
+BEAT_FREQS = {
+  '🧬': 10,   // PIEZO1 - Beta bas (concentration)
+  '🧠': 14,   // Neuro - Beta (concentration active)
+  '🦵': 10,   // Genou - Beta bas
+  '😴': 4,    // Sommeil - Theta/Delta (sommeil profond)
+  '🍽️': 10,   // Boulimie - Beta bas
+  '❤️': 8,    // Tension - Alpha (relaxation)
+  '💧': 10,   // Eau - Beta bas
+  '🏔️': 12,   // Altitude - Beta
+  '🌵': 10,   // Cactus - Beta bas
+  '🌿': 10,   // Plantes - Beta bas
+  '🥒': 10,   // Concombre - Beta bas
+  '🍅': 10,   // Tomate - Beta bas
+  '😊': 8,    // Humeur - Alpha (bien-être)
+  '👁️': 10,   // Yeux - Beta bas
+  '🌌': 6     // Conscience - Theta (états modifiés DMT)
+}
+```
+
+### **Ondes cérébrales et effets**
+
+| Onde | Fréquence | État de conscience | Catégories |
+|------|-----------|-------------------|------------|
+| **Delta** | 1-4 Hz | Sommeil profond, régénération | 😴 Sommeil |
+| **Theta** | 4-8 Hz | Méditation profonde, créativité, rêves | 🌌 Conscience, 😴 Sommeil |
+| **Alpha** | 8-13 Hz | Relaxation, calme, bien-être | ❤️ Tension, 😊 Humeur |
+| **Beta** | 13-30 Hz | Concentration, vigilance, cognition | 🧠 Neuro, 🏔️ Altitude |
+
+### **Précautions d'usage**
+
+⚠️ **Avertissement** : Modes Binaural et Isochrone déconseillés en cas d'épilepsie photosensible ou troubles neurologiques.
+
+- **Binaural** : Casque obligatoire
+- **Isochrone** : Fonctionne sans casque
+- **Volume modéré** : Les battements peuvent être intenses
+- **Durée progressive** : Commencer par 5-10 minutes
+
+---
+
+## 8. STRATÉGIE DE MISE À JOUR DU PLAYER HTML
 
 ### RÈGLE ABSOLUE : ne jamais patcher incrementalement
 Les patches successifs corrompent le fichier. Toujours éditer directement le fichier `web-ui/public/proteodies/index.html`.
@@ -174,7 +241,7 @@ Les patches successifs corrompent le fichier. Toujours éditer directement le fi
 
 ---
 
-## 8. BILANS NEUROTRANSMETTEURS DE BRUNO (contexte protéodies santé)
+## 9. BILANS NEUROTRANSMETTEURS DE BRUNO (contexte protéodies santé)
 
 **Bilan 2017 :** DOPA=85%, 34DOPAC=14%🔴, HVA=43%🔴, NORADRE=59%🟡, SEROT=54%🟡, 5HIAA=54%
 **Bilan 2018 (après Wim Hof) :** DOPA=72%, 34DOPAC=25%🟡, HVA=61%✅, NORADRE=128%🔴, SEROT=40%🔴, 5HIAA=91%✅
@@ -186,7 +253,7 @@ Les patches successifs corrompent le fichier. Toujours éditer directement le fi
 
 ---
 
-## 9. HISTORIQUE DES ERREURS À ÉVITER
+## 10. HISTORIQUE DES ERREURS À ÉVITER
 
 1. **Ne pas patcher le HTML incrementalement avec des regex** → corruption du fichier JS
 2. **Toujours éditer directement le fichier HTML** avec les outils Read/Edit
@@ -195,7 +262,7 @@ Les patches successifs corrompent le fichier. Toujours éditer directement le fi
 
 ---
 
-## 10. PISTES D'EXTENSION FUTURES
+## 11. PISTES D'EXTENSION FUTURES
 
 - Ajouter des protéodies pour d'autres légumes/fruits (poivron, courge...)
 - Protéodies de relaxation cardiaque (ANP, BNP)
