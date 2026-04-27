@@ -37,10 +37,26 @@ def _save_strategies(cfg: ConfigObj):
 def _section_to_template(name: str, section: Dict) -> Dict[str, Any]:
     commands = parse_template_commands(section)
     info = split_instance_name(name)
+
+    # Handle schedule_when which might be a list if it contains commas
+    schedule_when_raw = section.get("schedule_when", "")
+    if isinstance(schedule_when_raw, list):
+        # ConfigObj parsed it as list due to comma - rejoin it
+        schedule_when = ", ".join(schedule_when_raw).strip('"')
+    else:
+        schedule_when = schedule_when_raw.strip('"') if schedule_when_raw else ""
+
+    # Handle description which might also be a list
+    description_raw = section.get("description", "")
+    if isinstance(description_raw, list):
+        description = ", ".join(description_raw).strip('"')
+    else:
+        description = description_raw.strip('"') if description_raw else ""
+
     return {
         "name": name,
-        "description": section.get("description", "").strip('"'),
-        "schedule_when": section.get("schedule_when", "").strip('"'),
+        "description": description,
+        "schedule_when": schedule_when,
         "commands": commands,
         "is_instance": info is not None,
         "template_name": info[0] if info else None,
