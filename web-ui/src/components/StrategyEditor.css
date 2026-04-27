@@ -38,7 +38,15 @@
 }
 .se-field { display: flex; flex-direction: column; gap: 3px; }
 .se-field-grow { flex: 1; min-width: 160px; }
-.se-field label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+.se-field label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; }
+.se-hint {
+  font-size: 11px; color: #666; cursor: help;
+  border: 1px solid #444; border-radius: 50%;
+  width: 14px; height: 14px; display: inline-flex;
+  align-items: center; justify-content: center;
+  text-transform: none;
+}
+.se-hint:hover { color: #aaa; border-color: #666; }
 .se-field select,
 .se-field input[type="text"] {
   background: #1e1e2e; color: #e0e0e0;

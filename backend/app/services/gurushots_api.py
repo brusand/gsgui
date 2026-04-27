@@ -35,12 +35,13 @@ class ChallengeData:
     end_time: datetime
     time_left: Dict[str, int]  # {"days": 0, "hours": 2, "minutes": 30, "seconds": 15}
     url: str
-    votes: int
+    votes: int  # votes totaux du challenge
     rank: int
     level: str
     exposure: int
     gps: int
-    challenge_data: Dict[str, Any]  # Données complètes de l'API
+    players: int = 0  # nombre de joueurs total du challenge
+    challenge_data: Dict[str, Any] = None  # Données complètes de l'API
 
 
 @dataclass  
@@ -122,18 +123,19 @@ class GuruShotsAPI:
     def _parse_challenge_data(self, challenge_data: Dict[str, Any]) -> ChallengeData:
         """Parse les données d'un challenge depuis l'API"""
         timeleft = challenge_data['time_left']
-        
+
         return ChallengeData(
             id=challenge_data['id'],
             title=challenge_data['title'],
             end_time=datetime.fromtimestamp(challenge_data["close_time"]),
             time_left=timeleft,
             url=challenge_data['url'],
-            votes=int(challenge_data['member']['ranking']['total'].get('votes', 0)),
+            votes=int(challenge_data.get('votes', 0)),  # votes totaux du challenge
             rank=int(challenge_data['member']['ranking']['total'].get('rank', 0)),
             level=challenge_data['member']['ranking']['total'].get('level_name', 'UNKNOWN'),
             exposure=int(challenge_data['member']['ranking']['total'].get('exposure', 0)),
             gps=int(0),  # Comme dans gsui.py
+            players=int(challenge_data.get('players', 0)),  # joueurs totaux du challenge
             challenge_data=challenge_data
         )
     

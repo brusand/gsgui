@@ -40,6 +40,7 @@ def _section_to_template(name: str, section: Dict) -> Dict[str, Any]:
     return {
         "name": name,
         "description": section.get("description", "").strip('"'),
+        "schedule_when": section.get("schedule_when", "").strip('"'),
         "commands": commands,
         "is_instance": info is not None,
         "template_name": info[0] if info else None,
@@ -120,6 +121,7 @@ def update_template(
     name: str,
     description: Optional[str] = Body(None),
     commands: Optional[List[Dict[str, Any]]] = Body(None),
+    schedule_when: Optional[str] = Body(None),
 ):
     """Met à jour description et/ou commandes d'un template ou d'une instance."""
     cfg = _load_strategies()
@@ -131,6 +133,14 @@ def update_template(
 
     if description is not None:
         section["description"] = description
+
+    if schedule_when is not None:
+        if schedule_when.strip():
+            section["schedule_when"] = schedule_when.strip()
+        else:
+            # Remove schedule_when if empty
+            if "schedule_when" in section:
+                del section["schedule_when"]
 
     if commands is not None:
         # Supprimer anciennes clés numériques
