@@ -4,7 +4,7 @@ import { apiClient } from '../services/api-v2';
 import CommandRow, { type CommandDef } from './CommandRow';
 import './StrategyEditor.css';
 
-export interface ChallengeRef { id: string; title: string; }
+export interface ChallengeRef { id: string; title: string; strategyName?: string; }
 
 interface Template {
   name: string;
@@ -42,7 +42,27 @@ const StrategyEditor: React.FC<Props> = ({
   useEffect(() => {
     if (!isOpen) return;
     apiClient.getCommandSchema().then(r => setSchema(r.schema)).catch(console.error);
-    apiClient.getTemplates(false).then(r => setTemplates(r.templates)).catch(console.error);
+
+    // Charger tous les templates (dont instances) pour pré-remplir si une instance existe
+    apiClient.getTemplates(true).then(r => {
+      const all: Template[] = r.templates;
+      setTemplates(all);
+
+      // Si un seul challenge sélectionné avec une stratégie active connue, la charger
+      if (selectedChallenges.length === 1) {
+        const activeStrategyName = selectedChallenges[0].strategyName;
+        if (activeStrategyName) {
+          const instance = all.find(t => t.name === activeStrategyName);
+          if (instance) {
+            setCommands(withIds(instance.commands));
+            setDescription(instance.description ?? '');
+            // Retrouver le nom du template de base (avant __)
+            const baseName = instance.name.split('__')[0];
+            setSelectedTemplate(baseName);
+          }
+        }
+      }
+    }).catch(console.error);
   }, [isOpen]);
 
   const flash = (type: 'ok'|'err'|'info', msg: string, dur = 4000) => {

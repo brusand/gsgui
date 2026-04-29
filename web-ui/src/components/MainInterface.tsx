@@ -690,7 +690,7 @@ const MainInterface: React.FC<MainInterfaceProps> = ({
             ? [oneShotChallenge]
             : challenges
                 .filter(c => selectedChallenges.has(c.id))
-                .map((c): ChallengeRef => ({ id: c.id, title: c.title }))
+                .map((c): ChallengeRef => ({ id: c.id, title: c.title, strategyName: c.selected_strategy }))
         }
         onApplied={refreshChallenges}
       />

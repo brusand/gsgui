@@ -130,14 +130,15 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
       <span style="font-size:13px;color:var(--text2)">Répéter jusqu'à la durée cible</span>
     </label>
   </div>
-  <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.2s" id="diapason-box">
-    <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+  <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.2s;display:flex;align-items:center;gap:10px" id="diapason-box">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1">
       <input type="checkbox" id="diapason-chk" style="width:20px;height:20px;accent-color:#BA7517" onchange="onDiapasonChange()" checked>
       <div>
         <div style="font-size:13px;font-weight:500;color:var(--text)">💧 Diapason de l'eau H₂O</div>
         <div style="font-size:11px;color:var(--text2);margin-top:2px">La4 = <span id="diapason-freq">440.00</span> Hz · Marc Henry</div>
       </div>
     </label>
+    <button id="diapason-play" onclick="toggleDiapason(this)" title="Écouter le diapason" style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg3);color:var(--text2);font-size:16px;cursor:pointer;flex-shrink:0;transition:all 0.15s">&#9654;</button>
   </div>
 </div>
 
@@ -181,6 +182,12 @@ const PROTEODIES=[
   {id:'cry1',      name:'Pedro — Cryptochrome CRY1',      seq:'GKHINDMFH',                          cat:'🌵', desc:'Photorécepteur végétal'},
   {id:'aqptip',    name:'Pedro — Aquaporine TIP1;1',      seq:'CFNPAVTLGAHINPAV',                   cat:'🌵', desc:'Canal eau végétal'},
   {id:'pepc',      name:'Pedro — PEPC Métabolisme CAM',   seq:'SIDDQLRQA',                          cat:'🌵', desc:'PEP Carboxylase — métabolisme cactus CAM'},
+  // 🫃 INTESTIN
+  {id:'larazotide', name:'Intestin — Larazotide AT1001',  seq:'GGVLVQPG',                           cat:'🫃', desc:'Jonctions serrées — répare leaky gut (ZOT analog)'},
+  {id:'glp2',       name:'Intestin — GLP-2 Muqueuse',     seq:'HADGSFSDEMNTILDNLAARDFINWLIQTKITD',   cat:'🫃', desc:'Régénère épithélium intestinal'},
+  {id:'motiline',   name:'Intestin — Motiline',           seq:'FVPIFTYGELQRMQEKERNKGQ',              cat:'🫃', desc:'Motilité — réduit ballonnements'},
+  {id:'tff3',       name:'Intestin — TFF3 Mucus',         seq:'DPAPLQEAKDCPGETHFYK',                 cat:'🫃', desc:'Répare et protège la paroi intestinale'},
+  {id:'bdef1',      name:'Intestin — β-Défensine 1',      seq:'GNRQCVSQGRALLTCCYRNGRCATRQPGH',        cat:'🫃', desc:'Équilibre flore — anti-dysbiose'},
   // 🌿 PLANTES
   {id:'psk',       name:'Plantes — PSK-α Croissance',     seq:'YIYTQ',                              cat:'🌿', desc:'Phytosulfokine — prolifération cellulaire'},
   {id:'clv3',      name:'Plantes — CLV3 Méristème',       seq:'HEVPSGP',                            cat:'🌿', desc:'Cellules souches — pousse apicale'},
@@ -202,11 +209,12 @@ const SCALES={
 };
 const NOTE_N=['La','La#','Si','Do','Do#','Ré','Ré#','Mi','Fa','Fa#','Sol','Sol#'];
 const COLS=['#1D9E75','#185FA5','#BA7517','#D85A30','#993556','#534AB7','#3B6D11','#639922','#E24B4A','#EF9F27'];
-const CAT_COLORS={'🧬':'#534AB7','🧠':'#1D9E75','🦵':'#BA7517','😴':'#185FA5','🍽️':'#D85A30','❤️':'#993556','💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11','🌿':'#639922'};
+const CAT_COLORS={'🧬':'#534AB7','🧠':'#1D9E75','🦵':'#BA7517','😴':'#185FA5','🍽️':'#D85A30','❤️':'#993556','💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11','🌿':'#639922','🫃':'#2A9D8F'};
 
 let audioCtx=null,reverbNode=null,masterGain=null;
 let playing=false,stopFlag=false,skipFlag=false;
 let paused=false,pauseResolve=null;
+let diapasonOsc=null,diapasonGain=null;
 let sessionStart=0,sessionDuration=0,timerInterval=null;
 let currentInstr='flute';
 
@@ -245,8 +253,31 @@ function resetTransport(){
 // DIAPASON
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
 function onDiapasonChange(){
-  document.getElementById('diapason-freq').textContent=document.getElementById('diapason-chk').checked?'429.62':'440.00';
+  const freq=document.getElementById('diapason-chk').checked?'429.62':'440.00';
+  document.getElementById('diapason-freq').textContent=freq;
   document.getElementById('diapason-box').style.borderColor=document.getElementById('diapason-chk').checked?'#BA7517':'var(--border)';
+  if(diapasonOsc)diapasonOsc.frequency.setTargetAtTime(parseFloat(freq),audioCtx.currentTime,0.05);
+}
+async function toggleDiapason(btn){
+  if(diapasonOsc){
+    diapasonGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.08);
+    const o=diapasonOsc; setTimeout(()=>o.stop(),300);
+    diapasonOsc=null; diapasonGain=null;
+    btn.innerHTML='&#9654;'; btn.style.background='var(--bg3)'; btn.style.color='var(--text2)'; btn.style.borderColor='var(--border)';
+    return;
+  }
+  await initAudio();
+  if(audioCtx.state==='suspended')await audioCtx.resume();
+  diapasonOsc=audioCtx.createOscillator();
+  diapasonGain=audioCtx.createGain();
+  diapasonOsc.type='sine';
+  diapasonOsc.frequency.value=getA4();
+  diapasonGain.gain.setValueAtTime(0,audioCtx.currentTime);
+  diapasonGain.gain.linearRampToValueAtTime(0.35,audioCtx.currentTime+0.06);
+  diapasonOsc.connect(diapasonGain);
+  diapasonGain.connect(audioCtx.destination);
+  diapasonOsc.start();
+  btn.innerHTML='&#9646;'; btn.style.background='#BA751722'; btn.style.color='#BA7517'; btn.style.borderColor='#BA7517';
 }
 
 // HELPERS

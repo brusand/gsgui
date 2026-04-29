@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import TimingWidget from './TimingWidget';
 import './CommandRow.css';
 
@@ -33,6 +33,39 @@ interface Props {
   onMove: (from: number, to: number) => void;
   onDelete: (id: string) => void;
 }
+
+// Composant dédié pour photo_list : état local pour le texte brut pendant la saisie
+const PhotoListArg: React.FC<{ arg: ArgDef; val: any; setArg: (name: string, v: any) => void }> = ({ arg, val, setArg }) => {
+  const list: string[] = Array.isArray(val) ? val : [];
+  const [draft, setDraft] = useState(list.join(', '));
+
+  // Sync le draft si la valeur change depuis l'extérieur (ex: chargement d'un template)
+  useEffect(() => {
+    const incoming = (Array.isArray(val) ? val : []).join(', ');
+    setDraft(prev => {
+      const parsed = prev.split(',').map(s => s.trim()).filter(Boolean).join(', ');
+      return parsed === incoming ? prev : incoming;
+    });
+  }, [JSON.stringify(val)]);
+
+  return (
+    <span className="cmd-arg photo-arg" title={arg.label}>
+      <span className="arg-label">{arg.label}</span>
+      <textarea
+        className="arg-photos"
+        rows={2}
+        placeholder="UID1, UID2, ..."
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        onBlur={e => {
+          const parsed = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+          setArg(arg.name, parsed);
+          setDraft(parsed.join(', '));
+        }}
+      />
+    </span>
+  );
+};
 
 const COMMAND_TYPES = ['vote', 'submit', 'turbo', 'boost', 'revote', 'swap', 'unlocked_boost', 'cancel'];
 
@@ -137,19 +170,7 @@ const CommandRow: React.FC<Props> = ({ cmd, schema, index, total, onChange, onMo
     }
 
     if (arg.type === 'photo_list') {
-      const list: string[] = Array.isArray(val) ? val : [];
-      return (
-        <span className="cmd-arg photo-arg" key={arg.name} title={arg.label}>
-          <span className="arg-label">{arg.label}</span>
-          <textarea
-            className="arg-photos"
-            rows={2}
-            placeholder="UID1, UID2, ..."
-            value={list.join(', ')}
-            onChange={e => setArg(arg.name, e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
-          />
-        </span>
-      );
+      return <PhotoListArg key={arg.name} arg={arg} val={val} setArg={setArg} />;
     }
 
     if (arg.type === 'photo_uid') {
