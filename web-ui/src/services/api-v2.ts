@@ -203,10 +203,11 @@ class GSGUIApiClient {
     return response.data;
   }
 
-  async updateTemplate(name: string, description?: string, commands?: any[]): Promise<any> {
+  async updateTemplate(name: string, description?: string, commands?: any[], scheduleWhen?: string): Promise<any> {
     const response = await this.api.put(`/templates/${encodeURIComponent(name)}`, {
       description,
       commands,
+      schedule_when: scheduleWhen || undefined,
     });
     return response.data;
   }

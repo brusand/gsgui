@@ -89,29 +89,38 @@ class ExtendedStrategyExecutor:
             logger.error(f"❌ Erreur lors du rechargement de la configuration: {e}")
             return False
     
-    async def execute_extended_strategy(self, profile_id: str, challenge_id: str, 
+    async def execute_extended_strategy(self, profile_id: str, challenge_id: str,
                                       challenge_url: str, strategy_name: str) -> str:
         """Execute an extended strategy with timing - separates NOW vs FUTURE actions"""
-        
+
         if strategy_name not in self.strategies_config:
             logger.info(f"🔄 Strategy '{strategy_name}' not in cache — reloading strategies.ini")
             self.reload_config()
         if strategy_name not in self.strategies_config:
             raise ValueError(f"Strategy '{strategy_name}' not found in strategies.ini")
-        
+
         # Get user token
         user = config_manager.get_user(profile_id)
         if not user or not user.get('xtoken'):
             raise ValueError(f"No valid user token for profile {profile_id}")
-        
+
         # Create API client
         api_client = GuruShotsAPI(user['xtoken'])
-        
+
         # Get challenge end time from get_challenges() instead of get_challenge_details()
         challenge_end_time = await self._get_challenge_end_time(api_client, challenge_id)
-        
+
         if challenge_end_time <= datetime.now():
             raise ValueError("Challenge has already ended")
+
+        # Check if strategy has conditional scheduling
+        schedule_when = self.strategies_config[strategy_name].get('schedule_when')
+        if schedule_when:
+            logger.info(f"⏰ Strategy '{strategy_name}' has conditional scheduling: {schedule_when}")
+            return await self._schedule_conditional_strategy(
+                profile_id, challenge_id, challenge_url, strategy_name,
+                schedule_when, challenge_end_time
+            )
         
         # Parse strategy actions
         actions = self._parse_strategy_actions(strategy_name, challenge_end_time)
@@ -851,18 +860,19 @@ class ExtendedStrategyExecutor:
                     index_str = param[1:-1]
                 else:
                     index_str = param
+                    if index_str.isdigit():
+                        index_str = int(index_str) - 1
 
                 if index_str.isdigit():
-                    index = int(index_str) - 1
-                    logger.info(f"🎯 Resolving photo index [{index}] by fetching FRESH challenge data for boost")
+                    logger.info(f"🎯 Resolving photo index [{index_str}] by fetching FRESH challenge data for boost")
 
                     # GET FRESH CHALLENGE DATA at execution time (same as turbo)
-                    target_photo_id = await self._get_current_user_photo_by_index(api_client, challenge_id, index)
+                    target_photo_id = await self._get_current_user_photo_by_index(api_client, challenge_id, index_str)
                     if target_photo_id:
-                        logger.info(f"✅ Boost will target photo {target_photo_id} (index [{index}] from fresh data)")
+                        logger.info(f"✅ Boost will target photo {target_photo_id} (index [{index_str}] from fresh data)")
                     else:
-                        logger.error(f"❌ Could not resolve photo index [{index}] from current challenge data")
-                        return {'success': False, 'error': f'Could not resolve photo index {index}'}
+                        logger.error(f"❌ Could not resolve photo index [{index_str}] from current challenge data")
+                        return {'success': False, 'error': f'Could not resolve photo index {index_str}'}
                 else:
                     target_photo_id = param
                     logger.info(f"🎯 Boost will target specific photo: {target_photo_id}")
@@ -908,18 +918,19 @@ class ExtendedStrategyExecutor:
                     index_str = param[1:-1]
                 else:
                     index_str = param
+                    if index_str.isdigit():
+                        index_str = int(index_str) - 1
                 
                 if index_str.isdigit():
-                    index = int(index_str) - 1
-                    logger.info(f"🎯 Resolving photo index [{index}] by fetching FRESH challenge data")
+                    logger.info(f"🎯 Resolving photo index [{index_str}] by fetching FRESH challenge data")
                     
                     # GET FRESH CHALLENGE DATA at execution time
-                    target_photo_id = await self._get_current_user_photo_by_index(api_client, challenge_id, index)
+                    target_photo_id = await self._get_current_user_photo_by_index(api_client, challenge_id, index_str)
                     if target_photo_id:
-                        logger.info(f"✅ Turbo will target photo {target_photo_id} (index [{index}] from fresh data)")
+                        logger.info(f"✅ Turbo will target photo {target_photo_id} (index [{index_str}] from fresh data)")
                     else:
-                        logger.error(f"❌ Could not resolve photo index [{index}] from current challenge data")
-                        return {'success': False, 'error': f'Could not resolve photo index {index}'}
+                        logger.error(f"❌ Could not resolve photo index [{index_str}] from current challenge data")
+                        return {'success': False, 'error': f'Could not resolve photo index {index_str}'}
                 else:
                     target_photo_id = param
                     logger.info(f"🎯 Turbo will target specific photo: {target_photo_id}")
@@ -2137,6 +2148,350 @@ class ExtendedStrategyExecutor:
                 
         except Exception as e:
             logger.error(f"❌ Error updating action status: {e}")
+
+    async def _schedule_conditional_strategy(
+        self, profile_id: str, challenge_id: str, challenge_url: str,
+        strategy_name: str, schedule_when: str, challenge_end_time: datetime
+    ) -> str:
+        """
+        Schedule a strategy conditionally based on challenge metrics (players, votes).
+
+        Args:
+            schedule_when: condition string, e.g.:
+                - "votes>2200000|players>2000" (OR logic)
+                - "votes>2200000&players>2000" (AND logic)
+                - "votes>2500000" (single condition)
+                - "votes>2200000|players>2000,deadline=end-1h0m0s" (with deadline)
+
+        Returns:
+            execution_id for tracking
+        """
+        logger.info(f"🔄 Conditional scheduling for strategy '{strategy_name}' with condition: {schedule_when}")
+
+        # Parse the schedule_when condition
+        condition_str = schedule_when
+        deadline_str = None
+
+        # Extract deadline if present
+        if ',' in schedule_when:
+            parts = schedule_when.split(',')
+            condition_str = parts[0].strip()
+            for part in parts[1:]:
+                if part.strip().startswith('deadline='):
+                    deadline_str = part.split('=')[1].strip()
+
+        # Create monitoring job
+        execution_id = f"conditional_{strategy_name}_{challenge_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+        # Schedule first check immediately
+        from app.services.strategy_scheduler import strategy_scheduler
+        job_id = f"{profile_id}_conditional_check_{challenge_id}_{strategy_name}"
+
+        strategy_scheduler.scheduler.add_job(
+            func=self._check_and_schedule_if_ready,
+            trigger='date',
+            run_date=datetime.now() + timedelta(seconds=5),  # First check in 5s
+            args=[profile_id, challenge_id, challenge_url, strategy_name, condition_str, deadline_str, challenge_end_time],
+            id=job_id,
+            name=f"Conditional check: {strategy_name} for challenge {challenge_id}",
+            replace_existing=True,
+            coalesce=True,
+            max_instances=1,
+            misfire_grace_time=300
+        )
+
+        logger.info(f"📅 Scheduled conditional check for '{strategy_name}' - will verify every 5min until condition met")
+
+        # Save conditional strategy to DB for restart persistence
+        await self._save_conditional_strategy(
+            challenge_id, strategy_name, schedule_when, profile_id, challenge_url, execution_id
+        )
+
+        return execution_id
+
+    async def _check_and_schedule_if_ready(
+        self, profile_id: str, challenge_id: str, challenge_url: str,
+        strategy_name: str, condition_str: str, deadline_str: Optional[str],
+        challenge_end_time: datetime
+    ):
+        """
+        Check if scheduling condition is met, and if so, schedule the full strategy.
+        Otherwise, reschedule this check in 5 minutes.
+        """
+        try:
+            # Get fresh challenge data
+            user = config_manager.get_user(profile_id)
+            if not user or not user.get('xtoken'):
+                logger.error(f"❌ No valid token for profile {profile_id} - stopping conditional check")
+                return
+
+            api_client = GuruShotsAPI(user['xtoken'])
+            active_challenges = await api_client.get_challenges()
+            target = next((c for c in active_challenges if str(c.id) == str(challenge_id)), None)
+
+            if target is None:
+                logger.info(f"⏹️ Challenge {challenge_id} no longer active - stopping conditional check")
+                return
+
+            # Check deadline
+            if deadline_str:
+                dl_match = (re.match(r'end-(\d+)h(\d+)m(\d+)s', deadline_str) or
+                            re.match(r'end-(\d+)m(\d+)s', deadline_str))
+                if dl_match:
+                    groups = dl_match.groups()
+                    if len(groups) == 3:
+                        hours, minutes, seconds = int(groups[0]), int(groups[1]), int(groups[2])
+                    else:
+                        hours, minutes, seconds = 0, int(groups[0]), int(groups[1])
+                    deadline_delta = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+                    time_remaining = challenge_end_time - datetime.now()
+                    if time_remaining < deadline_delta:
+                        logger.info(f"⏹️ Deadline reached for conditional strategy '{strategy_name}' "
+                                    f"(remaining={time_remaining}, limit={deadline_delta}) - NOT scheduling")
+                        return
+
+            # Parse and evaluate condition
+            players = target.players
+            votes = target.votes
+
+            logger.info(f"🔍 Conditional check '{strategy_name}': players={players}, votes={votes}, condition={condition_str}")
+
+            condition_met = self._evaluate_condition(condition_str, players, votes)
+
+            if condition_met:
+                logger.info(f"✅ Condition MET for strategy '{strategy_name}' (players={players}, votes={votes})")
+                log_and_broadcast(
+                    f"🎯 Scheduling strategy '{strategy_name}' - condition met (players={players}, votes={votes})",
+                    "success", profile_id
+                )
+
+                # Remove schedule_when from config before scheduling
+                # (to avoid infinite loop)
+                original_config = self.strategies_config[strategy_name].copy()
+                if 'schedule_when' in self.strategies_config[strategy_name]:
+                    del self.strategies_config[strategy_name]['schedule_when']
+
+                try:
+                    # Schedule the strategy normally
+                    await self.execute_extended_strategy(
+                        profile_id, challenge_id, challenge_url, strategy_name
+                    )
+
+                    # Cleanup conditional strategy from DB (no longer needed)
+                    await self._cleanup_conditional_strategy(challenge_id, profile_id)
+
+                finally:
+                    # Restore original config
+                    self.strategies_config[strategy_name] = original_config
+
+            else:
+                # Condition not met, reschedule check in 5 minutes
+                logger.info(f"⏳ Condition NOT met for '{strategy_name}' - rescheduling check in 5min")
+
+                from app.services.strategy_scheduler import strategy_scheduler
+                job_id = f"{profile_id}_conditional_check_{challenge_id}_{strategy_name}"
+                next_run_time = datetime.now() + timedelta(minutes=5)
+
+                strategy_scheduler.scheduler.add_job(
+                    func=self._check_and_schedule_if_ready,
+                    trigger='date',
+                    run_date=next_run_time,
+                    args=[profile_id, challenge_id, challenge_url, strategy_name, condition_str, deadline_str, challenge_end_time],
+                    id=job_id,
+                    name=f"Conditional check: {strategy_name} for challenge {challenge_id}",
+                    replace_existing=True,
+                    coalesce=True,
+                    max_instances=1,
+                    misfire_grace_time=300
+                )
+                logger.info(f"📅 Rescheduled conditional check for {next_run_time.strftime('%H:%M:%S')}")
+
+        except Exception as e:
+            logger.error(f"❌ Error in conditional check for '{strategy_name}': {e}")
+
+    def _evaluate_condition(self, condition_str: str, players: int, votes: int) -> bool:
+        """
+        Evaluate a condition string like "votes>2200000 OR players>2000".
+
+        Supports:
+        - OR logic: "|", "OR", "or", "OU", "ou"
+        - AND logic: "&", "AND", "and", "ET", "et"
+        - Operators: >, >=, <, <=, ==
+        """
+        # Normalize to use separators for easier parsing
+        normalized = condition_str
+        # Replace word operators with symbols (case insensitive)
+        import re
+        normalized = re.sub(r'\s+(OR|or|OU|ou)\s+', '|', normalized)
+        normalized = re.sub(r'\s+(AND|and|ET|et)\s+', '&', normalized)
+
+        # Determine logic operator
+        if '|' in normalized:
+            logic = 'OR'
+            parts = normalized.split('|')
+        elif '&' in normalized:
+            logic = 'AND'
+            parts = normalized.split('&')
+        else:
+            logic = 'SINGLE'
+            parts = [normalized]
+
+        results = []
+        for part in parts:
+            part = part.strip()
+
+            # Parse condition: votes>2200000 or players>2000
+            if 'votes' in part:
+                match = re.match(r'votes\s*([><=]+)\s*(\d+)', part)
+                if match:
+                    operator = match.group(1)
+                    threshold = int(match.group(2))
+                    result = self._compare(votes, operator, threshold)
+                    results.append(result)
+                    logger.debug(f"  votes {operator} {threshold}: {votes} -> {result}")
+            elif 'players' in part:
+                match = re.match(r'players\s*([><=]+)\s*(\d+)', part)
+                if match:
+                    operator = match.group(1)
+                    threshold = int(match.group(2))
+                    result = self._compare(players, operator, threshold)
+                    results.append(result)
+                    logger.debug(f"  players {operator} {threshold}: {players} -> {result}")
+
+        # Apply logic
+        if logic == 'OR':
+            return any(results)
+        elif logic == 'AND':
+            return all(results)
+        else:  # SINGLE
+            return results[0] if results else False
+
+    def _compare(self, value: int, operator: str, threshold: int) -> bool:
+        """Compare value with threshold using operator"""
+        if operator == '>':
+            return value > threshold
+        elif operator == '>=':
+            return value >= threshold
+        elif operator == '<':
+            return value < threshold
+        elif operator == '<=':
+            return value <= threshold
+        elif operator == '==':
+            return value == threshold
+        return False
+
+    async def _save_conditional_strategy(
+        self, challenge_id: str, strategy_name: str, schedule_when: str,
+        profile_id: str, challenge_url: str, execution_id: str
+    ):
+        """Save conditional strategy to DB hierarchical structure for restart persistence"""
+        try:
+            if save_strategy_with_actions is None:
+                logger.warning("⚠️ save_strategy_with_actions not available - conditional strategy won't persist across restarts")
+                return
+
+            # Create a special action marker for conditional scheduling
+            actions = [{
+                'action': 'conditional_wait',
+                'timing': 'now',
+                'parameters': [schedule_when],
+                'scheduled_time': datetime.now().isoformat(),
+                'status': 'pending',
+                'execution_id': execution_id
+            }]
+
+            # Save with special metadata
+            success = save_strategy_with_actions(
+                challenge_id=challenge_id,
+                strategy_name=f"CONDITIONAL_{strategy_name}",
+                actions=actions,
+                profile_id=profile_id,
+                challenge_url=challenge_url,
+                metadata={
+                    'conditional': True,
+                    'schedule_when': schedule_when,
+                    'original_strategy': strategy_name
+                }
+            )
+
+            if success:
+                logger.info(f"💾 Saved conditional strategy '{strategy_name}' to DB (survives restart)")
+            else:
+                logger.warning(f"⚠️ Failed to save conditional strategy '{strategy_name}' to DB")
+
+        except Exception as e:
+            logger.error(f"❌ Error saving conditional strategy: {e}")
+
+    async def restore_conditional_strategies(self):
+        """Restore conditional strategies from DB after restart"""
+        try:
+            from gs_backend import get_all_strategies
+            if get_all_strategies is None:
+                logger.warning("⚠️ get_all_strategies not available")
+                return
+
+            # Get all strategies from DB
+            all_strategies = get_all_strategies()
+
+            for strategy in all_strategies:
+                metadata = strategy.get('metadata', {})
+                if not metadata.get('conditional'):
+                    continue
+
+                # This is a conditional strategy
+                challenge_id = strategy['challenge_id']
+                profile_id = strategy['profile_id']
+                challenge_url = strategy.get('challenge_url', '')
+                schedule_when = metadata.get('schedule_when')
+                original_strategy = metadata.get('original_strategy')
+
+                if not schedule_when or not original_strategy:
+                    continue
+
+                logger.info(f"🔄 Restoring conditional strategy '{original_strategy}' for challenge {challenge_id}")
+
+                # Check if challenge is still active
+                try:
+                    user = config_manager.get_user(profile_id)
+                    if not user or not user.get('xtoken'):
+                        logger.warning(f"⚠️ No token for profile {profile_id}, skipping")
+                        continue
+
+                    api_client = GuruShotsAPI(user['xtoken'])
+                    challenge_end_time = await self._get_challenge_end_time(api_client, challenge_id)
+
+                    if challenge_end_time <= datetime.now():
+                        logger.info(f"⏹️ Challenge {challenge_id} already ended, cleaning up")
+                        # TODO: cleanup from DB
+                        continue
+
+                    # Restore conditional scheduling
+                    await self._schedule_conditional_strategy(
+                        profile_id, challenge_id, challenge_url,
+                        original_strategy, schedule_when, challenge_end_time
+                    )
+
+                    logger.info(f"✅ Restored conditional strategy '{original_strategy}'")
+
+                except Exception as e:
+                    logger.error(f"❌ Error restoring conditional strategy: {e}")
+
+        except Exception as e:
+            logger.error(f"❌ Error in restore_conditional_strategies: {e}")
+
+    async def _cleanup_conditional_strategy(self, challenge_id: str, profile_id: str):
+        """Cleanup conditional strategy from DB after it has been triggered"""
+        try:
+            if check_and_cleanup_completed_strategies is None:
+                logger.warning("⚠️ check_and_cleanup_completed_strategies not available")
+                return
+
+            # Use the cleanup function to remove the conditional strategy marker
+            check_and_cleanup_completed_strategies(challenge_id, profile_id)
+            logger.info(f"🧹 Cleaned up conditional strategy marker for challenge {challenge_id}")
+
+        except Exception as e:
+            logger.error(f"❌ Error cleaning up conditional strategy: {e}")
 
 # Global instance
 extended_strategy_executor = ExtendedStrategyExecutor()

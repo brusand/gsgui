@@ -3477,6 +3477,12 @@ async def startup_event():
             await schedule_strategies_from_ini()
             logger.info("✅ StrategyScheduler service initialized")
 
+            # Restaurer les stratégies conditionnelles (schedule_when)
+            logger.info("🔄 Restoring conditional strategies...")
+            from app.services.extended_strategy_executor import extended_strategy_executor
+            await extended_strategy_executor.restore_conditional_strategies()
+            logger.info("✅ Conditional strategies restored")
+
             # Initialiser le service AutoRefreshScheduler
             try:
                 from app.services.auto_refresh_scheduler import init_auto_refresh_scheduler

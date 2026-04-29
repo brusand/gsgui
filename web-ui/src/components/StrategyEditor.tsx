@@ -32,6 +32,7 @@ const StrategyEditor: React.FC<Props> = ({
   const [templates, setTemplates]     = useState<Template[]>([]);
   const [commands, setCommands]       = useState<CommandDef[]>([]);
   const [description, setDescription] = useState('');
+  const [scheduleWhen, setScheduleWhen] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [applying, setApplying]       = useState(false);
   const [runningOnce, setRunningOnce] = useState(false);
@@ -75,6 +76,7 @@ const StrategyEditor: React.FC<Props> = ({
     if (!tpl) return;
     setCommands(withIds(tpl.commands));
     setDescription(tpl.description);
+    setScheduleWhen((tpl as any).schedule_when || '');
     setSelectedTemplate(name);
   }, [templates]);
 
@@ -96,7 +98,7 @@ const StrategyEditor: React.FC<Props> = ({
     const instanceName = `${templateName}__${profileId}__${challenge.id}`;
     try {
       // 1. Sauvegarder l'instance dans strategies.ini
-      await apiClient.updateTemplate(instanceName, description, commands);
+      await apiClient.updateTemplate(instanceName, description, commands, scheduleWhen);
       // 2. Appliquer au challenge via l'endpoint existant
       await apiClient.applyStrategy([challenge.id], instanceName, profileId);
       return true;
@@ -111,7 +113,7 @@ const StrategyEditor: React.FC<Props> = ({
     if (!name) { flash('err', 'Nom du template requis'); return; }
     if (commands.length === 0) { flash('err', 'Stratégie vide'); return; }
     try {
-      await apiClient.updateTemplate(name, description, commands);
+      await apiClient.updateTemplate(name, description, commands, scheduleWhen);
       flash('ok', `✅ Template "${name}" sauvegardé`);
       setNewTemplateName('');
       setShowNewTemplate(false);
@@ -162,7 +164,7 @@ const StrategyEditor: React.FC<Props> = ({
     const newName = newTemplateName.trim();
     if (newName) {
       try {
-        await apiClient.updateTemplate(newName, description, commands);
+        await apiClient.updateTemplate(newName, description, commands, scheduleWhen);
         setNewTemplateName('');
         setShowNewTemplate(false);
         setSelectedTemplate(newName);
@@ -249,6 +251,17 @@ const StrategyEditor: React.FC<Props> = ({
               type="text" value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="Description de la stratégie…"
+            />
+          </div>
+          <div className="se-field se-field-grow">
+            <label>
+              Programmation conditionnelle (optionnel)
+              <span className="se-hint" title="Ex: votes>2200000|players>2000 (programme quand condition remplie)">ℹ️</span>
+            </label>
+            <input
+              type="text" value={scheduleWhen}
+              onChange={e => setScheduleWhen(e.target.value)}
+              placeholder="votes>2200000|players>2000,deadline=end-1h0m0s"
             />
           </div>
         </div>
