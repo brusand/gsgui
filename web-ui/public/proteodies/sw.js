@@ -1,5 +1,5 @@
 // Service Worker pour Protéodies Player - Cache hors ligne
-const CACHE_NAME = 'proteodies-v15-vigne';
+const CACHE_NAME = 'proteodies-v16-neuro-douleur';
 const urlsToCache = [
   '/proteodies/',
   '/proteodies/index.html',
