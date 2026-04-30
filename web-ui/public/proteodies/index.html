@@ -388,6 +388,12 @@ let activeFilters=new Set();
 let audioMode='stereo';
 let diapasonOsc=null,diapasonGain=null;
 const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8};
+const CAT_AUDIO_MODE={
+  '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo',
+  '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
+  '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic'
+};
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
 function onDiapasonChange(){
@@ -719,6 +725,15 @@ async function playOne(prot){
   return true;
 }
 
+function autoSelectAudioMode(){
+  const queue=getQueue();
+  if(!queue.length)return;
+  const categories=queue.map(p=>p.cat);
+  const hasNeuroCat=categories.some(cat=>CAT_AUDIO_MODE[cat]==='isochronic');
+  const recommendedMode=hasNeuroCat?'isochronic':'stereo';
+  audioMode=recommendedMode;
+  document.getElementById('audio-mode').value=recommendedMode;
+}
 async function startSession(){
   if(playing)return;
   const queue=getQueue();
@@ -730,6 +745,7 @@ async function startSession(){
     }
     return;
   }
+  autoSelectAudioMode();
   playing=true;stopFlag=false;
   await initAudio();
   if(audioCtx.state==='suspended')await audioCtx.resume();
