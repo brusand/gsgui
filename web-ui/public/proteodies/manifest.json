@@ -1,8 +1,9 @@
 {
-  "name": "Protéodies Player",
+  "name": "Protéodies Player - La molé met l'eau !",
   "short_name": "Protéodies",
-  "description": "Sonification de séquences peptidiques - 56 protéodies",
-  "start_url": "/proteodies/",
+  "description": "La molé met l'eau ! 74 protéodies - De la molécule à la mélodie, de la séquence à la santé",
+  "start_url": ".",
+  "scope": "/proteodies/",
   "display": "standalone",
   "background_color": "#0f0f0f",
   "theme_color": "#1D9E75",

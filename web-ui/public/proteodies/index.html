@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>Proteodies Player</title>
-<meta name="description" content="Sonification de séquences peptidiques - 56 protéodies">
+<title>Proteodies Player - La molé met l'eau !</title>
+<meta name="description" content="La molé met l'eau ! Sonification de séquences peptidiques - 74 protéodies - De la molécule à la mélodie, de la séquence à la santé">
 <meta name="theme-color" content="#1D9E75">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -66,9 +66,10 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 .modal-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .modal-badge{font-size:11px;padding:3px 9px;border-radius:4px;font-weight:500}
 .filter-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.filter-btn{padding:8px 12px;border-radius:8px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);font-size:14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
-.filter-btn:hover{border-color:#555}
-.filter-btn.active{border-color:var(--teal);background:#1D9E7515;color:var(--teal)}
+.filter-btn{padding:8px 12px;border-radius:8px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);font-size:14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;user-select:none}
+.filter-btn:hover{border-color:#555;transform:translateY(-1px)}
+.filter-btn:active{transform:translateY(0)}
+.filter-btn.active{border-color:var(--teal);background:#1D9E7515;color:var(--teal);font-weight:500;border-width:1.5px}
 .filter-count{font-size:11px;background:#33333388;padding:2px 6px;border-radius:4px;font-weight:500}
 .filter-info{font-size:12px;color:var(--text2);margin-bottom:10px}
 </style>
@@ -81,14 +82,17 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <button id="t-pause" onclick="togglePause()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;&#9646;</button>
   <button onclick="stopSession()" style="width:60px;height:60px;border-radius:50%;border:none;background:#D85A30;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;</button>
   <button onclick="skipNext()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">&#9654;&#9654;</button>
+  <button id="t-loop" onclick="toggleLoop()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #1D9E75;background:#1D9E7522;color:#1D9E75;font-size:24px;cursor:pointer;flex-shrink:0;" title="Boucle active">&#8734;</button>
   <div style="flex:1;min-width:0;padding-left:4px;">
     <div id="t-name" style="font-size:13px;font-weight:500;color:#1D9E75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Pret</div>
     <div id="t-status" style="font-size:11px;color:#999;margin-top:2px;">Coche des proteodies et lance &#9654;</div>
   </div>
+  <div id="t-timer" style="display:none;font-size:22px;font-weight:600;color:#1D9E75;font-variant-numeric:tabular-nums;min-width:140px;text-align:right;padding-right:10px;">0:00 / 10:00</div>
 </div>
 
 <h1>&#x1F9EC; Proteodies Player</h1>
-<p class="sub">Sonification de sequences peptidiques &middot; 56 proteodies &middot; iPad ready</p>
+<p class="sub">La molé met l'eau ! &middot; 74 proteodies</p>
+<p class="sub" style="font-size:11px;margin-top:-14px;color:#666">De la molécule à la mélodie, de la séquence à la santé</p>
 
 <div class="now" id="now-box" style="display:none">
   <div class="now-title" id="now-title">&#8212;</div>
@@ -110,12 +114,12 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 <div class="card">
   <div class="card-title">Instrument</div>
   <div class="instr-grid">
-    <div class="instr-btn sel" onclick="setInstr('flute',this)"><span class="instr-icon">&#x1FAA8;</span>Flute andine</div>
+    <div class="instr-btn" onclick="setInstr('flute',this)"><span class="instr-icon">&#x1FAA8;</span>Flute andine</div>
     <div class="instr-btn" onclick="setInstr('voix_f',this)"><span class="instr-icon">&#x1F3A4;</span>Voix femmes</div>
     <div class="instr-btn" onclick="setInstr('voix_h',this)"><span class="instr-icon">&#x1F3B5;</span>Voix hommes</div>
     <div class="instr-btn" onclick="setInstr('choeur',this)"><span class="instr-icon">&#x1F3B6;</span>Choeur mixte</div>
     <div class="instr-btn" onclick="setInstr('cristal',this)"><span class="instr-icon">&#x2728;</span>Cristal</div>
-    <div class="instr-btn" onclick="setInstr('bol',this)"><span class="instr-icon">&#x1F514;</span>Bol tibetain</div>
+    <div class="instr-btn sel" onclick="setInstr('bol',this)"><span class="instr-icon">&#x1F514;</span>Bol tibetain</div>
   </div>
 </div>
 
@@ -132,6 +136,10 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     <input type="range" id="dur" min="1" max="30" value="10" step="1" oninput="onDurChange()">
     <span class="ctrl-val" id="dur-val">10</span>
     <span style="font-size:12px;color:var(--text2)">min</span>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-left:10px">
+      <input type="checkbox" id="infinite-chk" style="width:18px;height:18px;accent-color:#BA7517" onchange="onInfiniteChange()">
+      <span style="font-size:12px;color:var(--text2);white-space:nowrap">∞ Infini</span>
+    </label>
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Reverb</span>
@@ -158,7 +166,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <div class="ctrl-row" style="margin-top:4px">
     <span class="ctrl-label">Boucle</span>
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-      <input type="checkbox" id="loop-chk" style="width:20px;height:20px;accent-color:var(--teal)" checked>
+      <input type="checkbox" id="loop-chk" style="width:20px;height:20px;accent-color:var(--teal)" checked onchange="syncLoopButton()">
       <span style="font-size:13px;color:var(--text2)">Repeter jusqu'a la duree cible</span>
     </label>
   </div>
@@ -179,9 +187,9 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 </div>
 
 <div class="card">
-  <div class="card-title">Filtres par categorie</div>
+  <div class="card-title">Filtres par categorie <span style="color:var(--text2);font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">(selection multiple)</span></div>
   <div class="filter-wrap" id="filter-wrap"></div>
-  <div class="filter-info" id="filter-info">56 proteodies affichees</div>
+  <div class="filter-info" id="filter-info">Aucune proteodie - Selectionne au moins une categorie</div>
 </div>
 
 <div class="card">
@@ -219,9 +227,14 @@ const PROTEODIES=[
   {id:'igf1', name:'Genou — IGF-1', seq:'GYGSSSRRAPQT', cat:'🦵', desc:'Stimule chondrocytes'},
   {id:'bmp7', name:'Genou — BMP-7', seq:'VFQQHIHI', cat:'🦵', desc:'Morphogène osseux'},
   {id:'dsip', name:'Sommeil — DSIP', seq:'WAGGDASGE', cat:'😴', desc:'Delta Sleep-Inducing Peptide'},
-  {id:'oxy', name:'Sommeil — Ocytocine', seq:'CYIQNCPLG', cat:'😴', desc:'Relaxation + lien social'},
+  {id:'oxy', name:'Neuro — Ocytocine', seq:'CYIQNCPLG', cat:'🧠', desc:'Relaxation + lien social'},
   {id:'glp1', name:'Boulimie — GLP-1', seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR', cat:'🍽️', desc:'Hormone de satiété'},
   {id:'apelin', name:'Tension — Apelin-13', seq:'QRPRLSHKGPMPF', cat:'❤️', desc:'Vasodilatateur endogène'},
+  {id:'enos', name:'Tension — eNOS Oxyde Nitrique', seq:'RRKRKKSRGG', cat:'❤️', desc:'Enzyme NO — dilate artérioles (diastolique)'},
+  {id:'bnp', name:'Tension — BNP Diastolique', seq:'SPKMVQGSGCFGRKMDRISSSSGLGCKVLRRH', cat:'❤️', desc:'Brain Natriuretic Peptide — baisse résistance périphérique'},
+  {id:'adrm', name:'Tension — Adrénomédulline', seq:'YRQSMNNFQGLRSFGCRFGTCTVQKLAHQIYQFTDKDKDNVAPRSKISPQGY', cat:'❤️', desc:'Vasodilatateur puissant — cible diastolique'},
+  {id:'cgrp', name:'Tension — CGRP Artérioles', seq:'ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF', cat:'❤️', desc:'Calcitonin Gene-Related Peptide — détend artérioles'},
+  {id:'aqp2', name:'Tension — AQP2 Rénale', seq:'MGKEVEFKDTDWDHRSFQKKVSLAAVTFKLFVLGFGLDDHSGKGNFKGATAAVQVAWDGWKASTPSHNLW', cat:'❤️', desc:'Aquaporine rein — régule volume sanguin et diastolique'},
   {id:'aqp1', name:'Aquaporine AQP1', seq:'CFNPAVTLGAHINPAV', cat:'💧', desc:'Canal eau — pression artérielle'},
   {id:'epo', name:'Bolivie — EPO mimetic', seq:'GGTYSCHFGPLTWVCK', cat:'🏔️', desc:'Adaptation altitude'},
   {id:'hif', name:'Bolivie — HIF-1α', seq:'DLDLEMLAPF', cat:'🏔️', desc:'Capteur hypoxie'},
@@ -268,9 +281,41 @@ const PROTEODIES=[
   {id:'sod', name:'Yeux — SOD1 Antioxydante', seq:'HVGDLGNVTADKDGVADVSIED', cat:'👁️', desc:'Superoxyde Dismutase — protection rétine'},
   {id:'inmt', name:'Conscience — INMT DMT Endogène', seq:'LDVGCGTGLLASFL', cat:'🌌', desc:'DMT Synthase — molécule endogène de conscience'},
   {id:'5ht2a', name:'Conscience — 5-HT2A Psychédélique', seq:'KHSRRNYH', cat:'🌌', desc:'Récepteur sérotoninergique — états modifiés'},
+  {id:'mianne_anp', name:'Mianne — ANP Cohérence Cardiaque', seq:'SLRRSSCFGGRMDRIGAQSGLGCNSFRY', cat:'💚', desc:'Peptide natriurétique — rythme cardiaque harmonieux'},
+  {id:'mianne_nis', name:'Mianne — NIS Transport Iode', seq:'MGKFHQIPV', cat:'💚', desc:'Sodium-Iodide Symporter — capte l\'iode thyroïdien'},
+  {id:'mianne_tpo', name:'Mianne — TPO Synthèse Thyroïde', seq:'FQNHPGASN', cat:'💚', desc:'Thyroïde Peroxydase — incorpore l\'iode'},
+  {id:'gh_frag', name:'Métabolisme — GH Fragment Lipolytique', seq:'FPTIPLSRLFDNAMLRAHRLHQLAFDTYQEFEEAYIPKEQKYSFLQNPQTSLCFSESIPTPSNREETQQKSNLELLRISLLLIQSWLEPVQFLRSVFANSLVYGASDSNVYDLLKDLEEGIQTLMGRLEDGSPRTGQIFKQTYSKFDTNSHNDDALLKNYGLLYCFRKDMDKVETFLRIVQCRSVEGSCGF', cat:'🔥', desc:'Fragment hormone de croissance — lipolyse abdominale'},
+  {id:'adiponectin', name:'Métabolisme — Adiponectine', seq:'ECDVLQVLGKGQREMPESDKGDQGQHGDKGDAGPPGPMGPPGLRGPPGRDGRDGTPGEGGKPG', cat:'🔥', desc:'Hormone anti-obésité — sensibilité insuline'},
+  {id:'irisin', name:'Métabolisme — Irisin Browning', seq:'SDRFQHTDPPGKQPKDHPGDTQPPPRGFKRPQP', cat:'🔥', desc:'Hormone exercice — convertit graisse blanche en brune'},
+  {id:'atgl', name:'Métabolisme — ATGL Lipolyse', seq:'GWSMGGFLARAKHSPLPLM', cat:'🔥', desc:'Enzyme clé — dégrade triglycérides abdominaux'},
+  {id:'ucp1', name:'Métabolisme — UCP1 Thermogenèse', seq:'MGGTARPPDDKHNVPSSPVKPPMKYHILPPQPYPGWDLPCPRVRQLARQFGKVLNTANVLQGPDIAQERLHQLQQLAAELPRFQKLVMTGVFSTGVAGSALALGLLFRKVPPGTDLSRSFPPGLKDSTFYSFQAMAQNGGPWQGRVNTMVQVSHQVVQGAMVFGHLGLQGLLQLLQGFNPPDLALPRHLGQSMNAANQALSRFAFSGLAGLVVNGAGCAILVGIVPLALNFWFFRGTVPVFNLLWSPFTMTLPLVQMFGSALGILFGAGAPALQGGAMAGASIGEAEKLQELVEQHKEKGLDTYRKVQRMEVTGTKGDVLVIKWKTPRSARNYQAYISGMQFGYARGAHFTEDKCRKVTLVLDSTFTSKEVGSLVEVEDPFSTGAMQGLLYTKRTIVPPGAQTLKSVFAPVKHVGPEEYLTYIGWFMLITFLYVGIYAAYGLLVKEFTRSLRELSQLHTLLESTMHEGISLSESSNLGSLPSLEGNSLGSASP', cat:'🔥', desc:'Thermogenèse — brûle calories en chaleur'},
+  {id:'fgf21', name:'Foie — FGF21 Anti-Stéatose', seq:'HPIPDSSPLLQFGGQVRQRYLYTDDAQQTEAHLEIREDGTVGGAADQSPESLLQLKALKPGVIQILGVKTSRFLCQRPDGALYGSLHFDPEACSFRELLLEDGYNVYQSEAHGLPLHLPGNKSPHRDPAPRGPARFLPLPGLPPALPEPPGILAPQPPDVGSSDPLSMVGPSQGRSPSYAS', cat:'🫒', desc:'Hormone anti-stéatose — inverse le foie gras'},
+  {id:'ppara', name:'Foie — PPARα Oxydation Lipides', seq:'KVDGGQGGEQQPPPPPPPQDLLEVMEKDSAPGDLPPPLGDTNAPASGPLPAGLQADAGPQGAQAQQHPQQQQQQQQQHLQQQQQQQQQQQQQQQPQQQLLQPQQPQPAQQQFPQLQQP', cat:'🫒', desc:'Facteur transcription — brûle les graisses hépatiques'},
+  {id:'ampk', name:'Foie — AMPK Régulation Énergie', seq:'SGGEGSCSQRTVAQLKLEHPRGDNKWVQSLDALKQFEFKCNQVHKSSKVRKVLGDVISIQPCPDVKYGKRVDLQFVRLTGTNPKATYEEIDKSLVGYAEYDSGSSVQRGCDSPNAVLKLAFEKFDQIDNAGYIDPTQNPLKNKLNKLQKILQAKGMKGHMEEYSNYLNEKISSALVDEAQRWGWKDHKDHIDNRGKIRQLVLDYAMDTEKSRKSTSLSAVSRGVHGHDCAPSFSSEDYSESLFSEVVSLPPRTGGLRQKGTPPPRPPLRLAAGGPPPALPSRPPPPAAASGSAGNRTSSTTPTFSRSLAAPSLQRGNSRMPSTAGAANGLRMPP', cat:'🫒', desc:'Enzyme maîtresse — restaure métabolisme hépatique'},
+  {id:'adipoq_liver', name:'Foie — Adiponectine Hépatique', seq:'ECDVLQVLGKGQREMPESDKGDQGQHGDKGDAGPPGPMGPPGLRGPPGRDGRDGTPGEGGKPG', cat:'🫒', desc:'Réduit inflammation et fibrose hépatique'},
+  {id:'gsh_synth', name:'Foie — Glutathion Synthase Détox', seq:'MRRLRLELQGPRCLVHVPVSNSLPGRPPTPLRWQPSRLPRLLDPSLPGLPRARVARLGRS', cat:'🫒', desc:'Antioxydant majeur — détoxification hépatique'},
 
 ];
-const DESCRIPTIONS={"piezo1": "GsMTx4 est une toxine extraite du venin de tarentule Grammostola spatulata. Elle bloque PIEZO1, un canal ionique mécano-sensible qui s'ouvre quand la membrane cellulaire est sous tension mécanique. En s'intercalant dans la membrane lipidique autour du domaine blade du canal, elle réduit la tension locale et empêche l'ouverture. PIEZO1 est impliqué dans la douleur chronique, les maladies cardiovasculaires et certaines anémies.", "tph1": "La Tryptophane Hydroxylase 1 (TPH1) est l'enzyme clé qui catalyse la première étape de synthèse de la sérotonine : elle transforme le tryptophane en 5-hydroxytryptophane (5-HTP). Ton bilan 2018 montrait SEROT à 40% — en dessous de la norme. Cette protéodie cible l'enzyme responsable de ta production de sérotonine, impliquée dans l'humeur, le sommeil, l'appétit et la mémoire.", "th": "La Tyrosine Hydroxylase (TH) catalyse la conversion de la L-tyrosine en L-DOPA, première étape de synthèse de la dopamine. Ton bilan 2018 montrait 34DOPAC à 25% (très bas) — le 34DOPAC étant un métabolite direct de la dopamine, cela indique un faible turnover dopaminergique. La dopamine est essentielle à la motivation, la mémoire de travail, la concentration et le mouvement.", "dbh": "La Dopamine β-Hydroxylase (DBH) convertit la dopamine en noradrénaline. Ton bilan 2017 montrait NORADRE à 59% puis 128% en 2018 après Wim Hof — la méthode Wim Hof déclenche une libération massive de noradrénaline via l'activation du système sympathique. Cette enzyme régule l'équilibre dopamine/noradrénaline.", "semax": "Sémax (Met-Glu-His-Phe-Pro-Gly-Pro) est un peptide nootropique synthétique développé en Russie, dérivé de l'ACTH. Il stimule la synthèse du BDNF, améliore la transmission dopaminergique et sérotoninergique, et renforce la mémoire à court terme et la concentration. Utilisé cliniquement en Russie pour les AVC et troubles cognitifs.", "bdnf": "Le BDNF (Brain-Derived Neurotrophic Factor) est le facteur de croissance neuronal le plus important du cerveau. Son domaine loop 2 (HSDPARRGELF) est la région de liaison au récepteur TrkB. Le BDNF favorise la survie neuronale, la plasticité synaptique, la formation de nouveaux souvenirs (LTP) et la neurogenèse hippocampique.", "bpc157": "Le BPC-157 (Body Protection Compound) est un pentadécapeptide cytoprotecteur isolé du suc gastrique. Il accélère la réparation des tendons, ligaments et cartilages, stimule la production de collagène, et favorise l'angiogenèse locale. Des études montrent son efficacité sur les lésions méniscales et les arthrites.", "col2": "Le Collagène de type II est la protéine structurelle principale du cartilage articulaire — 90% du collagène cartilagineux. Sa séquence répétitive Gly-Pro-Pro forme la triple hélice caractéristique. Dans l'arthrose, c'est ce collagène qui se dégrade en premier. Cette protéodie encode le fragment de la triple hélice du cartilage.", "pdgf": "Le PDGF-BB (Platelet-Derived Growth Factor BB) est le facteur de croissance dominant des plaquettes — c'est lui qui explique l'efficacité du PRP (Plasma Riche en Plaquettes). Il stimule la prolifération des fibroblastes, chondrocytes et cellules souches mésenchymateuses. Son injection via le PRP favorise la régénération du cartilage.", "igf1": "IGF-1 (Insulin-like Growth Factor 1) est un facteur de croissance central pour les chondrocytes — les cellules qui produisent et maintiennent le cartilage. Il stimule leur prolifération, inhibe leur apoptose, et favorise la synthèse de collagène II et d'aggrécane. Son déclin avec l'âge est l'une des causes principales de l'arthrose.", "bmp7": "BMP-7 (Bone Morphogenetic Protein 7) est un morphogène osseux de la famille TGF-β. Son fragment knuckle (VFQQHIHI) est la région de liaison aux récepteurs. BMP-7 est le seul BMP à avoir prouvé son efficacité dans la régénération du cartilage articulaire en essais cliniques humains.", "dsip": "Le DSIP (Delta Sleep-Inducing Peptide) est le seul peptide endogène spécifiquement inducteur du sommeil delta (ondes lentes profondes, stade N3). Découvert en 1977 par Monnier, libéré naturellement par le thalamus. Il réduit la latence d'endormissement et augmente la proportion de sommeil profond. Le Tryptophane (W, 204Da) ouvre la mélodie — c'est le précurseur direct de la mélatonine.", "oxy": "L'Ocytocine est le neuropeptide de la relaxation, du lien social et de la confiance. Elle réduit l'activité de l'amygdale (peur/stress), abaisse le cortisol et la pression artérielle, et favorise la transition vers le sommeil. Elle est libérée lors du contact physique et du sentiment de sécurité.", "glp1": "GLP-1 (Glucagon-Like Peptide 1) est une hormone intestinale de satiété. Elle stimule la sécrétion d'insuline, ralentit la vidange gastrique, et envoie un signal de satiété au cerveau via le nerf vague. Le sémaglutide (Ozempic/Wegovy) est un analogue synthétique de GLP-1. Le Tryptophane (W, 204Da) au cœur de la séquence est la note la plus forte.", "apelin": "Apelin-13 est un peptide vasodilatateur endogène qui agit sur le récepteur APJ. Il dilate les artères et abaisse la pression artérielle sans effets indésirables. Ses niveaux sont paradoxalement bas chez les patients hypertendus. La noradrénaline élevée dans ton bilan 2018 (128%) est exactement le contexte où Apelin-13 est bénéfique.", "aqp1": "L'Aquaporine 1 (AQP1) est un canal membranaire qui transporte exclusivement les molécules d'eau. Les deux motifs NPA (Asn-Pro-Ala) de la séquence forment le filtre de sélectivité du pore. AQP1 est exprimée dans l'endothélium vasculaire et joue un rôle dans la régulation de la pression artérielle.", "epo": "EMP1 est un peptide mimétique de l'Érythropoïétine (EPO) qui se lie au récepteur EPO. L'EPO stimule la production de globules rouges — c'est l'adaptation principale à l'altitude. À Uyuni (3700m) et Sajama (4200m), ton corps va naturellement augmenter sa production d'EPO. Cette protéodie encode la région de liaison au récepteur.", "hif": "HIF-1α est le capteur moléculaire de l'hypoxie. Son domaine ODD (DLDLEMLAPF) est dégradé en normoxie. En altitude, quand l'O₂ baisse, HIF-1α s'accumule et active des centaines de gènes d'adaptation : EPO, VEGF, transporteurs de glucose. C'est le chef d'orchestre de l'acclimatation.", "cry1": "CRY1 est un photorécepteur flavoprotéine qui capte la lumière bleue (400-500nm). Son domaine FAD (GKHINDMFH) est le site de liaison du cofacteur qui absorbe les photons. Pedro utilise CRY1 pour synchroniser son métabolisme CAM avec le cycle jour/nuit.", "aqptip": "TIP1;1 est une aquaporine végétale spécifique du tonoplaste (membrane de la vacuole). Elle régule les flux d'eau entre la vacuole et le cytoplasme, contrôlant la turgescence cellulaire. Chez Pedro, elle est cruciale pour stocker l'eau pendant les sécheresses.", "pepc": "La PEP Carboxylase (PEPC) est l'enzyme signature du métabolisme CAM des cactus. La nuit, Pedro ouvre ses stomates et PEPC fixe le CO₂ en malate stocké dans la vacuole. Le jour, stomates fermés, le malate alimente la photosynthèse. SIDDQLRQA est le site de régulation circadienne.", "psk": "PSK-α (YIYTQ) est une hormone peptidique végétale sulfatée qui stimule la prolifération et la différenciation cellulaire. Elle agit via le récepteur PSKr1 et active des voies de signalisation similaires aux facteurs de croissance animaux.", "clv3": "CLV3 (HEVPSGP) est un peptide CLE qui régule la taille du méristème apical — la zone de cellules souches au sommet de la plante. Il signale via le récepteur CLV1 pour maintenir l'équilibre prolifération/différenciation. Moduler CLV3 peut augmenter la ramification et le nombre de fleurs.", "systemin": "La Systemine (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte (1991). Quand une feuille est attaquée, elle voyage dans toute la plante via le phloème et déclenche la synthèse d'acide jasmonique. C'est le signal d'alarme systémique de la plante.", "ralf": "RALF1 (YISYGALQKN) régule la croissance racinaire et l'immunité végétale. Il se lie au récepteur FER (Feronia) et inhibe les H+-ATPases, alcalinisant l'apoplasme. En faibles concentrations, il favorise le développement racinaire et l'absorption des nutriments.", "rubisco": "L'activase de la Rubisco (GKDNKLNELR) réactive la Rubisco inhibée par ses propres produits. La Rubisco est l'enzyme la plus abondante sur Terre — elle fixe le CO₂ lors de la photosynthèse. Son activase est un AAA+ ATPase qui remodèle la conformation de la Rubisco.", "expansin": "Les expansines (CDPYGGQNRS) favorisent l'extension cellulaire en rompant les liaisons hydrogène entre les microfibrilles de cellulose. Leur action est pH-dépendante et régule la turgescence, la croissance et la maturation des fruits.", "kin1": "La CKX (MTGDNKLHEF) dégrade les cytokinines — hormones qui stimulent la division cellulaire et la ramification. En inhibant CKX, on augmente les niveaux de cytokinines, ce qui donne plus de pousses latérales et une meilleure résistance au stress.", "pr1": "PR-1 est le marqueur moléculaire de la résistance systémique acquise (SAR) chez les plantes. Induit par l'acide salicylique après une première infection, il confère une résistance durable à large spectre contre champignons, bactéries et virus.", "chi": "La Chitinase (SGQFNNYSNYY) dégrade la chitine — le polysaccharide structural de la paroi des champignons. En coupant les chaînes de N-acétylglucosamine, elle détruit l'intégrité du champignon et produit des oligosaccharines qui servent de signaux d'alarme.", "npr1": "NPR1 (DNEAKEKYF) est le régulateur central de la voie de l'acide salicylique et de la SAR. En présence de SA, NPR1 se transloque du cytoplasme vers le noyau et active les gènes PR. C'est la cible privilégiée pour améliorer la résistance aux maladies.", "pdf12": "PDF1.2 (KTCENLADKY) est un peptide antimicrobien à structure stabilisée par des ponts disulfure. Il perméabilise les membranes fongiques et bactériennes. Son expression est induite par la voie jasmonate/éthylène. Actif contre Botrytis cinerea, Alternaria et Fusarium.", "wrky30": "WRKY30 (WRKYGQK) est un facteur de transcription dont le domaine WRKY se lie aux boîtes W dans les promoteurs des gènes de défense. Il orchestre la réponse aux ROS (espèces réactives de l'oxygène) et active les gènes de défense systémique.", "flg22": "Flg22 (QRLSTGSRINSAKDDAAGLQIA) est un fragment de flagelline bactérienne reconnu par le récepteur FLS2 des plantes. Cette reconnaissance déclenche la PTI (Pattern-Triggered Immunity) : cascade de phosphorylation, production de ROS et expression des gènes PR.", "csa": "CsaMLO (MGKDKLHEF) confère une résistance durable à l'oïdium (Podosphaera xanthii) chez le concombre. Les mutations perte-de-fonction de MLO donnent une résistance à large spectre utilisée depuis 50 ans en agriculture.", "t_pr1": "PR-1 de la tomate (NQYRGVPSAGAKIDYR) joue le même rôle central dans la résistance systémique. Chez la tomate, son induction marque l'activation de la SAR après infection par Cladosporium, Phytophthora ou Botrytis. Il est synergique avec la systemine.", "t_rcr3": "Rcr3 (GHGSCWAFSAVANQ) est une protéase à cystéine sécrétée dans l'apoplasme, cible de l'effecteur Avr2 de Cladosporium fulvum. Le champignon inhibe Rcr3, mais la plante utilise ce complexe comme appât pour déclencher l'hypersensibilité. Un piège moléculaire élégant.", "t_pto": "Pto (MGKKSSSEGKL) est une kinase qui reconnaît l'effecteur AvrPto de Pseudomonas syringae pv. tomato. La liaison Pto-AvrPto déclenche la réponse hypersensible (HR) : mort cellulaire programmée locale qui stoppe l'infection.", "t_i3": "L'Inhibiteur de Protéase II (RCLSYPGPCHRDDMC) inhibe les protéases digestives des insectes herbivores (trypsine, chymotrypsine). Ses ponts disulfure (Cys-Cys) lui confèrent une résistance à la digestion. Il inhibe aussi certaines protéases fongiques.", "t_ver": "VER2 (DGYSHFHPLG) est impliqué dans la résistance à Verticillium dahliae — le champignon vasculaire responsable de la verticilliose. C'est une lectine de type Jacaline qui reconnaît les structures glycaniques du champignon.", "t_syst": "La Systemine de tomate (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte par Clarence Ryan en 1991. Elle circule dans le phloème pour déclencher la synthèse d'acide jasmonique dans toute la plante après une blessure par insectes.", "t_lox": "LOX (MAPSNKL) catalyse la première étape de la voie de l'acide jasmonique — la peroxydation des acides gras. La jasmonine active la résistance aux insectes et aux champignons. LOX produit aussi des composés volatils qui alertent les plantes voisines.", "t_cf9": "Cf-9 (CGFQCENFP) est un récepteur LRR qui reconnaît l'effecteur Avr9 de Cladosporium fulvum. La liaison Cf-9/Avr9 déclenche une réponse hypersensible très rapide : les cellules infectées meurent en quelques heures, stoppant le champignon.", "endorphin": "La β-Endorphine (YGGFMTSEKSQTPLVT) est l'opioïde endogène le plus puissant — 18 à 33 fois plus actif que la morphine. Elle est libérée lors de l'effort physique intense (runner's high), du rire, des orgasmes et de la musique. Elle se lie aux récepteurs μ-opioïdes et provoque euphorie, analgésie profonde et sentiment de bien-être. Sa séquence commence par Tyr-Gly-Gly-Phe (YGGF) — le tétrapeptide commun à toutes les endorphines. Ton déficit sérotoninergique est compensé par cette voie opioïde parallèle.", "ananda": "L'Anandamide (du sanskrit 'ananda' = joie suprême) est l'endocannabinoïde endogène principal — le ligand naturel des récepteurs CB1 du cerveau. La séquence GKVITAFYNRPEDIS correspond au site actif de la FAAH, l'enzyme qui dégrade l'anandamide. En ciblant FAAH, on augmente les niveaux d'anandamide endogène : sérénité, réduction de l'anxiété et effet anti-douleur.", "galanin": "La Galanine (GWTLNSAGYLLGPHAVGNHRSFSDKHGLT) est un neuropeptide de 29 acides aminés co-libéré avec la noradrénaline et la sérotonine dans le locus coeruleus. Elle module l'anxiété, la dépression et la douleur via les récepteurs GalR1-R3. Elle potentialise l'action de la sérotonine résiduelle — très pertinent avec ton SEROT à 40%.", "vip": "Le VIP (Vasoactive Intestinal Peptide, HSDAVFTDNYTRLRKQMAVKKYLNSILN) est un neuropeptide aux propriétés anti-dépressives et neuroprotectrices. Il stimule la neurogenèse hippocampique, réduit la neuroinflammation, régule le cycle circadien et module l'axe HPA (cortisol). Il est déficient dans la dépression majeure.", "subp": "La Substance P (RPKPQQFFGLM) transmet les signaux de douleur physique ET émotionnelle via le récepteur NK1 (Neurokinin 1). Elle est libérée lors des états dépressifs et anxieux. Les antagonistes NK1 (aprépitant) sont utilisés comme antidépresseurs. Cette protéodie encode la séquence native pour moduler la voie NK1.", "cryaa": "αA-Crystallin (CRYAA) est la protéine chaperon moléculaire majeure du cristallin. Son domaine α-crystallin (MDIAIHHPWIRRPFFPFHSP) stabilise les autres crystallins et empêche leur agrégation — le mécanisme principal de la cataracte. C'est une small Heat Shock Protein (sHSP) qui maintient la transparence du cristallin en corrigeant les repliements protéiques aberrants. Ses niveaux diminuent avec l'âge, provoquant l'opacification progressive. Les mutations de CRYAA causent des cataractes congénitales.", "cryab": "αB-Crystallin (CRYAB) est une Heat Shock Protein 20 (HSP20) hautement exprimée dans le cristallin et le muscle cardiaque. Son domaine actif HEERQDEHGFISR prévient l'agrégation des protéines mal repliées lors du stress oxydatif. Elle est surexprimée en réponse au stress UV, thermique et osmotique. αB-Crystallin protège contre la cataracte liée à l'âge, au diabète et aux UV. Elle a aussi un rôle anti-apoptotique dans la rétine.", "crygd": "γD-Crystallin (CRYGD) est une protéine structurelle compacte qui représente 30% des protéines du cristallin. Son motif GCEWQFSC forme un domaine Greek key très stable. Contrairement aux α-crystallins, γD est une protéine purement structurelle sans activité chaperon. Ses mutations causent des cataractes congénitales sévères. Avec l'âge, les rayons UV provoquent des photolésions qui la rendent insoluble, formant des agrégats opaques.", "gpx": "Glutathion Peroxydase (GPX1) est l'enzyme antioxydante majeure du cristallin. Son domaine catalytique WNFEKFLVGP contient un résidu sélénocystéine qui réduit le peroxyde d'hydrogène (H₂O₂) en eau, protégeant les crystallins de l'oxydation. Le cristallin est exposé à un stress oxydatif intense via les UV et la lumière bleue. La diminution de GPX avec l'âge est un facteur majeur de cataracte. Le glutathion réduit (GSH) est son cofacteur essentiel.", "lano": "Lanosterol Synthase catalyse la production de lanosterol, un stérol qui réduit l'agrégation des crystallins. En 2015, une découverte majeure a montré que le lanosterol solubilise les agrégats de crystallins in vitro et in vivo, renversant partiellement les cataractes chez le chien et le lapin. Le domaine actif DCTAEAMK stabilise la conformation native des crystallins. Des essais cliniques humains sont en cours pour des collyres au lanosterol comme alternative à la chirurgie.", "sod": "Superoxyde Dismutase 1 (SOD1) est l'enzyme antioxydante cytosolique qui convertit le radical superoxyde (O₂⁻) en peroxyde d'hydrogène (H₂O₂), lui-même réduit par GPX. Son domaine actif HVGDLGNVTADKDGVADVSIED contient un site de liaison Cu/Zn. SOD1 protège la rétine et le cristallin contre le stress oxydatif causé par la lumière, particulièrement la lumière bleue (400-500nm). Ses niveaux diminuent avec l'âge, augmentant le risque de DMLA et de cataracte.", "inmt": "INMT (Indoléthylamine N-Méthyltransférase) est l'enzyme qui synthétise le DMT (N,N-Diméthyltryptamine) endogène dans le cerveau humain, particulièrement dans la glande pinéale. Son domaine catalytique LDVGCGTGLLASFL méthyle la tryptamine pour produire du DMT. Le DMT endogène est libéré lors du sommeil paradoxal, des expériences de mort imminente et possiblement à la naissance et à la mort. Surnommé 'la molécule de l'esprit' par Rick Strassman, le DMT induit des états de conscience non-ordinaires profonds, des visions géométriques complexes et des expériences mystiques. INMT est aussi exprimée dans les poumons, le foie et le sang.", "5ht2a": "Le récepteur 5-HT2A est le récepteur sérotoninergique principal des états modifiés de conscience induits par les psychédéliques classiques : DMT, psilocybine, LSD, mescaline. Son domaine intracellulaire KHSRRNYH active la voie Gq/phospholipase C, augmentant la plasticité neuronale et la connectivité inter-régionale. L'activation de 5-HT2A dans le cortex préfrontal et le thalamus provoque la dissolution de l'ego (ego death), les hallucinations visuelles géométriques et l'expansion de conscience. Des études récentes montrent que les psychédéliques réorganisent les réseaux neuronaux pour traiter la dépression résistante et le PTSD."};
+const DESCRIPTIONS={
+"gh_frag": "Le Fragment Lipolytique de l'Hormone de Croissance (GH 1-191, séquence complète 191 aa) est LA protéine maîtresse du métabolisme des graisses. La GH se lie au récepteur GHR sur les adipocytes (cellules graisseuses) et active la lipase hormonosensible (HSL), l'enzyme qui dégrade les triglycérides en acides gras libres + glycérol. Contrairement à l'insuline qui STOCKE les graisses, la GH les BRÛLE. Son pic nocturne (surtout en début de nuit, phase N3) explique pourquoi le jeûne intermittent et le sommeil profond sont si efficaces pour perdre du gras abdominal. La GH stimule aussi IGF-1 hépatique qui préserve la masse musculaire pendant la perte de poids. Les niveaux de GH diminuent drastiquement avec l'âge (30 ans : -50%, 60 ans : -80%) — d'où l'accumulation de graisse viscérale. Le jeûne de 16h+ augmente la GH de 500-1300%. Cette séquence complète de 191 acides aminés encode la forme mature de la GH humaine — l'hormone de la lipolyse ciblée.",
+"adiponectin": "L'Adiponectine (ECDVLQVLGKGQREMPESDKGDQGQHGDKGDAGPPGPMGPPGLRGPPGRDGRDGTPGEGGKPG) est une hormone paradoxale sécrétée PAR le tissu adipeux mais qui RÉDUIT la graisse. Plus tu as de graisse viscérale (abdominale), MOINS tu produis d'adiponectine — cercle vicieux de l'obésité. L'adiponectine se lie aux récepteurs AdipoR1/R2 sur le foie et les muscles, activant l'AMPK (AMP-activated protein kinase) qui déclenche l'oxydation des acides gras (β-oxydation mitochondriale). Elle augmente aussi la sensibilité à l'insuline, réduit la gluconéogenèse hépatique et a des effets anti-inflammatoires puissants. Les personnes minces ont des taux élevés (>10 μg/mL), les obèses des taux bas (<5 μg/mL). Le jeûne, l'exercice et les oméga-3 augmentent l'adiponectine. Les thiazolidinediones (rosiglitazone) sont des agonistes pharmacologiques. Cette séquence de 67 aa correspond au domaine collagène de l'adiponectine — la signature de la minceur.",
+"irisin": "L'Irisin (SDRFQHTDPPGKQPKDHPGDTQPPPRGFKRPQP) est 'l'hormone de l'exercice' découverte en 2012 par Bruce Spiegelman à Harvard. Elle est clivée de la protéine FNDC5 musculaire lors de la contraction et circule dans le sang pour transformer le tissu adipeux BLANC (stockage) en tissu adipeux BRUN (thermogenèse). Le gras brun contient des mitochondries denses en UCP1 qui brûlent les calories en CHALEUR au lieu de les stocker. L'irisin active aussi la voie PGC-1α dans les muscles et augmente le BDNF cérébral. Les niveaux d'irisin montent de 65% après 10 semaines d'exercice aérobique. C'est le mécanisme moléculaire du 'browning' — pourquoi l'exercice transforme ton métabolisme même au repos. Cette séquence de 32 aa correspond au fragment actif de l'irisin humain — l'hormone qui transforme ton gras en four à calories.",
+"atgl": "ATGL (Adipose Triglyceride Lipase, GWSMGGFLARAKHSPLPLM) est LA lipase qui initie la lipolyse — la première enzyme de la cascade de dégradation des triglycérides. Alors que HSL (Hormone-Sensitive Lipase) était considérée comme l'enzyme limitante, on a découvert en 2004 qu'ATGL effectue la PREMIÈRE hydrolyse : triglycéride → diglycéride + acide gras libre. Sans ATGL, les souris deviennent obèses morbides même en mangeant peu. ATGL est activée par CGI-58 (comparative gene identification-58) et inhibée par G0S2 et la périlipine-5. Son activité maximale se produit en jeûne prolongé, pendant l'exercice et sous stimulation β-adrénergique (adrénaline/noradrénaline). Cette séquence de 19 aa encode le domaine catalytique patatine-like d'ATGL — le déclencheur moléculaire de la fonte adipeuse.",
+"ucp1": "UCP1 (Uncoupling Protein 1, séquence complète 307 aa) est LA protéine de thermogenèse du tissu adipeux brun. Elle découple la chaîne respiratoire mitochondriale : au lieu de produire de l'ATP, les protons (H⁺) traversent UCP1 et leur énergie est dissipée en CHALEUR pure. Résultat : tu brûles les calories sans faire d'effort, juste pour te réchauffer. Les bébés ont beaucoup de graisse brune (cou, épaules) pour maintenir leur température. Les adultes en perdent mais peuvent la RÉACTIVER par le froid (cryothérapie, douches froides) et l'irisin. 50g de graisse brune active peut brûler 200-300 kcal/jour supplémentaires — équivalent de 30 min de jogging, en restant assis. UCP1 est activée par les acides gras libres et la noradrénaline via les récepteurs β3-adrénergiques. Cette séquence de 307 aa encode UCP1 humaine complète — le four métabolique interne.",
+"fgf21": "FGF21 (Fibroblast Growth Factor 21, 181 aa) est L'HORMONE ANTI-STÉATOSE HÉPATIQUE par excellence. Sécrétée par le foie en réponse au jeûne prolongé et à une diète cétogène, FGF21 active la β-oxydation des acides gras hépatiques, réduit la lipogenèse (synthèse de graisses) et améliore la sensibilité à l'insuline. Elle agit via le récepteur FGFR1c + β-Klotho. Les études cliniques montrent que FGF21 INVERSE la stéatose hépatique (NAFLD) en quelques semaines. Elle stimule aussi la production d'adiponectine, active la graisse brune (thermogenèse) et réduit l'envie de sucre. Le jeûne intermittent 16/8 augmente FGF21 de 300-500%. Les diabétiques de type 2 avec NAFLD ont des niveaux élevés de FGF21 (résistance au récepteur) — d'où l'intérêt des analogues pharmacologiques (efruxifermin en essais cliniques phase 3 pour NASH). Cette séquence de 181 aa encode FGF21 humain mature — l'hormone qui nettoie le foie.",
+"ppara": "PPARα (Peroxisome Proliferator-Activated Receptor alpha) est LE facteur de transcription qui active l'oxydation des acides gras dans le foie. Quand tu jeûnes ou manges peu de glucides, PPARα se lie à l'ADN et active des centaines de gènes de la β-oxydation mitochondriale (CPT1, ACOX, MCAD) et de la cétogenèse. Résultat : le foie brûle ses triglycérides stockés et produit des corps cétoniques. Les fibrates (fénofibrate, gemfibrozil) sont des agonistes pharmacologiques de PPARα utilisés pour traiter l'hypertriglycéridémie. PPARα est SOUS-EXPRIMÉ dans la stéatose hépatique — réactiver PPARα inverse le foie gras. L'acide alpha-linolénique (oméga-3 ALA du lin/chia) et l'EPA/DHA sont des ligands naturels de PPARα. Cette séquence encode le domaine de liaison à l'ADN et le domaine de liaison aux ligands de PPARα — le maître-brûleur de graisses hépatiques.",
+"ampk": "AMPK (AMP-activated Protein Kinase, 282 aa de la sous-unité catalytique α1) est L'ENZYME MAÎTRESSE du métabolisme énergétique — le capteur de carburant cellulaire. Quand l'ATP est bas (ratio AMP/ATP élevé), AMPK s'active et orchestre la restauration énergétique : elle ACTIVE la β-oxydation des acides gras, la glycolyse et l'autophagie (recyclage cellulaire), et INHIBE la lipogenèse, la gluconéogenèse et la synthèse de cholestérol. Dans le foie gras, AMPK est INHIBÉE — réactiver AMPK inverse la stéatose. La metformine (anti-diabétique) active AMPK — c'est pourquoi elle améliore le NAFLD. Le jeûne, l'exercice, le resvératrol (vin rouge), la berbérine et les polyphénols du thé vert activent AMPK. AMPK phosphoryle et inhibe ACC (Acetyl-CoA Carboxylase), bloquant la synthèse de malonyl-CoA et levant l'inhibition de CPT1 → les acides gras entrent dans les mitochondries pour être brûlés. Cette séquence encode la sous-unité α1 catalytique d'AMPK — le gardien du métabolisme hépatique.",
+"adipoq_liver": "L'Adiponectine (67 aa, domaine collagène) joue un rôle CRUCIAL dans la santé hépatique au-delà de son action métabolique. Dans le foie, l'adiponectine via AdipoR1/R2 active AMPK et PPARα, réduit la stéatose, supprime l'inflammation (réduit TNF-α, IL-6) et INHIBE LA FIBROSE HÉPATIQUE en bloquant l'activation des cellules stellaires (qui produisent le collagène de la fibrose). Les patients avec NAFLD ont des taux d'adiponectine TRÈS BAS (<5 μg/mL vs >10 chez les sains). Plus grave : dans la NASH (stéatohépatite, stade inflammatoire du foie gras), l'adiponectine est effondrée. Augmenter l'adiponectine protège contre la progression NAFLD → NASH → cirrhose. La perte de poids, le régime méditerranéen, les oméga-3 et la vitamine E augmentent l'adiponectine hépatique. Cette protéodie cible spécifiquement l'action hépatoprotectrice de l'adiponectine — l'ange gardien du foie.",
+"gsh_synth": "La Glutathion Synthase (GS, domaine N-terminal 62 aa) catalyse la dernière étape de synthèse du glutathion (GSH) : γ-Glu-Cys + Gly → GSH. Le glutathion est LE système antioxydant majeur du foie — il neutralise les radicaux libres (ROS), détoxifie les xénobiotiques via les glutathion S-transférases (GST), et maintient l'environnement réducteur intracellulaire. Dans la stéatose hépatique et surtout la NASH, le stress oxydatif est MASSIF : peroxydation lipidique, dommages mitochondriaux, inflammation. Le GSH est ÉPUISÉ dans le foie gras — les réserves chutent de 50-70%. Restaurer le GSH est ESSENTIEL pour stopper la progression vers la fibrose. La N-acétylcystéine (NAC) est le précurseur clinique du GSH. La glycine, la glutamine et la cystéine sont les 3 acides aminés du GSH. Le jeûne, le sulforaphane (brocoli) et le chardon-marie (silymarine) stimulent la synthèse de GSH. Cette séquence encode le domaine actif de la glutathion synthase — le bouclier antioxydant du foie.",
+"mianne_anp": "ANP (Atrial Natriuretic Peptide, SLRRSSCFGGRMDRIGAQSGLGCNSFRY) est le peptide natriurétique auriculaire de 28 acides aminés sécrété par les oreillettes cardiaques. Il régule la pression artérielle, la balance hydrique et surtout la cohérence cardiaque. ANP active le récepteur NPR-A qui produit du cGMP, induisant vasodilatation, natriurèse (excrétion de sodium) et relaxation vasculaire. Son action parasympathique favorise la variabilité cohérente de la fréquence cardiaque (HRV), marqueur de résilience et d'équilibre autonome. Sécrété lors de l'étirement auriculaire, il signale au corps de ralentir et de s'harmoniser. Les pratiques de cohérence cardiaque (respiration 5s inspiration/5s expiration à 0.1 Hz) augmentent naturellement l'ANP. Cette protéodie encode la séquence complète de l'ANP humain mature — la signature moléculaire du cœur en harmonie.",
+"mianne_nis": "NIS (Sodium-Iodide Symporter, MGKFHQIPV) est le transporteur membranaire qui capte l'iode depuis le sang vers les cellules thyroïdiennes. Son domaine N-terminal (MGKFHQIPV) est essentiel à sa fonction. NIS utilise le gradient de sodium pour concentrer l'iode 20 à 40 fois dans la thyroïde — c'est le goulot d'étranglement de la synthèse hormonale thyroïdienne. Une carence en iode ou un dysfonctionnement de NIS provoque hypothyroïdie et goitre. L'iode capté par NIS est ensuite oxydé par la TPO et incorporé dans la thyroglobuline pour former T3 et T4. Ces hormones régulent le métabolisme basal, la thermogenèse, la croissance neuronale et l'humeur. Le fragment MGKFHQIPV encode le signal d'adressage membranaire de NIS — la porte d'entrée de l'iode.",
+"mianne_tpo": "TPO (Thyroid Peroxidase, FQNHPGASN) est l'enzyme hème-peroxydase qui catalyse l'iodation de la thyroglobuline — l'étape clé de la synthèse des hormones thyroïdiennes T3 et T4. Son domaine actif (FQNHPGASN) contient le site de liaison à l'hème où l'iodure (I⁻) est oxydé en iode réactif (I⁺) qui se lie aux résidus tyrosine de la thyroglobuline. TPO catalyse aussi le couplage de deux tyrosines iodées pour former T3 (tri-iodothyronine) et T4 (tétra-iodothyronine). Les auto-anticorps anti-TPO sont le marqueur principal de la thyroïdite d'Hashimoto. Cette séquence encode le cœur catalytique de TPO — l'atelier où l'iode devient hormone.",
+"piezo1": "GsMTx4 est une toxine extraite du venin de tarentule Grammostola spatulata. Elle bloque PIEZO1, un canal ionique mécano-sensible qui s'ouvre quand la membrane cellulaire est sous tension mécanique. En s'intercalant dans la membrane lipidique autour du domaine blade du canal, elle réduit la tension locale et empêche l'ouverture. PIEZO1 est impliqué dans la douleur chronique, les maladies cardiovasculaires et certaines anémies.", "tph1": "La Tryptophane Hydroxylase 1 (TPH1) est l'enzyme clé qui catalyse la première étape de synthèse de la sérotonine : elle transforme le tryptophane en 5-hydroxytryptophane (5-HTP). Ton bilan 2018 montrait SEROT à 40% — en dessous de la norme. Cette protéodie cible l'enzyme responsable de ta production de sérotonine, impliquée dans l'humeur, le sommeil, l'appétit et la mémoire.", "th": "La Tyrosine Hydroxylase (TH) catalyse la conversion de la L-tyrosine en L-DOPA, première étape de synthèse de la dopamine. Ton bilan 2018 montrait 34DOPAC à 25% (très bas) — le 34DOPAC étant un métabolite direct de la dopamine, cela indique un faible turnover dopaminergique. La dopamine est essentielle à la motivation, la mémoire de travail, la concentration et le mouvement.", "dbh": "La Dopamine β-Hydroxylase (DBH) convertit la dopamine en noradrénaline. Ton bilan 2017 montrait NORADRE à 59% puis 128% en 2018 après Wim Hof — la méthode Wim Hof déclenche une libération massive de noradrénaline via l'activation du système sympathique. Cette enzyme régule l'équilibre dopamine/noradrénaline.", "semax": "Sémax (Met-Glu-His-Phe-Pro-Gly-Pro) est un peptide nootropique synthétique développé en Russie, dérivé de l'ACTH. Il stimule la synthèse du BDNF, améliore la transmission dopaminergique et sérotoninergique, et renforce la mémoire à court terme et la concentration. Utilisé cliniquement en Russie pour les AVC et troubles cognitifs.", "bdnf": "Le BDNF (Brain-Derived Neurotrophic Factor) est le facteur de croissance neuronal le plus important du cerveau. Son domaine loop 2 (HSDPARRGELF) est la région de liaison au récepteur TrkB. Le BDNF favorise la survie neuronale, la plasticité synaptique, la formation de nouveaux souvenirs (LTP) et la neurogenèse hippocampique.", "bpc157": "Le BPC-157 (Body Protection Compound) est un pentadécapeptide cytoprotecteur isolé du suc gastrique. Il accélère la réparation des tendons, ligaments et cartilages, stimule la production de collagène, et favorise l'angiogenèse locale. Des études montrent son efficacité sur les lésions méniscales et les arthrites.", "col2": "Le Collagène de type II est la protéine structurelle principale du cartilage articulaire — 90% du collagène cartilagineux. Sa séquence répétitive Gly-Pro-Pro forme la triple hélice caractéristique. Dans l'arthrose, c'est ce collagène qui se dégrade en premier. Cette protéodie encode le fragment de la triple hélice du cartilage.", "pdgf": "Le PDGF-BB (Platelet-Derived Growth Factor BB) est le facteur de croissance dominant des plaquettes — c'est lui qui explique l'efficacité du PRP (Plasma Riche en Plaquettes). Il stimule la prolifération des fibroblastes, chondrocytes et cellules souches mésenchymateuses. Son injection via le PRP favorise la régénération du cartilage.", "igf1": "IGF-1 (Insulin-like Growth Factor 1) est un facteur de croissance central pour les chondrocytes — les cellules qui produisent et maintiennent le cartilage. Il stimule leur prolifération, inhibe leur apoptose, et favorise la synthèse de collagène II et d'aggrécane. Son déclin avec l'âge est l'une des causes principales de l'arthrose.", "bmp7": "BMP-7 (Bone Morphogenetic Protein 7) est un morphogène osseux de la famille TGF-β. Son fragment knuckle (VFQQHIHI) est la région de liaison aux récepteurs. BMP-7 est le seul BMP à avoir prouvé son efficacité dans la régénération du cartilage articulaire en essais cliniques humains.", "dsip": "Le DSIP (Delta Sleep-Inducing Peptide) est le seul peptide endogène spécifiquement inducteur du sommeil delta (ondes lentes profondes, stade N3). Découvert en 1977 par Monnier, libéré naturellement par le thalamus. Il réduit la latence d'endormissement et augmente la proportion de sommeil profond. Le Tryptophane (W, 204Da) ouvre la mélodie — c'est le précurseur direct de la mélatonine.", "oxy": "L'Ocytocine est le neuropeptide de la relaxation, du lien social et de la confiance. Elle réduit l'activité de l'amygdale (peur/stress), abaisse le cortisol et la pression artérielle, et favorise la transition vers le sommeil. Elle est libérée lors du contact physique et du sentiment de sécurité.", "glp1": "GLP-1 (Glucagon-Like Peptide 1) est une hormone intestinale de satiété. Elle stimule la sécrétion d'insuline, ralentit la vidange gastrique, et envoie un signal de satiété au cerveau via le nerf vague. Le sémaglutide (Ozempic/Wegovy) est un analogue synthétique de GLP-1. Le Tryptophane (W, 204Da) au cœur de la séquence est la note la plus forte.", "apelin": "Apelin-13 est un peptide vasodilatateur endogène qui agit sur le récepteur APJ. Il dilate les artères et abaisse la pression artérielle sans effets indésirables. Ses niveaux sont paradoxalement bas chez les patients hypertendus. La noradrénaline élevée dans ton bilan 2018 (128%) est exactement le contexte où Apelin-13 est bénéfique.",
+"enos": "eNOS (endothelial Nitric Oxide Synthase, RRKRKKSRGG) est l'enzyme de l'endothélium vasculaire qui produit l'oxyde nitrique (NO) — le plus puissant vasodilatateur endogène. Le domaine RRKRKKSRGG est la séquence de localisation membranaire riche en arginines qui ancre eNOS à la membrane plasmique des cellules endothéliales. Le NO diffuse vers les cellules musculaires lisses vasculaires et active la guanylate cyclase soluble, produisant du cGMP qui provoque la relaxation vasculaire. Cette vasodilatation cible particulièrement les artérioles — les petites artères qui régulent la résistance périphérique et donc la pression DIASTOLIQUE (le 2e chiffre). Un dysfonctionnement de eNOS est la cause principale de l'hypertension diastolique. L'exercice, la méditation et certains aliments (betterave riche en nitrates) stimulent eNOS.",
+"bnp": "BNP (Brain Natriuretic Peptide, SPKMVQGSGCFGRKMDRISSSSGLGCKVLRRH) est un peptide de 32 acides aminés sécrété par les ventricules cardiaques en réponse à l'étirement — c'est le signal d'alarme du cœur surchargé. Contrairement à l'ANP (auriculaire), le BNP est 3 à 5 fois plus puissant comme vasodilatateur et cible spécifiquement la résistance vasculaire périphérique. Il se lie au récepteur NPR-A (comme l'ANP) mais avec une affinité supérieure, produisant plus de cGMP et une vasodilatation artériolaire massive. Le BNP réduit la post-charge cardiaque et abaisse directement la pression DIASTOLIQUE en détendant les petites artères. Dosé cliniquement pour diagnostiquer l'insuffisance cardiaque (BNP élevé = cœur en souffrance). Des analogues synthétiques (Nesiritide) sont utilisés en urgence cardiaque. Cette protéodie encode le BNP humain mature complet — la voix du ventricule qui demande moins de résistance.",
+"adrm": "Adrénomédulline (YRQSMNNFQGLRSFGCRFGTCTVQKLAHQIYQFTDKDKDNVAPRSKISPQGY) est un peptide vasodilatateur de 52 acides aminés découvert en 1993 dans les cellules médullaires de la glande surrénale. C'est l'un des vasodilatateurs endogènes les plus puissants connus — 10 fois plus actif que le CGRP. L'adrénomédulline se lie aux récepteurs CRLR/RAMP2 et RAMP3, activant l'adénylate cyclase et produisant de l'AMPc qui relaxe profondément la musculature lisse vasculaire. Elle cible particulièrement les artérioles de résistance — réduisant directement la pression DIASTOLIQUE. Ses niveaux sont élevés chez les hypertendus (mécanisme compensatoire), mais l'administration exogène abaisse encore plus la pression. L'adrénomédulline a aussi des effets anti-inflammatoires, cardioprotecteurs et rénaux. Sa demi-vie courte (22 minutes) limite son usage clinique. Cette séquence complète de 52 aa encode la forme mature circulante — la signature moléculaire de la vasodilatation maximale.",
+"cgrp": "CGRP (Calcitonin Gene-Related Peptide, ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF) est un neuropeptide vasodilatateur de 37 acides aminés libéré par les terminaisons nerveuses sensorielles périvasculaires. C'est le peptide vasodilatateur le plus abondant du système cardiovasculaire. CGRP se lie au complexe récepteur CRLR/RAMP1 sur les cellules musculaires lisses vasculaires et déclenche la production d'AMPc, induisant une relaxation puissante des artérioles — les vaisseaux qui contrôlent la résistance périphérique et donc la pression DIASTOLIQUE. Le pont disulfure Cys2-Cys7 (ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF) stabilise la boucle N-terminale essentielle à l'activité. CGRP est 10 fois plus puissant que la prostacycline. Il est libéré lors de la migraine (vasodilatation cérébrale) — d'où les anti-CGRP (erenumab, fremanezumab) pour traiter les migraines. Paradoxalement, les hypertendus ont souvent des niveaux bas de CGRP. Cette protéodie encode l'α-CGRP humain complet — le signal nerveux de dilatation artériolaire.",
+"aqp2": "AQP2 (Aquaporine-2, MGKEVEFKDTDWDHRSFQKKVSLAAVTFKLFVLGFGLDDHSGKGNFKGATAAVQVAWDGWKASTPSHNLW) est le canal à eau du tubule collecteur rénal — le site final de contrôle du volume urinaire et donc du volume sanguin. Cette séquence de 70 aa encode le domaine N-terminal et la première boucle transmembranaire contenant les deux motifs NPA signature (Asn-Pro-Ala) qui forment le filtre sélectif du pore. AQP2 est LA protéine régulatrice clé de la balance hydrique corporelle : elle est stockée dans des vésicules intracellulaires et transloquée vers la membrane apicale uniquement en présence de vasopressine (ADH). Quand l'ADH se lie au récepteur V2 du tubule collecteur, elle active l'AMPc qui phosphoryle AQP2 sur la sérine 256, déclenchant sa translocation membranaire. AQP2 à la surface réabsorbe massivement l'eau de l'urine primitive vers le sang. SANS AQP2 membranaire = urine diluée (diabète insipide). AVEC AQP2 = concentration urinaire et rétention d'eau. Cette rétention augmente le volume sanguin et donc la PRESSION DIASTOLIQUE. L'hypertension sensible au sel est souvent liée à une suractivation d'AQP2. Les diurétiques thiazidiques inhibent indirectement AQP2. Cette protéodie cible le domaine régulateur d'AQP2 — le robinet rénal du volume sanguin.", "aqp1": "L'Aquaporine 1 (AQP1) est un canal membranaire qui transporte exclusivement les molécules d'eau. Les deux motifs NPA (Asn-Pro-Ala) de la séquence forment le filtre de sélectivité du pore. AQP1 est exprimée dans l'endothélium vasculaire et joue un rôle dans la régulation de la pression artérielle.", "epo": "EMP1 est un peptide mimétique de l'Érythropoïétine (EPO) qui se lie au récepteur EPO. L'EPO stimule la production de globules rouges — c'est l'adaptation principale à l'altitude. À Uyuni (3700m) et Sajama (4200m), ton corps va naturellement augmenter sa production d'EPO. Cette protéodie encode la région de liaison au récepteur.", "hif": "HIF-1α est le capteur moléculaire de l'hypoxie. Son domaine ODD (DLDLEMLAPF) est dégradé en normoxie. En altitude, quand l'O₂ baisse, HIF-1α s'accumule et active des centaines de gènes d'adaptation : EPO, VEGF, transporteurs de glucose. C'est le chef d'orchestre de l'acclimatation.", "cry1": "CRY1 est un photorécepteur flavoprotéine qui capte la lumière bleue (400-500nm). Son domaine FAD (GKHINDMFH) est le site de liaison du cofacteur qui absorbe les photons. Pedro utilise CRY1 pour synchroniser son métabolisme CAM avec le cycle jour/nuit.", "aqptip": "TIP1;1 est une aquaporine végétale spécifique du tonoplaste (membrane de la vacuole). Elle régule les flux d'eau entre la vacuole et le cytoplasme, contrôlant la turgescence cellulaire. Chez Pedro, elle est cruciale pour stocker l'eau pendant les sécheresses.", "pepc": "La PEP Carboxylase (PEPC) est l'enzyme signature du métabolisme CAM des cactus. La nuit, Pedro ouvre ses stomates et PEPC fixe le CO₂ en malate stocké dans la vacuole. Le jour, stomates fermés, le malate alimente la photosynthèse. SIDDQLRQA est le site de régulation circadienne.", "psk": "PSK-α (YIYTQ) est une hormone peptidique végétale sulfatée qui stimule la prolifération et la différenciation cellulaire. Elle agit via le récepteur PSKr1 et active des voies de signalisation similaires aux facteurs de croissance animaux.", "clv3": "CLV3 (HEVPSGP) est un peptide CLE qui régule la taille du méristème apical — la zone de cellules souches au sommet de la plante. Il signale via le récepteur CLV1 pour maintenir l'équilibre prolifération/différenciation. Moduler CLV3 peut augmenter la ramification et le nombre de fleurs.", "systemin": "La Systemine (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte (1991). Quand une feuille est attaquée, elle voyage dans toute la plante via le phloème et déclenche la synthèse d'acide jasmonique. C'est le signal d'alarme systémique de la plante.", "ralf": "RALF1 (YISYGALQKN) régule la croissance racinaire et l'immunité végétale. Il se lie au récepteur FER (Feronia) et inhibe les H+-ATPases, alcalinisant l'apoplasme. En faibles concentrations, il favorise le développement racinaire et l'absorption des nutriments.", "rubisco": "L'activase de la Rubisco (GKDNKLNELR) réactive la Rubisco inhibée par ses propres produits. La Rubisco est l'enzyme la plus abondante sur Terre — elle fixe le CO₂ lors de la photosynthèse. Son activase est un AAA+ ATPase qui remodèle la conformation de la Rubisco.", "expansin": "Les expansines (CDPYGGQNRS) favorisent l'extension cellulaire en rompant les liaisons hydrogène entre les microfibrilles de cellulose. Leur action est pH-dépendante et régule la turgescence, la croissance et la maturation des fruits.", "kin1": "La CKX (MTGDNKLHEF) dégrade les cytokinines — hormones qui stimulent la division cellulaire et la ramification. En inhibant CKX, on augmente les niveaux de cytokinines, ce qui donne plus de pousses latérales et une meilleure résistance au stress.", "pr1": "PR-1 est le marqueur moléculaire de la résistance systémique acquise (SAR) chez les plantes. Induit par l'acide salicylique après une première infection, il confère une résistance durable à large spectre contre champignons, bactéries et virus.", "chi": "La Chitinase (SGQFNNYSNYY) dégrade la chitine — le polysaccharide structural de la paroi des champignons. En coupant les chaînes de N-acétylglucosamine, elle détruit l'intégrité du champignon et produit des oligosaccharines qui servent de signaux d'alarme.", "npr1": "NPR1 (DNEAKEKYF) est le régulateur central de la voie de l'acide salicylique et de la SAR. En présence de SA, NPR1 se transloque du cytoplasme vers le noyau et active les gènes PR. C'est la cible privilégiée pour améliorer la résistance aux maladies.", "pdf12": "PDF1.2 (KTCENLADKY) est un peptide antimicrobien à structure stabilisée par des ponts disulfure. Il perméabilise les membranes fongiques et bactériennes. Son expression est induite par la voie jasmonate/éthylène. Actif contre Botrytis cinerea, Alternaria et Fusarium.", "wrky30": "WRKY30 (WRKYGQK) est un facteur de transcription dont le domaine WRKY se lie aux boîtes W dans les promoteurs des gènes de défense. Il orchestre la réponse aux ROS (espèces réactives de l'oxygène) et active les gènes de défense systémique.", "flg22": "Flg22 (QRLSTGSRINSAKDDAAGLQIA) est un fragment de flagelline bactérienne reconnu par le récepteur FLS2 des plantes. Cette reconnaissance déclenche la PTI (Pattern-Triggered Immunity) : cascade de phosphorylation, production de ROS et expression des gènes PR.", "csa": "CsaMLO (MGKDKLHEF) confère une résistance durable à l'oïdium (Podosphaera xanthii) chez le concombre. Les mutations perte-de-fonction de MLO donnent une résistance à large spectre utilisée depuis 50 ans en agriculture.", "t_pr1": "PR-1 de la tomate (NQYRGVPSAGAKIDYR) joue le même rôle central dans la résistance systémique. Chez la tomate, son induction marque l'activation de la SAR après infection par Cladosporium, Phytophthora ou Botrytis. Il est synergique avec la systemine.", "t_rcr3": "Rcr3 (GHGSCWAFSAVANQ) est une protéase à cystéine sécrétée dans l'apoplasme, cible de l'effecteur Avr2 de Cladosporium fulvum. Le champignon inhibe Rcr3, mais la plante utilise ce complexe comme appât pour déclencher l'hypersensibilité. Un piège moléculaire élégant.", "t_pto": "Pto (MGKKSSSEGKL) est une kinase qui reconnaît l'effecteur AvrPto de Pseudomonas syringae pv. tomato. La liaison Pto-AvrPto déclenche la réponse hypersensible (HR) : mort cellulaire programmée locale qui stoppe l'infection.", "t_i3": "L'Inhibiteur de Protéase II (RCLSYPGPCHRDDMC) inhibe les protéases digestives des insectes herbivores (trypsine, chymotrypsine). Ses ponts disulfure (Cys-Cys) lui confèrent une résistance à la digestion. Il inhibe aussi certaines protéases fongiques.", "t_ver": "VER2 (DGYSHFHPLG) est impliqué dans la résistance à Verticillium dahliae — le champignon vasculaire responsable de la verticilliose. C'est une lectine de type Jacaline qui reconnaît les structures glycaniques du champignon.", "t_syst": "La Systemine de tomate (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte par Clarence Ryan en 1991. Elle circule dans le phloème pour déclencher la synthèse d'acide jasmonique dans toute la plante après une blessure par insectes.", "t_lox": "LOX (MAPSNKL) catalyse la première étape de la voie de l'acide jasmonique — la peroxydation des acides gras. La jasmonine active la résistance aux insectes et aux champignons. LOX produit aussi des composés volatils qui alertent les plantes voisines.", "t_cf9": "Cf-9 (CGFQCENFP) est un récepteur LRR qui reconnaît l'effecteur Avr9 de Cladosporium fulvum. La liaison Cf-9/Avr9 déclenche une réponse hypersensible très rapide : les cellules infectées meurent en quelques heures, stoppant le champignon.", "endorphin": "La β-Endorphine (YGGFMTSEKSQTPLVT) est l'opioïde endogène le plus puissant — 18 à 33 fois plus actif que la morphine. Elle est libérée lors de l'effort physique intense (runner's high), du rire, des orgasmes et de la musique. Elle se lie aux récepteurs μ-opioïdes et provoque euphorie, analgésie profonde et sentiment de bien-être. Sa séquence commence par Tyr-Gly-Gly-Phe (YGGF) — le tétrapeptide commun à toutes les endorphines. Ton déficit sérotoninergique est compensé par cette voie opioïde parallèle.", "ananda": "L'Anandamide (du sanskrit 'ananda' = joie suprême) est l'endocannabinoïde endogène principal — le ligand naturel des récepteurs CB1 du cerveau. La séquence GKVITAFYNRPEDIS correspond au site actif de la FAAH, l'enzyme qui dégrade l'anandamide. En ciblant FAAH, on augmente les niveaux d'anandamide endogène : sérénité, réduction de l'anxiété et effet anti-douleur.", "galanin": "La Galanine (GWTLNSAGYLLGPHAVGNHRSFSDKHGLT) est un neuropeptide de 29 acides aminés co-libéré avec la noradrénaline et la sérotonine dans le locus coeruleus. Elle module l'anxiété, la dépression et la douleur via les récepteurs GalR1-R3. Elle potentialise l'action de la sérotonine résiduelle — très pertinent avec ton SEROT à 40%.", "vip": "Le VIP (Vasoactive Intestinal Peptide, HSDAVFTDNYTRLRKQMAVKKYLNSILN) est un neuropeptide aux propriétés anti-dépressives et neuroprotectrices. Il stimule la neurogenèse hippocampique, réduit la neuroinflammation, régule le cycle circadien et module l'axe HPA (cortisol). Il est déficient dans la dépression majeure.", "subp": "La Substance P (RPKPQQFFGLM) transmet les signaux de douleur physique ET émotionnelle via le récepteur NK1 (Neurokinin 1). Elle est libérée lors des états dépressifs et anxieux. Les antagonistes NK1 (aprépitant) sont utilisés comme antidépresseurs. Cette protéodie encode la séquence native pour moduler la voie NK1.", "cryaa": "αA-Crystallin (CRYAA) est la protéine chaperon moléculaire majeure du cristallin. Son domaine α-crystallin (MDIAIHHPWIRRPFFPFHSP) stabilise les autres crystallins et empêche leur agrégation — le mécanisme principal de la cataracte. C'est une small Heat Shock Protein (sHSP) qui maintient la transparence du cristallin en corrigeant les repliements protéiques aberrants. Ses niveaux diminuent avec l'âge, provoquant l'opacification progressive. Les mutations de CRYAA causent des cataractes congénitales.", "cryab": "αB-Crystallin (CRYAB) est une Heat Shock Protein 20 (HSP20) hautement exprimée dans le cristallin et le muscle cardiaque. Son domaine actif HEERQDEHGFISR prévient l'agrégation des protéines mal repliées lors du stress oxydatif. Elle est surexprimée en réponse au stress UV, thermique et osmotique. αB-Crystallin protège contre la cataracte liée à l'âge, au diabète et aux UV. Elle a aussi un rôle anti-apoptotique dans la rétine.", "crygd": "γD-Crystallin (CRYGD) est une protéine structurelle compacte qui représente 30% des protéines du cristallin. Son motif GCEWQFSC forme un domaine Greek key très stable. Contrairement aux α-crystallins, γD est une protéine purement structurelle sans activité chaperon. Ses mutations causent des cataractes congénitales sévères. Avec l'âge, les rayons UV provoquent des photolésions qui la rendent insoluble, formant des agrégats opaques.", "gpx": "Glutathion Peroxydase (GPX1) est l'enzyme antioxydante majeure du cristallin. Son domaine catalytique WNFEKFLVGP contient un résidu sélénocystéine qui réduit le peroxyde d'hydrogène (H₂O₂) en eau, protégeant les crystallins de l'oxydation. Le cristallin est exposé à un stress oxydatif intense via les UV et la lumière bleue. La diminution de GPX avec l'âge est un facteur majeur de cataracte. Le glutathion réduit (GSH) est son cofacteur essentiel.", "lano": "Lanosterol Synthase catalyse la production de lanosterol, un stérol qui réduit l'agrégation des crystallins. En 2015, une découverte majeure a montré que le lanosterol solubilise les agrégats de crystallins in vitro et in vivo, renversant partiellement les cataractes chez le chien et le lapin. Le domaine actif DCTAEAMK stabilise la conformation native des crystallins. Des essais cliniques humains sont en cours pour des collyres au lanosterol comme alternative à la chirurgie.", "sod": "Superoxyde Dismutase 1 (SOD1) est l'enzyme antioxydante cytosolique qui convertit le radical superoxyde (O₂⁻) en peroxyde d'hydrogène (H₂O₂), lui-même réduit par GPX. Son domaine actif HVGDLGNVTADKDGVADVSIED contient un site de liaison Cu/Zn. SOD1 protège la rétine et le cristallin contre le stress oxydatif causé par la lumière, particulièrement la lumière bleue (400-500nm). Ses niveaux diminuent avec l'âge, augmentant le risque de DMLA et de cataracte.", "inmt": "INMT (Indoléthylamine N-Méthyltransférase) est l'enzyme qui synthétise le DMT (N,N-Diméthyltryptamine) endogène dans le cerveau humain, particulièrement dans la glande pinéale. Son domaine catalytique LDVGCGTGLLASFL méthyle la tryptamine pour produire du DMT. Le DMT endogène est libéré lors du sommeil paradoxal, des expériences de mort imminente et possiblement à la naissance et à la mort. Surnommé 'la molécule de l'esprit' par Rick Strassman, le DMT induit des états de conscience non-ordinaires profonds, des visions géométriques complexes et des expériences mystiques. INMT est aussi exprimée dans les poumons, le foie et le sang.", "5ht2a": "Le récepteur 5-HT2A est le récepteur sérotoninergique principal des états modifiés de conscience induits par les psychédéliques classiques : DMT, psilocybine, LSD, mescaline. Son domaine intracellulaire KHSRRNYH active la voie Gq/phospholipase C, augmentant la plasticité neuronale et la connectivité inter-régionale. L'activation de 5-HT2A dans le cortex préfrontal et le thalamus provoque la dissolution de l'ego (ego death), les hallucinations visuelles géométriques et l'expansion de conscience. Des études récentes montrent que les psychédéliques réorganisent les réseaux neuronaux pour traiter la dépression résistante et le PTSD."};
 
 const MASS={A:89,C:121,D:133,E:147,F:165,G:75,H:155,I:131,K:146,L:131,M:149,N:132,P:115,Q:146,R:174,S:105,T:119,V:117,W:204,Y:181};
 const ORD='ACDEFGHIKLMNPQRSTVWY';
@@ -288,23 +333,23 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16'
 };
 const CAT_NAMES={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie'
 };
 
 let audioCtx=null,reverbNode=null,masterGain=null,dryGain=null,wetGain=null;
 let playing=false,stopFlag=false,skipFlag=false,paused=false,pauseResolve=null;
-let sessionStart=0,sessionDuration=0,timerInterval=null,currentInstr='flute';
+let sessionStart=0,sessionDuration=0,timerInterval=null,currentInstr='bol';
 let activeFilters=new Set();
 let audioMode='stereo';
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7};
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
 function onDiapasonChange(){
@@ -343,7 +388,44 @@ function velFor(aa){let m=massFor(aa);return Math.min(0.9,0.45+(m-75)/(204-75)*0
 function ticksFor(aa){let m=massFor(aa);return m<=100?0.5:m<=160?1:2;}
 function fmtTime(s){let m=Math.floor(s/60);return m+':'+(s%60<10?'0':'')+Math.floor(s%60);}
 function setInstr(id,btn){currentInstr=id;document.querySelectorAll('.instr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
-function onDurChange(){document.getElementById('dur-val').textContent=document.getElementById('dur').value;document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);buildPlaylist();}
+function onDurChange(){
+  const durVal=parseInt(document.getElementById('dur').value);
+  document.getElementById('dur-val').textContent=durVal;
+  const durSec=durVal*60;
+  if(!document.getElementById('infinite-chk').checked){
+    document.getElementById('prog-total').textContent=fmtTime(durSec);
+    if(!playing){
+      document.getElementById('t-timer').textContent='0:00 / '+fmtTime(durSec);
+    }
+  }
+  buildPlaylist();
+}
+function onInfiniteChange(){
+  const isInfinite=document.getElementById('infinite-chk').checked;
+  const durSlider=document.getElementById('dur');
+  const durVal=document.getElementById('dur-val');
+  localStorage.setItem('proteodies-infinite',isInfinite);
+  if(isInfinite){
+    durSlider.disabled=true;
+    durSlider.style.opacity='0.3';
+    durVal.style.opacity='0.3';
+    document.getElementById('prog-total').textContent='∞';
+    if(!playing){
+      document.getElementById('t-timer').textContent='0:00';
+      document.getElementById('t-timer').style.color='#BA7517';
+    }
+  }else{
+    durSlider.disabled=false;
+    durSlider.style.opacity='1';
+    durVal.style.opacity='1';
+    const durSec=parseInt(durSlider.value)*60;
+    document.getElementById('prog-total').textContent=fmtTime(durSec);
+    if(!playing){
+      document.getElementById('t-timer').textContent='0:00 / '+fmtTime(durSec);
+      document.getElementById('t-timer').style.color='#1D9E75';
+    }
+  }
+}
 function togglePause(){
   if(!playing)return; paused=!paused;
   const btn=document.getElementById('t-pause');
@@ -368,10 +450,41 @@ function resetTransport(){
   document.getElementById('t-pause').innerHTML='&#9646;&#9646;';
   document.getElementById('t-pause').style.color='#999';
   document.getElementById('t-pause').style.borderColor='#333';
+  document.getElementById('t-timer').style.display='none';
+  // Reset timer display based on infinite mode
+  const isInfinite=document.getElementById('infinite-chk').checked;
+  if(isInfinite){
+    document.getElementById('t-timer').textContent='0:00';
+    document.getElementById('t-timer').style.color='#BA7517';
+  }else{
+    const durSec=parseInt(document.getElementById('dur').value)*60;
+    document.getElementById('t-timer').textContent='0:00 / '+fmtTime(durSec);
+    document.getElementById('t-timer').style.color='#1D9E75';
+  }
   paused=false;
 }
 function stopSession(){stopFlag=true;}
 function skipNext(){skipFlag=true;}
+function syncLoopButton(){
+  const chk=document.getElementById('loop-chk');
+  const btn=document.getElementById('t-loop');
+  if(chk.checked){
+    btn.style.borderColor='#1D9E75';
+    btn.style.background='#1D9E7522';
+    btn.style.color='#1D9E75';
+    btn.title='Boucle active';
+  }else{
+    btn.style.borderColor='#333';
+    btn.style.background='#252525';
+    btn.style.color='#999';
+    btn.title='Boucle desactivee';
+  }
+}
+function toggleLoop(){
+  const chk=document.getElementById('loop-chk');
+  chk.checked=!chk.checked;
+  syncLoopButton();
+}
 function getQueue(){return PROTEODIES.filter(p=>{const c=document.getElementById('chk-'+p.id);return c&&c.checked;});}
 function selectAll(v){PROTEODIES.forEach(p=>{const c=document.getElementById('chk-'+p.id);if(c)c.checked=v;});}
 
@@ -571,16 +684,39 @@ async function playOne(prot){
 async function startSession(){
   if(playing)return;
   const queue=getQueue();
-  if(!queue.length){alert('Coche au moins une proteodies !');return;}
+  if(!queue.length){
+    if(activeFilters.size===0){
+      alert('Selectionne au moins une categorie puis coche des proteodies !');
+    }else{
+      alert('Coche au moins une proteodies !');
+    }
+    return;
+  }
   playing=true;stopFlag=false;
   await initAudio();
   if(audioCtx.state==='suspended')await audioCtx.resume();
-  const dur=parseInt(document.getElementById('dur').value)*60;
+  const isInfinite=document.getElementById('infinite-chk').checked;
+  const dur=isInfinite?Infinity:parseInt(document.getElementById('dur').value)*60;
   sessionStart=Date.now();
+  sessionDuration=dur;
+  document.getElementById('t-timer').style.display='block';
   timerInterval=setInterval(()=>{
-    const el=(Date.now()-sessionStart)/1000;
+    const el=Math.floor((Date.now()-sessionStart)/1000);
     document.getElementById('prog-time').textContent=fmtTime(el);
-    document.getElementById('prog-total').textContent=fmtTime(Math.max(0,dur-el));
+    if(isInfinite){
+      document.getElementById('prog-total').textContent='∞';
+      document.getElementById('t-timer').textContent=fmtTime(el);
+      document.getElementById('t-timer').style.color='#BA7517';
+    }else{
+      const remaining=Math.max(0,dur-el);
+      document.getElementById('prog-total').textContent=fmtTime(remaining);
+      document.getElementById('t-timer').textContent=fmtTime(el)+' / '+fmtTime(dur);
+      if(remaining<=60&&remaining>0){
+        document.getElementById('t-timer').style.color='#D85A30';
+      }else{
+        document.getElementById('t-timer').style.color='#1D9E75';
+      }
+    }
   },500);
   const loop=document.getElementById('loop-chk').checked;
   let loopCount=0;
@@ -589,13 +725,13 @@ async function startSession(){
     for(let i=0;i<queue.length;i++){
       if(stopFlag)break outer;
       skipFlag=false;
-      if((Date.now()-sessionStart)/1000>=dur)break outer;
-      document.getElementById('prog-loop').textContent='Boucle '+loopCount+' · '+(i+1)+'/'+queue.length;
+      if(!isInfinite&&(Date.now()-sessionStart)/1000>=dur)break outer;
+      document.getElementById('prog-loop').textContent=(isInfinite?'∞ ':'')+' Boucle '+loopCount+' · '+(i+1)+'/'+queue.length;
       await playOne(queue[i]);
       if(skipFlag){skipFlag=false;continue;}
     }
     if(!loop)break;
-    if((Date.now()-sessionStart)/1000>=dur)break;
+    if(!isInfinite&&(Date.now()-sessionStart)/1000>=dur)break;
   }
   playing=false;stopFlag=false;skipFlag=false;
   clearInterval(timerInterval);
@@ -633,26 +769,39 @@ function buildFilters(){
   const cats=Object.keys(catCounts).sort((a,b)=>catCounts[b]-catCounts[a]);
   const stored=localStorage.getItem('proteodies-filters');
   if(stored){try{activeFilters=new Set(JSON.parse(stored));}catch(e){}}
-  if(activeFilters.size===0)cats.forEach(c=>activeFilters.add(c));
-  const all=document.createElement('div');all.className='filter-btn'+(activeFilters.size===cats.length?' active':'');
-  all.innerHTML='<span style="font-weight:500">✓ Tout</span><span class="filter-count">'+PROTEODIES.length+'</span>';
+  // Par défaut : aucun filtre (changement ici)
+  const allSelected=activeFilters.size===cats.length;
+  const noneSelected=activeFilters.size===0;
+  const all=document.createElement('div');
+  all.className='filter-btn'+(allSelected?' active':'');
+  // Texte qui change selon l'état
+  const allIcon=allSelected?'✗':'✓';
+  const allText=allSelected?'Aucun':'Tout';
+  all.innerHTML='<span style="font-weight:500">'+allIcon+' '+allText+'</span><span class="filter-count">'+PROTEODIES.length+'</span>';
   all.onclick=()=>{
-    activeFilters.clear();cats.forEach(c=>activeFilters.add(c));
+    if(allSelected){
+      // Tous sont sélectionnés → Désélectionner tout
+      activeFilters.clear();
+    }else{
+      // Certains ou aucun → Sélectionner tout
+      activeFilters.clear();
+      cats.forEach(c=>activeFilters.add(c));
+    }
     localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
     buildFilters();buildPlaylist();
   };
   fw.appendChild(all);
   cats.forEach(cat=>{
     const isActive=activeFilters.has(cat);
-    const isExclusive=activeFilters.size===1&&isActive;
     const btn=document.createElement('div');btn.className='filter-btn'+(isActive?' active':'');
     const catName=CAT_NAMES[cat]||'';
     btn.innerHTML='<span>'+cat+' '+catName+'</span><span class="filter-count">'+catCounts[cat]+'</span>';
     btn.onclick=()=>{
-      if(isExclusive){
-        activeFilters.clear();cats.forEach(c=>activeFilters.add(c));
+      // Toggle on/off de la catégorie (sans restriction)
+      if(activeFilters.has(cat)){
+        activeFilters.delete(cat);
       }else{
-        activeFilters.clear();activeFilters.add(cat);
+        activeFilters.add(cat);
       }
       localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
       buildFilters();buildPlaylist();
@@ -677,19 +826,107 @@ function buildPlaylist(){
       +'<button class="pl-info-btn" onclick="showDesc(\'' + p.id + '\')" title="Description">&#x24D8;</button>';
     pl.appendChild(div);
   });
-  document.getElementById('filter-info').textContent=filtered.length+' proteodies affichees sur '+PROTEODIES.length;
+  const catCount=activeFilters.size;
+  let catText;
+  if(catCount===0){
+    catText='aucune catégorie';
+  }else if(catCount===Object.keys(CAT_COLORS).length){
+    catText='toutes les catégories';
+  }else{
+    catText=catCount+' catégorie'+(catCount>1?'s':'');
+  }
+  const infoText=filtered.length>0?filtered.length+' proteodies affichees · '+catText:'Aucune proteodie - Sélectionnez au moins une catégorie';
+  document.getElementById('filter-info').textContent=infoText;
 }
 
+// Initialiser les filtres à vide par défaut si pas de localStorage
+const storedFilters=localStorage.getItem('proteodies-filters');
+if(!storedFilters){
+  // Premier lancement : aucun filtre sélectionné
+  activeFilters.clear();
+  localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
+}
 buildFilters();
 buildPlaylist();
-document.getElementById('prog-total').textContent=fmtTime(parseInt(document.getElementById('dur').value)*60);
+const initDur=parseInt(document.getElementById('dur').value)*60;
+document.getElementById('prog-total').textContent=fmtTime(initDur);
+// Restore infinite mode from localStorage
+const storedInfinite=localStorage.getItem('proteodies-infinite');
+if(storedInfinite==='true'){
+  document.getElementById('infinite-chk').checked=true;
+  onInfiniteChange();
+}else{
+  document.getElementById('t-timer').textContent='0:00 / '+fmtTime(initDur);
+}
 
 // Enregistrement du Service Worker pour fonctionnement hors ligne
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
+    // Pré-cache agressif de la page actuelle
+    if('caches' in window){
+      const CACHE_NAME='proteodies-v13-slogan-complet';
+      caches.open(CACHE_NAME).then(cache=>{
+        const urlsToPreCache=[
+          window.location.href,
+          window.location.pathname,
+          '/proteodies/',
+          '/proteodies/index.html',
+          '/proteodies/manifest.json'
+        ];
+        console.log('[App] 💾 Pré-cache de la page actuelle...');
+        urlsToPreCache.forEach(url=>{
+          fetch(url).then(response=>{
+            if(response.ok){
+              cache.put(url,response.clone());
+              console.log('[App] ✅ Pré-cached:',url);
+            }
+          }).catch(()=>{});
+        });
+      });
+    }
+
     navigator.serviceWorker.register('/proteodies/sw.js')
-      .then(reg=>console.log('Service Worker enregistré:',reg.scope))
-      .catch(err=>console.log('Erreur Service Worker:',err));
+      .then(reg=>{
+        console.log('[App] ✅ Service Worker enregistré:',reg.scope);
+        console.log('[App] SW état:',reg.active?'actif':'en attente');
+
+        // Forcer la mise à jour du SW
+        reg.update().then(()=>{
+          console.log('[App] 🔄 Mise à jour SW vérifiée');
+        });
+
+        // Écouter les changements de SW
+        reg.addEventListener('updatefound',()=>{
+          console.log('[App] 🆕 Nouveau Service Worker détecté');
+          const newWorker=reg.installing;
+          newWorker.addEventListener('statechange',()=>{
+            console.log('[App] SW state:',newWorker.state);
+            if(newWorker.state==='activated'){
+              console.log('[App] ✅ Nouveau SW activé');
+            }
+          });
+        });
+      })
+      .catch(err=>console.error('[App] ❌ Erreur Service Worker:',err));
+
+    // Vérifier l'état du cache
+    setTimeout(()=>{
+      if('caches' in window){
+        caches.keys().then(names=>{
+          console.log('[App] 💾 Caches disponibles:',names);
+          names.forEach(name=>{
+            caches.open(name).then(cache=>{
+              cache.keys().then(keys=>{
+                console.log('[App] Cache',name,'contient',keys.length,'entrées');
+                if(keys.length>0){
+                  console.log('[App] 🛩️ MODE AVION READY!');
+                }
+              });
+            });
+          });
+        });
+      }
+    },2000);
   });
 }
 </script>
