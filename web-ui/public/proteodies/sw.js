@@ -1,5 +1,5 @@
 // Service Worker pour Protéodies Player - Cache hors ligne
-const CACHE_NAME = 'proteodies-v16-neuro-douleur';
+const CACHE_NAME = 'proteodies-v17-spinal-inhibition';
 const urlsToCache = [
   '/proteodies/',
   '/proteodies/index.html',
