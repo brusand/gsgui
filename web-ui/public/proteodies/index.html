@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Proteodies Player - La molé met l'eau !</title>
-<meta name="description" content="La molé met l'eau ! Sonification de séquences peptidiques - 90 protéodies - De la molécule à la mélodie, de la séquence à la santé">
+<meta name="description" content="La molé met l'eau ! Sonification de séquences peptidiques - 95 protéodies - De la molécule à la mélodie, de la séquence à la santé">
 <meta name="theme-color" content="#1D9E75">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -91,7 +91,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 </div>
 
 <h1>&#x1F9EC; Proteodies Player</h1>
-<p class="sub">La molé met l'eau ! &middot; 90 proteodies</p>
+<p class="sub">La molé met l'eau ! &middot; 95 proteodies</p>
 <p class="sub" style="font-size:11px;margin-top:-14px;color:#666">De la molécule à la mélodie, de la séquence à la santé</p>
 
 <div class="now" id="now-box" style="display:none">
@@ -310,6 +310,11 @@ const PROTEODIES=[
   {id:'sst14', name:'Neuro-Douleur — Somatostatine Spinale', seq:'AGCKNFFWKTFTSC', cat:'⚡', desc:'SST-14 — inhibe libération Substance P dans moelle (intrathécal)'},
   {id:'noci', name:'Neuro-Douleur — Nociceptine/OFQ', seq:'FGGFTGARKSARKLANQ', cat:'⚡', desc:'Orphanine FQ — opioïde atypique bloque transmission spinale'},
   {id:'endom1', name:'Neuro-Douleur — Endomorphine-1', seq:'YPWF', cat:'⚡', desc:'Opioïde μ-sélectif le plus puissant — analgésie spinale pure'},
+  {id:'ferritin', name:'Jambes Sans Repos — Ferritine H', seq:'TTASTSQVRQNYHQDSEAAINRQINLELYASYVYLSMSYYFDRDDVALKNFAKYFLHQSHEEREHAEKLMKLQNQRGGRIFLQDIKKPDCDDWESGLNAMECALHLEKNVNQSLLELHKLATDKNDPHLCDFIETHYLNEQVKAIKELGDHVTNLRKMGAPESGLAEYLFDKHTLGDSDNES', cat:'🦿', desc:'Stockage fer cérébral — déficit = cause #1 du SJSR'},
+  {id:'drd3', name:'Jambes Sans Repos — Récepteur D3 Dopamine', seq:'MAPLSQLSSHINSTCGAENSTGASQARPHAYYALSYCALILAIVFGNGLVCMAVLKERALQTTTNYLVVSLAVADLLVATLVMPWVVYLEVTGGWNFSRICCDVFVTLDVMMCTASILNLCAISIDRYTAVVMPVHYQHGTGQSSCRRVALMITAVWVLAFAVSCPLLFGFNTTGDPTVCSISNPDFVIYSSVVSFYLPFGVTVLVYARIYVVLKQRRRKRILTRQNSQCNSVRPGFPQQTLSPDPAHLELKRYYSICQDTALGGPGFQERGGELKREEKTRNSLSPTIAPKLSLEVRKLSNGRLSTSLKLGPLQPRGVPLREKKATQMVAIVLGAFIVCWLPFFLTHVLNTHCQTCHVSPELYSATTWLGYVNSALNPVIYTTFNIEFRKAFLKILSC', cat:'🦿', desc:'Circuit dopamine nigrostrié — dysfonction centrale du SJSR'},
+  {id:'cacna2d1', name:'Jambes Sans Repos — α2δ-1 Canaux Calciques', seq:'MGAGAVLLLLLGSCQGSLLLQEAAEERLQAEALAEQAATAAEARAAAEERERRLEAEIERRAQEVRAAAEEMRAREEELRAAEEERRAAQEVRAAAEEMRARELELRAAEEERRAAQEVRAAAEEMRAREEELRAAEEERRAAQEVRAAAEEMRARDEKLRAAEEERRLAQEVRAAAEEMRAREEELRAAEEERRAA', cat:'🦿', desc:'Cible gabapentine/prégabaline — réduit hyperexcitabilité spinale'},
+  {id:'btbd9', name:'Jambes Sans Repos — BTBD9 Fer-Dopamine', seq:'MSEAQDREQLRQELEQKRNELEQKRRELEQNREQEVQDLEEQREKLEQEVRAQEQELEEKVRDQERELEEKVRELEEQREKLELEVRELEEQREQLELELEEQREKLEREVRDQEKELEQEV', cat:'🦿', desc:'Gène de susceptibilité SJSR — lie fer et dopamine'},
+  {id:'meis1', name:'Jambes Sans Repos — MEIS1 Homéodomaine', seq:'KRPKKRPRTAYTRYQTLELEKEFHFNRYLTRRRRIEIAHALCLTERQIKIWFQNRRMKWKKEN', cat:'🦿', desc:'Principal gène SJSR — développement circuits moteurs'},
 
 ];
 const DESCRIPTIONS={
@@ -366,14 +371,14 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED'
 };
 const CAT_NAMES={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos'
 };
 
 let audioCtx=null,reverbNode=null,masterGain=null,dryGain=null,wetGain=null;
@@ -382,7 +387,7 @@ let sessionStart=0,sessionDuration=0,timerInterval=null,currentInstr='bol';
 let activeFilters=new Set();
 let audioMode='stereo';
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8};
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
 function onDiapasonChange(){
