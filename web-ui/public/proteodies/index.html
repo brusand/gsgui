@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Proteodies Player - La molé met l'eau !</title>
-<meta name="description" content="La molé met l'eau ! Sonification de séquences peptidiques - 95 protéodies - De la molécule à la mélodie, de la séquence à la santé">
+<meta name="description" content="La molé met l'eau ! Sonification de séquences peptidiques - 100 protéodies - De la molécule à la mélodie, de la séquence à la santé">
 <meta name="theme-color" content="#1D9E75">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -91,7 +91,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 </div>
 
 <h1>&#x1F9EC; Proteodies Player</h1>
-<p class="sub">La molé met l'eau ! &middot; 95 proteodies</p>
+<p class="sub">La molé met l'eau ! &middot; 100 proteodies</p>
 <p class="sub" style="font-size:11px;margin-top:-14px;color:#666">De la molécule à la mélodie, de la séquence à la santé</p>
 
 <div class="now" id="now-box" style="display:none">
@@ -133,8 +133,8 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Duree</span>
-    <input type="range" id="dur" min="1" max="30" value="10" step="1" oninput="onDurChange()">
-    <span class="ctrl-val" id="dur-val">10</span>
+    <input type="range" id="dur" min="1" max="30" value="20" step="1" oninput="onDurChange()">
+    <span class="ctrl-val" id="dur-val">20</span>
     <span style="font-size:12px;color:var(--text2)">min</span>
     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-left:10px">
       <input type="checkbox" id="infinite-chk" style="width:18px;height:18px;accent-color:#BA7517" onchange="onInfiniteChange()">
@@ -168,6 +168,13 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
       <input type="checkbox" id="loop-chk" style="width:20px;height:20px;accent-color:var(--teal)" checked onchange="syncLoopButton()">
       <span style="font-size:13px;color:var(--text2)">Repeter jusqu'a la duree cible</span>
+    </label>
+  </div>
+  <div class="ctrl-row" style="margin-top:4px">
+    <span class="ctrl-label">Random</span>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <input type="checkbox" id="random-chk" style="width:20px;height:20px;accent-color:#BA7517">
+      <span style="font-size:13px;color:var(--text2)">🎲 Jouer les notes de façon aleatoire (test)</span>
     </label>
   </div>
   <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.2s;display:flex;align-items:center;gap:10px" id="diapason-box">
@@ -315,6 +322,35 @@ const PROTEODIES=[
   {id:'cacna2d1', name:'Jambes Sans Repos — α2δ-1 Canaux Calciques', seq:'MGAGAVLLLLLGSCQGSLLLQEAAEERLQAEALAEQAATAAEARAAAEERERRLEAEIERRAQEVRAAAEEMRAREEELRAAEEERRAAQEVRAAAEEMRARELELRAAEEERRAAQEVRAAAEEMRAREEELRAAEEERRAAQEVRAAAEEMRARDEKLRAAEEERRLAQEVRAAAEEMRAREEELRAAEEERRAA', cat:'🦿', desc:'Cible gabapentine/prégabaline — réduit hyperexcitabilité spinale'},
   {id:'btbd9', name:'Jambes Sans Repos — BTBD9 Fer-Dopamine', seq:'MSEAQDREQLRQELEQKRNELEQKRRELEQNREQEVQDLEEQREKLEQEVRAQEQELEEKVRDQERELEEKVRELEEQREKLELEVRELEEQREQLELELEEQREKLEREVRDQEKELEQEV', cat:'🦿', desc:'Gène de susceptibilité SJSR — lie fer et dopamine'},
   {id:'meis1', name:'Jambes Sans Repos — MEIS1 Homéodomaine', seq:'KRPKKRPRTAYTRYQTLELEKEFHFNRYLTRRRRIEIAHALCLTERQIKIWFQNRRMKWKKEN', cat:'🦿', desc:'Principal gène SJSR — développement circuits moteurs'},
+  {id:'aqp4_inner', name:'Ménière — AQP4 Oreille Interne', seq:'MSDGAAARRWGKCGPLCTRENIMVAFKGVWTQAFWKAVTAEFLAMLIFVLLSVGSTINWGGSENPLPVDMVLISLCFGLSIATMVQCFGHISGGHINPAVTVAMVCTRKISIAKSVFYIAAQCLGAIIGAGILYLVTPPSVVGGLGVTMVHGNLTAGHGLLVELIITFQLVFTIFASCDSKRTDVTGSIALAIGFSY', cat:'🦻', desc:'Aquaporine — régule endolymphe, pression oreille interne'},
+  {id:'kcnq4', name:'Ménière — KCNQ4 Canal Potassique', seq:'MRWWKCCPNCLQDGPRRLHQVLQPLVRCSPRLVSHPEPVPREAPGLQEGQEQELQAAGETPVLSLPPLQPGPPEEPQPPQPVPWPPSLPPVEQETRQRTQRLQRLQRQRERLERLERLQ', cat:'🦻', desc:'Canal K+ cellules ciliées — mutation = surdité + Ménière'},
+  {id:'enac_alpha', name:'Ménière — ENaC-α Sodium Épithélial', seq:'CQADTLLYCKENGYLCRTTCPNFHGCCQTRLE', cat:'🦻', desc:'Canal sodium — contrôle volume endolymphe'},
+  {id:'coch', name:'Ménière — Cochline COCH', seq:'CRQGVCLPIWVHCGECQVPGYTGHCYYRDGQCYCSKSGTEYYGYNCYNLPGRFYGPLTYLHKLTNYENQTD', cat:'🦻', desc:'Protéine matrice oreille interne — mutations = Ménière'},
+  {id:'bdnf_cochlea', name:'Ménière — BDNF Neuroprotection', seq:'HSDPARRGELF', cat:'🦻', desc:'Protège neurones auditifs et vestibulaires'},
+  {id:'nkcc1', name:'Ménière — NKCC1 Transport Ionique', seq:'RRDNFVAIGKKKAPN', cat:'🦻', desc:'Cotransporteur Na-K-Cl — homéostasie endolymphe'},
+  {id:'sp_block', name:'Fibromyalgie — Antagoniste Substance P', seq:'RPKPQQFFGLM', cat:'💪', desc:'Bloque récepteur NK1 — réduit douleur centrale'},
+  {id:'dyn_a', name:'Fibromyalgie — Dynorphine A', seq:'YGGFLRRIRPKLKWDNQ', cat:'💪', desc:'Opioïde κ — analgésie douleur chronique'},
+  {id:'alpha_msh', name:'Fibromyalgie — α-MSH Anti-Inflammatoire', seq:'SYSMEHFRWGKPV', cat:'💪', desc:'Melanocortin — réduit inflammation centrale'},
+  {id:'cgrp_block', name:'Fibromyalgie — Antagoniste CGRP', seq:'ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF', cat:'💪', desc:'Réduit migraines et sensibilisation périphérique'},
+  {id:'galanin_fibro', name:'Fibromyalgie — Galanine Inhibitrice', seq:'GWTLNSAGYLLGPHAVGNHRSFSDKHGLT', cat:'💪', desc:'Inhibe transmission nociceptive spinale'},
+  {id:'sst28', name:'Fibromyalgie — Somatostatine-28', seq:'SANSNPAMAPRERKAGCKNFFWKTFTSC', cat:'💪', desc:'SST-28 — inhibe libération glutamate et Substance P'},
+  {id:'beta_end', name:'Fibromyalgie — β-Endorphine', seq:'YGGFMTSEKSQTPLVTLFKNAIIKNAHKKGQ', cat:'💪', desc:'Opioïde endogène complet — analgésie puissante'},
+  {id:'agmatin', name:'Fibromyalgie — Agmatine NMDA', seq:'CNNRRRV', cat:'💪', desc:'Bloque récepteurs NMDA — réduit wind-up central'},
+  {id:'npy', name:'Fibromyalgie — Neuropeptide Y', seq:'YPSKPDNPGEDAPAEDMARYYSALRHYINLITRQRY', cat:'💪', desc:'Anxiolytique + analgésique — fatigue chronique'},
+  {id:'cox2_inhib', name:'AINS — COX-2 Site Actif', seq:'FAEDEGLPNSS', cat:'🩹', desc:'Cyclo-oxygénase 2 — cible du diclofénac/Voltarène'},
+  {id:'anxa1', name:'AINS — Annexine A1 Anti-Inflammatoire', seq:'AMVSEFLKQAWFIENEEQEYVQTVKSSKGGPGSAVSPYPTFNPSSDVAALHKAIMVKGVDEATIIDILTKSRNEQQ', cat:'🩹', desc:'Peptide endogène mimant corticostéroïdes — résolution inflammation'},
+  {id:'il10', name:'AINS — IL-10 Cytokine', seq:'SPGQGTQSENSCTHFPGNLPNMLRDLRDAFSRVKTFFQMKDQLDNLLLKESLLEDFKGYLGCQALSEMIQFYLEEVMPQAENQDPDIKAHVNSLGENLKTLRLRLRRCHRFLPCENKSKAVEQVKNAFNKLQEKGIYKAMSEFDIFINYIEAYMTMKIRN', cat:'🩹', desc:'Interleukine-10 — cytokine anti-inflammatoire majeure'},
+  {id:'lipoxin_r', name:'AINS — Récepteur Lipoxine A4', seq:'MDLDNSMFDSTNSETLESWSYTSMTEE', cat:'🩹', desc:'Médiateur pro-résolution — termine l\'inflammation activement'},
+  {id:'tgfb1', name:'AINS — TGF-β1 Immunorégulateur', seq:'ALDAAYCFRNVQDNCCLRPLYIDFKRDLGWKWIHEPKGYHANFCLGPCPYIWSLDTQYSKVLALYNQHNPGASAAPCCVPQALEPLPIVYYVGRKPKVEQLSNMIVRSCKCS', cat:'🩹', desc:'Transforming Growth Factor — bloque cascades inflammatoires'},
+  {id:'sod_anti', name:'AINS — SOD Superoxyde Dismutase', seq:'ATKAVCVLKGDGPVQGIINFEQKESNGPVKVWGSIKGLTEGLHGFHVHEFGDNTAGCTSAGPHFNPLSRKHGGPKDEERHVGDLGNVTADKDGVADVSIEDSVISLSGDHCIIGRTLVVHEKADDLGKGGNEESTKTGNAGSRLACGVIGIAQ', cat:'🩹', desc:'Antioxydant puissant — neutralise radicaux libres inflammatoires'},
+  {id:'a2m', name:'AINS — α2-Macroglobuline', seq:'GFAEQQAKTPHTKGGVVK', cat:'🩹', desc:'Inhibe MMP et protéases — stoppe destruction tissulaire'},
+  {id:'hsp70', name:'AINS — HSP70 Cytoprotectrice', seq:'GIDLGTTYSCVGVFQHGKVEIIANDQGNRTTPSYVAFTDTERLIGDAAKNQVALNPQNTVFDAKRLIGRKFGDPVVQSDMKHWPFQVINDGDKPKVQVSYKGETKAFYPEEISSMVLTKMKEIAEAYLGYPVTNAVITVPAYFNDSQRQATKDAGVIAGLNVLRIINEPTAAAIAYGLDKKVGAERNVLIFDLGGGTFDVSILTIDDGIFEVKATAGDTHLGGEDFDNRLVNHFVEEFKRKHKKDISQNKRAVRRLRTACERAKRTLSSSTQASLEIDSLFEGIDFYTSITRARFEELCSDLFRSTLEPVEKALRDAKLDKAQIHDLVLVGGSTRIPKVQKLLQDFFNGRDLNKSINPDEAVAYGAAVQAAILMGDKSENVQDLLLLDVAPLSLGLETAGGVMTALIKRNSTIPTKQTQIFTTYSDNQPGVLIQVYEGERAMTKDNNLLGRFELSGIPPAPRGVPQIEVTFDIDANGILNVTATDKSTGKANKITITNDKGRLSKEEIERMVQEAEKYKAEDEVQRERVSAKNALESYAFNMKSAVEDEGLKGKISEADKKKVLDKCQEVISWLDANTLAEKDEFEHKRKELEQVCNPIISGLYQGAGGPGPGGFGAQGPKGGSGSGPTIEEVD', cat:'🩹', desc:'Heat Shock Protein 70 — protège cellules du stress inflammatoire'},
+  {id:'resolvin_d1', name:'AINS — Résolvine D1 Récepteur', seq:'ELFFKNMARDL', cat:'🩹', desc:'Médiateur spécialisé pro-résolution — termine inflammation sans immunosuppression'},
+  {id:'h1r_block', name:'Anti-Démangeaisons — H1R Antagoniste', seq:'PMGYNVSALTLQTPDGAVL', cat:'🦟', desc:'Bloque récepteur H1 histamine — coupe démangeaisons piqûres'},
+  {id:'il31ra_block', name:'Anti-Démangeaisons — IL-31RA Bloqueur', seq:'WSEWSPAAVQCCR', cat:'🦟', desc:'Bloque IL-31 — cytokine majeure du prurit chronique'},
+  {id:'par2_antag', name:'Anti-Démangeaisons — PAR2 Antagoniste', seq:'SLIGKV', cat:'🦟', desc:'Protease-Activated Receptor 2 — réduit prurit inflammatoire'},
+  {id:'trpv1_mod', name:'Anti-Démangeaisons — TRPV1 Modulateur', seq:'AAVALLPAVLLALLAP', cat:'🦟', desc:'Canal TRP — bloque sensation brûlure et démangeaison'},
+  {id:'tslp_block', name:'Anti-Démangeaisons — TSLP Bloqueur', seq:'KCMGLNTDKQAFEEVLG', cat:'🦟', desc:'Thymic Stromal Lymphopoietin — coupe allergies piqûres'},
 
 ];
 const DESCRIPTIONS={
@@ -352,7 +388,12 @@ const DESCRIPTIONS={
 "gabaa": "GABA-A récepteur sous-unité α2 (domaine N-terminal 27 aa) est la cible de l'analgésie GABAergique spinale. Les récepteurs GABA-A sont des canaux chlore inhibiteurs — leur activation hyperpolarise les neurones et RÉDUIT leur excitabilité. Dans la douleur de désafférentation, il y a une PERTE des interneurones GABAergiques inhibiteurs de la corne dorsale de la moelle épinière — phénomène appelé 'désinhibition'. Cette perte de freinage GABAergique permet aux neurones de projection de la douleur de décharger spontanément → allodynie mécanique (toucher léger perçu comme douleur brûlante). La sous-unité α2 du récepteur GABA-A est spécifiquement impliquée dans l'ANALGÉSIE sans effets sédatifs (contrairement à α1 responsable de la sédation des benzodiazépines). Les agonistes sélectifs α2 (comme le TPA023B) réduisent l'hyperexcitabilité spinale et l'allodynie dans les modèles de douleur neuropathique SANS somnolence ni tolérance. Cette séquence de 27 aa encode le domaine extracellulaire N-terminal de la sous-unité α2 qui lie le GABA — le restaurateur du silence inhibiteur anti-douleur.",
 "sst14": "Somatostatine-14 (SST-14, AGCKNFFWKTFTSC, 14 aa) est LE neuropeptide inhibiteur majeur de la transmission de la douleur dans la moelle épinière. Cyclisée par un pont disulfure Cys3-Cys14, SST-14 est sécrétée par les interneurones de la corne dorsale et se lie aux récepteurs sst2A sur les terminaisons des neurones afférents primaires. Son action INHIBE LA LIBÉRATION DE SUBSTANCE P — le neurotransmetteur undécapeptide qui transmet les signaux douloureux de la périphérie vers le cerveau. Dans la douleur de désafférentation, la perte d'input normal provoque un déséquilibre entre systèmes excitateurs (glutamate, substance P, CGRP) et inhibiteurs (GABA, glycine, somatostatine) → dominance de l'excitation pathologique. SST-14 est utilisée cliniquement en administration INTRATHÉCALE (perfusion directe dans le liquide céphalo-rachidien) pour traiter les douleurs cancéreuses RÉFRACTAIRES aux opioïdes et aux autres traitements. Les analogues synthétiques (octréotide, lanréotide) sont moins efficaces pour la douleur car ils ciblent surtout sst2 et sst5, alors que sst2A spinal est la cible analgésique. La somatostatine endogène a une demi-vie très courte (1-3 minutes) due aux endopeptidases. Cette séquence de 14 aa encode SST-14 humaine native — l'inhibiteur intrathécal de la substance P.",
 "noci": "Nociceptine/Orphanine FQ (FGGFTGARKSARKLANQ, 17 aa) est un peptide opioïde ATYPIQUE découvert en 1995 qui module la transmission de la douleur spinale par un mécanisme unique. Contrairement aux opioïdes classiques (endorphines, enképhalines) qui se lient aux récepteurs μ/δ/κ, la nociceptine se lie au récepteur NOP (Nociceptin/Orphanin FQ Peptide receptor, anciennement ORL-1). Le nom 'nociceptine' est TROMPEUR — au niveau SPINAL, elle est ANTI-nociceptive (bloque la douleur), mais au niveau SUPRA-SPINAL (cerveau), elle peut être pro-nociceptive. Ce paradoxe s'explique par la localisation différentielle du récepteur NOP. Dans la moelle épinière, la nociceptine INHIBE la libération de glutamate et de substance P des neurones afférents primaires et HYPERPOLARISE les neurones de projection de la corne dorsale via l'activation des canaux potassiques GIRK — mécanisme identique aux enképhalines. Dans la douleur de désafférentation, le système nociceptine/NOP est dysrégulé. L'administration intrathécale de nociceptine produit une analgésie PUISSANTE sans développer de tolérance ni de dépendance (contrairement à la morphine). La séquence N-terminale FGGFT ressemble à YGGF des opioïdes classiques, mais la phénylalanine (F) remplace la tyrosine (Y). Cette séquence de 17 aa encode la nociceptine/OFQ humaine complète — l'opioïde atypique qui bloque la transmission spinale.",
-"endom1": "Endomorphine-1 (YPWF-NH2, 4 aa amidé) est l'opioïde endogène LE PLUS SÉLECTIF pour le récepteur μ-opioïde — la cible de la morphine. Découverte en 1997 par Zadina, l'endomorphine-1 a une affinité et une sélectivité pour μ SUPÉRIEURES à celles de la β-endorphine et des enképhalines. Elle ne se lie PAS aux récepteurs δ ni κ. Les récepteurs μ de la corne dorsale spinale sont LA cible principale de l'analgésie opioïde — c'est là que la morphine intrathécale (pompes implantées) produit son effet analgésique maximal avec des doses 300 fois plus faibles qu'en systémique. L'endomorphine-1 est concentrée dans les régions de traitement de la douleur : corne dorsale spinale, thalamus, substance grise périaqueducale (PAG), noyau raphé magnus. Sa séquence YPWF est UNIQUE — aucun autre opioïde endogène ne contient tryptophane (W, 204 Da, la note la plus grave/puissante). Le tryptophane en position 3 et la phénylalanine en position 4 créent une poche hydrophobe qui s'insère parfaitement dans le site de liaison μ. L'endomorphine-1 produit une analgésie spinale PURE sans effets respiratoires ni constipation (contrairement à la morphine systémique). Elle est rapidement dégradée par les peptidases — d'où l'intérêt des analogues métaboliquement stables. Cette séquence de 4 aa encode Endomorphine-1 — l'opioïde μ-sélectif pour analgésie spinale maximale."};
+"endom1": "Endomorphine-1 (YPWF-NH2, 4 aa amidé) est l'opioïde endogène LE PLUS SÉLECTIF pour le récepteur μ-opioïde — la cible de la morphine. Découverte en 1997 par Zadina, l'endomorphine-1 a une affinité et une sélectivité pour μ SUPÉRIEURES à celles de la β-endorphine et des enképhalines. Elle ne se lie PAS aux récepteurs δ ni κ. Les récepteurs μ de la corne dorsale spinale sont LA cible principale de l'analgésie opioïde — c'est là que la morphine intrathécale (pompes implantées) produit son effet analgésique maximal avec des doses 300 fois plus faibles qu'en systémique. L'endomorphine-1 est concentrée dans les régions de traitement de la douleur : corne dorsale spinale, thalamus, substance grise périaqueducale (PAG), noyau raphé magnus. Sa séquence YPWF est UNIQUE — aucun autre opioïde endogène ne contient tryptophane (W, 204 Da, la note la plus grave/puissante). Le tryptophane en position 3 et la phénylalanine en position 4 créent une poche hydrophobe qui s'insère parfaitement dans le site de liaison μ. L'endomorphine-1 produit une analgésie spinale PURE sans effets respiratoires ni constipation (contrairement à la morphine systémique). Elle est rapidement dégradée par les peptidases — d'où l'intérêt des analogues métaboliquement stables. Cette séquence de 4 aa encode Endomorphine-1 — l'opioïde μ-sélectif pour analgésie spinale maximale.",
+"h1r_block": "H1R (Récepteur H1 de l'Histamine, domaine 19 aa) est LE récepteur qui déclenche les démangeaisons lors des piqûres de moustiques et autres insectes. Quand un moustique pique, il injecte de la salive contenant des anticoagulants et des peptides qui provoquent la libération massive d'histamine par les mastocytes cutanés. L'histamine se lie au récepteur H1R sur les terminaisons nerveuses sensorielles (fibres C pruriceptives) et déclenche la cascade du prurit : activation de la phospholipase C, production d'IP3 et de diacylglycerol, libération de calcium intracellulaire et activation des canaux TRPV1 et TRPA1 qui génèrent le signal de démangeaison vers le cerveau. Le domaine PMGYNVSALTLQTPDGAVL correspond à la troisième boucle intracellulaire du récepteur H1R — la région qui couple le récepteur à la protéine G et initie la signalisation. Les antihistaminiques classiques (cétirizine, loratadine, diphenhydramine) bloquent le site de liaison de l'histamine sur la face extracellulaire, mais cette protéodie cible le domaine de couplage intracellulaire pour COUPER la transmission du signal pruritogène même si l'histamine est déjà liée. Contrairement aux antihistaminiques qui peuvent provoquer somnolence, cette approche peptidique locale module spécifiquement la voie du prurit cutané. Cette séquence de 19 aa encode le domaine de couplage G du récepteur H1 — le bloqueur moléculaire des démangeaisons de piqûres.",
+"il31ra_block": "IL-31RA (Récepteur Alpha de l'Interleukine-31, 13 aa du domaine extracellulaire) est le récepteur de l'IL-31 — LA cytokine majeure du prurit chronique et des réactions allergiques aux piqûres d'insectes. Découverte en 2004, l'IL-31 est sécrétée principalement par les lymphocytes Th2 lors des réactions allergiques et se lie à un complexe hétérodimérique IL-31RA + OSMR (Oncostatin M Receptor) exprimé sur les neurones sensoriels pruriceptifs et les kératinocytes. Les piqûres de moustiques et d'autres insectes déclenchent une réponse immunitaire Th2 avec libération massive d'IL-31, créant des démangeaisons INTENSES et prolongées qui persistent bien après que l'histamine initiale ait été métabolisée — c'est pourquoi les antihistaminiques sont souvent inefficaces pour les piqûres qui démangent pendant des jours. Le domaine WSEWSPAAVQCCR encode une région du domaine extracellulaire D2 du récepteur IL-31RA qui est essentielle à la liaison de l'IL-31. En ciblant ce domaine, on bloque l'interaction IL-31/IL-31RA et on COUPE la voie du prurit inflammatoire chronique. Le nemolizumab, un anticorps monoclonal anti-IL-31RA, est en essais cliniques phase 3 pour la dermatite atopique et montre une réduction spectaculaire du prurit. Cette protéodie encode le fragment peptidique bloqueur d'IL-31RA — l'extincteur du feu des démangeaisons prolongées de piqûres.",
+"par2_antag": "PAR2 (Protease-Activated Receptor 2, hexapeptide SLIGKV) est un récepteur couplé aux protéines G activé par les protéases — notamment la trypsine et les protéases injectées par les insectes lors des piqûres. Contrairement aux récepteurs classiques qui se lient à des ligands, PAR2 est activé par CLIVAGE protéolytique : la protéase coupe la région N-terminale du récepteur, exposant un nouveau N-terminus (SLIGKV chez l'humain) qui se replie et s'auto-active en se liant au deuxième domaine extracellulaire — mécanisme d'activation irréversible unique. Les moustiques, abeilles, guêpes et autres insectes injectent des protéases (comme les kallicréines) dans leur salive qui activent massivement PAR2 sur les neurones pruriceptifs cutanés. L'activation de PAR2 déclenche une cascade inflammatoire et pruritogène PUISSANTE : libération de tryptase des mastocytes (qui active encore plus de PAR2), production de cytokines pro-inflammatoires (IL-6, IL-8, TNF-α) et sensibilisation des fibres C. PAR2 est aussi impliqué dans le prurit chronique de la dermatite atopique, du psoriasis et de l'urticaire. Le peptide SLIGKV est le 'tethered ligand' — le ligand attaché qui active normalement le récepteur. En l'utilisant comme antagoniste compétitif, on BLOQUE l'activation de PAR2 même en présence de protéases. Cette séquence de 6 aa encode le fragment antagoniste de PAR2 — le bouclier contre le prurit inflammatoire des piqûres.",
+"trpv1_mod": "TRPV1 (Transient Receptor Potential Vanilloid 1, domaine transmembranaire 16 aa) est le canal ionique de la BRÛLURE et des DÉMANGEAISONS — le récepteur de la capsaïcine (piment), de la chaleur (>43°C) et des signaux pruritogènes. Exprimé sur les fibres C nociceptives et pruriceptives, TRPV1 est LA porte d'entrée finale du calcium qui génère les potentiels d'action de démangeaison et de douleur brûlante. Lors des piqûres d'insectes, l'histamine et l'IL-31 activent les récepteurs H1R et IL-31RA qui, via la phospholipase C et la protéine kinase C (PKC), PHOSPHORYLENT et SENSIBILISENT TRPV1 — abaissant son seuil d'activation et transformant la chaleur corporelle normale (37°C) en sensation de brûlure. C'est pourquoi les piqûres démangent PLUS quand il fait chaud ou après une douche chaude. La séquence AAVALLPAVLLALLAP correspond à une région du segment transmembranaire S5-S6 qui forme le filtre de sélectivité du pore du canal TRPV1. Cette région est riche en résidus hydrophobes (Ala, Leu, Val, Pro) qui s'insèrent dans la bicouche lipidique membranaire. Le resiniferatoxin (RTX), un ultra-agoniste de TRPV1, est utilisé cliniquement pour désensibiliser (défunctionnaliser) les neurones TRPV1+ et traiter la douleur chronique réfractaire. Cette protéodie module le domaine du pore de TRPV1 pour RÉDUIRE l'hyperexcitabilité induite par les piqûres — coupant la sensation de brûlure et de démangeaison à la source. Cette séquence de 16 aa encode le filtre de pore de TRPV1 — le modulateur qui éteint le feu des démangeaisons.",
+"tslp_block": "TSLP (Thymic Stromal Lymphopoietin, 17 aa du domaine actif) est LA cytokine qui orchestre les réactions allergiques aux piqûres d'insectes et les démangeaisons intenses qui en résultent. Sécrétée par les kératinocytes cutanés en réponse aux protéases et peptides injectés par les moustiques, abeilles et autres insectes, TSLP active massivement les cellules dendritiques qui migrent vers les ganglions lymphatiques et polarisent les lymphocytes T naïfs en Th2 — le phénotype allergique. Cette cascade Th2 provoque la libération d'IL-4, IL-5, IL-13 et surtout IL-31 (la cytokine du prurit). TSLP active AUSSI directement les neurones sensoriels pruriceptifs via le récepteur TSLPR — déclenchant des démangeaisons INDÉPENDANTES de l'histamine (c'est pourquoi les antihistaminiques sont souvent inefficaces). Le domaine KCMGLNTDKQAFEEVLG correspond à une région de l'hélice C de TSLP humain mature qui est essentielle à la liaison au récepteur TSLPR. Les individus hypersensibles aux piqûres (skeeter syndrome, réactions papuleuses aux moustiques) ont des niveaux de TSLP TRÈS élevés. Le tezepelumab, un anticorps monoclonal anti-TSLP, est approuvé pour l'asthme sévère et montre une réduction spectaculaire des réactions allergiques. En ciblant TSLP avec cette protéodie, on COUPE la cascade allergique à sa SOURCE — avant même la production d'IL-31 et la sensibilisation Th2. Cette séquence de 17 aa encode le domaine de liaison de TSLP — le coupe-circuit des allergies de piqûres d'insectes."};
 
 
 const MASS={A:89,C:121,D:133,E:147,F:165,G:75,H:155,I:131,K:146,L:131,M:149,N:132,P:115,Q:146,R:174,S:105,T:119,V:117,W:204,Y:181};
@@ -371,14 +412,14 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39'
 };
 const CAT_NAMES={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons'
 };
 
 let audioCtx=null,reverbNode=null,masterGain=null,dryGain=null,wetGain=null;
@@ -387,12 +428,12 @@ let sessionStart=0,sessionDuration=0,timerInterval=null,currentInstr='bol';
 let activeFilters=new Set();
 let audioMode='stereo';
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10};
 const CAT_AUDIO_MODE={
-  '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo',
+  '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo','🦟':'stereo',
   '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
   '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
-  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic'
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic'
 };
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
@@ -704,8 +745,19 @@ function drawWave(seq){
   c.stroke();
 }
 
+function shuffleArray(array){
+  const arr=[...array];
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
 async function playOne(prot){
-  const seq=prot.seq.split(''),bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
+  let seq=prot.seq.split('');
+  const isRandom=document.getElementById('random-chk').checked;
+  if(isRandom){seq=shuffleArray(seq);}
+  const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
   showSeq(prot);
   document.querySelectorAll('.pl-item').forEach(e=>e.classList.remove('active-item'));
   const pli=document.getElementById('pl-'+prot.id);
@@ -858,6 +910,11 @@ function buildFilters(){
         activeFilters.add(cat);
       }
       localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
+      // Auto-ajuste durée à 15 min si uniquement catégorie 🦟 ou 😴 sélectionnée
+      if(activeFilters.size===1&&(activeFilters.has('🦟')||activeFilters.has('😴'))){
+        document.getElementById('dur').value=15;
+        onDurChange();
+      }
       buildFilters();buildPlaylist();
     };
     fw.appendChild(btn);
@@ -918,7 +975,7 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     // Pré-cache agressif de la page actuelle
     if('caches' in window){
-      const CACHE_NAME='proteodies-v14-auxine';
+      const CACHE_NAME='proteodies-v21-voltarene';
       caches.open(CACHE_NAME).then(cache=>{
         const urlsToPreCache=[
           window.location.href,
