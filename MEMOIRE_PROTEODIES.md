@@ -82,7 +82,7 @@ http://192.168.1.18:3000/proteodies/ ← depuis l'iPad (réseau local)
   id="desc-modal" → showDesc(id) / closeModal()
 
 <script>
-  const PROTEODIES = [...]   ← tableau des 48 protéodies
+  const PROTEODIES = [...]   ← tableau des 100 protéodies
   const DESCRIPTIONS = {...} ← descriptions détaillées
   const MASS = {...}          ← masses molaires 20 AA
   const ORD = 'ACDEFGHIKLMNPQRSTVWY'
@@ -126,7 +126,7 @@ Et dans `DESCRIPTIONS[id]` : description longue de 3-5 phrases (mécanisme bioch
 
 ---
 
-## 5. CATÉGORIES ACTUELLES (56 protéodies)
+## 5. CATÉGORIES ACTUELLES (100 protéodies)
 
 | Emoji | Catégorie | Nb | IDs principaux |
 |---|---|---|---|
@@ -135,16 +135,27 @@ Et dans `DESCRIPTIONS[id]` : description longue de 3-5 phrases (mécanisme bioch
 | 🦵 | Genou | 5 | bpc157, col2, pdgf, igf1, bmp7 |
 | 😴 | Sommeil | 2 | dsip, oxy |
 | 🍽️ | Boulimie | 1 | glp1 |
-| ❤️ | Tension | 1 | apelin |
+| ❤️ | Tension | 6 | apelin, enos, bnp, adrm, cgrp, aqp2 |
 | 💧 | Eau/Pression | 1 | aqp1 |
 | 🏔️ | Bolivie/Altitude | 2 | epo, hif |
 | 🌵 | Pedro (cactus) | 3 | cry1, aqptip, pepc |
-| 🌿 | Plantes | 7 | psk, clv3, systemin, ralf, rubisco, expansin, kin1 |
+| 🫃 | Intestin | 5 | larazotide, glp2, motiline, tff3, bdef1 |
+| 🌿 | Plantes | 8 | psk, clv3, systemin, ralf, rubisco, expansin, kin1, auxin_tir1 |
 | 🥒 | Concombre | 7 | pr1, chi, npr1, pdf12, wrky30, flg22, csa |
 | 🍅 | Tomates | 8 | t_pr1, t_rcr3, t_pto, t_i3, t_ver, t_syst, t_lox, t_cf9 |
+| 🍇 | Vigne (esca) | 5 | vv_def, vv_sts, vv_pr10, vv_chi, vv_tlp, vv_lac |
 | 😊 | Humeur | 5 | endorphin, ananda, galanin, vip, subp |
 | 👁️ | Yeux/Cataracte | 6 | cryaa, cryab, crygd, gpx, lano, sod |
 | 🌌 | Conscience | 2 | inmt, 5ht2a |
+| 💚 | Mianne | 3 | mianne_anp, mianne_nis, mianne_tpo |
+| 🔥 | Métabolisme | 5 | gh_frag, adiponectin, irisin, atgl, ucp1 |
+| 🫒 | Foie (stéatose) | 5 | fgf21, ppara, ampk, adipoq_liver, gsh_synth |
+| ⚡ | Neuro-Douleur | 9 | ngf, bdnf_pain, nav17_block, nmda_mod, met_enk, gabaa, sst14, noci, endom1 |
+| 🦿 | Jambes Sans Repos | 5 | ferritin, drd3, cacna2d1, btbd9, meis1 |
+| 🦻 | Ménière | 6 | aqp4_inner, kcnq4, enac_alpha, coch, bdnf_cochlea, nkcc1 |
+| 💪 | Fibromyalgie | 9 | sp_block, dyn_a, alpha_msh, cgrp_block, galanin_fibro, sst28, beta_end, agmatin, npy |
+| 🩹 | Anti-Inflammatoire | 8 | cox2_inhib, anxa1, il10, lipoxin_r, tgfb1, sod_anti, a2m, hsp70, resolvin_d1 |
+| 🦟 | Anti-Démangeaisons | 5 | h1r_block, il31ra_block, par2_antag, trpv1_mod, tslp_block |
 
 ---
 
@@ -197,12 +208,23 @@ BEAT_FREQS = {
   '💧': 10,   // Eau - Beta bas
   '🏔️': 12,   // Altitude - Beta
   '🌵': 10,   // Cactus - Beta bas
+  '🫃': 6,    // Intestin - Theta (relaxation digestive)
   '🌿': 10,   // Plantes - Beta bas
   '🥒': 10,   // Concombre - Beta bas
   '🍅': 10,   // Tomate - Beta bas
+  '🍇': 10,   // Vigne - Beta bas
   '😊': 8,    // Humeur - Alpha (bien-être)
   '👁️': 10,   // Yeux - Beta bas
-  '🌌': 6     // Conscience - Theta (états modifiés DMT)
+  '🌌': 6,    // Conscience - Theta (états modifiés DMT)
+  '💚': 6,    // Mianne - Theta (cohérence cardiaque)
+  '🔥': 12,   // Métabolisme - Beta (activation métabolique)
+  '🫒': 7,    // Foie - Alpha bas (détox et régénération)
+  '⚡': 6,    // Neuro-Douleur - Theta (analgésie)
+  '🦿': 8,    // Jambes Sans Repos - Alpha (apaisement moteur)
+  '🦻': 10,   // Ménière - Beta bas (équilibre vestibulaire)
+  '💪': 7,    // Fibromyalgie - Alpha bas (soulagement)
+  '🩹': 10,   // Anti-Inflammatoire - Beta bas
+  '🦟': 10    // Anti-Démangeaisons - Beta bas (non utilisé en mode stereo)
 }
 ```
 
@@ -214,6 +236,37 @@ BEAT_FREQS = {
 | **Theta** | 4-8 Hz | Méditation profonde, créativité, rêves | 🌌 Conscience, 😴 Sommeil |
 | **Alpha** | 8-13 Hz | Relaxation, calme, bien-être | ❤️ Tension, 😊 Humeur |
 | **Beta** | 13-30 Hz | Concentration, vigilance, cognition | 🧠 Neuro, 🏔️ Altitude |
+
+### **Sélection automatique du mode audio par catégorie**
+
+Certaines catégories utilisent automatiquement le mode **Stereo** (bols tibétains), d'autres le mode **Isochrone** :
+
+```javascript
+CAT_AUDIO_MODE = {
+  // Mode STEREO (effets locaux/physiques, plantes)
+  '🌿': 'stereo',  // Plantes (pas de cerveau)
+  '🥒': 'stereo',  // Concombre
+  '🍅': 'stereo',  // Tomate
+  '🍇': 'stereo',  // Vigne
+  '🌵': 'stereo',  // Cactus
+  '🦟': 'stereo',  // Anti-Démangeaisons (effet local peau + relaxation)
+
+  // Mode ISOCHRONE (modulation cérébrale)
+  '🧬': 'isochronic', '🧠': 'isochronic', '🦵': 'isochronic',
+  '😴': 'isochronic', '🍽️': 'isochronic', '❤️': 'isochronic',
+  '🏔️': 'isochronic', '😊': 'isochronic', '👁️': 'isochronic',
+  '🌌': 'isochronic', '🫃': 'isochronic', '💚': 'isochronic',
+  '🔥': 'isochronic', '🫒': 'isochronic', '⚡': 'isochronic',
+  '🦿': 'isochronic', '🦻': 'isochronic', '💪': 'isochronic',
+  '🩹': 'isochronic'
+}
+```
+
+### **Auto-ajustement de la durée**
+
+Certaines catégories ajustent automatiquement la durée à **15 minutes** quand elles sont sélectionnées seules :
+- **🦟 Anti-Démangeaisons** → 15 min (soulagement rapide des piqûres)
+- **😴 Sommeil** → 15 min (phase d'induction rapide)
 
 ### **Précautions d'usage**
 
@@ -262,12 +315,87 @@ Les patches successifs corrompent le fichier. Toujours éditer directement le fi
 
 ---
 
-## 11. PISTES D'EXTENSION FUTURES
+## 11. SERVICE WORKER ET CACHE OFFLINE
+
+**Fichier :** `web-ui/public/proteodies/sw.js`
+**Version actuelle :** `proteodies-v22-apaisante`
+
+Le Service Worker permet l'utilisation **hors ligne complète** de l'application, notamment en **mode avion** sur iPad.
+
+### Stratégie de mise à jour du cache :
+
+1. **Incrémenter la version** du cache à chaque modification majeure :
+   ```javascript
+   const CACHE_NAME = 'proteodies-v22-apaisante';
+   ```
+
+2. **Nommer les versions** avec un suffixe mnémonique :
+   - v21-voltarene (ajout AINS)
+   - v22-apaisante (ajout anti-démangeaisons)
+
+3. **L'ancien cache est automatiquement supprimé** lors de l'activation du nouveau SW
+
+4. **Stratégie CACHE FIRST** : L'app fonctionne même sans réseau
+
+### Mode avion sur iPad :
+
+Pour utiliser en mode avion complet :
+1. **Première ouverture avec connexion** → met en cache
+2. **Activer mode avion** → fonctionne offline
+3. **Ajouter à l'écran d'accueil** → PWA autonome
+4. **Alternative : serveur local** via Alpine + BusyBox httpd
+
+Voir `web-ui/public/proteodies/MODE-AVION-COMPLET.md` pour le guide détaillé.
+
+---
+
+## 12. CATÉGORIE SPÉCIALE : 🦟 ANTI-DÉMANGEAISONS
+
+Cette catégorie cible spécifiquement les **piqûres de moustiques et autres insectes**.
+
+### Mécanismes ciblés :
+
+1. **H1R Antagoniste** (`PMGYNVSALTLQTPDGAVL`)
+   - Bloque le récepteur H1 de l'histamine
+   - Domaine de couplage à la protéine G intracellulaire
+   - Alternative peptidique aux antihistaminiques classiques
+
+2. **IL-31RA Bloqueur** (`WSEWSPAAVQCCR`)
+   - Bloque l'IL-31, cytokine majeure du **prurit chronique**
+   - Explique pourquoi les piqûres démangent pendant des jours
+   - Plus efficace que les antihistaminiques pour le prurit prolongé
+
+3. **PAR2 Antagoniste** (`SLIGKV`)
+   - Protease-Activated Receptor 2
+   - Activé par les protéases injectées dans la salive d'insectes
+   - Tethered ligand utilisé comme antagoniste compétitif
+
+4. **TRPV1 Modulateur** (`AAVALLPAVLLALLAP`)
+   - Canal TRP de la brûlure et démangeaison
+   - Sensibilisé par l'histamine et l'IL-31
+   - Module le pore pour réduire l'hyperexcitabilité
+
+5. **TSLP Bloqueur** (`KCMGLNTDKQAFEEVLG`)
+   - Thymic Stromal Lymphopoietin
+   - Orchestre la cascade allergique Th2
+   - Coupe la réaction à la source
+
+### Utilisation recommandée :
+
+- **Durée** : 10-15 min (auto-ajustée à 15 min)
+- **Mode audio** : Stereo (bols tibétains apaisants)
+- **Application** : Écoute classique OU iPad posé sur la zone (effet vibratoire local optionnel)
+- **Répéter** : Si besoin après 30 min
+
+---
+
+## 13. PISTES D'EXTENSION FUTURES
 
 - Ajouter des protéodies pour d'autres légumes/fruits (poivron, courge...)
-- Protéodies de relaxation cardiaque (ANP, BNP)
+- Protéodies de relaxation cardiaque (ANP, BNP) ✅ FAIT (Mianne)
 - Combo "Pedro la nuit" (PEPC + AQP TIP en Ab majeur 28 BPM)
 - Export WAV depuis Logic Pro des sessions clés
 - Version avec accord de base répété en boucle plutôt que bourdon changeant
 - Ajout de la propriété `bpm` par protéodie pour des tempos spécifiques (ex: DSIP = 28 BPM)
 - Interface de création de protéodie custom depuis le player (saisie séquence AA)
+- Serveur local BusyBox dans Alpine pour usage offline complet sur iPad
