@@ -1,5 +1,5 @@
 // Service Worker pour Protéodies Player - Cache hors ligne
-const CACHE_NAME = 'proteodies-v18-rls';
+const CACHE_NAME = 'proteodies-v22-apaisante';
 const urlsToCache = [
   '/proteodies/',
   '/proteodies/index.html',
