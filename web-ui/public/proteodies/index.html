@@ -157,7 +157,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Mode audio</span>
-    <select id="audio-mode" onchange="audioMode=this.value">
+    <select id="audio-mode" onchange="audioMode=this.value;audioModeManuallyChanged=true">
       <option value="stereo">Stéréo (classique)</option>
       <option value="binaural">Binaural 🎧 (casque requis)</option>
       <option value="isochrone">Isochrone (pulsations)</option>
@@ -436,6 +436,7 @@ let playing=false,stopFlag=false,skipFlag=false,paused=false,pauseResolve=null;
 let sessionStart=0,sessionDuration=0,timerInterval=null,currentInstr='bol';
 let activeFilters=new Set();
 let audioMode='stereo';
+let audioModeManuallyChanged=false;
 let diapasonOsc=null,diapasonGain=null;
 const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8};
 const CAT_AUDIO_MODE={
@@ -787,8 +788,22 @@ async function playOne(prot){
 }
 
 function autoSelectAudioMode(){
+  // Ne pas changer si l'utilisateur a fait un choix manuel
+  if(audioModeManuallyChanged)return;
+
   const queue=getQueue();
-  if(!queue.length)return;
+  if(!queue.length){
+    // Si aucune protéodie cochée, regarder les catégories filtrées
+    const filtered=PROTEODIES.filter(p=>activeFilters.has(p.cat));
+    if(!filtered.length)return;
+    const categories=[...new Set(filtered.map(p=>p.cat))];
+    const hasNeuroCat=categories.some(cat=>CAT_AUDIO_MODE[cat]==='isochronic');
+    const recommendedMode=hasNeuroCat?'isochronic':'stereo';
+    audioMode=recommendedMode;
+    document.getElementById('audio-mode').value=recommendedMode;
+    return;
+  }
+
   const categories=queue.map(p=>p.cat);
   const hasNeuroCat=categories.some(cat=>CAT_AUDIO_MODE[cat]==='isochronic');
   const recommendedMode=hasNeuroCat?'isochronic':'stereo';
@@ -939,7 +954,7 @@ function buildPlaylist(){
     const durStr=durS<60?Math.round(durS)+'s':(durS/60).toFixed(1)+'min';
     const col=CAT_COLORS[p.cat]||'#1D9E75';
     const div=document.createElement('div');div.className='pl-item';div.id='pl-'+p.id;
-    div.innerHTML='<input type="checkbox" id="chk-'+p.id+'" checked>'
+    div.innerHTML='<input type="checkbox" id="chk-'+p.id+'" checked onchange="autoSelectAudioMode()">'
       +'<div class="pl-label"><div class="pl-name"><span style="margin-right:4px">'+p.cat+'</span>'+p.name
       +'<span class="pl-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+'aa</span></div>'
       +'<div class="pl-meta">'+p.desc+' · '+durStr+'/boucle</div></div>'
@@ -957,6 +972,9 @@ function buildPlaylist(){
   }
   const infoText=filtered.length>0?filtered.length+' proteodies affichees · '+catText:'Aucune proteodie - Sélectionnez au moins une catégorie';
   document.getElementById('filter-info').textContent=infoText;
+
+  // Auto-sélectionner le mode audio selon les catégories affichées
+  autoSelectAudioMode();
 }
 
 // Initialiser les filtres à vide par défaut si pas de localStorage
