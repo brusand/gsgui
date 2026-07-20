@@ -242,6 +242,10 @@ const PROTEODIES=[
   {id:'adrm', name:'Tension — Adrénomédulline', seq:'YRQSMNNFQGLRSFGCRFGTCTVQKLAHQIYQFTDKDKDNVAPRSKISPQGY', cat:'❤️', desc:'Vasodilatateur puissant — cible diastolique'},
   {id:'cgrp', name:'Tension — CGRP Artérioles', seq:'ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF', cat:'❤️', desc:'Calcitonin Gene-Related Peptide — détend artérioles'},
   {id:'aqp2', name:'Tension — AQP2 Rénale', seq:'MGKEVEFKDTDWDHRSFQKKVSLAAVTFKLFVLGFGLDDHSGKGNFKGATAAVQVAWDGWKASTPSHNLW', cat:'❤️', desc:'Aquaporine rein — régule volume sanguin et diastolique'},
+  {id:'tpa', name:'Sang — tPA Thrombolyse', seq:'SYQVICRDEKTQMIYQQHQSWLRPVLRSNRVEYCWCNSGRAQCHSVPVKSCSEPRCFNGGTCQQALYFSDFVCQCPEGFAGKCCEIDTRATCYEDQGISYRGTWSTAESGAECTNWNSSALAQKPYSGRRPDAIRLGLGNHNYCRNPDRDSKPWCYVFKAGKYSSEFCSTPACSEGNSDCYFGNGSAYRGTHSLTESGASCLPWNSMILIGKVYTAQNPSAQALGLGKHNYCRNPDGDAKPWCHVLKNRRLTWEYCDVPSCSTCGLRQYSQPQFRIKGGLFADIASHPWQAAIFAKHRRSPGERFLCGGILISSCWILSAAHCFQERFPPHHLTVILGRTYRVVPGEEEQKFEVEKYIVHKEFDDDTYDNDIALLQLKSDSSRCAQESSVVRTVCLPPADLQLPDWTECELSGYGKHEALSPFYSERLKEAHVRLYPSSRCTSQHLLNRTVTDNMLCAGDTRSGGPQANLHDACQGDSGGPLVCLNDGRMTLVGIISWGLGCGQKDVPGVYTKVTNYLDWIRDNMRP', cat:'🩸', desc:'Tissue Plasminogen Activator — dissout caillots sanguins (thrombolyse)'},
+  {id:'hirudin', name:'Sang — Hirudine Anti-Thrombine', seq:'VTYTDCTESGQNLCLCEGSNVCGQGNKCILGSDGEKNQCVTGEGTPKPQSHNDGDFEEIPEEYLQ', cat:'🩸', desc:'Anticoagulant de sangsue — inhibe thrombine, fluidifie sang'},
+  {id:'no_synthase', name:'Sang — iNOS Oxyde Nitrique', seq:'DFIKKMTTFCDEMSKEGKNRRTHNSLSKMGFPVTRAQKMMADHLRNPGKKNIYISPDKYSYFGLRDIYRPDKDKTTDHHHHHHH', cat:'🩸', desc:'NO Synthase inductible — vasodilatation et anti-agrégation plaquettaire'},
+  {id:'prostacyclin', name:'Sang — PGIS Prostacycline', seq:'MVLLPETQLVKLLPLALLLGRSSALVGRPELLRDAFQQSTNLRSGDGPFSLGELQQRATRFGALRAWALAERFTPYLRYLQRRGQFPRVPAPWSHGARLPPGERLSRELPWQHRQCVQLVHTVGGPLVVVDDQRKPFFMALKGALCLVSHVWVHRPPGLTHLFSQVDMDYFLIPFKLFLSLLTNGVQWYNLQQDPELSQFQPWLQAHLEEGAQTPAQCLSWTFRKYRLPPGPPPPTPVPFQPTCEMYRTTEADLHVSLGMFLLFLLWLYLSHWRWATRRFKSQDPVVHDYKDV', cat:'🩸', desc:'Prostacycline Synthase — puissant anti-agrégant plaquettaire naturel'},
   {id:'aqp1', name:'Aquaporine AQP1', seq:'CFNPAVTLGAHINPAV', cat:'💧', desc:'Canal eau — pression artérielle'},
   {id:'epo', name:'Bolivie — EPO mimetic', seq:'GGTYSCHFGPLTWVCK', cat:'🏔️', desc:'Adaptation altitude'},
   {id:'hif', name:'Bolivie — HIF-1α', seq:'DLDLEMLAPF', cat:'🏔️', desc:'Capteur hypoxie'},
@@ -328,6 +332,11 @@ const PROTEODIES=[
   {id:'coch', name:'Ménière — Cochline COCH', seq:'CRQGVCLPIWVHCGECQVPGYTGHCYYRDGQCYCSKSGTEYYGYNCYNLPGRFYGPLTYLHKLTNYENQTD', cat:'🦻', desc:'Protéine matrice oreille interne — mutations = Ménière'},
   {id:'bdnf_cochlea', name:'Ménière — BDNF Neuroprotection', seq:'HSDPARRGELF', cat:'🦻', desc:'Protège neurones auditifs et vestibulaires'},
   {id:'nkcc1', name:'Ménière — NKCC1 Transport Ionique', seq:'RRDNFVAIGKKKAPN', cat:'🦻', desc:'Cotransporteur Na-K-Cl — homéostasie endolymphe'},
+  {id:'nt3_auditory', name:'Nerf Auditif — NT-3 Neurotrophin-3', seq:'YAEHKSHRGEYSVCDSESLWVTDKSSAIDIRGHQVTVLGEIKTGNSPVKQYFYETRCKEARPVKNGCRGIDDKHWNSQCKTTSQTIVSAKMQKQVDKIKKNVKKMVKKGQRG', cat:'🦻', desc:'Neurotrophin-3 — régénération cellules ciliées et fibres du nerf auditif'},
+  {id:'gdnf_spiral', name:'Nerf Auditif — GDNF Ganglion Spiral', seq:'MGLKVLSLLRLWLGLGLSTQRRSSLAALGARPPGAGSPPGGARPAAETGTARGLADGRLLAPPAAARALGAAARGDALDGRVRRAGRGGAARADDDALDVDPAGRAAPDALDPLPADALGGAARRARPARGGRAAGAA', cat:'🦻', desc:'Glial-Derived Neurotrophic Factor — régénère neurones ganglion spiral cochléaire'},
+  {id:'ngf_auditory', name:'Nerf Auditif — NGF Régénération', seq:'SSSHPIFHRGEFSVCDSVSVWVGDKTTATDIKGKEVTVLAEVNINNSVFRQQYFFETKCRDPNPVDSGCRGIDSKHWNSYCTTTHTFVKALTMDGKQAAWRFIRIDTACVCVLSRKAVRRA', cat:'🦻', desc:'Nerve Growth Factor auditif — régénération et survie des fibres nerveuses cochléaires'},
+  {id:'nrg1_myelin', name:'Nerf Auditif — Neuregulin-1 Myéline', seq:'SHLVKCAEKEKTFCVNGGECFMVKDLSNPSRYLCKCQAGFGHLCQGPNPCGSCKLKL', cat:'🦻', desc:'Neuregulin-1 Type III — myélinisation et protection des fibres du nerf auditif'},
+  {id:'cntf_cochlear', name:'Nerf Auditif — CNTF Neuroprotection', seq:'MAFTEHSPLTPHRRDLCSRSIWLARKIRSDLTALTESYVKHQGLNKNINLDSADGMPVASTDQWSELTEYLENKFRRGHSRGS', cat:'🦻', desc:'Ciliary Neurotrophic Factor — protège neurones auditifs de la dégénérescence'},
   {id:'sp_block', name:'Fibromyalgie — Antagoniste Substance P', seq:'RPKPQQFFGLM', cat:'💪', desc:'Bloque récepteur NK1 — réduit douleur centrale'},
   {id:'dyn_a', name:'Fibromyalgie — Dynorphine A', seq:'YGGFLRRIRPKLKWDNQ', cat:'💪', desc:'Opioïde κ — analgésie douleur chronique'},
   {id:'alpha_msh', name:'Fibromyalgie — α-MSH Anti-Inflammatoire', seq:'SYSMEHFRWGKPV', cat:'💪', desc:'Melanocortin — réduit inflammation centrale'},
@@ -412,14 +421,14 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C'
 };
 const CAT_NAMES={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang'
 };
 
 let audioCtx=null,reverbNode=null,masterGain=null,dryGain=null,wetGain=null;
@@ -428,12 +437,12 @@ let sessionStart=0,sessionDuration=0,timerInterval=null,currentInstr='bol';
 let activeFilters=new Set();
 let audioMode='stereo';
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8};
 const CAT_AUDIO_MODE={
   '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo','🦟':'stereo',
   '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
   '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
-  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic'
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic'
 };
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
