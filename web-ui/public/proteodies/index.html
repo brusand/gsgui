@@ -72,6 +72,10 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 .filter-btn.active{border-color:var(--teal);background:#1D9E7515;color:var(--teal);font-weight:500;border-width:1.5px}
 .filter-count{font-size:11px;background:#33333388;padding:2px 6px;border-radius:4px;font-weight:500}
 .filter-info{font-size:12px;color:var(--text2);margin-bottom:10px}
+.lang-switch{display:flex;gap:6px;margin-bottom:16px}
+.lang-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;transition:all 0.15s;font-weight:500}
+.lang-btn:hover{border-color:#555;background:var(--bg2)}
+.lang-btn.active{border-color:var(--teal);background:#1D9E7515;color:var(--teal)}
 </style>
 </head>
 <body>
@@ -90,9 +94,15 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <div id="t-timer" style="display:none;font-size:22px;font-weight:600;color:#1D9E75;font-variant-numeric:tabular-nums;min-width:140px;text-align:right;padding-right:10px;">0:00 / 10:00</div>
 </div>
 
-<h1>&#x1F9EC; Proteodies Player</h1>
-<p class="sub">La molé met l'eau ! &middot; 100 proteodies</p>
-<p class="sub" style="font-size:11px;margin-top:-14px;color:#666">De la molécule à la mélodie, de la séquence à la santé</p>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+  <h1>&#x1F9EC; <span data-i18n="title">Proteodies Player</span></h1>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+<p class="sub" data-i18n="subtitle">La molé met l'eau ! &middot; 100 proteodies</p>
+<p class="sub" style="font-size:11px;margin-top:-14px;color:#666" data-i18n="tagline">De la molécule à la mélodie, de la séquence à la santé</p>
 
 <div class="now" id="now-box" style="display:none">
   <div class="now-title" id="now-title">&#8212;</div>
@@ -100,7 +110,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 </div>
 
 <div class="card">
-  <div class="card-title">Sequence en cours</div>
+  <div class="card-title" data-i18n="sequenceTitle">Sequence en cours</div>
   <canvas class="wave" id="wave" width="700" height="40"></canvas>
   <div class="seq-wrap" id="seq-wrap"></div>
   <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
@@ -112,39 +122,39 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 </div>
 
 <div class="card">
-  <div class="card-title">Instrument</div>
+  <div class="card-title" data-i18n="instrumentTitle">Instrument</div>
   <div class="instr-grid">
-    <div class="instr-btn" onclick="setInstr('flute',this)"><span class="instr-icon">&#x1FAA8;</span>Flute andine</div>
-    <div class="instr-btn" onclick="setInstr('voix_f',this)"><span class="instr-icon">&#x1F3A4;</span>Voix femmes</div>
-    <div class="instr-btn" onclick="setInstr('voix_h',this)"><span class="instr-icon">&#x1F3B5;</span>Voix hommes</div>
-    <div class="instr-btn" onclick="setInstr('choeur',this)"><span class="instr-icon">&#x1F3B6;</span>Choeur mixte</div>
-    <div class="instr-btn" onclick="setInstr('cristal',this)"><span class="instr-icon">&#x2728;</span>Cristal</div>
-    <div class="instr-btn sel" onclick="setInstr('bol',this)"><span class="instr-icon">&#x1F514;</span>Bol tibetain</div>
+    <div class="instr-btn" onclick="setInstr('flute',this)"><span class="instr-icon">&#x1FAA8;</span><span data-i18n="flute">Flute andine</span></div>
+    <div class="instr-btn" onclick="setInstr('voix_f',this)"><span class="instr-icon">&#x1F3A4;</span><span data-i18n="voiceF">Voix femmes</span></div>
+    <div class="instr-btn" onclick="setInstr('voix_h',this)"><span class="instr-icon">&#x1F3B5;</span><span data-i18n="voiceH">Voix hommes</span></div>
+    <div class="instr-btn" onclick="setInstr('choeur',this)"><span class="instr-icon">&#x1F3B6;</span><span data-i18n="choir">Choeur mixte</span></div>
+    <div class="instr-btn" onclick="setInstr('cristal',this)"><span class="instr-icon">&#x2728;</span><span data-i18n="crystal">Cristal</span></div>
+    <div class="instr-btn sel" onclick="setInstr('bol',this)"><span class="instr-icon">&#x1F514;</span><span data-i18n="bowl">Bol tibetain</span></div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title">Reglages</div>
+  <div class="card-title" data-i18n="settingsTitle">Reglages</div>
   <div class="ctrl-row">
-    <span class="ctrl-label">Tempo</span>
+    <span class="ctrl-label" data-i18n="tempo">Tempo</span>
     <input type="range" id="bpm" min="25" max="180" value="65" step="1" oninput="document.getElementById('bpm-val').textContent=this.value;buildPlaylist()">
     <span class="ctrl-val" id="bpm-val">65</span>
     <span style="font-size:12px;color:var(--text2)">BPM</span>
   </div>
   <div class="ctrl-row">
-    <span class="ctrl-label">Duree</span>
+    <span class="ctrl-label" data-i18n="duration">Duree</span>
     <input type="range" id="dur" min="1" max="30" value="20" step="1" oninput="onDurChange()">
     <span class="ctrl-val" id="dur-val">20</span>
-    <span style="font-size:12px;color:var(--text2)">min</span>
+    <span style="font-size:12px;color:var(--text2)" data-i18n="min">min</span>
     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-left:10px">
       <input type="checkbox" id="infinite-chk" style="width:18px;height:18px;accent-color:#BA7517" onchange="onInfiniteChange()">
-      <span style="font-size:12px;color:var(--text2);white-space:nowrap">∞ Infini</span>
+      <span style="font-size:12px;color:var(--text2);white-space:nowrap" data-i18n="infinite">∞ Infini</span>
     </label>
   </div>
   <div class="ctrl-row">
-    <span class="ctrl-label">Reverb</span>
+    <span class="ctrl-label" data-i18n="reverb">Reverb</span>
     <input type="range" id="rvb" min="0" max="1" value="0.45" step="0.01">
-    <span style="font-size:12px;color:var(--text2)">espace</span>
+    <span style="font-size:12px;color:var(--text2)" data-i18n="space">espace</span>
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Gamme</span>
@@ -156,11 +166,11 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     </select>
   </div>
   <div class="ctrl-row">
-    <span class="ctrl-label">Mode audio</span>
+    <span class="ctrl-label" data-i18n="audioMode">Mode audio</span>
     <select id="audio-mode" onchange="audioMode=this.value;audioModeManuallyChanged=true">
-      <option value="stereo">Stéréo (classique)</option>
-      <option value="binaural">Binaural 🎧 (casque requis)</option>
-      <option value="isochrone">Isochrone (pulsations)</option>
+      <option value="stereo" data-i18n="stereo">Stéréo (classique)</option>
+      <option value="binaural" data-i18n="binaural">Binaural 🎧 (casque requis)</option>
+      <option value="isochrone" data-i18n="isochrone">Isochrone (pulsations)</option>
     </select>
   </div>
   <div class="ctrl-row" style="margin-top:4px">
@@ -188,19 +198,19 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     <button id="diapason-play" onclick="toggleDiapason(this)" title="Écouter le diapason" style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg3);color:var(--text2);font-size:16px;cursor:pointer;flex-shrink:0;transition:all 0.15s">&#9654;</button>
   </div>
   <div style="margin-top:10px;padding:10px 12px;background:#D85A3022;border-radius:8px;border:0.5px solid #D85A30" id="audio-warning">
-    <div style="font-size:12px;color:#D85A30;font-weight:500">⚠️ Modes Binaural/Isochrone</div>
-    <div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.4">Utilisation déconseillée en cas d'épilepsie. Mode Binaural : casque requis. Fréquences de battement adaptées à chaque catégorie (4-14 Hz).</div>
+    <div style="font-size:12px;color:#D85A30;font-weight:500" data-i18n="audioWarningTitle">⚠️ Modes Binaural/Isochrone</div>
+    <div style="font-size:11px;color:var(--text2);margin-top:4px;line-height:1.4" data-i18n="audioWarningText">Utilisation déconseillée en cas d'épilepsie. Mode Binaural : casque requis. Fréquences de battement adaptées à chaque catégorie (4-14 Hz).</div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title">Filtres par categorie <span style="color:var(--text2);font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">(selection multiple)</span></div>
+  <div class="card-title"><span data-i18n="filtersTitle">Filtres par categorie</span> <span style="color:var(--text2);font-weight:400;font-size:10px;text-transform:none;letter-spacing:0" data-i18n="multiSelect">(selection multiple)</span></div>
   <div class="filter-wrap" id="filter-wrap"></div>
   <div class="filter-info" id="filter-info">Aucune proteodie - Selectionne au moins une categorie</div>
 </div>
 
 <div class="card">
-  <div class="card-title">Playlist &#8212; cocher pour enchainer</div>
+  <div class="card-title" data-i18n="playlistTitle">Playlist &#8212; cocher pour enchainer</div>
   <div class="playlist" id="playlist"></div>
   <div style="display:flex;gap:8px;margin-top:10px">
     <button onclick="selectAll(true)" style="flex:1;padding:8px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">Tout cocher</button>
@@ -423,14 +433,112 @@ const CAT_COLORS={
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
   '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C'
 };
-const CAT_NAMES={
+const CAT_NAMES_FR={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
   '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang'
 };
+const CAT_NAMES_EN={
+  '🧬':'PIEZO1','🧠':'Neuro','🦵':'Knee',
+  '😴':'Sleep','🍴':'Binge Eating','❤️':'Blood Pressure',
+  '💧':'Water','🏔️':'Altitude','🌵':'Cactus',
+  '🌿':'Plants','🥒':'Cucumber','🍅':'Tomato','😊':'Mood',
+  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood'
+};
+let CAT_NAMES=CAT_NAMES_FR;
 
+const I18N={
+  fr:{
+    title:'Proteodies Player',
+    subtitle:'La molé met l\'eau ! · 109 proteodies',
+    tagline:'De la molécule à la mélodie, de la séquence à la santé',
+    tempo:'Tempo',
+    duration:'Duree',
+    reverb:'Reverb',
+    space:'espace',
+    audioMode:'Mode audio',
+    stereo:'Stéréo (classique)',
+    binaural:'Binaural 🎧 (casque requis)',
+    isochrone:'Isochrone (pulsations)',
+    tuning:'Diapason',
+    standard:'Standard (440 Hz)',
+    verdi:'Verdi (432 Hz)',
+    play_diapason:'Écouter le diapason',
+    audioWarningTitle:'⚠️ Modes Binaural/Isochrone',
+    audioWarningText:'Utilisation déconseillée en cas d\'épilepsie. Mode Binaural : casque requis. Fréquences de battement adaptées à chaque catégorie (4-14 Hz).',
+    filtersTitle:'Filtres par categorie',
+    multiSelect:'(selection multiple)',
+    playlistTitle:'Playlist — cocher pour enchainer',
+    sequenceTitle:'Sequence en cours',
+    instrumentTitle:'Instrument',
+    settingsTitle:'Reglages',
+    flute:'Flute andine',
+    voiceF:'Voix femmes',
+    voiceH:'Voix hommes',
+    choir:'Choeur mixte',
+    crystal:'Cristal',
+    bowl:'Bol tibetain',
+    min:'min',
+    infinite:'∞ Infini',
+    ready:'Pret',
+    selectAndPlay:'Coche des proteodies et lance ▶',
+    noCategory:'Aucune proteodie - Selectionne au moins une categorie',
+    all:'Tout',
+    none:'Aucun',
+    categories:'catégorie',
+    categories_plural:'catégories',
+    allCategories:'toutes les catégories',
+    proteodiesShown:'proteodies affichees',
+    loop:'boucle'
+  },
+  en:{
+    title:'Proteodies Player',
+    subtitle:'From molecule to melody! · 109 proteodies',
+    tagline:'From molecule to melody, from sequence to health',
+    tempo:'Tempo',
+    duration:'Duration',
+    reverb:'Reverb',
+    space:'space',
+    audioMode:'Audio mode',
+    stereo:'Stereo (classic)',
+    binaural:'Binaural 🎧 (headphones required)',
+    isochrone:'Isochronic (pulses)',
+    tuning:'Tuning',
+    standard:'Standard (440 Hz)',
+    verdi:'Verdi (432 Hz)',
+    play_diapason:'Play tuning fork',
+    audioWarningTitle:'⚠️ Binaural/Isochronic Modes',
+    audioWarningText:'Not recommended for epilepsy. Binaural mode: headphones required. Beat frequencies adapted to each category (4-14 Hz).',
+    filtersTitle:'Filter by category',
+    multiSelect:'(multiple selection)',
+    playlistTitle:'Playlist — check to queue',
+    sequenceTitle:'Current sequence',
+    instrumentTitle:'Instrument',
+    settingsTitle:'Settings',
+    flute:'Andean flute',
+    voiceF:'Female voices',
+    voiceH:'Male voices',
+    choir:'Mixed choir',
+    crystal:'Crystal',
+    bowl:'Tibetan bowl',
+    min:'min',
+    infinite:'∞ Infinite',
+    ready:'Ready',
+    selectAndPlay:'Check proteodies and play ▶',
+    noCategory:'No proteody - Select at least one category',
+    all:'All',
+    none:'None',
+    categories:'category',
+    categories_plural:'categories',
+    allCategories:'all categories',
+    proteodiesShown:'proteodies shown',
+    loop:'loop'
+  }
+};
+
+let currentLang='fr';
 let audioCtx=null,reverbNode=null,masterGain=null,dryGain=null,wetGain=null;
 let playing=false,stopFlag=false,skipFlag=false,paused=false,pauseResolve=null;
 let sessionStart=0,sessionDuration=0,timerInterval=null,currentInstr='bol';
@@ -892,6 +1000,28 @@ function showDesc(id){
 function closeModal(){document.getElementById('desc-modal').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
+function setLang(lang){
+  currentLang=lang;
+  localStorage.setItem('proteodies-lang',lang);
+  CAT_NAMES=lang==='fr'?CAT_NAMES_FR:CAT_NAMES_EN;
+
+  // Update all i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    if(I18N[lang][key])el.textContent=I18N[lang][key];
+  });
+
+  // Update lang buttons
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.remove('active');
+    if(btn.textContent===lang.toUpperCase())btn.classList.add('active');
+  });
+
+  // Rebuild filters and playlist to apply translations
+  buildFilters();
+  buildPlaylist();
+}
+
 function buildFilters(){
   const fw=document.getElementById('filter-wrap');fw.innerHTML='';
   const catCounts={};
@@ -906,7 +1036,7 @@ function buildFilters(){
   all.className='filter-btn'+(allSelected?' active':'');
   // Texte qui change selon l'état
   const allIcon=allSelected?'✗':'✓';
-  const allText=allSelected?'Aucun':'Tout';
+  const allText=allSelected?I18N[currentLang].none:I18N[currentLang].all;
   all.innerHTML='<span style="font-weight:500">'+allIcon+' '+allText+'</span><span class="filter-count">'+PROTEODIES.length+'</span>';
   all.onclick=()=>{
     if(allSelected){
@@ -957,7 +1087,7 @@ function buildPlaylist(){
     div.innerHTML='<input type="checkbox" id="chk-'+p.id+'" checked onchange="autoSelectAudioMode()">'
       +'<div class="pl-label"><div class="pl-name"><span style="margin-right:4px">'+p.cat+'</span>'+p.name
       +'<span class="pl-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+'aa</span></div>'
-      +'<div class="pl-meta">'+p.desc+' · '+durStr+'/boucle</div></div>'
+      +'<div class="pl-meta">'+p.desc+' · '+durStr+'/'+I18N[currentLang].loop+'</div></div>'
       +'<button class="pl-info-btn" onclick="showDesc(\'' + p.id + '\')" title="Description">&#x24D8;</button>';
     pl.appendChild(div);
   });
@@ -966,15 +1096,31 @@ function buildPlaylist(){
   if(catCount===0){
     catText='aucune catégorie';
   }else if(catCount===Object.keys(CAT_COLORS).length){
-    catText='toutes les catégories';
+    catText=I18N[currentLang].allCategories;
   }else{
-    catText=catCount+' catégorie'+(catCount>1?'s':'');
+    const catWord=catCount>1?I18N[currentLang].categories_plural:I18N[currentLang].categories;
+    catText=catCount+' '+catWord;
   }
-  const infoText=filtered.length>0?filtered.length+' proteodies affichees · '+catText:'Aucune proteodie - Sélectionnez au moins une catégorie';
+  const infoText=filtered.length>0?filtered.length+' '+I18N[currentLang].proteodiesShown+' · '+catText:I18N[currentLang].noCategory;
   document.getElementById('filter-info').textContent=infoText;
 
   // Auto-sélectionner le mode audio selon les catégories affichées
   autoSelectAudioMode();
+}
+
+// Load language from localStorage (default: fr)
+const storedLang=localStorage.getItem('proteodies-lang')||'fr';
+if(storedLang==='en'){
+  currentLang='en';
+  CAT_NAMES=CAT_NAMES_EN;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    if(I18N.en[key])el.textContent=I18N.en[key];
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.remove('active');
+    if(btn.textContent==='EN')btn.classList.add('active');
+  });
 }
 
 // Initialiser les filtres à vide par défaut si pas de localStorage
