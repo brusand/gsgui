@@ -1033,6 +1033,7 @@ function startProtocolH(){
   // Randomize conditions
   const audioModeChoice=Math.random()<0.5?'stereo':'isochrone';
   const randomOrderChoice=Math.random()<0.5;
+  const diapasonChoice=Math.random()<0.5; // true = H2O (429.62 Hz), false = Standard (440 Hz)
 
   // Generate timestamp
   const timestamp=new Date().toISOString();
@@ -1044,6 +1045,7 @@ function startProtocolH(){
     proteody:'TPH1-Serotonine',
     audioMode:audioModeChoice,
     randomOrder:randomOrderChoice,
+    diapason:diapasonChoice?'H2O-429.62Hz':'Standard-440Hz',
     duration:10 // minutes
   };
 
@@ -1052,6 +1054,7 @@ function startProtocolH(){
   console.log('Timestamp:', timestamp);
   console.log('Audio Mode:', audioModeChoice);
   console.log('Random Order:', randomOrderChoice?'YES':'NO (sequential)');
+  console.log('Diapason:', diapasonChoice?'H2O (429.62 Hz)':'Standard (440 Hz)');
   console.log('Duration: 10 minutes');
   console.log('Proteody: TPH1 Sérotonine (WFLSQQHER)');
   console.log('========================');
@@ -1068,6 +1071,10 @@ function startProtocolH(){
 
   // Set random order checkbox
   document.getElementById('random-chk').checked=randomOrderChoice;
+
+  // Set diapason (true = H2O, false = Standard)
+  document.getElementById('diapason-chk').checked=diapasonChoice;
+  onDiapasonChange();
 
   // Set duration to 10 minutes
   document.getElementById('dur').value=10;
@@ -1100,7 +1107,8 @@ function startProtocolH(){
 
   // Update UI status
   document.getElementById('t-name').textContent='Protocol H: TPH1 Sérotonine';
-  document.getElementById('t-status').textContent='Mode: '+audioModeChoice+' | Order: '+(randomOrderChoice?'Random':'Sequential');
+  const diapasonText=diapasonChoice?'H2O (429.62Hz)':'Standard (440Hz)';
+  document.getElementById('t-status').textContent='Mode: '+audioModeChoice+' | Order: '+(randomOrderChoice?'Random':'Seq')+' | Diapason: '+diapasonText;
 
   // Update button tooltip with new session count
   const phBtn=document.getElementById('protocol-h');
