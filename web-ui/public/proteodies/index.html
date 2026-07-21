@@ -87,6 +87,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <button onclick="stopSession()" style="width:60px;height:60px;border-radius:50%;border:none;background:#D85A30;color:#fff;font-size:20px;cursor:pointer;flex-shrink:0;">&#9646;</button>
   <button onclick="skipNext()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">&#9654;&#9654;</button>
   <button id="t-loop" onclick="toggleLoop()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #1D9E75;background:#1D9E7522;color:#1D9E75;font-size:24px;cursor:pointer;flex-shrink:0;" title="Boucle active">&#8734;</button>
+  <button id="protocol-h" onclick="startProtocolH()" style="width:60px;height:60px;border-radius:50%;border:2px solid #8B5CF6;background:#8B5CF622;color:#8B5CF6;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;letter-spacing:-0.5px;" title="Protocole Humain (TPH1/Sérotonine)">P-H</button>
   <div style="flex:1;min-width:0;padding-left:4px;">
     <div id="t-name" style="font-size:13px;font-weight:500;color:#1D9E75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Pret</div>
     <div id="t-status" style="font-size:11px;color:#999;margin-top:2px;">Coche des proteodies et lance &#9654;</div>
@@ -1022,6 +1023,119 @@ function setLang(lang){
   buildPlaylist();
 }
 
+// Protocol H: Human experimental protocol with randomized conditions
+function startProtocolH(){
+  if(playing){
+    alert('Stop the current session first');
+    return;
+  }
+
+  // Randomize conditions
+  const audioModeChoice=Math.random()<0.5?'stereo':'isochrone';
+  const randomOrderChoice=Math.random()<0.5;
+
+  // Generate timestamp
+  const timestamp=new Date().toISOString();
+
+  // Create log entry
+  const logEntry={
+    timestamp:timestamp,
+    protocol:'Protocol-H',
+    proteody:'TPH1-Serotonine',
+    audioMode:audioModeChoice,
+    randomOrder:randomOrderChoice,
+    duration:10 // minutes
+  };
+
+  // Log to console
+  console.log('=== PROTOCOL H START ===');
+  console.log('Timestamp:', timestamp);
+  console.log('Audio Mode:', audioModeChoice);
+  console.log('Random Order:', randomOrderChoice?'YES':'NO (sequential)');
+  console.log('Duration: 10 minutes');
+  console.log('Proteody: TPH1 Sérotonine (WFLSQQHER)');
+  console.log('========================');
+
+  // Save to localStorage for persistent logging
+  const logs=JSON.parse(localStorage.getItem('protocol-h-logs')||'[]');
+  logs.push(logEntry);
+  localStorage.setItem('protocol-h-logs',JSON.stringify(logs));
+
+  // Apply randomized settings
+  audioMode=audioModeChoice;
+  audioModeManuallyChanged=true; // Prevent auto-change
+  document.getElementById('audio-mode').value=audioModeChoice;
+
+  // Set random order checkbox
+  document.getElementById('random-chk').checked=randomOrderChoice;
+
+  // Set duration to 10 minutes
+  document.getElementById('dur').value=10;
+  onDurChange();
+
+  // Enable loop
+  document.getElementById('loop-chk').checked=true;
+  syncLoopButton();
+
+  // Select only Neuro category (🧠) to show TPH1
+  activeFilters.clear();
+  activeFilters.add('🧠');
+  localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
+
+  // Rebuild filters and playlist to show TPH1
+  buildFilters();
+  buildPlaylist();
+
+  // Uncheck all proteodies
+  document.querySelectorAll('[id^="chk-"]').forEach(chk=>chk.checked=false);
+
+  // Check only TPH1
+  const tph1Checkbox=document.getElementById('chk-tph1');
+  if(tph1Checkbox){
+    tph1Checkbox.checked=true;
+  }else{
+    alert('TPH1 proteody not found! Error in protocol setup.');
+    return;
+  }
+
+  // Update UI status
+  document.getElementById('t-name').textContent='Protocol H: TPH1 Sérotonine';
+  document.getElementById('t-status').textContent='Mode: '+audioModeChoice+' | Order: '+(randomOrderChoice?'Random':'Sequential');
+
+  // Update button tooltip with new session count
+  const phBtn=document.getElementById('protocol-h');
+  if(phBtn){
+    phBtn.title='Protocole Humain (TPH1/Sérotonine) - '+logs.length+' sessions loguées - Console: exportProtocolHLogs()';
+  }
+
+  // Auto-start after 1 second to let user see the configuration
+  setTimeout(()=>{
+    startSession();
+  },1000);
+}
+
+// Export Protocol H logs to console
+function exportProtocolHLogs(){
+  const logs=JSON.parse(localStorage.getItem('protocol-h-logs')||'[]');
+  if(logs.length===0){
+    console.log('No Protocol H logs found.');
+    return;
+  }
+  console.log('=== PROTOCOL H LOGS ('+logs.length+' sessions) ===');
+  console.table(logs);
+  console.log('To download as JSON, run: copy(localStorage.getItem("protocol-h-logs"))');
+  console.log('===============================================');
+  return logs;
+}
+
+// Clear Protocol H logs
+function clearProtocolHLogs(){
+  if(confirm('Clear all Protocol H logs?')){
+    localStorage.removeItem('protocol-h-logs');
+    console.log('Protocol H logs cleared.');
+  }
+}
+
 function buildFilters(){
   const fw=document.getElementById('filter-wrap');fw.innerHTML='';
   const catCounts={};
@@ -1121,6 +1235,13 @@ if(storedLang==='en'){
     btn.classList.remove('active');
     if(btn.textContent==='EN')btn.classList.add('active');
   });
+}
+
+// Update Protocol H button with session count
+const phLogs=JSON.parse(localStorage.getItem('protocol-h-logs')||'[]');
+const phBtn=document.getElementById('protocol-h');
+if(phBtn){
+  phBtn.title='Protocole Humain (TPH1/Sérotonine) - '+phLogs.length+' sessions loguées - Console: exportProtocolHLogs()';
 }
 
 // Initialiser les filtres à vide par défaut si pas de localStorage
