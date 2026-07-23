@@ -234,7 +234,11 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 <script>
 const PROTEODIES=[
   {id:'piezo1', name:'PIEZO1 — GsMTx4', seq:'GCLEFWWKCNPNDDKCCGPKLKCHAISYKECTK', cat:'🧬', desc:'Inhibiteur canal mécano-sensible'},
-  {id:'tph1', name:'Neuro — TPH1 Sérotonine', seq:'WFLSQQHER', cat:'🧠', desc:'Tryptophane Hydroxylase — SEROT 40%'},
+  {id:'ph_start', name:'Protocol H — Signal Départ', seq:'G', cat:'🧪', desc:'1 note de départ — marque le début du protocole'},
+  {id:'ph_silence1', name:'Protocol H — Pause 5min', seq:'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG', cat:'🧪', desc:'Silence 5 minutes — pause entre signaux'},
+  {id:'tph1', name:'Protocol H — TPH1 Sérotonine', seq:'WFLSQQHER', cat:'🧪', desc:'Tryptophane Hydroxylase — SEROT 40% — session principale'},
+  {id:'ph_silence2', name:'Protocol H — Pause 5min', seq:'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG', cat:'🧪', desc:'Silence 5 minutes — pause avant fin'},
+  {id:'ph_end', name:'Protocol H — Signal Fin', seq:'GG', cat:'🧪', desc:'2 notes de fin — marque la fin du protocole'},
   {id:'th', name:'Neuro — TH Dopamine', seq:'ARQHAFAQLR', cat:'🧠', desc:'Tyrosine Hydroxylase — 34DOPAC 25%'},
   {id:'dbh', name:'Neuro — DBH Noradrénaline', seq:'HFHWHTLGM', cat:'🧠', desc:'Dopamine β-Hydroxylase'},
   {id:'semax', name:'Mémoire — Sémax', seq:'MEHFPGP', cat:'🧠', desc:'Nootropique BDNF + dopamine'},
@@ -432,28 +436,28 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6'
 };
 const CAT_NAMES_FR={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H'
 };
 const CAT_NAMES_EN={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Knee',
   '😴':'Sleep','🍴':'Binge Eating','❤️':'Blood Pressure',
   '💧':'Water','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plants','🥒':'Cucumber','🍅':'Tomato','😊':'Mood',
-  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood'
+  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H'
 };
 let CAT_NAMES=CAT_NAMES_FR;
 
 const I18N={
   fr:{
     title:'Proteodies Player',
-    subtitle:'La molé met l\'eau ! · 109 proteodies',
+    subtitle:'La molé met l\'eau ! · 142 proteodies',
     tagline:'De la molécule à la mélodie, de la séquence à la santé',
     tempo:'Tempo',
     duration:'Duree',
@@ -496,7 +500,7 @@ const I18N={
   },
   en:{
     title:'Proteodies Player',
-    subtitle:'From molecule to melody! · 109 proteodies',
+    subtitle:'From molecule to melody! · 142 proteodies',
     tagline:'From molecule to melody, from sequence to health',
     tempo:'Tempo',
     duration:'Duration',
@@ -547,12 +551,12 @@ let activeFilters=new Set();
 let audioMode='stereo';
 let audioModeManuallyChanged=false;
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10};
 const CAT_AUDIO_MODE={
   '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo','🦟':'stereo',
   '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
   '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
-  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic'
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic'
 };
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
@@ -884,7 +888,11 @@ async function playOne(prot){
   for(let i=0;i<seq.length;i++){
     if(stopFlag||skipFlag)return false;
     const aa=seq[i],dur=ticksFor(aa)*beat;
-    playNote(freqFor(midiFor(aa)),dur,velFor(aa),prot.cat);
+    // Silent mode for Protocol H silence proteodies
+    const isSilent=prot.id==='ph_silence1'||prot.id==='ph_silence2';
+    if(!isSilent){
+      playNote(freqFor(midiFor(aa)),dur,velFor(aa),prot.cat);
+    }
     document.querySelectorAll('.aa-cell').forEach(e=>e.classList.remove('lit'));
     const cell=document.getElementById('aa'+i);if(cell)cell.classList.add('lit');
     document.getElementById('prog-bar').style.width=((i+1)/seq.length*100)+'%';
@@ -1042,22 +1050,27 @@ function startProtocolH(){
   const logEntry={
     timestamp:timestamp,
     protocol:'Protocol-H',
-    proteody:'TPH1-Serotonine',
+    proteodies:['Signal-Start-1note','Silence-5min','TPH1-Serotonine-10min','Silence-5min','Signal-End-2notes'],
     audioMode:audioModeChoice,
     randomOrder:randomOrderChoice,
     diapason:diapasonChoice?'H2O-429.62Hz':'Standard-440Hz',
-    duration:10 // minutes
+    duration:20 // minutes total
   };
 
   // Log to console
-  console.log('=== PROTOCOL H START ===');
+  console.log('=== PROTOCOL H START (20 min) ===');
   console.log('Timestamp:', timestamp);
   console.log('Audio Mode:', audioModeChoice);
   console.log('Random Order:', randomOrderChoice?'YES':'NO (sequential)');
   console.log('Diapason:', diapasonChoice?'H2O (429.62 Hz)':'Standard (440 Hz)');
-  console.log('Duration: 10 minutes');
-  console.log('Proteody: TPH1 Sérotonine (WFLSQQHER)');
-  console.log('========================');
+  console.log('Sequence:');
+  console.log('  1. Signal Start (1 note)');
+  console.log('  2. Silence (5 min)');
+  console.log('  3. TPH1 Sérotonine (10 min loop)');
+  console.log('  4. Silence (5 min)');
+  console.log('  5. Signal End (2 notes)');
+  console.log('Total Duration: 20 minutes');
+  console.log('===================================');
 
   // Save to localStorage for persistent logging
   const logs=JSON.parse(localStorage.getItem('protocol-h-logs')||'[]');
@@ -1076,37 +1089,42 @@ function startProtocolH(){
   document.getElementById('diapason-chk').checked=diapasonChoice;
   onDiapasonChange();
 
-  // Set duration to 10 minutes
-  document.getElementById('dur').value=10;
+  // Set duration to 20 minutes
+  document.getElementById('dur').value=20;
   onDurChange();
 
-  // Enable loop
-  document.getElementById('loop-chk').checked=true;
+  // DISABLE loop (we want to play the sequence once)
+  document.getElementById('loop-chk').checked=false;
   syncLoopButton();
 
-  // Select only Neuro category (🧠) to show TPH1
+  // Select only Protocol H category (🧪)
   activeFilters.clear();
-  activeFilters.add('🧠');
+  activeFilters.add('🧪');
   localStorage.setItem('proteodies-filters',JSON.stringify([...activeFilters]));
 
-  // Rebuild filters and playlist to show TPH1
+  // Rebuild filters and playlist to show Protocol H proteodies
   buildFilters();
   buildPlaylist();
 
   // Uncheck all proteodies
   document.querySelectorAll('[id^="chk-"]').forEach(chk=>chk.checked=false);
 
-  // Check only TPH1
-  const tph1Checkbox=document.getElementById('chk-tph1');
-  if(tph1Checkbox){
-    tph1Checkbox.checked=true;
-  }else{
-    alert('TPH1 proteody not found! Error in protocol setup.');
+  // Check all 5 Protocol H proteodies in order
+  const phProteodies=['ph_start','ph_silence1','tph1','ph_silence2','ph_end'];
+  phProteodies.forEach(id=>{
+    const chk=document.getElementById('chk-'+id);
+    if(chk)chk.checked=true;
+  });
+
+  // Verify all are checked
+  const allChecked=phProteodies.every(id=>document.getElementById('chk-'+id)?.checked);
+  if(!allChecked){
+    alert('Protocol H proteodies not found! Error in protocol setup.');
     return;
   }
 
   // Update UI status
-  document.getElementById('t-name').textContent='Protocol H: TPH1 Sérotonine';
+  document.getElementById('t-name').textContent='Protocol H: Signal+TPH1+Signal (20min)';
   const diapasonText=diapasonChoice?'H2O (429.62Hz)':'Standard (440Hz)';
   document.getElementById('t-status').textContent='Mode: '+audioModeChoice+' | Order: '+(randomOrderChoice?'Random':'Seq')+' | Diapason: '+diapasonText;
 
