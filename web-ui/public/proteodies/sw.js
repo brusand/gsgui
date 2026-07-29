@@ -1,5 +1,5 @@
 // Service Worker pour Protéodies Player - Cache hors ligne
-const CACHE_NAME = 'proteodies-v31-protocol-h-fix-duration';
+const CACHE_NAME = 'proteodies-v32-fa-lydien-default';
 const urlsToCache = [
   '/proteodies/',
   '/proteodies/index.html',
