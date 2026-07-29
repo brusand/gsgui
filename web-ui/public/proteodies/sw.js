@@ -1,5 +1,5 @@
 // Service Worker pour Protéodies Player - Cache hors ligne
-const CACHE_NAME = 'proteodies-v33-auto-scale-selection';
+const CACHE_NAME = 'proteodies-v34-sib-lydien';
 const urlsToCache = [
   '/proteodies/',
   '/proteodies/index.html',
