@@ -384,6 +384,16 @@ const PROTEODIES=[
   {id:'leafy', name:'Orchidées — LEAFY Identité Florale', seq:'KRMKVLTRESIKRQADQL', cat:'🌸', desc:'Facteur transcription — transforme bourgeon végétatif en bourgeon floral'},
   {id:'apetala1', name:'Orchidées — APETALA1 Pétales', seq:'MGRGKIEIKRIENKTNRQ', cat:'🌸', desc:'MADS-box — initie formation des pétales et sépales'},
   {id:'soc1', name:'Orchidées — SOC1 Intégrateur', seq:'RIKLENIRAQWSSRKRLK', cat:'🌸', desc:'Suppressor of Overexpression of CO1 — intègre tous signaux floraison'},
+  {id:'insulin_a', name:'Diabète — Insuline Chaîne A', seq:'GIVEQCCTSICSLYQLENYCN', cat:'💉', desc:'Hormone hypoglycémiante — baisse glycémie, stocke glucose'},
+  {id:'c_peptide', name:'Diabète — C-Peptide', seq:'EAEDLQVGQVELGGGPGAGSLQPLALEGSLQ', cat:'💉', desc:'Marqueur production insuline — protège cellules β pancréas'},
+  {id:'gip_incretin', name:'Diabète — GIP Incrétine', seq:'YAEGTFISDYSIAMDKIHQQDFVNWLLAQKGKKNDWKHNITQ', cat:'💉', desc:'Glucose-dependent Insulinotropic Polypeptide — stimule sécrétion insuline'},
+  {id:'pdx1', name:'Diabète — PDX1 Régénération', seq:'KRHKILTDQMQVNHMLHQC', cat:'💉', desc:'Pancreatic Duodenal Homeobox 1 — régénère cellules β pancréas'},
+  {id:'glut4', name:'Diabète — GLUT4 Transporteur', seq:'MYQQLGPRSPGLAAVIGWVLGSFGFTILTS', cat:'💉', desc:'Glucose transporter 4 — capte glucose dans muscles/tissus'},
+  {id:'irs1', name:'Diabète — IRS1 Sensibilité', seq:'KKMKHKSRLPFLQKTTMF', cat:'💉', desc:'Insulin Receptor Substrate 1 — améliore sensibilité à l\'insuline'},
+  {id:'adiponectin', name:'Diabète — Adiponectine', seq:'ECDVLQVQGLDDQGPQ', cat:'💉', desc:'Hormone adipocytes — améliore sensibilité insuline, anti-inflammatoire'},
+  {id:'ampk_alpha', name:'Diabète — AMPK Métabolisme', seq:'ELDKDVGRVNVSLTGHTKA', cat:'💉', desc:'AMP-activated Protein Kinase — active métabolisme glucose'},
+  {id:'glucagon_antag', name:'Diabète — Antagoniste Glucagon', seq:'HSQGTFTSDYSKYLDSRRAQDFVQWLMNT', cat:'💉', desc:'Bloque glucagon — réduit production glucose hépatique'},
+  {id:'gck', name:'Diabète — Glucokinase', seq:'MATQNLALMWPGWKANLQQGDDGRYQGPLTNYL', cat:'💉', desc:'Sensor glucose cellules β — déclenche sécrétion insuline'},
 
 ];
 const DESCRIPTIONS={
@@ -447,28 +457,28 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6','💉':'#E91E63'
 };
 const CAT_NAMES_FR={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées','💉':'Diabète'
 };
 const CAT_NAMES_EN={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Knee',
   '😴':'Sleep','🍴':'Binge Eating','❤️':'Blood Pressure',
   '💧':'Water','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plants','🥒':'Cucumber','🍅':'Tomato','😊':'Mood',
-  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids'
+  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids','💉':'Diabetes'
 };
 let CAT_NAMES=CAT_NAMES_FR;
 
 const I18N={
   fr:{
     title:'Proteodies Player',
-    subtitle:'La molé met l\'eau ! · 149 proteodies',
+    subtitle:'La molé met l\'eau ! · 159 proteodies',
     tagline:'De la molécule à la mélodie, de la séquence à la santé',
     tempo:'Tempo',
     duration:'Duree',
@@ -511,7 +521,7 @@ const I18N={
   },
   en:{
     title:'Proteodies Player',
-    subtitle:'From molecule to melody! · 149 proteodies',
+    subtitle:'From molecule to melody! · 159 proteodies',
     tagline:'From molecule to melody, from sequence to health',
     tempo:'Tempo',
     duration:'Duration',
@@ -563,16 +573,18 @@ let audioMode='stereo';
 let audioModeManuallyChanged=false;
 let scaleManuallyChanged=false;
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10,'💉':8};
 const CAT_AUDIO_MODE={
   '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo','🦟':'stereo',
   '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
   '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
-  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic'
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic','💉':'isochronic'
 };
 const CAT_DEFAULT_SCALE={
   // Mib Lydien (effet INHIBANT/CALMANT) - calmer, apaiser, relaxer
   '😴':'mib','❤️':'mib','🦿':'mib','💪':'mib','🩹':'mib','🦟':'mib','🩸':'mib','🦻':'mib',
+  // Sib Lydien (effet ÉQUILIBRANT) - équilibre, harmonise
+  '💉':'sib',
   // Fa Lydien (effet STIMULANT/ÉNERGISANT) - activer, stimuler, régénérer
   '🧬':'fa','🧠':'fa','🦵':'fa','🍴':'fa','💧':'fa','🏔️':'fa','🌵':'fa','🌿':'fa','🥒':'fa','🍅':'fa','😊':'fa','👁️':'fa','🌌':'fa','🫃':'fa','💚':'fa','🔥':'fa','🫒':'fa','🍇':'fa','⚡':'fa','🧪':'fa','🌸':'fa'
 };

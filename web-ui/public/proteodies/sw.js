@@ -1,5 +1,5 @@
 // Service Worker pour Protéodies Player - Cache hors ligne
-const CACHE_NAME = 'proteodies-v35-orchidees-floraison';
+const CACHE_NAME = 'proteodies-v36-diabete-metabolisme';
 const urlsToCache = [
   '/proteodies/',
   '/proteodies/index.html',
