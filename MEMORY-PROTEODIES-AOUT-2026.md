@@ -2,8 +2,11 @@
 
 **Date:** 2026-08-08
 **Branche:** `gsgui-v2-protéodies`
-**Commit:** `6853ed6` - "Add arthrose pack and proteodies audio validation tools"
-**Total protéodies:** 167 (était 159)
+**Commit:** `e39da99` - "Add Proteodies V2 with audio samples and simplified interface"
+**Total protéodies:** 185 organisées en 34 packs
+**Versions:**
+- **V1** (`/proteodies/`) : Interface classique 185 protéodies + bouton audio 🔊
+- **V2** (`/proteodies2/`) : Interface simplifiée par packs avec samples audio pré-générés
 
 ## 🎯 CONTEXTE
 
@@ -273,22 +276,104 @@ Auto-sélection selon catégorie cochée:
 - Template Logic Pro pré-configuré pour chaque catégorie
 - Export batch automatique toutes protéodies cochées
 
-## 📦 COMMIT DÉTAILS
+## 🎵 PROTEODIES V2 - INTERFACE SIMPLIFIÉE
 
-**Hash:** `6853ed6`
-**Branche:** `gsgui-v2-protéodies`
+### Architecture V2 (`/proteodies2/`)
+
+**Workflow utilisateur ultra-simple:**
+1. Sélectionner pack (ex: Arthrose, Sommeil, Diabète...)
+2. Choisir diapason (h3O2 ou Standard)
+3. Mode audio (Auto recommandé, ou manuel)
+4. Gamme (Auto recommandé, ou Fa/Sib/Mib)
+5. Durée via slider (1-60 minutes)
+6. ▶ Jouer → Lecture automatique avec samples audio
+
+**Packs disponibles (34 packs, 185 protéodies):**
+- 🦴 Arthrose (8 protéodies) - 7 Hz Mib
+- 😴 Sommeil (1 protéodie) - 4 Hz Mib
+- 💦 Peau Sèche (7 protéodies) - 8 Hz Fa
+- 💉 Diabète (9 protéodies) - 8 Hz Sib
+- 🧠 Neuro (5 protéodies) - 14 Hz Fa
+- 🦵 Genou (5 protéodies) - 10 Hz Fa
+- ❤️ Tension (6 protéodies) - 8 Hz Mib
+- 🫃 Intestin (5 protéodies) - 6 Hz Fa
+- 🫒 Foie (5 protéodies) - 7 Hz Fa
+- ⚡ Neuro-Douleur (9 protéodies) - 6 Hz Fa
+- 💪 Fibromyalgie (9 protéodies) - 7 Hz Mib
+- 🦿 Jambes Sans Repos (6 protéodies) - 8 Hz Mib
+- 🦻 Ménière (6 protéodies) - 10 Hz Mib
+- 🔥 Métabolisme (6 protéodies) - 12 Hz Fa
+- 🩸 Sang (3 protéodies) - 8 Hz Mib
+- ... et 19 autres packs
+
+**Fonctionnalités:**
+- Auto-configuration paramètres selon pack
+- Calcul automatique nombre de boucles
+- Barre progression + timer temps réel
+- Affichage détails pack (protéodies incluses, fréquence, effet)
+- Concaténation protéodies du pack en séquence unique
+- Lecture en boucle jusqu'à durée cible
+
+### Script extraction packs (`extract_all_packs.py`)
+
+Extrait automatiquement tous les packs depuis V1:
+```python
+# Parse PROTEODIES depuis index.html V1
+# Groupe par catégorie (cat:'🦴', cat:'😴', etc.)
+# Génère code JavaScript V2 avec config
+```
+
+**Sortie:**
+- Dictionnaire PROTEODIES (id → {name, seq})
+- Dictionnaire PACKS (pack_id → {name, emoji, proteodies[], mode, scale, freq, effect})
+
+### Bibliothèque audio (54 MB)
+
+**Structure:**
+```
+web-ui/public/proteodies/audio/building_blocks/
+├── manifest.json (métadonnées)
+├── h3o2_stereo/{fa,sib,mib}/A-Y.wav
+├── h3o2_isochrone_4hz/{fa,sib,mib}/A-Y.wav
+├── h3o2_isochrone_7hz/{fa,sib,mib}/A-Y.wav
+├── h3o2_isochrone_10hz/{fa,sib,mib}/A-Y.wav
+├── h3o2_isochrone_14hz/{fa,sib,mib}/A-Y.wav
+├── standard_stereo/{fa,sib,mib}/A-Y.wav
+├── standard_isochrone_4hz/{fa,sib,mib}/A-Y.wav
+├── standard_isochrone_7hz/{fa,sib,mib}/A-Y.wav
+├── standard_isochrone_10hz/{fa,sib,mib}/A-Y.wav
+└── standard_isochrone_14hz/{fa,sib,mib}/A-Y.wav
+```
+
+**Total:** 600 samples WAV (2 diapasons × 5 modes × 3 gammes × 20 AA)
+
+## 📦 COMMITS DÉTAILS
+
+### Commit 1: `6853ed6` - Arthrose pack + validation tools
 **Fichiers:** 6 modifiés, +1815 lignes
 **Date:** 2026-08-08
 
-**Fichiers ajoutés:**
-- analyze_audio.py
-- analyze_lfo_detailed.py
-- detect_notes_timing.py
-- generate_dsip_20min.py
-- generate_dsip_midi.py
+**Fichiers:**
+- analyze_audio.py (analyse générale)
+- analyze_lfo_detailed.py (LFO Hilbert)
+- detect_notes_timing.py (YIN pitch detection)
+- generate_dsip_20min.py (MIDI 20 min)
+- generate_dsip_midi.py (MIDI variable)
+- web-ui/public/proteodies/index.html (arthrose pack)
 
-**Fichiers modifiés:**
-- web-ui/public/proteodies/index.html (+19 lignes, -19 lignes)
+### Commit 2: `e39da99` - Proteodies V2 complete system
+**Fichiers:** 8 modifiés, +1918 lignes
+**Date:** 2026-08-08
+
+**Fichiers:**
+- web-ui/public/proteodies2/index.html (interface V2)
+- web-ui/public/proteodies/audio-player.js (Web Audio player)
+- web-ui/public/test_audio_samples.html (tests)
+- generate_proteodies_audio_library.py (génération samples)
+- extract_all_packs.py (extraction packs V1→V2)
+- AUDIO-SAMPLES-GUIDE.md (documentation)
+- web-ui/vite.config.ts (fix routing)
+- web-ui/public/proteodies/index.html (bouton audio 🔊)
 
 **Pull Request:**
 https://github.com/brusand/gsgui/pull/new/gsgui-v2-prot%C3%A9odies
