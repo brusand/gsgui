@@ -85,6 +85,12 @@ for cat, prots in sorted(packs.items()):
 
     cfg = CAT_CONFIG[cat]
     pack_id = cfg['name'].lower().replace(' ', '_').replace('-', '_').replace('+', 'plus').replace('/', '_')
+    # Normaliser les caractères accentués pour compatibilité URL
+    pack_id = pack_id.replace('é', 'e').replace('è', 'e').replace('ê', 'e')
+    pack_id = pack_id.replace('à', 'a').replace('â', 'a')
+    pack_id = pack_id.replace('î', 'i').replace('ï', 'i')
+    pack_id = pack_id.replace('ô', 'o')
+    pack_id = pack_id.replace('û', 'u').replace('ù', 'u')
 
     packs_index.append({
         'id': pack_id,
@@ -113,6 +119,12 @@ for cat, prots in packs.items():
 
     cfg = CAT_CONFIG[cat]
     pack_id = cfg['name'].lower().replace(' ', '_').replace('-', '_').replace('+', 'plus').replace('/', '_')
+    # Normaliser les caractères accentués pour compatibilité URL
+    pack_id = pack_id.replace('é', 'e').replace('è', 'e').replace('ê', 'e')
+    pack_id = pack_id.replace('à', 'a').replace('â', 'a')
+    pack_id = pack_id.replace('î', 'i').replace('ï', 'i')
+    pack_id = pack_id.replace('ô', 'o')
+    pack_id = pack_id.replace('û', 'u').replace('ù', 'u')
 
     # Créer description
     if len(prots) == 1:

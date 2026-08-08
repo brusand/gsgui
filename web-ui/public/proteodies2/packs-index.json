@@ -40,7 +40,7 @@
     "effect": "Adaptation sécheresse"
   },
   {
-    "id": "orchidées",
+    "id": "orchidees",
     "name": "Orchidées",
     "emoji": "🌸",
     "count": 7,
@@ -110,7 +110,7 @@
     "effect": "Protection cristallin"
   },
   {
-    "id": "diabète",
+    "id": "diabete",
     "name": "Diabète",
     "emoji": "💉",
     "count": 9,
@@ -130,7 +130,7 @@
     "effect": "Cohérence cardiaque"
   },
   {
-    "id": "peau_sèche",
+    "id": "peau_seche",
     "name": "Peau Sèche",
     "emoji": "💦",
     "count": 8,
@@ -160,7 +160,7 @@
     "effect": "Anti-douleur + énergie"
   },
   {
-    "id": "métabolisme",
+    "id": "metabolisme",
     "name": "Métabolisme",
     "emoji": "🔥",
     "count": 5,
@@ -200,7 +200,7 @@
     "effect": "Résistance pathogènes"
   },
   {
-    "id": "anti_démangeaisons",
+    "id": "anti_demangeaisons",
     "name": "Anti-Démangeaisons",
     "emoji": "🦟",
     "count": 5,
@@ -230,7 +230,7 @@
     "effect": "Régénération articulaire"
   },
   {
-    "id": "ménière",
+    "id": "meniere",
     "name": "Ménière",
     "emoji": "🦻",
     "count": 11,
@@ -320,7 +320,7 @@
     "effect": "Détox + anti-stéatose"
   },
   {
-    "id": "rénal_kplus_créatinine",
+    "id": "renal_kplus_creatinine",
     "name": "Rénal K+/Créatinine",
     "emoji": "🫘",
     "count": 8,
