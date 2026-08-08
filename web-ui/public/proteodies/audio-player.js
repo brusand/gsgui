@@ -106,9 +106,17 @@ class ProteodiesAudioPlayer {
     this.isPlaying = true;
     this.stopRequested = false;
 
+    // Pour les très longues séquences (>500 AA), on tronque pour éviter surcharge mémoire
+    const MAX_SEQUENCE_LENGTH = 500;
+    let workingSequence = sequence;
+    if (sequence.length > MAX_SEQUENCE_LENGTH) {
+      console.warn(`⚠️ Séquence très longue (${sequence.length} AA), tronquée à ${MAX_SEQUENCE_LENGTH} AA`);
+      workingSequence = sequence.substring(0, MAX_SEQUENCE_LENGTH);
+    }
+
     // Pré-charger samples
-    console.log(`🎵 Pré-chargement séquence: ${sequence}`);
-    await this.preloadSequence(sequence, diapason, mode, scale,
+    console.log(`🎵 Pré-chargement séquence: ${workingSequence.substring(0, 50)}... (${workingSequence.length} AA)`);
+    await this.preloadSequence(workingSequence, diapason, mode, scale,
       (loaded, total) => {
         console.log(`📦 Chargement samples: ${loaded}/${total}`);
       }
@@ -116,7 +124,7 @@ class ProteodiesAudioPlayer {
 
     // Charger tous les buffers de la séquence
     const buffers = [];
-    for (let aa of sequence) {
+    for (let aa of workingSequence) {
       const buffer = await this.loadSample(aa, diapason, mode, scale);
       if (!buffer) {
         console.error(`❌ Sample manquant: ${aa}`);
