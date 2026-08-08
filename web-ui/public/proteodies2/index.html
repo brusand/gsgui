@@ -201,7 +201,7 @@ input[type=range]::-moz-range-thumb:hover{
   <a href="/proteodies/">← Retour à l'interface classique</a>
 </div>
 
-<script src="/proteodies/audio-player.js"></script>
+<script src="/proteodies/proteody-player.js"></script>
 <script>
 // État global
 let audioPlayer = null;
@@ -231,7 +231,7 @@ async function init() {
     setStatus('', 'Prêt', 'Sélectionnez un pack et cliquez sur ▶ Jouer');
 
     // Init audio player
-    audioPlayer = new ProteodiesAudioPlayer();
+    audioPlayer = new ProteodyPlayer();
     await audioPlayer.init();
 
   } catch (error) {
@@ -338,12 +338,6 @@ async function playPack() {
   if (mode === 'auto') mode = currentPackData.mode;
   if (scale === 'auto') scale = currentPackData.scale;
 
-  // Concaténer toutes les séquences du pack
-  let fullSequence = '';
-  currentPackData.proteodies.forEach(p => {
-    fullSequence += p.seq;
-  });
-
   setStatus('loading', 'Chargement...', `Préparation ${currentPackData.proteodies.length} protéodies`);
   document.getElementById('play-btn').disabled = true;
   document.getElementById('stop-btn').disabled = false;
@@ -351,13 +345,12 @@ async function playPack() {
   isPlaying = true;
 
   try {
-    await audioPlayer.playProteody(fullSequence, {
+    await audioPlayer.playPack(currentPackData.proteodies, {
       diapason,
       mode,
       scale,
       duration: durationSecs,
       masterVolume: 0.7,
-      reverbMix: 0.2,
       onProgress: (progress) => {
         if (!isPlaying) return;
         document.getElementById('progress-fill').style.width = `${progress * 100}%`;
