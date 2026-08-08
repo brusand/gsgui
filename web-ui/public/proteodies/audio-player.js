@@ -200,35 +200,49 @@ class ProteodiesAudioPlayer {
         scheduledSources.push(source);
         currentTime += buffer.duration - crossfadeDuration; // Overlap pour crossfade
       }
-
-      // Callback progression
-      if (onProgress) {
-        const progress = (loop + 1) / numLoops;
-        setTimeout(() => onProgress(progress),
-                   (currentTime - this.audioContext.currentTime) * 1000);
-      }
     }
 
     // Stocker références
+    const playbackStartTime = this.audioContext.currentTime;
+    const playbackEndTime = currentTime;
+    const totalDuration = playbackEndTime - playbackStartTime;
+
     this.currentPlayback = {
       sources: scheduledSources,
-      startTime: this.audioContext.currentTime,
-      endTime: currentTime,
+      startTime: playbackStartTime,
+      endTime: playbackEndTime,
       masterGain
     };
+
+    // Progression en temps réel
+    if (onProgress) {
+      const updateProgress = () => {
+        if (!this.isPlaying || this.stopRequested) return;
+
+        const elapsed = this.audioContext.currentTime - playbackStartTime;
+        const progress = Math.min(elapsed / totalDuration, 1);
+        onProgress(progress);
+
+        if (progress < 1) {
+          setTimeout(updateProgress, 100); // Update every 100ms
+        }
+      };
+      setTimeout(updateProgress, 100);
+    }
 
     // Callback fin
     const finalSource = scheduledSources[scheduledSources.length - 1];
     finalSource.onended = () => {
       if (!this.stopRequested) {
         this.isPlaying = false;
+        if (onProgress) onProgress(1.0); // Ensure 100%
         if (onComplete) onComplete();
         console.log('✅ Lecture terminée');
       }
     };
 
     console.log(`▶️  Lecture démarrée: ${sequence.substring(0, 20)}...`);
-    console.log(`⏱️  Durée totale: ${(currentTime - this.audioContext.currentTime).toFixed(1)}s`);
+    console.log(`⏱️  Durée totale: ${totalDuration.toFixed(1)}s`);
   }
 
   /**
