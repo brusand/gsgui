@@ -88,6 +88,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <button onclick="skipNext()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">&#9654;&#9654;</button>
   <button id="t-loop" onclick="toggleLoop()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #1D9E75;background:#1D9E7522;color:#1D9E75;font-size:24px;cursor:pointer;flex-shrink:0;" title="Boucle active">&#8734;</button>
   <button id="protocol-h" onclick="startProtocolH()" style="width:60px;height:60px;border-radius:50%;border:2px solid #8B5CF6;background:#8B5CF622;color:#8B5CF6;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;letter-spacing:-0.5px;" title="Protocole Humain (TPH1/Sérotonine)">P-H</button>
+  <button onclick="exportMIDITemplate()" style="width:60px;height:60px;border-radius:50%;border:2px solid #F97316;background:#F9731622;color:#F97316;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;line-height:1.2;" title="Export MIDI + Template DAW">MIDI<br>+DAW</button>
   <div style="flex:1;min-width:0;padding-left:4px;">
     <div id="t-name" style="font-size:13px;font-weight:500;color:#1D9E75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Pret</div>
     <div id="t-status" style="font-size:11px;color:#999;margin-top:2px;">Coche des proteodies et lance &#9654;</div>
@@ -160,9 +161,10 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <div class="ctrl-row">
     <span class="ctrl-label">Gamme</span>
     <select id="gamme" onchange="scaleManuallyChanged=true">
-      <option value="fa">Fa Lydien (stimulant)</option>
-      <option value="sib">Sib Lydien (équilibrant)</option>
-      <option value="mib">Mib Lydien (inhibant)</option>
+      <option value="reel">🧬 Fréquence réelle (signature moléculaire)</option>
+      <option value="fa">⚡ Fa Lydien (stimulant)</option>
+      <option value="sib">⚖️ Sib Lydien (équilibrant)</option>
+      <option value="mib">😴 Mib Lydien (calmant)</option>
       <option value="sol">Sol majeur</option>
       <option value="la">La mineur</option>
       <option value="ab">Ab majeur (sommeil)</option>
@@ -394,6 +396,41 @@ const PROTEODIES=[
   {id:'ampk_alpha', name:'Diabète — AMPK Métabolisme', seq:'ELDKDVGRVNVSLTGHTKA', cat:'💉', desc:'AMP-activated Protein Kinase — active métabolisme glucose'},
   {id:'glucagon_antag', name:'Diabète — Antagoniste Glucagon', seq:'HSQGTFTSDYSKYLDSRRAQDFVQWLMNT', cat:'💉', desc:'Bloque glucagon — réduit production glucose hépatique'},
   {id:'gck', name:'Diabète — Glucokinase', seq:'MATQNLALMWPGWKANLQQGDDGRYQGPLTNYL', cat:'💉', desc:'Sensor glucose cellules β — déclenche sécrétion insuline'},
+  {id:'hib_hsp70', name:'Hibiscus Canicule — HSP70 Bouclier Thermique', seq:'IDLGTTYSCVGVFQHGKVEIIANDQGNRTTPSYVAFTDTERLIGDAAKNQVALNPQNTVFDAKRLIGRKFGDPVVQSDMKHWPFQVINDGDKPKVQVSYKGETKAFYPEEISSMVLTKMKEIAEAYLGYPVTNAVITVPAYFNDSQRQATKDAGVIAGLNVLRIINEPTAAAIAYGLDKKVGAERNVLIFDLGGGTFDVSILTIDDGIFEVKATAGDTHLGGEDFDNRLVNHFVEEFKRKHKKDISQNKRAVRRLRTACERAKRTLSSSTQASLEIDSLFEGIDFYTSITRARFEELCSDLFRSTLEPVEKALRDAKLDKAQIHDLVLVGGSTRIPKVQKLLQDFFNGRDLNKSINPDEAVAYGAAVQAAILMGDKSENVQDLLLLDVAPLSLGLETAGGVMTALIKRNSTIPTKQTQTFTTYSDNQPGVLIQVYEGERAMTKDNNLLGRFELSGIPPAPRGVPQIEVTFDIDANGILNVTATDKSTGKANKITITNDKGRLSKEEIERMVQEAEKYKAEDEVQRERVSAKNALESYAFNMKSAVEDEGLKGKISEADKKKVLDKCQEVISWLDANTLAEKDEFEHKRKELEQVCNPIISGLYQGAGGPGPGGFGAQGPKGGSGSGPTIEEVD', cat:'🌺', desc:'Heat Shock Protein 70 — protège cellules contre stress thermique intense'},
+  {id:'hib_pip', name:'Hibiscus Canicule — PIP Aquaporine Hydratation', seq:'MAIPMGTTGQSLARAYDGGAPDLGSALNGGWNPVSITFAFAGAAALVLHIACPVTDGQAPGDFGGAAVATFASWLTGRIVAEFISGTGANTALLSTGPGQILGVGAQALFLGIVTSMLRFWPQSNPIAVGLAVGAHISGAHLNPAVTFGLLLSRFALVTMLVTGTAAFMVGQISGGHINPAVTFCLLLAQVLGAISAATLYEHGGGPGGTSEKDQKPV', cat:'🌺', desc:'Plasma membrane Intrinsic Protein — canal à eau pour hydratation maximale'},
+  {id:'hib_apx', name:'Hibiscus Canicule — APX Antioxydant', seq:'APPLLNVKTDPKLGAADLSLEPGQYVEVRCLAHLADPTGKDVSVAQADFARAYQRLFSVLKNEDAEIKKAEVKAFKSEDPSGPVVTVSWDFNASQPDPEKAFKEYLKKLGLDDKTAANLHFLDKLDNYKFPEAVDYEKAYQDIAKPSGFK', cat:'🌺', desc:'Ascorbate Peroxidase — neutralise radicaux libres de la chaleur'},
+  {id:'hib_sod', name:'Hibiscus Canicule — SOD Protection Chlorophylle', seq:'ATKAVCVLKGDGPVQGIINFEQKESNGPVKVWGSIKGLTEGLHGFHVHQFGDNTAGCTSAGPHFNPLSRKHGGPKDEERHVGDLGNVTADKDGVADVSIEDSVISLSGDHCIIGRTLVVHEKADDLGKGGNEESTKTGNAGSRLACGVIGIAQ', cat:'🌺', desc:'Superoxide Dismutase — protège chlorophylle du stress oxydatif'},
+  {id:'hib_aba', name:'Hibiscus Canicule — ABA Économie d\'Eau', seq:'MEHSITCQHHLHQKDPGQEVPPLQRMGTGGATDNWPRLEGQLEAAVARQAVDWGCARVDTMRQRVCRDLPAPPGFPAGIDPPIDLPPAAAGGSRVFKPFFGQVAAWDAREQVEAMVQRYGVQRRLLGEAVPGPAGAGVDPPIDLAVAAAGGSRVFKPFFG', cat:'🌺', desc:'ABA Receptor — ferme stomates pour limiter évaporation'},
+  {id:'hib_hsp90', name:'Hibiscus Canicule — HSP90 Réparation Cellules', seq:'VETFAFQAEIAQLMSLIINTFYSNKEIFLRELISNSSDALDKIRYESLTDPSKLDSGKELHINLIPNKQDRTLTIVDTGIGMTKADLINNLGTIAKSGTKAFMEALQAGADISMIGQFGVGFYSAYLVAEKVTVITKHNDDEQYAWESSAGGSFTVRADHGEPIGRGTKVILHLKEDQTEYLEERRIKEIVKKHSQFIGYPITLFVEKERDKEVSDDEAEEKEDKEEEKEKEEKESEDKPEE', cat:'🌺', desc:'Heat Shock Protein 90 — répare protéines endommagées par chaleur'},
+  {id:'hib_cat', name:'Hibiscus Canicule — Catalase Détox H₂O₂', seq:'RDIPTNVKFAGHHTPSRLAAHQGSFGFSPNLKPGDKVAEAIQPHSLKFGPGQFSDGRAFNWQSHNPQFFEREPPRFVQAVANVSKEGMPVDKHLGPQMIVDQREIFQRLLFSIAKLNKSRFGSPQVIERFGPNEYPDPQAKFEADTGFRLFASVIKPMVQNGIRLKPHPLMGSDKQQAAHLGGLTNANTLFGFGPANPEKVTLHPGFKVTYVVPVKDAQCPSDVAIAVDGDGGHPHFKGTIPTRFDREQLEAFKDHNQYVEDADHPGVAFVRLTKHEKGWIEADVVRFTPVDDAGFTVRPETLKNSQGPYSIGDVFDVDADFKDFFYKMMDRPNAPLRLAIVRNKSTVEQSLKSTTQNAQEEVIDALKGFGSSVDHKNFIDNFRNEFPRGKSLKLRTFPSFDYPDSFQVPVDPQHFAQSANKVDDMDVVTGPIKFSLSRLATRTVSGGSDPTGVAENLAVSTFSRIYDPEMFKRVFKMFGESFVSGIKASVTNNDKVPAIIKELFPNEIAPVDLAQRMRDQLKDPKFSRFGSAVYPPQLKTDGQLPTGKSHLVTREWLQADNAVVTDSFGGTFEKEFLEFDNFPGYGKMLQNPLAQVNQRMQKMGLQGWVIKDMAMDSGFLDFDSANNSLTGDGGEFGKQFVDFAKYKDILDPTLSIEEVKLKSDLHVIDVPESRTMSQEEQILYQGMSLLQDVKTKQTQAGMAKIGPMAADIEKIMNGLGQFTNEIAPGQETEEQTVSVDVKQLPRGKLQSKIVNVGDSVTVEDQRTAKMQGFPRKEKFVGRLQDQIDRPPTFNMEFQQLQRAFRPEYNSFKPENSPTVDKLLQNKFPPAIPPDPTRQQDPDPPVPPAPPAPAPAPQPQ', cat:'🌺', desc:'Catalase — détoxifie peroxyde d\'hydrogène du stress thermique'},
+  {id:'hib_dreb', name:'Hibiscus Canicule — DREB Résistance Sécheresse', seq:'MAAAPPPLGRAGRKKKFRETRHPVYRGVRLWLGTFPTAEMAASAAVAADAAATPAGGGGVAAVAAAAAAADASRGRGGRGGGGAGGGAAAPPPPEVRPGRHGKRPWGKWVAEIREPNKKGAKWRERVGVKTEVIPQGAGKQGQRVGRVKIFLENVHP', cat:'🌺', desc:'Dehydration Responsive Element Binding — active gènes anti-sécheresse'},
+  {id:'romk', name:'Rénal K+/Créat — ROMK Excrétion Potassium', seq:'MGSASCGRELCQDPGPPPGSPARHSPFLHHLQPQVPWVLVATVVIFLGSLLATALVFQPEFQRHFFTLILFLVSTALVIFLLFDVIGVMFATLGLKFKHYSSYSHWATVIGLTPLVQLTVFEVCLETLPELQSGGARCRRMKVVHNTQVEDCCRCCYHVDCPCPWVPDQQPCCDEDCEQDHAHHNSPARPLLSAPAPSPPPPAAAGTPPPSRPPKPVSSV', cat:'🫘', desc:'Canal K+ médullaire rénal — excrète potassium en excès'},
+  {id:'na_k_atpase', name:'Rénal K+/Créat — Na-K-ATPase Pompe', seq:'MGKGVGMDERAAARNEQVGLIIIGVAVFLGVSFFILSLILGEYSTVPTKDNLKKIMVELGNDLTKPVQKAAKDQAEGSKSLEKLFVFIIMVVMTIFLFMFLYKKRYFVEMRKEQEHPNLFPKLLQRRTYKHKMMKDQQKRWGTLCNFVTFCPCALILGNTTAFDQDECTVLIKFLSTIVSMMLMFMIGVISIASGKNERPKTASRDAKMAALSALGNKDYQSIRDNIIVGFGVSGCNDSPALIAAGIIAVIGIGDKLGGKNVEELKKQVVSYFERLFLALKMVGLPFLDPPMVPAWGKATLVFQAANSGIVGVNLGTNCEQLLDQFAMKLGVHDPKDQPLYDLVKELDRIIHTYSSGTKQYEPCKEKFSMLKQLRRGSTCVEHTPSIAPDIKDAIDSLDSLEALMGDPELHRPLLDDPFLRQRRFKHYPPSVPPPVQETLHFPQKSRSMDSPSLTNGLRSDGRGKPHVNIFDHGYVETLRVFDRPLPVEVRSVGSGSIVSSLDDPALKCRPVSQNLFSGDFLNLRRALPMLLQWRSVASWLDGSTLRNLARRKPHFLEDLKSFATEAPPKRLEALTGFNPPQYSYEEAMERVRKLIQERIRLAHEKISPLDSDEVAKHLESLGDQVDCPGHDGVSPASMCFEKDPKAFQDFLNAIHPSEGRLSKREVSKRASWQAGPGHSKRVVFLIRNPSNKTVGQMMNDKAIIAGLGKIGTGRLVVDPEGLRFVEEEYLWNFYKERYGVPVIAHGGVTGERTRPLIARMTEDAQEQAAACLAKVNELLDFVTESDEEDDAYFSRLGRKAFETIAENFRTHPDFVIAANATLDIENKRMKVAENVFKNFVPLEGVQSPATAMAAMGIGQLLVATFVAGALVLMVVCVLKEEAPVVMRRGSAHVKRAHKASLIREKPNRLDRLTEIGKALNQVTPLQVRLHYGLEPGSSPGHQKAATDTDTTPLDEESKMPDRNSPRKPRRE', cat:'🫘', desc:'Pompe Na+/K+ — régule équilibre sodium-potassium'},
+  {id:'enac', name:'Rénal K+/Créat — ENaC Canal Sodium', seq:'MEPRPGEGGRALLLLLPLLLGPWGASAGPCSEGSPPEHKKCFQCCQAGCHCVFPSQTGCLDQFGCTCCGQAQCPAGHCHKNEHHFCPNIFGCDPCSRCRGKKCKKEQAHCFQNGTCVSAAEQCLCPFCHQQKRHHNRCFQFDGCTPCSDCGRQQCVQHPGCHVNPQHYCSDVIGCEPCSRCSRQQCPQAAPLCHFNPFHRCFQVKGCTPCSRCGEKQCVRLSGCHRNRDDYFCSGDTPCESCGRCRRCKQSGLCFQYSHFCQDLDGCEPCSHCGGKECQDTRQCHVNPDHFCFQWDPCEPCSRCSGQQCPQTPGCHVSGTGHDCKEVDGCMDCTRCGGKQCPKHPGCHFNPDHYCFDIDGCEPCSHCGGKQCVPRPGCHVNPHHFCYDIEGCEPCSKCSGKQCQRTPGCHVNPQHFCFQRDGCEPCTKCGAKQCQDTAGCHVNPHHFCYDLDGCTPCSHCGGQQCVRTPGCHVNPHHFCFDIEGCEPCSHCGSKQCQRLPGCHVNPDHFCFQYDGCEPCSHCGGKQCVRTPGCHVNPQHFCFDIEGCEPCTKCGGKQCQRLPGCHVNPHHFCFDIEGCEPCSHCGGKQCVQTPGCHVNPDHFCFDIEGCEPCSKCGGKQCQRLPGCHVNPQHFCFDIDGCEPCSHCGGKQCVRTAGCHVNPHHFCFDIDGCEPCSKCGGKQCQRLPGCHVNPHHFCFDIDGCEPCSHCGGKQCVRTPGCHVNPQHFCFDIEGCEPCSHCGGKQCVRTPGCHVNPHHFCFDIEGCEPCSKCGGKQCQRLPGCHVNPQHFCFDIDGCEPCSHCGGKQCVRTAGCHVNPQHFCFDIDGCEPCSHCGGKQCVRTPGCHVNPHHFC', cat:'🫘', desc:'Canal sodium épithélial — réabsorbe sodium, aide excrétion K+'},
+  {id:'klotho', name:'Rénal K+/Créat — Klotho Protecteur', seq:'MKLVSVALSAVVLLQVSSGQGQMPPELKLPLFRPFLVLCLLVLVLGPTQPGQYGCNKQDCPYNPENGTFHVPRQIGGTRLILHQTDEKIALTLGAEQLLTVPGSADNLYSSGDGFQKLVQQLSVLQENQDDVVAITLGVSRGREPQTLDIKSMKEQQLQQMVTELLGSGVIPGVPIVAEVLKVKGKDPHQYFIELDKAAVSSGYHQLLQSCAAKLQSDKKRRQHLQEEEDRQRLKEEEEQQQRQEQQHEENKEMEEKEQDPNNRLLKRFKKVDTMQNFEAVAHYLNQHAVETFLKFQLELREALTGEQSDVIQQAEKLLESEAQKQQQEQAAEAERLRQAEEQLQKAEAAAQQEQLALKQQEAALQVAEAQQAKQEAQALTKKMEVNQSQNVQKLLQKQQEGATAAVTKDFTRFFKVRDVEPFSLYLKLLESLSLNGEDQILLSSRVQFHQMLHNDQWTTACNGNHCPAGEGTFSHVANVCLDMGQAMDKVLLLTDKEVQVFPAEEIKTFGGADGWQNIKTEEFEEFQRTLVQSLAFQHPDWMILSIRRRSGPWDSKFIFEIEHKARNAIGFGHHDDPNQLYLKMSRQLADFRRSQSHVESVRLKCQDYDNSQYLNFPGNKYVYIQAIGFCPKGHPSCKAMFPRQQTILQLGDRFLEDCDDDGRMVLTCADSKIVPSSQDDCAIIKVFQNLQRLKKLPKAPDFLALFDYQMSEDEDVMNGLDFSERFLVIPKRHFHHFTKDSLILGNTDQTPCLDNSAPCIGRPPNLSVLWFDPNQDQCISCGENGRCFHAHGCHPFTSPVLCHQQQGRLLQSTSPEQAQQKRGDVGSTSVFSALRLLSTGSGASQSSASSTAPVAQPLHFLEPYTEEPIFPSSSYEQDDDKKDEDDDDGYDDLEDGACLPLPGPATMRRLRNFRLFKSPKQVSLPPFSQQVSLPAGAAKRSALSQAMGPALQPNRVAPVDAQTRLPPVLRLHSVQEVRSRSRTPSPTKASARQPSVQEPQPSPQQAEKQKTEVSSNSEISSSISQQEVAAVEEENSNENGEDELEDNDDYLSFANCCYPYSLKLSSLLG', cat:'🫘', desc:'Protéine anti-âge rénale — améliore filtration glomérulaire'},
+  {id:'podocin', name:'Rénal K+/Créat — Podocine Filtre', seq:'MAAAVLRRSSRAAQGTGLLLRSLVLAVEGVRVLLEVQFPGFVLDFATSFLLVFVLVCYFRKRSKRKAYFGGLRHVNQGQLLLLSFLLVFLMVVALYFLSPLLLCTILLLLFPAFCCRQFGKMWFVLALWLLSMMGLYTLGGKRFQKKPHHLSLIIQEVSFLLGFILVVCLAAVFFLWQLLLWLIGSKHLFTSQAAARLSTDRAGGPGGGVLGLDPAEPGPATGPGDCPRRLLGRPQGLQCRAAAAAAPSPSPPSPEPESDSDVSASSLPQKPAEAGELQGPRRARSDRAHSAEAPAASPVSAAPQRPPRPPGPPRPPGSDAQQVPNPVNPQYQPPQYPPPQRSQQPLQQPPPQGQQQLQQPYGQMQQQQPQYPPRQPQYPQQPMQVPQAQQMLALYQQMPQAYSQQQMLGPYQQQQQQQPPPYSQPPPYSQQPQYMQQPQYQQPQGQQQMQQPQYAQQPQYAQQQQYAQQQMQQPQYAQQPQ', cat:'🫘', desc:'Protéine du filtre glomérulaire — maintient barrière de filtration'},
+  {id:'nephrin', name:'Rénal K+/Créat — Néphrine Barrière', seq:'MWKLLGAFGLGVLGVWTEGGLVFPRSGPRGPQGPQEQEQEAQPVTPEGPASSSPPNVTWMRTACEVLNKEEVLVPGPPVSWKKGDTVMLGGVGSEYGWQAEVDGTPGGELRFRIRNKTGELDSGTYKCVALGEGQEAPSRYKVQVGPKRFEYNKTPDLGWNVHGQIIQEDSNLTIPCNVKSISAESQKVMLQNGTFSALQRIRIQVTGLEDQGNYSCLASNSLGFQTGNVRVLYKGKKPVPMKNQKEYLSGLKFSCKAQGEKRDGYWQEACAGYTDQSTIFLKRVVQSNQVLENGQTVEVLTAPRPLRIYSKDPSLGWTCHAEGGTGQGTILVRFDSDQIDGVNPDTVFKCLAKSPHSQSATTYQVTFTQPRFLDNINLELGWNEDQTVHPCDVPPAPKPAPKPTWDKIWPRNLQVLTQEPPLVPSPPKPLRIRKTKPDRYTGWRGQNHSCAANLHCNDGRAQAVTCNISGKTCPPDVNFSFTDSCTFNALGTPDGQNITLRIRDCDGDYGRTYECLAINRQGTVSKHFRVFPSNSQKYLHVTLRFKHVNDISGFWLCKAVLGVKGKQSLIIKVVKDSKDVHLYDAEIVIRFDSQGEDEGNYTCLAVAKPEDGVTSVRITEVQTVEITATSNLQGRDTPPGDLSLNHSWSKNCVVSSKLNCIGRQNVHVKCEVLGQDCEEDDVTEVCEEGKGIRCQVDYEYRAGRSLTLFIRNIQLTDTKLQGNYSCLVVDKGALRTGQHTLVQGPAKTVQIRATQNVEDAQNPSTGTDGTATVSPEQPDLPLGKTYIWKPRLLAQAKEDKNNYEWMSQFQTCNETNIECLSLAEIVCLSRVRVVNSIQEDQVLTIIPDAVVPSANVSLQVTYQAQGQPGRYSIEVNAVSASEGFMCKAKEGQGDKPSLLRVTVHRLKGAAGGAAAGGGMALAVGLLVGGLLWRYRRKKERKGRTANREKKQEYDIYKRLEEENPYTKFNETKIGSMPASEEKLLRSQETNMEMEKQQLEEQIKKLQDQHMEIQDKLRQKEQEIDYQIVNTEAKSLNMELQESTQSLKKEKMVLEEQLAKAENKLQEDMNEYRLRRAEDGLQAAEEELEDKNGRYRDIQDKLHLEQEQQQNLEEKSQEVLRQRSEQEEGYSLIQQEHNLLKNLKQQQDQALQRMEQEKQRILEEIEDSKRKLEAELSSVSENKRRLAEARADIESLAKDIKKMKDEMDLMMQKQLSSAEASMSKLEAAKERKNQVFELYRTLMTTQSELEQAKQNRKKLEAELMAMARQKLMQKDAQVEQPNSMAEYAEQFKKLMKELSDYRGRQAAELSQRKKLEAEVHKAVDKKQQLLKEKRTLDQQLKKIEKESQLYHEQQKLQERLAVLDETKHKVEAELHQSRTNVRNKAESIEALAQRLQQKDSSIQDKERSRGKMEDEVEQLKNQMNLLESQYKSAEQEQDSMQAMQREAVSLAAEVEKLQNNVTELSTQVQSVEKEKSRMLVELLLEQEKKTQELLLDQVDTYRMTVDALDQVAQQLEAELGDVTQDRAKVHAQVEQLKQEVEEARRRKEESQTTYEQKIVEMQELMRVLHGDYAAQKAEMKALAGRLKMEKEAKALANEKQRLNQDVDLASKAAQELDREVEQGIRSLAQAMATLEKDMEAYQKKMHEMAELVEKVEAQLDNARQNELKIQEIEKAREAFEQTEEKRQVLLEQLNAVNQKLEAELQHIGRKVNAQLEELDAKVQENEKEVQAELAALAKERSQLMQDMDLAEQALKKMSDRSEAQKGDLQAAAKEMNKEVDAYQEKLEAEVESLTKVKQILEKSAELKAELEAVDAKQELAAEMVVTEEAVKAGSNQV', cat:'🫘', desc:'Protéine barrière fente de filtration — filtre protéines hors urine'},
+  {id:'renalase', name:'Rénal K+/Créat — Rénalase Protection', seq:'MGPLRTLSLPLLLLSWAGPLSAQRTFNVDKAEKESGGDWEVIEKLFNAYGAVSWRQTRFEAMDFKFEEVDYRLRKAGEAAGRQLGEGGFWMLDKSKPSNYDLMAAIYKRWFTDHPGFVQSVDSKGKKLVWCNTHRGAKLTYYEKGLFRGVLFPDKHSKQKWKDPNVTNAEPVIILVSGGPPLRRVTVDLLKDPRVQDLTGGPFGNYLHGRWTGLLSDKEWPVWVDLPDGQSKGDAQRRLDLAAWQKLGRSLYGNIPDKDANVKDAAEKGGGGQGIRPAINVGLSANSDAIRFEDMKLNELRRRFSVDESLRPGIKQRLWDSLQGGYREAFGAFLDQEVTEKKKTSKMQAFRSLPLPTSASQNL', cat:'🫘', desc:'Enzyme protectrice rénale — réduit stress oxydatif et créatinine'},
+  {id:'uromodulin', name:'Rénal K+/Créat — Uromoduline Tubules', seq:'MGPWKKLVFLVLLLHGQVQAQSLLVQPPAKPEVCDLLIQNLTCESVKACPDGFVLCERDEGVCNWYPCLGRGCRQVEGTSSYAFPGATCPPDVQCVAGMSCESAHFPSVYCLSYGLCGDGWNSSASPKPAEKCAPGKQQCVANGWSGLGCFPGATCYPSVRCVPHASCQRMRLQCESSLGCDQLLCDDGFSLSPGVPRAQCPALQEFSRVKDQCRVGWSGQGCTPFATLCKPVVDCEAWATCRSVLSCESSLTCEPGRCSSGWGLAPCVPVPPCLPHLRCGLPALCQRLLPCESSLSCGQTPCPDGWGLGTCQPHGRCLPSARCPPPGTCGSVLPCQSSLQCVGGRTCSPGFGLPGCPPVKQCKPHVSCERPVVCQEAAACEGGLECPPSQCDRGFSLSGGAPVGQCAPRPSEQCRSGWSGLGCTPEALCPPHLDCEPGQSCLTVLGCNRQLQCLAGETCSPGWGLPHCTPHVHCPPHLHCQGGASCQAVLMCERVLYCEGSLDCPSAACVGGLGLPGCSRKQCPRLVSCERDGHCRTALTCESSYGCRPLHCEPGWGLAKCVPSVQCRSHVNCQPALACEAIAQCQNVQSGNGTVTTVTSISGSPGAGSIAAPAATPSPQRLCSVSSSFSPLAPPFSRLNSSSTTTIQAPPTVSNIGSSSFPGPSITPRRVNSNSIMSLPSPQFPSSSTQPLLGGNFGHTTNRSIGLAAGSRVIHSCTSSSVAGLGSSSIDQSTSTVNVSSNIVASPQRLPSQPTQPFSTISTSEQTTPVSSGKLTVQSQTSALVTSTLLSSDTSTGFWSPGLVNSLRPPQKSNSPQSLTSRAFRGHVSAVVTVQGGSPVQTSTVSSNIQSSNQFSTLAGQVGPGSLPKPFIGLFSNSRPQSITTPWTQLHTLRATNSPQHFVGTSTFEDVKPTFTATSPGAASTFLTPQIVNFQELRAGPHKPIDGRLQSLDQEVLKELLGGSGGACFWGSCQYCGDGWLAGLCIKQVCPPWENCSEPLTCLSSSRRLSVQLGSIKGWGKGEENQQEELLAEVMSLDLELQDIYTLNEKKFFLPLALSSATQLDTLLFSSGLSSYGLSALQLLVSPLLLAIAGGVVLMLGIGLALLWKKKTRMSRHKVGSVLNFLGRLGSASSGSQRPSQSAPAQPPVGSARVPPHRSHRSASRTPRYRSVVRGRTSRSLVRVQPRPQRSPCTVHLPSQPDNPLGFPGLMLYQDGFSRSSEAVGREASGREASGRAASGRVASERPPSRPVASQPPSREPSSEPASGRALSGRLASFRPPSELSGSQPSSQGSSGTLHLASSSLHLYQDGLPRPPGFSRSSGPVASGRQPPGRGPPGRTLSRRSPPPQTLLSPQPSPDPPGLGFPRLIHSQPGPMTGPAVGGRLPSSLSFRPPSETSPSLSGSRSASQGSSRGALASGSLHIYQDGLPGLG', cat:'🫘', desc:'Protège tubules rénaux — module excrétion électrolytes'},
+  {id:'aqp3', name:'Peau Sèche — AQP3 Hydratation', seq:'MEKEKSEFFRRTKQFLTLVLVLAVIGSTGIIN', cat:'💦', desc:'Aquaporine-3 — canal à eau + glycérol épidermique'},
+  {id:'filaggrin', name:'Peau Sèche — Filaggrine NMF', seq:'SHQSQVQGSRRHSDRGRSRGRSGRSGSRHSVRGS', cat:'💦', desc:'Protéine NMF — retient eau dans cornéocytes'},
+  {id:'loricrin', name:'Peau Sèche — Loricrine Barrière', seq:'SQHSVQGQGQSHSQSQGQSQQQGQGQSQSQSQGQSQGQSQGQSQSQGQSHSSQGQSQGQ', cat:'💦', desc:'Protéine majeure barrière cornée — imperméabilisation'},
+  {id:'involucrin', name:'Peau Sèche — Involucrine Enveloppe', seq:'MEERKVRIEELHELQAKLSQEGKPESLQQKVDQEQQQQPGQQPPPQPQQQPQQQEQPQPEQPQQQPQQQQE', cat:'💦', desc:'Enveloppe cornée — structure imperméable'},
+  {id:'ceramide_synth', name:'Peau Sèche — Céramide Synthase Lipides', seq:'MAALRPGWKLLSLLLPLLLCGRLSGCEDGFQCVNGGCWMHNLTCQDHGLCKIGDEYHSKPGYGGNKCEPLDCQEEDCPFHDDYGYDSNCTKSEFQCSHGDCPNLLDGYDYTNCKLEYTPGYPPTNCKPVGDCSPEEHNGYDEKCFQEFPGYPPLNCKILGDCVDPDHYGYDERCQMEYAGYPPPNCKKAGDCVHTHHVGYDSRCEREYVGYPPQNCKPMGDCAHEAHQGFDSACQKEYMGFPPTNCKKLGDCVHDHHKGYDNKCKQEYVGYPPPNCKQVGDCVHDHHQGFDSKCKQEFAGFPPSNCKKAGDCVHDHHIGYDDKCKREYVGFPPANCKQPGDCVHDQHQGFDSQCKQEYVGFPPANCKQPGDCVHDQHQGFDSQCKQEYVGFPPANCKKLGDCVHDHHKGYDNRCKQEYMGFPPTNCKKLGDCVHDHHKGYDNRCKREYMGFPPTNCKKLGDCVHDHHKGYDNRCKREYVGFPPANCKQPGDCVHDHHQGFDSQCKQEYVGFPPANCKKLGDCVHDHHKGYDNRCKQEYVGFPPANCKKLGDCVHDHHKGYDNRCKQE', cat:'💦', desc:'Produit céramides — lipides essentiels barrière cutanée'},
+  {id:'has2', name:'Peau Sèche — HAS2 Acide Hyaluronique', seq:'MDDFFHLLLLCVLLLPGSLVQAQMECRAQGLRTVPGSRFLGALASLEREICRRCGPGCRCEEDGFRCQCQPGHFKGQGCQCATGRCNDDEGLCTCPPGLYCAWDGVYCNACGSGRKGKKEEEDGDGVEDMNTQFFSSLQ', cat:'💦', desc:'Hyaluronan Synthase 2 — produit acide hyaluronique (retient 1000x eau)'},
+  {id:'claudin1', name:'Peau Sèche — Claudine-1 Jonction', seq:'MANAGLQLLGFILAIVGAWVTATATLCCQAADYDGLNCVSSQMAQKGAQTFSIPAPLPQIVRWLGFLVIVGTLWICVSKSSLGQGEPSKPRNLGTWSGTFRMCVSGGLLWCCLASVFILLAAFALLYAWRRSRRSKMPSHSKTNILTSAQPGNKGSSMKYFADNPSHQEPFYWRSGLKIVSTAISVGAVLAFLGWLGLLICCACRGGKHKRKQVYGYQLYDNANVHQRDESMLPQPPKYS', cat:'💦', desc:'Jonction serrée épidermique — imperméabilise'},
+  {id:'occludin', name:'Peau Sèche — Occludine Imperméabilisation', seq:'MSSNSSPPYQGTAPPRPLGYPPRRPPYPPRRPPYVPPQPYSPPPADYEGMQRTTQEIQQVEMREQKDRNLGLWMSCVSGGSHIWRGTLLFLAGALLAAQTVGALANTLPALVPMTVAISVLGFLGITAAASFSGREVQKLISSSLGLDIYTIPPAPRPASPGGGPRGANSKRSPGPRGYRYPLPPDMQTPPPAQGPSRDGYMTVGQYYDMRLLDTAANPFKQAFFADYAGAHNIMAQKGSGFPPQPPPYPQLPPPYPPQQPNQPHYDYEDGGEQSYPLYPPQEKYQDQNDDTNKLTLDWNTLVWNPDAENIQRLLEGVMDRYSEGLSRSLRQNSIQSLQADSFKMEETRVEEEETKTETEKPITSVPPYQEEKTTESPPPYQETEESPPPEYQETEESPPPYQETEESPPPEYQETEESPPPEYQEIEESPPPEYQETESPPPYQETEESPPPYEEIEESPPPYDLKEELPPPYDMDDVADNDVGMGQAAQLQ', cat:'💦', desc:'Occludine — scelle jonctions imperméables'},
+  {id:'tip11', name:'Peau Sèche — TIP1;1 Canal Végétal', seq:'CFNPAVTLGAHINPAV', cat:'💦', desc:'Aquaporine vacuolaire végétale — transfert d\'eau phyto'},
+
+  // Pack Arthrose Articulations 🦴 (8 proteodies)
+  {id:'col2a1', name:'Arthrose — Collagène II Cartilage', seq:'QPGKDGVVGPSGPPGPPGKVGPSGAPGPQGFQGPAGEPGEPGQTGPAGARGPAGPPGKAGEDGHPGKPGRPGERGPPGPQGARGLPGTAGLPGMKGHRGFSGLDGAKGDAGPAGPKGEPGSPGENGAPGQMGPRGLPGERGRPGAPGPAGARGNDGATGAAGPPGPTGPAGPPGFPGAVGAKGEAGPQGPRGSEGPQGVRGEPGPPGPAGAAGPAGNPGADGQPGAKGANGAPGIAGAPGFPGARGPSGPQGPSGPPGPKGNSGEPGAPGSKGDTGAKGEPGPVGVQGPPGPAGEEGKRGARGEPGPTGLPGPPGERGGPGSRGFPGADGVAGPKGPAGERGSPGPAGPKGSPGEAGRPGEAGLPGAKGLTGSPGSPGPDGKTGPPGPAGQDGRPGPPGPPGARGQPGVMGFPGPKGAAGEPGKAGERGVPGPPGAVGPAGKDGEAGAQGPPGPAGPAGERGEQGPAGSPGFQGLPGPAGPPGEAGKPGEQGVPGDLGAPGPSGARGERGFPGERGVQGPPGPAGPRGANGAPGNDGAKGDAGAPGAPGSQGAPGLQGMPGERGAAGLPGPKGDRGDAGPKGADGSPGKDGVRGLTGPIGPPGPAGAPGDKGESGPSGPAGPTGARGAPGDRGEPGPPGPAGFAGPPGADGQPGAKGEPGDAGAKGDAGPPGPAGPAGPPGPIGNVGAPGPKGARGSAGPPGATGFPGAAGRVGPPGPSGNAGPPGPPGPAGKEGGKGPRGETGPAGRPGEVGPPGPPGPAGEKGSPGADGPAGAPGTPGPQGIAGQRGVVGLPGQRGERGFPGLPGPSGEPGKQGPSGASGERGPPGPMGPPGLAGPPGESGREGAPGAEGSPGRDGSPGAKGDRGETGPAGPPGAPGAPGAPGPVGPAGKSGDRGETGPAGPAGPIGPVGARGPAGPQGPRGDKGETGEQGDRGIKGHRGFSGLQGPPGPPGSPGEQGPSGASGPAGPRGPPGSAGSPGKDGLNGLPGPIGPPGPRGRTGDAGPVGPPGPPGPPGPPGPPSAGFDFSFLPQPPQEKAHDGGRYYRA', cat:'🦴', desc:'Collagène type II — structure principale du cartilage articulaire'},
+  {id:'acan', name:'Arthrose — Aggrécane Hydratation', seq:'TAQEPPPEVPPPPVEVPTEPVGPGPVEVPAVPGVGPVEAPATPAKPEVPTEKPEVPTEVPVEVPVAEVPVEAPATPAKPEVPTEKPEVPTEVPVEVPVAEVPVEAPATPAKPEVPTEKPEVPTEVPVEVPVAEVPVEAPATPAKPEVPTE', cat:'🦴', desc:'Aggrécane — protéoglycane majeur, retient eau dans cartilage'},
+  {id:'sox9', name:'Arthrose — SOX9 Chondrogenèse', seq:'MQSPQSQQQFHPGMDRSSSPPPRCPPACLSQGPGGAGSGAGSPGPGPPQPPPQSSPPAHPGGPRQQPDSVQGPGQPLPPQPAQPGGGPPQPHPPPPPQPPPPQPQPPPQPQPPPQPPPLPGQQPPPPPPPPPGPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPSGPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPGPGGPHQPPPPPPPPPPPPPPPPPPPPPPPPPPGRGAHPVTPTSLSPPPVSPQQPQPKDVTTGPPPQVDAQRRLHRPMNAFMVWSQIERRKFENPRMRNTDTEKRPFMCQYQCQRPMNHLKVILPQPPVSQQQQQQQLQQQQQQQQQQQQPAMAQVQDVQKLQRKLQQQENNNKHKASQHCHPDGCTKTYTYEKHHQAEPYCQYSHIDRVHGKVWAENYYQSLAQKYQQLLDSRN', cat:'🦴', desc:'Facteur de transcription SOX9 — régénération cartilagineuse'},
+  {id:'prg4', name:'Arthrose — Lubricine PRG4', seq:'EKDTTTTPKTAPTTPKTTPKAPTAPAATPAPATPAPATKTTTPKTTTPKTAAATPAAPKTTTPKTTTPKTAPTTPKTTTPKTAPTTPKTAPTTPKTTTPKTTTPKTAPTTPKTTTPKTTPKTTPKTTPKTTPKTTPKTTPKTTPKTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPK', cat:'🦴', desc:'Lubricine — lubrifiant naturel articulations (liquide synovial)'},
+  {id:'comp', name:'Arthrose — COMP Matrice', seq:'GETGPQGPQGPQGPPGPPGPPGPPGPPGPQGPSGPPGPPGPPGPPGPPGPPGPQGPSGPQGPPGPPGPPGPPGPPGPPGPQGPPGPQGPPGPPGPPGPPGPPGPPGPQGPSGPQGPPGPPGPPGPPGPPGPPGPQGPSGPQGPPGPPGPPGPPGPPGPPGPPGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPPGPPGPPGPPGPPGPPGPQ', cat:'🦴', desc:'COMP — protéine oligomérique matrice cartilagineuse'},
+  {id:'il10_arth', name:'Arthrose — IL-10 Anti-Inflammatoire', seq:'SPGQGTQSENSCTHFPGNLPNMLRDLRDAFSRVKTFFQMKDQLDNLLLKESLLEDFKGYLGCQALSEMIQFYLEEVMPQAENQDPDIKAHVNSLGENLKTLRLRLRRCHRFLPCENKSKAVEQVKNAFNKLQEKGIYKAMSEFDIFINYIEAYMTMKIRN', cat:'🦴', desc:'Interleukine-10 — puissant anti-inflammatoire articulaire'},
+  {id:'tgfb1', name:'Arthrose — TGF-β1 Régénération', seq:'ALDAAYCFRNVQDNCCLRPLYIDFKRDLGWKWIHEPKGYHANFCLGPCPYIWSLDTQYSKVLALYNQHNPGASAAPCCVPQALEPLPIVYYVGRKPKVEQLSNMIVRSCKCS', cat:'🦴', desc:'TGF-beta 1 — stimule production matrice cartilagineuse'},
+  {id:'fmod', name:'Arthrose — Fibromoduline Collagène', seq:'NNFTIENLRHNIQLVQKSLEEIKKHLQSIEKYNKSLESLETLDNNKIQTVFDFTNFLREDYGDLDFKRLVQWLQSVQKSLVSKLNNLTRLHLDGNNITSKVQDKTLLAFDSNFLKRPSIPKSAFVVQKLKENKNLGSKLWSKIRENKLKCFNIVPSGQFSQVSLAMLELFNLTHNRIQTEIQFYQKEELQDNVTD', cat:'🦴', desc:'Fibromoduline — régule assemblage fibrilles de collagène'},
 
 ];
 const DESCRIPTIONS={
@@ -423,6 +460,14 @@ const DESCRIPTIONS={
 "cgrp": "CGRP (Calcitonin Gene-Related Peptide, ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF) est un neuropeptide vasodilatateur de 37 acides aminés libéré par les terminaisons nerveuses sensorielles périvasculaires. C'est le peptide vasodilatateur le plus abondant du système cardiovasculaire. CGRP se lie au complexe récepteur CRLR/RAMP1 sur les cellules musculaires lisses vasculaires et déclenche la production d'AMPc, induisant une relaxation puissante des artérioles — les vaisseaux qui contrôlent la résistance périphérique et donc la pression DIASTOLIQUE. Le pont disulfure Cys2-Cys7 (ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF) stabilise la boucle N-terminale essentielle à l'activité. CGRP est 10 fois plus puissant que la prostacycline. Il est libéré lors de la migraine (vasodilatation cérébrale) — d'où les anti-CGRP (erenumab, fremanezumab) pour traiter les migraines. Paradoxalement, les hypertendus ont souvent des niveaux bas de CGRP. Cette protéodie encode l'α-CGRP humain complet — le signal nerveux de dilatation artériolaire.",
 "aqp2": "AQP2 (Aquaporine-2, MGKEVEFKDTDWDHRSFQKKVSLAAVTFKLFVLGFGLDDHSGKGNFKGATAAVQVAWDGWKASTPSHNLW) est le canal à eau du tubule collecteur rénal — le site final de contrôle du volume urinaire et donc du volume sanguin. Cette séquence de 70 aa encode le domaine N-terminal et la première boucle transmembranaire contenant les deux motifs NPA signature (Asn-Pro-Ala) qui forment le filtre sélectif du pore. AQP2 est LA protéine régulatrice clé de la balance hydrique corporelle : elle est stockée dans des vésicules intracellulaires et transloquée vers la membrane apicale uniquement en présence de vasopressine (ADH). Quand l'ADH se lie au récepteur V2 du tubule collecteur, elle active l'AMPc qui phosphoryle AQP2 sur la sérine 256, déclenchant sa translocation membranaire. AQP2 à la surface réabsorbe massivement l'eau de l'urine primitive vers le sang. SANS AQP2 membranaire = urine diluée (diabète insipide). AVEC AQP2 = concentration urinaire et rétention d'eau. Cette rétention augmente le volume sanguin et donc la PRESSION DIASTOLIQUE. L'hypertension sensible au sel est souvent liée à une suractivation d'AQP2. Les diurétiques thiazidiques inhibent indirectement AQP2. Cette protéodie cible le domaine régulateur d'AQP2 — le robinet rénal du volume sanguin.", "aqp1": "L'Aquaporine 1 (AQP1) est un canal membranaire qui transporte exclusivement les molécules d'eau. Les deux motifs NPA (Asn-Pro-Ala) de la séquence forment le filtre de sélectivité du pore. AQP1 est exprimée dans l'endothélium vasculaire et joue un rôle dans la régulation de la pression artérielle.", "epo": "EMP1 est un peptide mimétique de l'Érythropoïétine (EPO) qui se lie au récepteur EPO. L'EPO stimule la production de globules rouges — c'est l'adaptation principale à l'altitude. À Uyuni (3700m) et Sajama (4200m), ton corps va naturellement augmenter sa production d'EPO. Cette protéodie encode la région de liaison au récepteur.", "hif": "HIF-1α est le capteur moléculaire de l'hypoxie. Son domaine ODD (DLDLEMLAPF) est dégradé en normoxie. En altitude, quand l'O₂ baisse, HIF-1α s'accumule et active des centaines de gènes d'adaptation : EPO, VEGF, transporteurs de glucose. C'est le chef d'orchestre de l'acclimatation.", "cry1": "CRY1 est un photorécepteur flavoprotéine qui capte la lumière bleue (400-500nm). Son domaine FAD (GKHINDMFH) est le site de liaison du cofacteur qui absorbe les photons. Pedro utilise CRY1 pour synchroniser son métabolisme CAM avec le cycle jour/nuit.", "aqptip": "TIP1;1 est une aquaporine végétale spécifique du tonoplaste (membrane de la vacuole). Elle régule les flux d'eau entre la vacuole et le cytoplasme, contrôlant la turgescence cellulaire. Chez Pedro, elle est cruciale pour stocker l'eau pendant les sécheresses.", "pepc": "La PEP Carboxylase (PEPC) est l'enzyme signature du métabolisme CAM des cactus. La nuit, Pedro ouvre ses stomates et PEPC fixe le CO₂ en malate stocké dans la vacuole. Le jour, stomates fermés, le malate alimente la photosynthèse. SIDDQLRQA est le site de régulation circadienne.", "psk": "PSK-α (YIYTQ) est une hormone peptidique végétale sulfatée qui stimule la prolifération et la différenciation cellulaire. Elle agit via le récepteur PSKr1 et active des voies de signalisation similaires aux facteurs de croissance animaux.", "clv3": "CLV3 (HEVPSGP) est un peptide CLE qui régule la taille du méristème apical — la zone de cellules souches au sommet de la plante. Il signale via le récepteur CLV1 pour maintenir l'équilibre prolifération/différenciation. Moduler CLV3 peut augmenter la ramification et le nombre de fleurs.", "systemin": "La Systemine (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte (1991). Quand une feuille est attaquée, elle voyage dans toute la plante via le phloème et déclenche la synthèse d'acide jasmonique. C'est le signal d'alarme systémique de la plante.", "ralf": "RALF1 (YISYGALQKN) régule la croissance racinaire et l'immunité végétale. Il se lie au récepteur FER (Feronia) et inhibe les H+-ATPases, alcalinisant l'apoplasme. En faibles concentrations, il favorise le développement racinaire et l'absorption des nutriments.", "rubisco": "L'activase de la Rubisco (GKDNKLNELR) réactive la Rubisco inhibée par ses propres produits. La Rubisco est l'enzyme la plus abondante sur Terre — elle fixe le CO₂ lors de la photosynthèse. Son activase est un AAA+ ATPase qui remodèle la conformation de la Rubisco.", "expansin": "Les expansines (CDPYGGQNRS) favorisent l'extension cellulaire en rompant les liaisons hydrogène entre les microfibrilles de cellulose. Leur action est pH-dépendante et régule la turgescence, la croissance et la maturation des fruits.", "kin1": "La CKX (MTGDNKLHEF) dégrade les cytokinines — hormones qui stimulent la division cellulaire et la ramification. En inhibant CKX, on augmente les niveaux de cytokinines, ce qui donne plus de pousses latérales et une meilleure résistance au stress.",
 "auxin_tir1": "TIR1 (Transport Inhibitor Response 1, 159 aa) est LE RÉCEPTEUR de l'auxine — la plus importante hormone végétale, découverte en 1880 par Charles Darwin dans ses travaux sur le phototropisme. L'auxine (acide indole-3-acétique, IAA) contrôle TOUS les aspects de la croissance : élongation cellulaire, tropisme (lumière, gravité), dominance apicale, formation des racines adventives et développement des fruits. TIR1 est une protéine F-box qui, en présence d'auxine, recrute les répresseurs Aux/IAA pour leur dégradation par le protéasome, libérant les facteurs ARF (Auxin Response Factors) qui activent des milliers de gènes. Cette découverte (2005, Nature) a révolutionné la biologie végétale. L'auxine se déplace de l'apex vers la base (transport polaire) via les transporteurs PIN. Le 2,4-D (herbicide) est un analogue synthétique d'auxine. Cette séquence de 159 aa encode le domaine LRR (Leucine-Rich Repeat) de TIR1 d'Arabidopsis — le récepteur qui capte le signal de croissance végétale.", "pr1": "PR-1 est le marqueur moléculaire de la résistance systémique acquise (SAR) chez les plantes. Induit par l'acide salicylique après une première infection, il confère une résistance durable à large spectre contre champignons, bactéries et virus.", "chi": "La Chitinase (SGQFNNYSNYY) dégrade la chitine — le polysaccharide structural de la paroi des champignons. En coupant les chaînes de N-acétylglucosamine, elle détruit l'intégrité du champignon et produit des oligosaccharines qui servent de signaux d'alarme.", "npr1": "NPR1 (DNEAKEKYF) est le régulateur central de la voie de l'acide salicylique et de la SAR. En présence de SA, NPR1 se transloque du cytoplasme vers le noyau et active les gènes PR. C'est la cible privilégiée pour améliorer la résistance aux maladies.", "pdf12": "PDF1.2 (KTCENLADKY) est un peptide antimicrobien à structure stabilisée par des ponts disulfure. Il perméabilise les membranes fongiques et bactériennes. Son expression est induite par la voie jasmonate/éthylène. Actif contre Botrytis cinerea, Alternaria et Fusarium.", "wrky30": "WRKY30 (WRKYGQK) est un facteur de transcription dont le domaine WRKY se lie aux boîtes W dans les promoteurs des gènes de défense. Il orchestre la réponse aux ROS (espèces réactives de l'oxygène) et active les gènes de défense systémique.", "flg22": "Flg22 (QRLSTGSRINSAKDDAAGLQIA) est un fragment de flagelline bactérienne reconnu par le récepteur FLS2 des plantes. Cette reconnaissance déclenche la PTI (Pattern-Triggered Immunity) : cascade de phosphorylation, production de ROS et expression des gènes PR.", "csa": "CsaMLO (MGKDKLHEF) confère une résistance durable à l'oïdium (Podosphaera xanthii) chez le concombre. Les mutations perte-de-fonction de MLO donnent une résistance à large spectre utilisée depuis 50 ans en agriculture.", "t_pr1": "PR-1 de la tomate (NQYRGVPSAGAKIDYR) joue le même rôle central dans la résistance systémique. Chez la tomate, son induction marque l'activation de la SAR après infection par Cladosporium, Phytophthora ou Botrytis. Il est synergique avec la systemine.", "t_rcr3": "Rcr3 (GHGSCWAFSAVANQ) est une protéase à cystéine sécrétée dans l'apoplasme, cible de l'effecteur Avr2 de Cladosporium fulvum. Le champignon inhibe Rcr3, mais la plante utilise ce complexe comme appât pour déclencher l'hypersensibilité. Un piège moléculaire élégant.", "t_pto": "Pto (MGKKSSSEGKL) est une kinase qui reconnaît l'effecteur AvrPto de Pseudomonas syringae pv. tomato. La liaison Pto-AvrPto déclenche la réponse hypersensible (HR) : mort cellulaire programmée locale qui stoppe l'infection.", "t_i3": "L'Inhibiteur de Protéase II (RCLSYPGPCHRDDMC) inhibe les protéases digestives des insectes herbivores (trypsine, chymotrypsine). Ses ponts disulfure (Cys-Cys) lui confèrent une résistance à la digestion. Il inhibe aussi certaines protéases fongiques.", "t_ver": "VER2 (DGYSHFHPLG) est impliqué dans la résistance à Verticillium dahliae — le champignon vasculaire responsable de la verticilliose. C'est une lectine de type Jacaline qui reconnaît les structures glycaniques du champignon.", "t_syst": "La Systemine de tomate (AVQSKPPSKRDPPKMQTD) est la première hormone peptidique végétale découverte par Clarence Ryan en 1991. Elle circule dans le phloème pour déclencher la synthèse d'acide jasmonique dans toute la plante après une blessure par insectes.", "t_lox": "LOX (MAPSNKL) catalyse la première étape de la voie de l'acide jasmonique — la peroxydation des acides gras. La jasmonine active la résistance aux insectes et aux champignons. LOX produit aussi des composés volatils qui alertent les plantes voisines.", "t_cf9": "Cf-9 (CGFQCENFP) est un récepteur LRR qui reconnaît l'effecteur Avr9 de Cladosporium fulvum. La liaison Cf-9/Avr9 déclenche une réponse hypersensible très rapide : les cellules infectées meurent en quelques heures, stoppant le champignon.", "endorphin": "La β-Endorphine (YGGFMTSEKSQTPLVT) est l'opioïde endogène le plus puissant — 18 à 33 fois plus actif que la morphine. Elle est libérée lors de l'effort physique intense (runner's high), du rire, des orgasmes et de la musique. Elle se lie aux récepteurs μ-opioïdes et provoque euphorie, analgésie profonde et sentiment de bien-être. Sa séquence commence par Tyr-Gly-Gly-Phe (YGGF) — le tétrapeptide commun à toutes les endorphines. Ton déficit sérotoninergique est compensé par cette voie opioïde parallèle.", "ananda": "L'Anandamide (du sanskrit 'ananda' = joie suprême) est l'endocannabinoïde endogène principal — le ligand naturel des récepteurs CB1 du cerveau. La séquence GKVITAFYNRPEDIS correspond au site actif de la FAAH, l'enzyme qui dégrade l'anandamide. En ciblant FAAH, on augmente les niveaux d'anandamide endogène : sérénité, réduction de l'anxiété et effet anti-douleur.", "galanin": "La Galanine (GWTLNSAGYLLGPHAVGNHRSFSDKHGLT) est un neuropeptide de 29 acides aminés co-libéré avec la noradrénaline et la sérotonine dans le locus coeruleus. Elle module l'anxiété, la dépression et la douleur via les récepteurs GalR1-R3. Elle potentialise l'action de la sérotonine résiduelle — très pertinent avec ton SEROT à 40%.", "vip": "Le VIP (Vasoactive Intestinal Peptide, HSDAVFTDNYTRLRKQMAVKKYLNSILN) est un neuropeptide aux propriétés anti-dépressives et neuroprotectrices. Il stimule la neurogenèse hippocampique, réduit la neuroinflammation, régule le cycle circadien et module l'axe HPA (cortisol). Il est déficient dans la dépression majeure.", "subp": "La Substance P (RPKPQQFFGLM) transmet les signaux de douleur physique ET émotionnelle via le récepteur NK1 (Neurokinin 1). Elle est libérée lors des états dépressifs et anxieux. Les antagonistes NK1 (aprépitant) sont utilisés comme antidépresseurs. Cette protéodie encode la séquence native pour moduler la voie NK1.", "cryaa": "αA-Crystallin (CRYAA) est la protéine chaperon moléculaire majeure du cristallin. Son domaine α-crystallin (MDIAIHHPWIRRPFFPFHSP) stabilise les autres crystallins et empêche leur agrégation — le mécanisme principal de la cataracte. C'est une small Heat Shock Protein (sHSP) qui maintient la transparence du cristallin en corrigeant les repliements protéiques aberrants. Ses niveaux diminuent avec l'âge, provoquant l'opacification progressive. Les mutations de CRYAA causent des cataractes congénitales.", "cryab": "αB-Crystallin (CRYAB) est une Heat Shock Protein 20 (HSP20) hautement exprimée dans le cristallin et le muscle cardiaque. Son domaine actif HEERQDEHGFISR prévient l'agrégation des protéines mal repliées lors du stress oxydatif. Elle est surexprimée en réponse au stress UV, thermique et osmotique. αB-Crystallin protège contre la cataracte liée à l'âge, au diabète et aux UV. Elle a aussi un rôle anti-apoptotique dans la rétine.", "crygd": "γD-Crystallin (CRYGD) est une protéine structurelle compacte qui représente 30% des protéines du cristallin. Son motif GCEWQFSC forme un domaine Greek key très stable. Contrairement aux α-crystallins, γD est une protéine purement structurelle sans activité chaperon. Ses mutations causent des cataractes congénitales sévères. Avec l'âge, les rayons UV provoquent des photolésions qui la rendent insoluble, formant des agrégats opaques.", "gpx": "Glutathion Peroxydase (GPX1) est l'enzyme antioxydante majeure du cristallin. Son domaine catalytique WNFEKFLVGP contient un résidu sélénocystéine qui réduit le peroxyde d'hydrogène (H₂O₂) en eau, protégeant les crystallins de l'oxydation. Le cristallin est exposé à un stress oxydatif intense via les UV et la lumière bleue. La diminution de GPX avec l'âge est un facteur majeur de cataracte. Le glutathion réduit (GSH) est son cofacteur essentiel.", "lano": "Lanosterol Synthase catalyse la production de lanosterol, un stérol qui réduit l'agrégation des crystallins. En 2015, une découverte majeure a montré que le lanosterol solubilise les agrégats de crystallins in vitro et in vivo, renversant partiellement les cataractes chez le chien et le lapin. Le domaine actif DCTAEAMK stabilise la conformation native des crystallins. Des essais cliniques humains sont en cours pour des collyres au lanosterol comme alternative à la chirurgie.", "sod": "Superoxyde Dismutase 1 (SOD1) est l'enzyme antioxydante cytosolique qui convertit le radical superoxyde (O₂⁻) en peroxyde d'hydrogène (H₂O₂), lui-même réduit par GPX. Son domaine actif HVGDLGNVTADKDGVADVSIED contient un site de liaison Cu/Zn. SOD1 protège la rétine et le cristallin contre le stress oxydatif causé par la lumière, particulièrement la lumière bleue (400-500nm). Ses niveaux diminuent avec l'âge, augmentant le risque de DMLA et de cataracte.", "inmt": "INMT (Indoléthylamine N-Méthyltransférase) est l'enzyme qui synthétise le DMT (N,N-Diméthyltryptamine) endogène dans le cerveau humain, particulièrement dans la glande pinéale. Son domaine catalytique LDVGCGTGLLASFL méthyle la tryptamine pour produire du DMT. Le DMT endogène est libéré lors du sommeil paradoxal, des expériences de mort imminente et possiblement à la naissance et à la mort. Surnommé 'la molécule de l'esprit' par Rick Strassman, le DMT induit des états de conscience non-ordinaires profonds, des visions géométriques complexes et des expériences mystiques. INMT est aussi exprimée dans les poumons, le foie et le sang.", "5ht2a": "Le récepteur 5-HT2A est le récepteur sérotoninergique principal des états modifiés de conscience induits par les psychédéliques classiques : DMT, psilocybine, LSD, mescaline. Son domaine intracellulaire KHSRRNYH active la voie Gq/phospholipase C, augmentant la plasticité neuronale et la connectivité inter-régionale. L'activation de 5-HT2A dans le cortex préfrontal et le thalamus provoque la dissolution de l'ego (ego death), les hallucinations visuelles géométriques et l'expansion de conscience. Des études récentes montrent que les psychédéliques réorganisent les réseaux neuronaux pour traiter la dépression résistante et le PTSD.",
+"hib_hsp70": "HSP70 (Heat Shock Protein 70, 641 aa) est LA protéine chaperon majeure de protection contre le stress thermique — le bouclier moléculaire universel des cellules soumises à la chaleur extrême. Quand la température monte au-delà de 35-40°C (canicule), les protéines cellulaires commencent à se dénaturer (perdre leur structure 3D) et à former des AGRÉGATS TOXIQUES. HSP70 reconnaît les protéines mal repliées exposant des régions hydrophobes et les stabilise ou les replie correctement en utilisant l'énergie de l'ATP. Dans l'hibiscus soumis à la canicule, HSP70 protège les enzymes de la photosynthèse (Rubisco, ATP synthase), les protéines membranaires et les facteurs de transcription contre la dénaturation thermique. Les plantes résistantes à la chaleur surexpriment constitutivement HSP70. Son domaine de liaison aux substrats (résidus 386-540) reconnaît les séquences hydrophobes riches en leucine exposées lors du dépliement. HSP70 travaille en synergie avec HSP40 (co-chaperon) et HSP90. L'expression d'HSP70 est induite par le facteur de transcription HSF (Heat Shock Factor) qui détecte l'accumulation de protéines dénaturées. Cette protéodie encode HSP70 complète d'Arabidopsis — le gardien protéique qui maintient les cellules vivantes à 40°C+.",
+"hib_pip": "PIP (Plasma membrane Intrinsic Protein, 286 aa) est une aquaporine majeure de la membrane plasmique végétale — le canal à eau haute capacité qui régule l'hydratation cellulaire. Les aquaporines sont des canaux transmembranaires qui forment des tétramères, chaque monomère créant un pore sélectif pour l'eau. Les deux motifs NPA (Asn-Pro-Ala) caractéristiques aux résidus 76 et 192 forment le filtre de sélectivité qui laisse passer UNIQUEMENT les molécules d'eau (3 milliards de molécules H₂O par seconde par canal) tout en bloquant les protons H⁺. Dans l'hibiscus en canicule, l'évapotranspiration explose (perte d'eau par les stomates et la cuticule), créant un déficit hydrique MASSIF. Les PIP permettent aux cellules racinaires d'absorber l'eau du sol et aux cellules foliaires de maintenir leur turgescence (pression interne qui garde les feuilles rigides). La régulation des PIP est critique : en stress hydrique, elles sont partiellement internalisées pour limiter les fuites, mais une expression constitutive élevée améliore la résistance à la sécheresse. Les PIP sont phosphorylées sur des sérines C-terminales, modulant leur activité et leur trafficking membranaire. Cette protéodie encode PIP2;1 d'Arabidopsis — le canal qui maintient l'hydratation vitale pendant la canicule.",
+"hib_apx": "APX (Ascorbate Peroxidase, 250 aa) est l'enzyme antioxydante MAJEURE du chloroplaste végétal — le détoxificateur de peroxyde d'hydrogène (H₂O₂) qui explose lors du stress thermique. La chaleur perturbe la chaîne de transport d'électrons photosynthétique dans le thylakoïde, provoquant une FUITE d'électrons vers l'oxygène moléculaire (O₂) → production massive de radicaux superoxydes (O₂⁻) convertis par la SOD en H₂O₂. Si le H₂O₂ n'est pas détoxifié, il oxyde les lipides membranaires (peroxydation lipidique), détruit la chlorophylle, inactive les enzymes et provoque la mort cellulaire. APX catalyse la réduction du H₂O₂ en eau en utilisant l'ascorbate (vitamine C) comme donneur d'électrons : H₂O₂ + 2 ascorbate → 2 H₂O + 2 monodehydroascorbate. L'ascorbate oxydé est régénéré par la voie ascorbate-glutathion. APX a une affinité pour le H₂O₂ 1000 fois supérieure à la catalase, ce qui la rend idéale pour éliminer les faibles concentrations toxiques dans le chloroplaste. L'hibiscus en canicule avec APX déficiente développe des nécroses foliaires brunes (mort cellulaire oxydative). Cette protéodie encode APX chloroplastique d'Arabidopsis — le neutraliseur de radicaux libres qui sauve les feuilles.",
+"hib_sod": "SOD (Superoxide Dismutase, 152 aa) est l'enzyme antioxydante de première ligne qui convertit les radicaux superoxydes (O₂⁻) — extrêmement toxiques — en peroxyde d'hydrogène (H₂O₂) moins réactif, ensuite détoxifié par APX et CAT : 2 O₂⁻ + 2 H⁺ → H₂O₂ + O₂. Dans le chloroplaste exposé à la chaleur intense, la chaîne photosynthétique sature et les électrons excédentaires réduisent l'O₂ en O₂⁻ au niveau du Photosystème I. Le superoxyde attaque DIRECTEMENT la chlorophylle, la transformant en phéophytine (pigment brun) — c'est le mécanisme du blanchiment foliaire (leaf bleaching) observé lors des vagues de chaleur. SOD contient un cofacteur Cu/Zn (SOD1 cytosolique et chloroplastique) ou Mn (SOD2 mitochondriale) ou Fe (SOD3 chloroplastique) au site actif qui catalyse la dismutation par cycles redox. Les plantes transgéniques surexprimant SOD montrent une résistance accrue aux stress thermique, hydrique et photoxydatif. La séquence encode le domaine catalytique avec le site de liaison Cu/Zn caractéristique (His-X-His). Cette protéodie encode Cu/Zn-SOD chloroplastique — le protecteur de chlorophylle qui garde les feuilles vertes pendant la canicule.",
+"hib_aba": "ABA Receptor PYL/RCAR (Pyrabactin Resistance-Like/Regulatory Components of ABA Receptor, 182 aa) est LE récepteur de l'acide abscissique (ABA) — l'hormone de stress hydrique qui ferme les stomates pour économiser l'eau. Lors de la canicule, l'hibiscus perd de l'eau massivement par transpiration stomatique. L'ABA s'accumule en réponse au déficit hydrique et se lie aux récepteurs PYL dans les cellules de garde stomatiques. La liaison ABA-PYL inactive les phosphatases PP2C, libérant les kinases SnRK2 qui phosphorylent les canaux ioniques SLAC1/SLAH (efflux d'anions Cl⁻ et malate²⁻) et KAT1 (influx K⁺). Résultat : les cellules de garde perdent des solutés, l'eau suit par osmose, elles se dégonflent et le stomate SE FERME. Fermeture stomatique = arrêt de la transpiration = conservation de l'eau. Le compromis : photosynthèse ralentie car moins de CO₂ entre. L'hibiscus en canicule doit équilibrer survie hydrique (stomates fermés) et production d'énergie (stomates ouverts). Les variétés résistantes à la sécheresse ont une sensibilité accrue à l'ABA. Cette protéodie encode PYL8 d'Arabidopsis — le récepteur qui commande la fermeture d'urgence des stomates.",
+"hib_hsp90": "HSP90 (Heat Shock Protein 90, 694 aa) est le chaperon moléculaire qui stabilise et replie les PROTÉINES RÉGULATRICES clés lors du stress thermique — kinases, facteurs de transcription, récepteurs hormonaux. Contrairement à HSP70 qui agit sur les protéines en cours de synthèse ou gravement dénaturées, HSP90 cible des protéines DÉJÀ REPLIÉES mais thermolabiles qui nécessitent une stabilisation conformationnelle fine. HSP90 fonctionne comme une pince moléculaire alimentée par l'ATP : elle enserre la protéine cliente, utilise l'hydrolyse de l'ATP pour induire des changements conformationnels qui stabilisent ou modifient la structure de la protéine, puis la relâche. Parmi ses clients végétaux : les récepteurs d'auxine, de brassinostéroïdes et de salicylate, les kinases de signalisation du stress (MPK), et les facteurs de transcription HSF eux-mêmes. HSP90 travaille avec des co-chaperons (HOP, p23, immunophilines) pour cibler spécifiquement certaines protéines. L'inhibition d'HSP90 (par la geldanamycine) provoque une hypersensibilité à la chaleur. En canicule, HSP90 maintient actifs les systèmes de signalisation hormonale et de réponse au stress qui orchestrent la survie cellulaire. Cette protéodie encode HSP90.1 cytosolique d'Arabidopsis — le stabilisateur de voies de signalisation vitales.",
+"hib_cat": "Catalase (CAT, 492 aa) est l'enzyme antioxydante ULTRA-RAPIDE qui détoxifie le peroxyde d'hydrogène (H₂O₂) produit massivement lors du stress oxydatif thermique : 2 H₂O₂ → 2 H₂O + O₂. La catalase a le turnover catalytique le PLUS ÉLEVÉ de toutes les enzymes connues : 40 MILLIONS de molécules de H₂O₂ décomposées par seconde par molécule de catalase. Son site actif contient un hème avec Fe³⁺ qui subit des cycles redox pour cliver le H₂O₂. Contrairement à APX (haute affinité, faibles concentrations de H₂O₂ dans le chloroplaste), CAT a une affinité faible mais une capacité énorme — elle détoxifie les FORTES concentrations de H₂O₂ dans les peroxysomes et le cytosol. Les peroxysomes végétaux produisent du H₂O₂ via la β-oxydation des acides gras, la photorespiration (glycolate oxidase) et le métabolisme des purines. En canicule, la photorespiration EXPLOSE (la Rubisco fixe O₂ au lieu de CO₂ quand les stomates se ferment) → H₂O₂ peroxysomal massif. Sans CAT fonctionnelle, l'hibiscus développe des nécroses foliaires, un nanisme et une stérilité. Les plantes CAT-déficientes sont hypersensibles au stress lumineux et thermique. Cette protéodie encode CAT3 peroxysomale d'Arabidopsis — le détoxificateur ultra-rapide qui nettoie le peroxyde de la photorespiration.",
+"hib_dreb": "DREB2A (Dehydration Responsive Element Binding protein 2A, 335 aa) est LE facteur de transcription maître qui active les gènes de résistance à la sécheresse ET à la chaleur — le chef d'orchestre moléculaire de la survie en canicule. DREB2A appartient à la famille AP2/ERF (APETALA2/Ethylene Response Factor) et contient un domaine de liaison à l'ADN AP2 qui reconnaît les éléments cis DRE/CRT (Dehydration-Responsive Element/C-Repeat) dans les promoteurs de centaines de gènes. Quand l'hibiscus subit la canicule (stress hydrique + thermique combiné), DREB2A est activé par phosphorylation et transloqué au noyau où il active : (1) les gènes de protection osmotique (LEA, déhydrines qui stabilisent les membranes), (2) les gènes de biosynthèse d'osmoprotecteurs (proline, glycine bétaïne, tréhalose), (3) les HSP, (4) les enzymes antioxydantes (SOD, APX), (5) les aquaporines. La surexpression de DREB2A confère une tolérance spectaculaire à la sécheresse et à la chaleur dans le riz, le blé et Arabidopsis. DREB2A est lui-même régulé post-traductionnellement : une région centrale (aa 136-165) le cible pour dégradation en conditions normales, mais en stress elle est clivée, stabilisant DREB2A. Cette protéodie encode DREB2A complet d'Arabidopsis — le maître-régulateur qui active 200+ gènes de survie en canicule.",
 "ngf": "NGF (Nerve Growth Factor, 120 aa) est LE facteur neurotrophique qui régénère les fibres nerveuses lésées. Découvert en 1951 par Rita Levi-Montalcini (Prix Nobel 1986), NGF est essentiel à la survie, la croissance et la différenciation des neurones périphériques sensoriels et sympathiques. Dans les douleurs de DÉSAFFÉRENTATION — causées par amputation, avulsion du plexus brachial, lésion médullaire ou neuropathie périphérique sévère — les neurones afférents sont endommagés ou détruits, créant un silence sensoriel que le SNC interprète comme douleur fantôme. NGF se lie au récepteur TrkA et active les voies PI3K/Akt et MAPK/ERK, stimulant la repousse axonale, la remyélinisation et la restauration de la connectivité sensorielle. Paradoxalement, NGF peut AUSSI sensibiliser les nocicepteurs dans la douleur inflammatoire — mais dans la désafférentation, son action régénératrice est bénéfique. Cette séquence de 120 aa encode le domaine mature de NGF humain — le facteur de croissance qui reconnecte les nerfs coupés.",
 "bdnf_pain": "BDNF (Brain-Derived Neurotrophic Factor, séquence complète mature 119 aa) joue un rôle COMPLEXE dans la douleur neuropathique. Dans la moelle épinière, l'hyperactivité de BDNF dans les neurones afférents après lésion nerveuse provoque une SENSIBILISATION CENTRALE — le phénomène où le système nerveux central amplifie les signaux douloureux (hyperalgésie) et transforme des stimuli normaux en douleur (allodynie). MAIS dans le cerveau, BDNF a l'effet INVERSE : il restaure les circuits inhibiteurs descendants du cortex préfrontal et du tronc cérébral qui normalement FREINENT la douleur. La désafférentation provoque une perte de BDNF cortical, réduisant le contrôle inhibiteur top-down. Cette protéodie cible spécifiquement le BDNF cortical pour restaurer la modulation descendante de la douleur. Le BDNF se lie au récepteur TrkB et active les voies de plasticité synaptique qui reconstruisent les circuits de contrôle de la douleur. Cette séquence de 119 aa encode BDNF humain complet — le sculpteur de circuits anti-douleur.",
 "nav17_block": "ProTx-II (Protoxin-II, 30 aa) est un peptide de venin d'araignée tarentule (Thrixopelma pruriens) qui bloque SÉLECTIVEMENT le canal Nav1.7 — le canal sodique voltage-dépendant responsable de la transmission de la DOULEUR NEUROPATHIQUE. Nav1.7 est exprimé dans les nocicepteurs (neurones de la douleur) du ganglion de la racine dorsale et déclenche les potentiels d'action qui propagent les signaux douloureux vers la moelle épinière. Les mutations gain-de-fonction de Nav1.7 causent l'érythromélalgie (douleur brûlante extrême) et le syndrome de douleur extrême paroxystique. Les mutations perte-de-fonction causent l'INSENSIBILITÉ CONGÉNITALE À LA DOULEUR (CIP) — les patients ne ressentent JAMAIS de douleur. ProTx-II se lie au domaine voltage-sensor DII du canal Nav1.7 et bloque son ouverture, empêchant l'influx de sodium et la génération de potentiels d'action nociceptifs. Contrairement aux anesthésiques locaux qui bloquent TOUS les canaux sodiques (engourdissement), ProTx-II cible uniquement Nav1.7 → analgésie pure sans perte sensorielle. Cette séquence de 30 aa stabilisée par 3 ponts disulfure encode ProTx-II complet — le bloqueur sélectif de la douleur neuropathique.",
@@ -436,19 +481,36 @@ const DESCRIPTIONS={
 "il31ra_block": "IL-31RA (Récepteur Alpha de l'Interleukine-31, 13 aa du domaine extracellulaire) est le récepteur de l'IL-31 — LA cytokine majeure du prurit chronique et des réactions allergiques aux piqûres d'insectes. Découverte en 2004, l'IL-31 est sécrétée principalement par les lymphocytes Th2 lors des réactions allergiques et se lie à un complexe hétérodimérique IL-31RA + OSMR (Oncostatin M Receptor) exprimé sur les neurones sensoriels pruriceptifs et les kératinocytes. Les piqûres de moustiques et d'autres insectes déclenchent une réponse immunitaire Th2 avec libération massive d'IL-31, créant des démangeaisons INTENSES et prolongées qui persistent bien après que l'histamine initiale ait été métabolisée — c'est pourquoi les antihistaminiques sont souvent inefficaces pour les piqûres qui démangent pendant des jours. Le domaine WSEWSPAAVQCCR encode une région du domaine extracellulaire D2 du récepteur IL-31RA qui est essentielle à la liaison de l'IL-31. En ciblant ce domaine, on bloque l'interaction IL-31/IL-31RA et on COUPE la voie du prurit inflammatoire chronique. Le nemolizumab, un anticorps monoclonal anti-IL-31RA, est en essais cliniques phase 3 pour la dermatite atopique et montre une réduction spectaculaire du prurit. Cette protéodie encode le fragment peptidique bloqueur d'IL-31RA — l'extincteur du feu des démangeaisons prolongées de piqûres.",
 "par2_antag": "PAR2 (Protease-Activated Receptor 2, hexapeptide SLIGKV) est un récepteur couplé aux protéines G activé par les protéases — notamment la trypsine et les protéases injectées par les insectes lors des piqûres. Contrairement aux récepteurs classiques qui se lient à des ligands, PAR2 est activé par CLIVAGE protéolytique : la protéase coupe la région N-terminale du récepteur, exposant un nouveau N-terminus (SLIGKV chez l'humain) qui se replie et s'auto-active en se liant au deuxième domaine extracellulaire — mécanisme d'activation irréversible unique. Les moustiques, abeilles, guêpes et autres insectes injectent des protéases (comme les kallicréines) dans leur salive qui activent massivement PAR2 sur les neurones pruriceptifs cutanés. L'activation de PAR2 déclenche une cascade inflammatoire et pruritogène PUISSANTE : libération de tryptase des mastocytes (qui active encore plus de PAR2), production de cytokines pro-inflammatoires (IL-6, IL-8, TNF-α) et sensibilisation des fibres C. PAR2 est aussi impliqué dans le prurit chronique de la dermatite atopique, du psoriasis et de l'urticaire. Le peptide SLIGKV est le 'tethered ligand' — le ligand attaché qui active normalement le récepteur. En l'utilisant comme antagoniste compétitif, on BLOQUE l'activation de PAR2 même en présence de protéases. Cette séquence de 6 aa encode le fragment antagoniste de PAR2 — le bouclier contre le prurit inflammatoire des piqûres.",
 "trpv1_mod": "TRPV1 (Transient Receptor Potential Vanilloid 1, domaine transmembranaire 16 aa) est le canal ionique de la BRÛLURE et des DÉMANGEAISONS — le récepteur de la capsaïcine (piment), de la chaleur (>43°C) et des signaux pruritogènes. Exprimé sur les fibres C nociceptives et pruriceptives, TRPV1 est LA porte d'entrée finale du calcium qui génère les potentiels d'action de démangeaison et de douleur brûlante. Lors des piqûres d'insectes, l'histamine et l'IL-31 activent les récepteurs H1R et IL-31RA qui, via la phospholipase C et la protéine kinase C (PKC), PHOSPHORYLENT et SENSIBILISENT TRPV1 — abaissant son seuil d'activation et transformant la chaleur corporelle normale (37°C) en sensation de brûlure. C'est pourquoi les piqûres démangent PLUS quand il fait chaud ou après une douche chaude. La séquence AAVALLPAVLLALLAP correspond à une région du segment transmembranaire S5-S6 qui forme le filtre de sélectivité du pore du canal TRPV1. Cette région est riche en résidus hydrophobes (Ala, Leu, Val, Pro) qui s'insèrent dans la bicouche lipidique membranaire. Le resiniferatoxin (RTX), un ultra-agoniste de TRPV1, est utilisé cliniquement pour désensibiliser (défunctionnaliser) les neurones TRPV1+ et traiter la douleur chronique réfractaire. Cette protéodie module le domaine du pore de TRPV1 pour RÉDUIRE l'hyperexcitabilité induite par les piqûres — coupant la sensation de brûlure et de démangeaison à la source. Cette séquence de 16 aa encode le filtre de pore de TRPV1 — le modulateur qui éteint le feu des démangeaisons.",
-"tslp_block": "TSLP (Thymic Stromal Lymphopoietin, 17 aa du domaine actif) est LA cytokine qui orchestre les réactions allergiques aux piqûres d'insectes et les démangeaisons intenses qui en résultent. Sécrétée par les kératinocytes cutanés en réponse aux protéases et peptides injectés par les moustiques, abeilles et autres insectes, TSLP active massivement les cellules dendritiques qui migrent vers les ganglions lymphatiques et polarisent les lymphocytes T naïfs en Th2 — le phénotype allergique. Cette cascade Th2 provoque la libération d'IL-4, IL-5, IL-13 et surtout IL-31 (la cytokine du prurit). TSLP active AUSSI directement les neurones sensoriels pruriceptifs via le récepteur TSLPR — déclenchant des démangeaisons INDÉPENDANTES de l'histamine (c'est pourquoi les antihistaminiques sont souvent inefficaces). Le domaine KCMGLNTDKQAFEEVLG correspond à une région de l'hélice C de TSLP humain mature qui est essentielle à la liaison au récepteur TSLPR. Les individus hypersensibles aux piqûres (skeeter syndrome, réactions papuleuses aux moustiques) ont des niveaux de TSLP TRÈS élevés. Le tezepelumab, un anticorps monoclonal anti-TSLP, est approuvé pour l'asthme sévère et montre une réduction spectaculaire des réactions allergiques. En ciblant TSLP avec cette protéodie, on COUPE la cascade allergique à sa SOURCE — avant même la production d'IL-31 et la sensibilisation Th2. Cette séquence de 17 aa encode le domaine de liaison de TSLP — le coupe-circuit des allergies de piqûres d'insectes."};
+"tslp_block": "TSLP (Thymic Stromal Lymphopoietin, 17 aa du domaine actif) est LA cytokine qui orchestre les réactions allergiques aux piqûres d'insectes et les démangeaisons intenses qui en résultent. Sécrétée par les kératinocytes cutanés en réponse aux protéases et peptides injectés par les moustiques, abeilles et autres insectes, TSLP active massivement les cellules dendritiques qui migrent vers les ganglions lymphatiques et polarisent les lymphocytes T naïfs en Th2 — le phénotype allergique. Cette cascade Th2 provoque la libération d'IL-4, IL-5, IL-13 et surtout IL-31 (la cytokine du prurit). TSLP active AUSSI directement les neurones sensoriels pruriceptifs via le récepteur TSLPR — déclenchant des démangeaisons INDÉPENDANTES de l'histamine (c'est pourquoi les antihistaminiques sont souvent inefficaces). Le domaine KCMGLNTDKQAFEEVLG correspond à une région de l'hélice C de TSLP humain mature qui est essentielle à la liaison au récepteur TSLPR. Les individus hypersensibles aux piqûres (skeeter syndrome, réactions papuleuses aux moustiques) ont des niveaux de TSLP TRÈS élevés. Le tezepelumab, un anticorps monoclonal anti-TSLP, est approuvé pour l'asthme sévère et montre une réduction spectaculaire des réactions allergiques. En ciblant TSLP avec cette protéodie, on COUPE la cascade allergique à sa SOURCE — avant même la production d'IL-31 et la sensibilisation Th2. Cette séquence de 17 aa encode le domaine de liaison de TSLP — le coupe-circuit des allergies de piqûres d'insectes.",
+"romk": "ROMK (Renal Outer Medullary Potassium Channel, 391 aa) est LE canal potassique majeur du tubule collecteur cortical rénal — le principal responsable de l'EXCRÉTION du potassium en excès dans l'urine. Dans l'hyperkaliémie (K+ sanguin >5.5 mM), dangereuse pour le cœur (risque d'arythmies mortelles), ROMK est le canal qui SAUVE la vie en évacuant le potassium excédentaire. ROMK appartient à la famille des canaux K+ à rectification entrante (Kir1.1) et forme des tétramères dans la membrane apicale des cellules principales du tubule collecteur. Il est constitutivement actif et permet au K+ de sortir passivement de la cellule vers la lumière tubulaire (future urine) selon son gradient électrochimique. L'activité de ROMK est régulée par l'aldostérone (hormone qui augmente l'excrétion de K+), le pH (acidose l'inhibe), et la concentration intracellulaire de K+. Les mutations perte-de-fonction de ROMK causent le syndrome de Bartter type 2 — hypokaliémie sévère, alcalose métabolique et perte de sel. À l'inverse, les inhibiteurs pharmacologiques de ROMK sont en développement pour traiter l'hypertension et l'insuffisance cardiaque en réduisant l'excrétion de sodium (car ROMK crée un potentiel luminal négatif qui favorise la réabsorption de Na+ via ENaC). Cette protéodie encode ROMK humain complet — le canal qui évacue le potassium mortel de l'hyperkaliémie.",
+"na_k_atpase": "Na-K-ATPase (Pompe Sodium-Potassium, sous-unité α1, 1023 aa) est LA pompe ionique fondamentale de TOUTES les cellules animales — la protéine qui consomme 30% de l'énergie cellulaire totale pour maintenir les gradients Na+/K+ vitaux. Dans le rein, elle est exprimée massivement dans la membrane basolatérale (côté sang) de TOUS les segments tubulaires et orchestre la réabsorption de 99% du sodium filtré et l'excrétion contrôlée du potassium. La pompe utilise l'hydrolyse d'ATP pour transporter 3 Na+ HORS de la cellule et 2 K+ DANS la cellule contre leurs gradients — créant un milieu intracellulaire pauvre en Na+ et riche en K+. Ce gradient est ESSENTIEL pour : (1) la réabsorption de Na+ via les canaux apicaux (ENaC), (2) l'excrétion de K+ via ROMK, (3) le potentiel de membrane négatif, (4) le transport secondaire de glucose, acides aminés et autres nutriments. Dans l'insuffisance rénale chronique, l'hyperkaliémie résulte souvent d'une DÉFAILLANCE de la Na-K-ATPase tubulaire — les cellules ne peuvent plus pomper le K+ hors du sang. Les inhibiteurs de la Na-K-ATPase (digitale, ouabaïne) sont utilisés en cardiologie mais CONTRE-INDIQUÉS en hyperkaliémie car ils aggravent la situation. Cette protéodie encode la sous-unité α1 catalytique complète de la Na-K-ATPase humaine — la pompe maîtresse qui régule l'équilibre Na+/K+ rénal.",
+"enac": "ENaC (Epithelial Sodium Channel, sous-unité α, 669 aa) est LE canal sodique du tubule collecteur cortical rénal — le site final de contrôle de la réabsorption de sodium et donc de la pression artérielle ET de l'excrétion de potassium. ENaC est un hétérotrimère (αβγ) exprimé dans la membrane apicale (côté lumière tubulaire) des cellules principales, où il permet l'entrée passive de Na+ depuis l'urine vers la cellule selon le gradient créé par la Na-K-ATPase basolatérale. Cette entrée de Na+ crée un potentiel luminal NÉGATIF qui PROPULSE électriquement le K+ à travers ROMK vers l'urine — c'est le couplage électrogénique Na+/K+. L'activité d'ENaC est régulée par l'aldostérone (hormone qui augmente l'expression d'ENaC → réabsorption de Na+ et excrétion de K+), la vasopressine et l'angiotensine II. Les mutations gain-de-fonction d'ENaC causent le syndrome de Liddle — hypertension sévère avec hypokaliémie par excrétion excessive de K+. À l'inverse, les mutations perte-de-fonction causent le pseudo-hypoaldostéronisme de type 1 — perte de sel, hypotension et HYPERKALIÉMIE mortelle. Les diurétiques épargneurs de potassium (amiloride, triamtérène) bloquent ENaC et sont utilisés pour traiter l'hypokaliémie. Cette protéodie module ENaC pour optimiser le rapport Na+/K+ — réduisant l'excrétion de K+ en hypokaliémie ou l'augmentant en hyperkaliémie selon le contexte.",
+"klotho": "Klotho (1012 aa) est LA protéine anti-vieillissement rénal — nommée d'après la déesse grecque qui filait le fil de la vie. Découverte en 1997, Klotho est exprimée principalement dans le tubule distal et collecteur rénal où elle a des fonctions CRITIQUES pour la survie rénale et la longévité. Klotho existe sous deux formes : (1) transmembranaire (agit comme co-récepteur du FGF23), (2) soluble (clivée et sécrétée, agit comme hormone). La forme transmembranaire forme un complexe avec FGFR1 pour lier le FGF23 (Fibroblast Growth Factor 23) — l'hormone qui régule le phosphate et la vitamine D. Le complexe Klotho-FGFR1-FGF23 INHIBE la réabsorption de phosphate dans le tubule proximal en réduisant l'expression des co-transporteurs sodium-phosphate (NaPi-IIa, NaPi-IIc), augmentant l'excrétion urinaire de phosphate. Dans l'insuffisance rénale chronique, Klotho CHUTE dramatiquement dès les stades précoces (DFG <60), provoquant hyperphosphatémie, calcifications vasculaires et progression accélérée vers l'insuffisance terminale. La forme soluble de Klotho a des effets pléiotropiques : anti-oxydant, anti-fibrose, protection podocytaire, régulation du TRPV5 (canal calcium rénal). Les souris Klotho-knockout développent vieillissement accéléré, athérosclérose, emphysème et insuffisance rénale — phénotype complètement réversé par restauration de Klotho. La créatinine élevée reflète souvent un déficit de Klotho. Cette protéodie encode Klotho humain complet — la protéine qui régénère les reins vieillissants.",
+"podocin": "Podocine (NPHS2, 383 aa) est une protéine ESSENTIELLE du diaphragme de fente glomérulaire — la barrière de filtration ultime du rein qui empêche les protéines de fuir dans l'urine. Les podocytes sont les cellules épithéliales qui enveloppent les capillaires glomérulaires avec leurs prolongements cytoplasmiques (pédicelles). Entre les pédicelles adjacents se trouve la fente de filtration (40 nm) traversée par un diaphragme moléculaire composé de néphrine, podocine, CD2AP et autres protéines. La podocine est une protéine intégrale de membrane en forme d'épingle à cheveux qui s'insère dans les radeaux lipidiques riches en cholestérol et recrute la néphrine, formant un complexe de signalisation essentiel à l'intégrité du filtre. Les mutations de podocine causent le syndrome néphrotique stéroïdo-résistant autosomique récessif — protéinurie massive (>50 g/jour), hypoalbuminémie, œdèmes généralisés et progression rapide vers l'insuffisance rénale terminale. La protéinurie détruit progressivement les tubules rénaux (toxicité tubulaire des protéines), expliquant l'élévation de la créatinine. La podocine interagit directement avec TRPC6 (canal calcium) et régule l'homéostasie calcique podocytaire — essentielle à la dynamique du cytosquelette d'actine des pédicelles. Cette protéodie encode la podocine humaine complète — le gardien moléculaire qui scelle la barrière de filtration glomérulaire.",
+"nephrin": "Néphrine (NPHS1, 1241 aa) est LA protéine maîtresse du diaphragme de fente glomérulaire — le zipper moléculaire qui crée la barrière de filtration finale empêchant les protéines de passer dans l'urine. Néphrine est une protéine transmembranaire de type immunoglobuline avec un domaine extracellulaire massif contenant 8 domaines Ig et un domaine fibronectine de type III. Les molécules de néphrine de podocytes adjacents interagissent en trans (hétérophilie) pour former un réseau de filaments entrecroisés à travers la fente de 40 nm — créant des pores de taille précise (~4 nm) qui laissent passer l'eau, les électrolytes et les petites molécules mais BLOQUENT l'albumine (66 kDa, rayon de Stokes 3.6 nm) et les protéines plus grandes. Le domaine intracellulaire de néphrine se lie à podocine, CD2AP, actine et protéines adaptatrices de signalisation (Nck, Grb2) — transduisant des signaux mécaniques et biochimiques essentiels à la survie podocytaire. Les mutations de néphrine causent le syndrome néphrotique congénital de type finlandais — protéinurie in utero massive, accouchement prématuré, œdèmes néonataux sévères et mortalité élevée sans transplantation rénale précoce. La protéinurie glomérulaire (albuminurie) est LE marqueur précoce de dysfonction rénale — elle précède l'élévation de créatinine de plusieurs années. Cette protéodie encode néphrine humaine complète — le zipper qui scelle le filtre glomérulaire.",
+"renalase": "Rénalase (342 aa) est une flavine adénine dinucléotide (FAD)-dépendante monoamine oxydase sécrétée EXCLUSIVEMENT par le rein — d'où son nom. Découverte en 2005, la rénalase dégrade les catécholamines circulantes (adrénaline, noradrénaline, dopamine) dans le sang, agissant comme un régulateur endocrinien systémique du tonus sympathique. Mais son rôle RÉNAL est encore plus fascinant : la rénalase protège les tubules rénaux contre le stress oxydatif, l'ischémie et la toxicité des catécholamines locales. Dans l'insuffisance rénale chronique, les niveaux de rénalase CHUTENT drastiquement, provoquant une accumulation de catécholamines qui (1) augmentent la pression artérielle (→ aggravation de l'IRC), (2) induisent un stress oxydatif tubulaire (→ fibrose interstitielle), (3) stimulent le système rénine-angiotensine (→ protéinurie). Les patients dialysés ont des niveaux de rénalase effondrés, expliquant partiellement leur risque cardiovasculaire massif (50% de mortalité à 5 ans). La rénalase a aussi une activité antioxydante directe indépendante de son activité enzymatique — elle régule NAD(P)H oxydase et réduit la production de superoxydes. L'administration de rénalase recombinante chez l'animal protège contre l'ischémie-reperfusion rénale, réduit la fibrose et améliore la survie. Cette protéodie encode rénalase humaine complète — l'enzyme protectrice qui détoxifie le rein du stress catécholaminergique.",
+"uromodulin": "Uromoduline (Tamm-Horsfall protein, 640 aa) est LA protéine la plus abondante de l'urine humaine normale (50-100 mg/jour) — un polymère massif (plusieurs mégadaltons) sécrété exclusivement par l'épithélium de la branche ascendante large de l'anse de Henle. L'uromoduline a des fonctions multiples ESSENTIELLES : (1) Protection contre les infections urinaires — elle se lie aux pili de type 1 d'E. coli et autres uropathogènes, les empêchant d'adhérer à l'urothélium et facilitant leur élimination par le flux urinaire. (2) Modulation de l'homéostasie des électrolytes — l'uromoduline régule l'activité du co-transporteur Na-K-2Cl (NKCC2) de la branche ascendante large, contrôlant la réabsorption de sodium, potassium et chlorure. Les mutations gain-de-fonction d'uromoduline causent une rétention de sel, hypertension et hypokaliémie. Les mutations perte-de-fonction causent une perte de sel et hyperkaliémie. (3) Protection contre la formation de calculs rénaux — l'uromoduline inhibe l'agrégation et la cristallisation de l'oxalate de calcium. (4) Immunomodulation — elle active le système du complément et module l'inflammation tubulo-interstitielle. Dans l'insuffisance rénale chronique, l'excrétion d'uromoduline est réduite, reflétant la perte de masse néphronique fonctionnelle. Les niveaux bas d'uromoduline urinaire prédisent la progression vers l'IRC terminale. Cette protéodie encode uromoduline humaine complète — le polymère protecteur qui défend les tubules rénaux.",
+"aqp3": "Aquaporine-3 (AQP3, 292 aa) est LE canal à eau et glycérol constitutif de l'épiderme — la protéine qui maintient l'hydratation cutanée. Contrairement aux autres aquaporines qui transportent uniquement l'eau, AQP3 est une aquaglycéroporine qui transporte AUSSI le glycérol, l'urée et le peroxyde d'hydrogène. AQP3 est exprimée dans la membrane plasmique des kératinocytes des couches basale et épineuse de l'épiderme. Elle permet : (1) l'afflux d'eau depuis le derme vers l'épiderme pour maintenir l'hydratation, (2) l'entrée de glycérol qui est métabolisé en lipides de la barrière cutanée (céramides, cholestérol, acides gras libres), (3) la diffusion d'urée vers la surface où elle agit comme humectant naturel du stratum corneum. Les souris AQP3-knockout développent une peau SÈCHE sévère, une réduction de 70% du glycérol épidermique, une diminution des céramides et une fonction barrière altérée. Chez l'humain, les niveaux d'AQP3 diminuent avec l'âge et dans la peau sèche/atopique. Le rétinoïde trétinoïne (acide rétinoïque topique) augmente l'expression d'AQP3. Cette séquence de 32 aa encode le domaine N-terminal et la première boucle transmembranaire contenant le premier motif NPA (Asn-Pro-Ala) signature des aquaporines. Cette protéodie active AQP3 — le canal qui hydrate la peau de l'intérieur.",
+"filaggrin": "Filaggrine (FLG, 4061 aa pour la profilaggrine, clivée en monomères de ~37 kDa) est LA protéine clé du facteur d'hydratation naturel (NMF) de la peau — le système de rétention d'eau du stratum corneum. La profilaggrine est synthétisée dans les kératinocytes granuleux et stockée dans les granules de kératohyaline. Lors de la différenciation terminale, elle est déphosphorylée et clivée en monomères de filaggrine qui agrègent les filaments de kératine en macrofibres denses, aplatissant les cellules en cornéocytes imperméables. MAIS le rôle le PLUS CRITIQUE de la filaggrine vient APRÈS : les monomères sont rapidement dégradés par des peptidases en acides aminés libres (histidine, sérine, glycine, glutamine) et dérivés (acide pyrrolidone carboxylique PCA, acide urocanique UCA) qui constituent le NMF. Le NMF est hygroscopique — il capte et retient l'eau atmosphérique dans le stratum corneum, maintenant l'hydratation cutanée et la flexibilité. Les mutations perte-de-fonction de FLG (R501X, 2282del4) causent l'ichtyose vulgaire (peau écailleuse sèche) et sont LE facteur de risque génétique majeur de la dermatite atopique (présent chez 30-50% des patients). La peau filaggrine-déficiente est SÈCHE, rugueuse, perméable aux allergènes et sujette aux infections. Cette séquence encode un motif répété riche en sérine-histidine-glutamine caractéristique de la filaggrine — le précurseur du NMF qui retient l'eau cutanée.",
+"loricrin": "Loricrine (LOR, 315 aa) est LA protéine structurelle majeure de l'enveloppe cornée — représentant 70-85% de sa masse totale. L'enveloppe cornée est une coque de protéines réticulées de 15 nm d'épaisseur qui remplace la membrane plasmique dans les cornéocytes du stratum corneum, formant une barrière IMPERMÉABLE essentielle à la prévention de la perte d'eau transépidermique (TEWL). La loricrine est synthétisée dans les kératinocytes granuleux et séquestrée dans les granules de kératohyaline. Lors de la différenciation terminale, elle est déposée sur la face interne de la membrane plasmique où la transglutaminase 1 (TGase1) la réticulé par des liaisons isopeptidiques ε-(γ-glutamyl)lysine aux protéines de l'enveloppe préformée (involucrine, petites protéines riches en proline). La séquence de loricrine est UNIQUE : 70% glycine-sérine-glutamine, formant des boucles flexibles qui se réticulé en un réseau dense et insoluble. Les souris loricrine-knockout compensent avec d'autres protéines d'enveloppe mais ont une barrière cutanée subtillement altérée. Chez l'humain, les mutations de loricrine causent l'érythrokératodermie progressive symétrique — peau sèche, hyperkératosique et érythémateuse. Cette séquence de 60 aa encode un motif riche en sérine-glutamine-glycine caractéristique de loricrine — la protéine qui imperméabilise la barrière cornée.",
+"involucrin": "Involucrine (IVL, 585 aa) est LA première protéine déposée lors de la formation de l'enveloppe cornée — le précurseur structural qui sert d'échafaudage pour le recrutement de loricrine et autres protéines. Involucrine est exprimée dans les kératinocytes suprabasaux et induite massivement par le calcium extracellulaire (le signal de différenciation épidermique). Elle est constituée de répétitions riches en glutamine-proline-lysine qui sont des substrats IDÉAUX pour la transglutaminase. Dès que le calcium intracellulaire monte (lors de la rupture de la membrane plasmique en fin de différenciation), la TGase1 et TGase3 réticulé l'involucrine à elle-même et aux protéines membranaires (SPR, loricrin, envoplakin, periplakin), formant un réseau insoluble de 12-15 nm d'épaisseur sous la membrane. Cette enveloppe protéique est ensuite liée de manière covalente aux lipides extracellulaires (céramides) par l'action de la TGase1, créant une barrière protéine-lipide IMPERMÉABLE qui empêche la perte d'eau transépidermique. Les souris involucrine-knockout ont une barrière cutanée normale (compensation par envoplakin/periplakin), mais l'involucrine reste un marqueur essentiel de la différenciation épidermique terminale. Dans la peau sèche et atopique, l'expression d'involucrine est souvent réduite. Cette séquence de 70 aa encode le domaine N-terminal et une répétition centrale riche en glutamine — l'échafaudage de l'enveloppe cornée imperméable.",
+"ceramide_synth": "Céramide Synthase (CerS, famille de 6 isoformes CerS1-6, ~350-400 aa chacune) catalyse l'étape LIMITANTE de la synthèse des céramides — les lipides sphingolipidiques qui composent 50% des lipides du stratum corneum et sont ESSENTIELS à la fonction barrière cutanée. Les céramides forment avec le cholestérol et les acides gras libres des lamelles lipidiques multicouches organisées dans l'espace intercellulaire du stratum corneum — créant un labyrinthe tortueux imperméable qui empêche la perte d'eau transépidermique (TEWL). Les CerS catalysent l'acylation N de la sphingosine (ou sphinganine) avec un acyl-CoA à chaîne longue (C14-C26) pour former les céramides. Chaque isoforme CerS a une spécificité de chaîne : CerS3 produit les céramides ultra-longues (C22-C26) spécifiques de l'épiderme, essentiels à la formation des lamelles. Les mutations de CerS3 causent l'ichtyose congénitale autosomique récessive de type 9 — peau TRÈS sèche, squameuse et TEWL massif. La peau atopique a des niveaux de céramides RÉDUITS de 30-60% — expliquant la sécheresse, la perméabilité aux allergènes et l'inflammation. Les céramides topiques (crèmes) améliorent modestement la barrière, mais stimuler la synthèse endogène est plus efficace. Cette séquence encode un domaine conservé de céramide synthase humaine — l'enzyme qui produit les lipides barrière imperméables.",
+"has2": "Hyaluronan Synthase 2 (HAS2, 552 aa) est L'ENZYME majeure qui synthétise l'acide hyaluronique (HA) de haut poids moléculaire dans le derme et l'épiderme — le glycosaminoglycane qui retient jusqu'à 1000 fois son poids en eau. HAS2 est une glycosyltransférase intégrale de membrane qui polymérise alternativement l'acide glucuronique (GlcUA) et la N-acétylglucosamine (GlcNAc) pour former des chaînes de HA de 0.5 à 2 millions de Daltons (2000-20000 disaccharides). Le HA synthétisé par HAS2 est extrudé directement dans l'espace extracellulaire où il forme un gel hygroscopique qui maintient l'hydratation dermique, la turgescence cutanée, l'élasticité et facilite la migration cellulaire lors de la cicatrisation. Le HA de haut PM (>1 MDa, produit par HAS2) est ANTI-INFLAMMATOIRE et hydratant. Le HA de bas PM (<500 kDa, produit par dégradation) est PRO-INFLAMMATOIRE et pro-angiogénique. Avec l'âge, l'activité de HAS2 CHUTE et les hyaluronidases augmentent → réduction drastique du HA dermique (peau de 80 ans a 75% moins de HA que peau de 20 ans) → sécheresse, rides, perte d'élasticité. Les injections de HA (fillers) et le HA topical (crèmes/sérums) compensent partiellement, mais l'activation endogène de HAS2 est la clé. L'acide rétinoïque, la vitamine C, l'estradiol et le TGF-β stimulent HAS2. Cette séquence encode le domaine N-terminal et la première région transmembranaire de HAS2 — l'enzyme qui produit le réservoir d'eau dermique.",
+"claudin1": "Claudine-1 (CLDN1, 211 aa) est LA protéine majeure des jonctions serrées (tight junctions) épidermiques — les sceaux moléculaires qui imperméabilisent l'espace paracellulaire entre les kératinocytes et empêchent la perte d'eau transépidermique (TEWL). Les jonctions serrées de l'épiderme forment une barrière continue dans la couche granuleuse (stratum granulosum), juste sous le stratum corneum. Claudine-1 est une protéine tétraspanine qui forme des homodimères et hétérodimères (avec claudine-4, -7, -12) créant des pores paracellulaires sélectifs de taille et charge. Dans l'épiderme, claudine-1 SCELLE l'espace intercellulaire, bloquant la diffusion d'eau, d'ions et de molécules. Les souris claudine-1-knockout meurent dans les 24h après la naissance par DÉSHYDRATATION MASSIVE — TEWL augmenté de 7 fois, incapacité totale à retenir l'eau. Chez l'humain, les mutations hypomorphiques de claudine-1 causent le syndrome néonatal sclérosant de l'ichtyose et de la cholangite (NISCH) — peau très sèche, squameuse et maladie hépatique. La claudine-1 est aussi LA porte d'entrée du virus de l'hépatite C (HCV) — paradoxalement, bloquer claudine-1 prévient l'infection HCV. Dans la dermatite atopique, l'expression de claudine-1 est RÉDUITE, augmentant la perméabilité cutanée aux allergènes. Cette séquence de 211 aa encode claudine-1 humaine complète — le sceau qui imperméabilise l'épiderme.",
+"occludin": "Occludine (OCLN, 522 aa) est une protéine transmembranaire majeure des jonctions serrées épidermiques qui régule la perméabilité paracellulaire et l'intégrité de la barrière cutanée. Occludine a 4 domaines transmembranaires, 2 boucles extracellulaires qui interagissent en trans avec l'occludine des cellules adjacentes, et un domaine C-terminal cytoplasmique qui se lie aux protéines d'échafaudage ZO-1, ZO-2, ZO-3 et au cytosquelette d'actine. L'occludine régule la taille des pores des jonctions serrées par un mécanisme dynamique : sa phosphorylation par des kinases (PKC, MAPK) augmente la perméabilité, sa déphosphorylation resserre les jonctions. Dans l'épiderme, occludine co-localise avec claudine-1 dans la couche granuleuse où elles forment la barrière paracellulaire qui empêche la perte d'eau transépidermique (TEWL). Les souris occludine-knockout ont une barrière épidermique partiellement altérée mais survivent (compensation par tricelluline et claudines), contrairement aux souris claudine-1-KO qui meurent. Mais l'occludine reste essentielle : elle régule l'homéostasie calcique épidermique, la différenciation kératinocytaire et la signalisation inflammatoire. Dans la peau atopique et psoriasique, l'expression et la localisation d'occludine sont ALTÉRÉES, contribuant à la perméabilité excessive et l'inflammation. L'occludine est aussi modulée par les conditions environnementales : l'air sec et froid RÉDUIT son expression → augmentation TEWL → peau sèche hivernale. Cette séquence de 522 aa encode occludine humaine complète — le régulateur dynamique de l'imperméabilisation paracellulaire."};
 
 
 const MASS={A:89,C:121,D:133,E:147,F:165,G:75,H:155,I:131,K:146,L:131,M:149,N:132,P:115,Q:146,R:174,S:105,T:119,V:117,W:204,Y:181};
 const ORD='ACDEFGHIKLMNPQRSTVWY';
 const NAMES={A:'Ala',C:'Cys',D:'Asp',E:'Glu',F:'Phe',G:'Gly',H:'His',I:'Ile',K:'Lys',L:'Leu',M:'Met',N:'Asn',P:'Pro',Q:'Gln',R:'Arg',S:'Ser',T:'Thr',V:'Val',W:'Trp',Y:'Tyr'};
 const SCALES={
-  fa: [53,55,57,59,60,62,64,65,67,69,71,72,74,76,77,79,81,83,84,86],
-  sib:[46,48,50,52,53,55,57,58,60,62,64,65,67,69,70,72,74,76,77,79],
-  mib:[51,53,55,57,58,60,62,63,65,67,69,70,72,74,75,77,79,81,82,84],
-  sol:[43,45,47,48,50,52,54,55,57,59,60,62,64,67,69,71,72,74,76,79],
-  la: [45,48,50,52,53,55,57,60,62,65,67,69,72,74,77,79,81,84,86,89],
-  ab: [44,46,48,49,51,53,55,56,58,60,61,63,65,67,68,70,72,73,75,77]
+  reel:[53,55,57,59,60,62,64,65,67,69,71,72,74,76,77,79,81,83,84,86], // Gamme naturelle/réelle - signature moléculaire authentique
+  fa:  [53,55,57,59,60,62,64,65,67,69,71,72,74,76,77,79,81,83,84,86], // Fa Lydien - stimulant/énergisant
+  sib: [46,48,50,52,53,55,57,58,60,62,64,65,67,69,70,72,74,76,77,79], // Sib Lydien - équilibrant
+  mib: [51,53,55,57,58,60,62,63,65,67,69,70,72,74,75,77,79,81,82,84], // Mib Lydien - calmant/inhibant
+  sol: [43,45,47,48,50,52,54,55,57,59,60,62,64,67,69,71,72,74,76,79], // Sol majeur
+  la:  [45,48,50,52,53,55,57,60,62,65,67,69,72,74,77,79,81,84,86,89], // La mineur
+  ab:  [44,46,48,49,51,53,55,56,58,60,61,63,65,67,68,70,72,73,75,77]  // Lab majeur
 };
 const NOTE_N=['La','La#','Si','Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#'];
 const COLS=['#1D9E75','#185FA5','#BA7517','#D85A30','#993556','#534AB7','#3B6D11','#639922','#E24B4A','#EF9F27'];
@@ -457,28 +519,28 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6','💉':'#E91E63'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6','💉':'#E91E63','🌺':'#FF6B9D','🫘':'#A0522D','💦':'#00CED1','🦴':'#CD853F'
 };
 const CAT_NAMES_FR={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées','💉':'Diabète'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées','💉':'Diabète','🌺':'Hibiscus Canicule','🫘':'Rénal K+/Créatinine','💦':'Peau Sèche','🦴':'Arthrose'
 };
 const CAT_NAMES_EN={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Knee',
   '😴':'Sleep','🍴':'Binge Eating','❤️':'Blood Pressure',
   '💧':'Water','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plants','🥒':'Cucumber','🍅':'Tomato','😊':'Mood',
-  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids','💉':'Diabetes'
+  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids','💉':'Diabetes','🌺':'Hibiscus Heat Wave','🫘':'Renal K+/Creatinine','💦':'Dry Skin','🦴':'Arthritis'
 };
 let CAT_NAMES=CAT_NAMES_FR;
 
 const I18N={
   fr:{
     title:'Proteodies Player',
-    subtitle:'La molé met l\'eau ! · 159 proteodies',
+    subtitle:'La molé met l\'eau ! · 167 proteodies',
     tagline:'De la molécule à la mélodie, de la séquence à la santé',
     tempo:'Tempo',
     duration:'Duree',
@@ -521,7 +583,7 @@ const I18N={
   },
   en:{
     title:'Proteodies Player',
-    subtitle:'From molecule to melody! · 159 proteodies',
+    subtitle:'From molecule to melody! · 167 proteodies',
     tagline:'From molecule to melody, from sequence to health',
     tempo:'Tempo',
     duration:'Duration',
@@ -573,20 +635,20 @@ let audioMode='stereo';
 let audioModeManuallyChanged=false;
 let scaleManuallyChanged=false;
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10,'💉':8};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10,'💉':8,'🌺':12,'🫘':6,'💦':8,'🦴':7};
 const CAT_AUDIO_MODE={
   '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo','🦟':'stereo',
   '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
   '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
-  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic','💉':'isochronic'
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic','💉':'isochronic','🌺':'isochronic','🫘':'isochronic','💦':'isochronic','🦴':'isochronic'
 };
 const CAT_DEFAULT_SCALE={
   // Mib Lydien (effet INHIBANT/CALMANT) - calmer, apaiser, relaxer
-  '😴':'mib','❤️':'mib','🦿':'mib','💪':'mib','🩹':'mib','🦟':'mib','🩸':'mib','🦻':'mib',
+  '😴':'mib','❤️':'mib','🦿':'mib','💪':'mib','🩹':'mib','🦟':'mib','🩸':'mib','🦻':'mib','🫘':'mib','🦴':'mib',
   // Sib Lydien (effet ÉQUILIBRANT) - équilibre, harmonise
   '💉':'sib',
   // Fa Lydien (effet STIMULANT/ÉNERGISANT) - activer, stimuler, régénérer
-  '🧬':'fa','🧠':'fa','🦵':'fa','🍴':'fa','💧':'fa','🏔️':'fa','🌵':'fa','🌿':'fa','🥒':'fa','🍅':'fa','😊':'fa','👁️':'fa','🌌':'fa','🫃':'fa','💚':'fa','🔥':'fa','🫒':'fa','🍇':'fa','⚡':'fa','🧪':'fa','🌸':'fa'
+  '🧬':'fa','🧠':'fa','🦵':'fa','🍴':'fa','💧':'fa','🏔️':'fa','🌵':'fa','🌿':'fa','🥒':'fa','🍅':'fa','😊':'fa','👁️':'fa','🌌':'fa','🫃':'fa','💚':'fa','🔥':'fa','🫒':'fa','🍇':'fa','⚡':'fa','🧪':'fa','🌸':'fa','🌺':'fa','💦':'fa'
 };
 
 function getA4(){return document.getElementById('diapason-chk').checked?429.62:440;}
@@ -1412,6 +1474,553 @@ if('serviceWorker' in navigator){
     },2000);
   });
 }
+
+// ==================== MIDI EXPORT + DAW TEMPLATE ====================
+
+function exportMIDITemplate(){
+  const queue=getQueue();
+  if(!queue.length){
+    alert('❌ Coche au moins une protéodie à exporter !');
+    return;
+  }
+
+  // Ask user which proteodies to export
+  const choice=confirm(`🎵 Export MIDI + DAW Template\n\n✅ ${queue.length} protéodie(s) cochée(s)\n\nExporter TOUTES les protéodies cochées ?`);
+  if(!choice)return;
+
+  // Ask user: single loop or full duration
+  const durChoice=confirm(`⏱️ Durée de l'export MIDI\n\nQuelle durée exporter ?\n\n🔁 OK = Durée personnalisée (avec répétitions)\n   → Export final prêt à l'emploi (10, 20, 30 min...)\n\n⚡ ANNULER = 1 boucle simple (~10 secondes)\n   → Test rapide du workflow Logic Pro`);
+
+  let targetDuration=0; // 0 = single loop
+  if(durChoice){
+    const durInput=prompt('⏱️ Durée cible en MINUTES\n\nEntrez la durée souhaitée pour l\'export MIDI\n(la séquence sera répétée automatiquement)\n\nExemples : 10, 15, 20, 30, 60','20');
+    if(durInput===null)return; // User cancelled
+    targetDuration=parseInt(durInput)||20;
+    if(targetDuration<1||targetDuration>120){
+      alert('❌ Durée invalide ! Doit être entre 1 et 120 minutes.');
+      return;
+    }
+  }
+
+  // Export each proteodie
+  queue.forEach(p=>{
+    exportSingleProteody(p,targetDuration);
+  });
+
+  const durationText=targetDuration>0?`${targetDuration} min`:'1 boucle';
+  alert(`✅ Export terminé !\n\n📁 ${queue.length} fichier(s) MIDI (${durationText}) + ${queue.length} template(s) générés\n\n💡 Importe les fichiers .mid dans ton DAW avec Vienna Synchron Player\n📋 Consulte les fichiers .txt pour les réglages d'effets`);
+}
+
+function exportSingleProteody(p,targetDuration=0){
+  const bpm=parseInt(document.getElementById('bpm').value)||65;
+  const a4=getA4();
+  const seq=p.seq;
+  const cat=p.cat;
+  const audioMode=CAT_AUDIO_MODE[cat]||'stereo';
+  const beatFreq=BEAT_FREQS[cat]||10;
+  const scale=getScale();
+
+  // Generate MIDI file
+  const midiData=generateMIDI(seq,bpm,a4,targetDuration);
+  const suffix=targetDuration>0?`_${targetDuration}min`:'';
+  downloadBlob(midiData,`${p.id}${suffix}.mid`,'audio/midi');
+
+  // Generate DAW template instructions
+  const template=generateDAWTemplate(p,bpm,a4,audioMode,beatFreq,targetDuration);
+  downloadBlob(new Blob([template],{type:'text/plain'}),`${p.id}${suffix}_template.txt`,'text/plain');
+}
+
+function generateMIDI(seq,bpm,a4,targetDuration=0){
+  // MIDI file format specification
+  const ppqn=480; // pulses per quarter note
+  const ticksPerBeat=ppqn;
+  const tickDuration=60000/(bpm*ppqn); // ms per tick
+
+  // Calculate number of repetitions needed
+  let numRepetitions=1;
+  if(targetDuration>0){
+    const beatDuration=60/bpm; // seconds per beat
+    let totalBeats=0;
+    for(let i=0;i<seq.length;i++){
+      totalBeats+=ticksFor(seq[i]);
+    }
+    const loopDuration=totalBeats*beatDuration; // seconds
+    const targetSeconds=targetDuration*60;
+    numRepetitions=Math.ceil(targetSeconds/loopDuration);
+  }
+
+  // Convert sequence to MIDI notes (with repetitions)
+  const notes=[];
+  let currentTick=0;
+
+  for(let rep=0;rep<numRepetitions;rep++){
+    for(let i=0;i<seq.length;i++){
+      const aa=seq[i];
+      const midi=midiFor(aa);
+      const mass=massFor(aa);
+      const velocity=Math.floor(velFor(aa)*127);
+      const duration=Math.floor(ticksFor(aa)*ticksPerBeat);
+
+      notes.push({
+        tick:currentTick,
+        midi:midi,
+        velocity:velocity,
+        duration:duration
+      });
+
+      currentTick+=duration;
+    }
+  }
+
+  // Build MIDI file (Format 0, 1 track)
+  const header=new Uint8Array([
+    0x4D,0x54,0x68,0x64, // "MThd"
+    0x00,0x00,0x00,0x06, // header length (6)
+    0x00,0x00,           // format 0
+    0x00,0x01,           // 1 track
+    (ppqn>>8)&0xFF,ppqn&0xFF // ticks per quarter note
+  ]);
+
+  // Build track
+  const trackEvents=[];
+
+  // Tempo event (microseconds per quarter note)
+  const usPerQuarter=Math.floor(60000000/bpm);
+  trackEvents.push(
+    0x00, // delta time
+    0xFF,0x51,0x03, // tempo meta event
+    (usPerQuarter>>16)&0xFF,
+    (usPerQuarter>>8)&0xFF,
+    usPerQuarter&0xFF
+  );
+
+  // Note events
+  let lastTick=0;
+  notes.forEach(note=>{
+    const deltaTick=note.tick-lastTick;
+
+    // Note On
+    trackEvents.push(...encodeVarLen(deltaTick));
+    trackEvents.push(0x90,note.midi,note.velocity); // Note On channel 0
+
+    // Note Off
+    trackEvents.push(...encodeVarLen(note.duration));
+    trackEvents.push(0x80,note.midi,0x00); // Note Off
+
+    lastTick=note.tick+note.duration;
+  });
+
+  // End of track
+  trackEvents.push(0x00,0xFF,0x2F,0x00);
+
+  const trackData=new Uint8Array(trackEvents);
+  const trackHeader=new Uint8Array([
+    0x4D,0x54,0x72,0x6B, // "MTrk"
+    (trackData.length>>24)&0xFF,
+    (trackData.length>>16)&0xFF,
+    (trackData.length>>8)&0xFF,
+    trackData.length&0xFF
+  ]);
+
+  // Combine header + track
+  const midi=new Uint8Array(header.length+trackHeader.length+trackData.length);
+  midi.set(header,0);
+  midi.set(trackHeader,header.length);
+  midi.set(trackData,header.length+trackHeader.length);
+
+  return new Blob([midi],{type:'audio/midi'});
+}
+
+function encodeVarLen(value){
+  // MIDI variable-length encoding
+  const bytes=[];
+  bytes.push(value&0x7F);
+  value>>=7;
+  while(value>0){
+    bytes.unshift((value&0x7F)|0x80);
+    value>>=7;
+  }
+  return bytes;
+}
+
+function generateDAWTemplate(p,bpm,a4,audioMode,beatFreq,targetDuration=0){
+  const catName=CAT_NAMES_FR[p.cat]||'Unknown';
+  const scaleName=document.getElementById('gamme').value;
+  const scaleLabel={
+    'reel':'Fréquence réelle (signature moléculaire)',
+    'fa':'Fa Lydien (stimulant)',
+    'sib':'Sib Lydien (équilibrant)',
+    'mib':'Mib Lydien (calmant)',
+    'sol':'Sol majeur',
+    'la':'La mineur'
+  }[scaleName]||scaleName;
+
+  // Analyze sequence for register distribution
+  const seq=p.seq;
+  let countLow=0,countMid=0,countHigh=0,countVeryLow=0;
+  const midiNotes=[];
+  for(let i=0;i<seq.length;i++){
+    const midi=midiFor(seq[i]);
+    midiNotes.push(midi);
+    if(midi<48)countVeryLow++; // Below C3 - too low for female choir
+    else if(midi<60)countLow++;
+    else if(midi<72)countMid++;
+    else countHigh++;
+  }
+  const minMidi=Math.min(...midiNotes);
+  const maxMidi=Math.max(...midiNotes);
+  const rangeSemitones=maxMidi-minMidi;
+  const hasHighNotes=countHigh>0;
+  const percentHigh=Math.round((countHigh/seq.length)*100);
+  const hasTooLowNotes=countVeryLow>0;
+  const percentTooLow=Math.round((countVeryLow/seq.length)*100);
+
+  const midiToNote=(midi)=>{
+    const notes=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    const octave=Math.floor(midi/12)-1;
+    return notes[midi%12]+octave;
+  };
+
+  let template=`╔═══════════════════════════════════════════════════════════════════╗
+║        PROTÉODIE DAW TEMPLATE - Vienna Synchron Player         ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+📋 INFORMATIONS PROTÉODIE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ID:           ${p.id}
+  Nom:          ${p.name}
+  Catégorie:    ${catName} ${p.cat}
+  Séquence:     ${p.seq}
+  Longueur:     ${p.seq.length} acides aminés
+  Description:  ${p.desc}
+
+🎵 PARAMÈTRES MUSICAUX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Tempo:        ${bpm} BPM
+  Diapason:     ${a4===429.62?'h3O2 (429.62 Hz)':'Standard (440 Hz)'}
+  Gamme:        ${scaleLabel}
+  Mode audio:   ${audioMode==='isochronic'?`Isochronic ${beatFreq} Hz`:(audioMode==='binaural'?`Binaural ${beatFreq} Hz`:'Stéréo')}
+  ${targetDuration>0?`Durée:        ${targetDuration} minutes (${Math.ceil((targetDuration*60)/(seq.length*60/bpm))} répétitions)`:'Durée:        1 boucle (test rapide)'}
+
+📊 ANALYSE DE REGISTRE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Tessiture:    ${midiToNote(minMidi)} → ${midiToNote(maxMidi)} (${rangeSemitones} demi-tons)
+  Notes <C3:    ${countVeryLow} (${percentTooLow}%) - MIDI <48 ${hasTooLowNotes?'⚠️ TROP GRAVE!':'✅'}
+  Notes graves: ${countLow} (${Math.round((countLow/seq.length)*100)}%) - MIDI 48-59
+  Notes méd.:   ${countMid} (${Math.round((countMid/seq.length)*100)}%) - MIDI 60-71
+  Notes aigues: ${countHigh} (${percentHigh}%) - MIDI ≥72
+
+  ${hasTooLowNotes?`⚠️  ALERTE TESSITURE VIENNA SYNCHRON:
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ${countVeryLow} note(s) sont en dessous de C3 (${percentTooLow}% de la séquence)
+  Les chœurs féminins Vienna ne descendent pas en dessous de C3 !
+
+  🔧 SOLUTIONS RECOMMANDÉES:
+
+  SOLUTION 1: TRANSPOSER +1 OCTAVE (Simple, garde homogénéité) ✅
+  ═══════════════════════════════════════════════════════════════
+  • Dans ton DAW: Sélectionner TOUTES les notes MIDI
+  • Transposer +12 demi-tons (1 octave plus haut)
+  • Toutes les notes seront jouables par les chœurs féminins
+  • Nouvelle tessiture: ${midiToNote(minMidi+12)} → ${midiToNote(maxMidi+12)}
+
+  SOLUTION 2: SPLIT CHŒURS MASCULINS/FÉMININS (Naturel)
+  ═══════════════════════════════════════════════════════════════
+  • Dupliquer la piste MIDI en 2 pistes:
+    - PISTE 1: Supprimer notes ≥C3 → Chœurs MASCULINS (Ténor/Basse)
+    - PISTE 2: Supprimer notes <C3 → Chœurs FÉMININS (Soprano/Alto)
+  • Vienna Choir Masculin descend jusqu'à E2 (MIDI 40)
+  • Mixage: Volume égal, léger crossfade dans la zone C3-C4
+
+  SOLUTION 3: TRANSPOSER SEULEMENT LES GRAVES
+  ═══════════════════════════════════════════════════════════════
+  • Sélectionner seulement les notes <C3 (MIDI <48)
+  • Transposer +12 demi-tons (ces notes uniquement)
+  • Garder le reste intact
+  • Peut créer des sauts d'octaves (vérifier cohérence musicale)
+
+  💡 CONSEIL: Solution 1 (transposer tout +1 octave) est la plus simple
+  et garde l'intégrité musicale de la séquence protéique.
+  `:`💡 RECOMMANDATION AUTOMATIQUE:
+  ${percentHigh>=30?'✨ LAYERING CHŒURS+FLÛTES recommandé (beaucoup de notes hautes)':
+    percentHigh>=15?'🎭 Chœurs féminins seuls ou léger layer flûtes sur aigus':
+    '🎵 Chœurs féminins seuls suffisent (peu de notes hautes)'}`}
+
+🎹 CONFIGURATION DAW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ IMPORTER LE MIDI
+   • Créer une nouvelle piste MIDI
+   • Importer le fichier: ${p.id}.mid
+   • Tempo du projet: ${bpm} BPM
+
+2️⃣ CONFIGURATION VIENNA SYNCHRON PLAYER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   🎭 APPROCHE RECOMMANDÉE: LAYERING CHŒURS + FLÛTES
+
+   📏 TESSITURES VIENNA SYNCHRON CHOIR:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   • Soprano:       C4 (MIDI 60) → C6 (MIDI 84)
+   • Alto:          G3 (MIDI 55) → G5 (MIDI 79)
+   • Ténor:         C3 (MIDI 48) → C5 (MIDI 72)
+   • Basse:         E2 (MIDI 40) → E4 (MIDI 64)
+
+   • WOMEN (Soprano+Alto):  C3 (MIDI 48) → C6 (MIDI 84) ⚠️
+   • MEN (Ténor+Basse):     E2 (MIDI 40) → C5 (MIDI 72)
+
+   OPTION A - Chœurs féminins seuls (simple, éthéré)
+   ═══════════════════════════════════════════════════
+   • Vienna Synchron Choir: Soprano + Alto (Women)
+   ${hasTooLowNotes?'  ⚠️  ATTENTION: Notes trop graves détectées! Voir solutions ci-dessus.':'  ✅  Tessiture compatible'}
+   • Articulation: Ah ou Oh (voyelles douces)
+   • Vibrato: Medium
+   • Preset: "Women Soft" ou "Female Ensemble"
+
+   ${hasTooLowNotes?`OPTION B - Split Chœurs Masculins/Féminins (RECOMMANDÉ pour cette protéodie) ⭐
+   ═══════════════════════════════════════════════════
+   ${countVeryLow} notes trop graves pour chœurs féminins → Solution automatique:
+
+   📍 PISTE 1: Chœurs MASCULINS (notes graves <C3)
+      • Vienna Synchron Choir: Tenor + Bass (Men)
+      • Filtrer MIDI: Garder seulement notes <48 (${countVeryLow} notes)
+      • Articulation: "Oh sustained" (chaleur masculine)
+      • Volume: -3 dB (fondation)
+      • Pan: Centre
+
+   📍 PISTE 2: Chœurs FÉMININS (notes ≥C3)
+      • Vienna Synchron Choir: Soprano + Alto (Women)
+      • Filtrer MIDI: Garder seulement notes ≥48 (${seq.length-countVeryLow} notes)
+      • Articulation: "Ah sustained"
+      • Volume: -3 dB (clarté)
+      • Pan: Centre
+
+   📍 PISTE 3 (optionnelle): Flûtes sur notes aigues (≥C5)
+      • Voir Option C ci-dessous
+
+   💡 Crossfade naturel: Les deux chœurs se rejoignent dans la zone C3-C4
+
+   OPTION C - Layering chœurs + flûtes (Si tessiture compatible)
+   `:`OPTION B - Layering chœurs + flûtes (RECOMMANDÉ ✨)
+   `}═══════════════════════════════════════════════════
+   Dupliquer la piste MIDI en 2 ou 3 pistes:
+
+   📍 PISTE 1: Chœurs féminins (registre complet)
+      • Vienna Synchron Choir: Soprano + Alto
+      • Articulation: Ah ou Mm (chaleur)
+      • Volume: -3 dB (base du son)
+      • Pan: Centre
+      • Réverb: 35-40% (Cathedral / Scoring Stage)
+
+   📍 PISTE 2: Flûtes sur notes hautes (≥C5 / Do5 / MIDI ≥72)
+      • Vienna Synchron Woodwinds: Flute 1 ou Flute Ensemble
+      • 🎹 FILTRER MIDI: Garder seulement notes ≥72 (${countHigh} notes sur ${seq.length})
+        → Cubase: MIDI Modifier > Note Range > Min=72, Max=127
+        → Logic: Transformer > Note Pitch > Select & Remove <C5
+        → Ableton: MIDI Effect Rack > Pitch filter ≥C5
+      • Volume: -6 dB (brillance ajoutée)
+      • Pan: Légèrement L/R (width +10%)
+      • Réverb: 25-30% (plus sec que chœurs)
+
+   📍 PISTE 3 (optionnelle): Doublage flûte sur extrême aigu (≥C6 / MIDI ≥84)
+      • Flute 2 ou Piccolo (pour étincelles cristallines)
+      • 🎹 FILTRER MIDI: Garder seulement notes ≥84
+      • Volume: -9 dB (touche subtile)
+      • Pan: Wide L/R (+20%)
+
+   ⚡ ASTUCE FILTRAGE RAPIDE:
+   • Dupliquer la piste MIDI 2 ou 3 fois
+   • Piste Chœurs: Pas de filtre (garder toutes notes)
+   • Piste Flûtes aigues: Sélectionner notes <72 et DELETE
+   • Piste Piccolo: Sélectionner notes <84 et DELETE
+
+   ${hasTooLowNotes?'OPTION D':'OPTION C'} - Split par registre (organique)
+   ═══════════════════════════════════════════════════
+   ${hasTooLowNotes?'• Graves (<C3): Chœurs masculins\n   • Médiums (C3-C5): Chœurs féminins\n   • Aigus (≥C5): Flûte traversière\n   • Extrême aigus (≥C6): Flûte + Piccolo layer':'• Graves/Médiums (<C5): Chœurs féminins Ah\n   • Aigus (≥C5): Flûte traversière solo\n   • Extrême aigus (≥C6): Flûte + Piccolo layer'}
+
+3️⃣ RÉGLAGES VIENNA DÉTAILLÉS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   🎹 CHŒURS FÉMININS (Soprano/Alto):
+   • Patch principal: "Ah sustained" (chaleureux, polyvalent)
+   • Variantes selon catégorie:
+     ${p.cat==='😴'||p.cat==='💚'||p.cat==='🌌'?'→ "Mm sustained" (berceuse, doux, méditatif)':
+       p.cat==='🧬'||p.cat==='🧠'||p.cat==='⚡'?'→ "Eh sustained" (brillant, présent, énergique)':
+       p.cat==='🌸'||p.cat==='💦'||p.cat==='🌺'?'→ "Oh sustained" (rond, naturel, organique)':
+       '→ "Ah sustained" (universel, équilibré)'}
+   • Vibrato: Medium (réglage naturel)
+   • Expression (CC11): Courbe douce 80-110
+   • Dynamics: Laisser vélocité MIDI contrôler (CC1 optionnel)
+   • Humanize: Timing ±10ms, Velocity ±5
+   • Breath Controller (CC2): Activer pour fluidité
+   • Legato: Portamento mode activé (transitions organiques)
+
+   ${hasTooLowNotes?`🎭 CHŒURS MASCULINS (Ténor/Basse) - Pour notes graves:
+   • Patch principal: "Oh sustained" (chaleur, profondeur)
+   • Variantes:
+     → "Mm sustained" (mystérieux, méditation)
+     → "Ah sustained" (ouvert, puissant)
+   • Vibrato: Medium to Strong (masculin naturel)
+   • Expression (CC11): Courbe 75-105 (moins que féminins)
+   • Dynamics: Laisser vélocité contrôler
+   • Humanize: Timing ±12ms (légèrement plus que féminins)
+   • Breath Controller (CC2): Activer
+
+   `:''}🎺 FLÛTES:
+   • Patch: "Flute 1 sustain" (notes tenues)
+   • Vibrato: Light to Medium
+   • Air Noise: 10-15% (réalisme)
+   • Legato: Portamento activé (transitions douces)
+   • Flutter Tongue: Désactivé (sauf effet spécial)
+
+   🎚️ MIXAGE ${hasTooLowNotes?'CHŒURS MASCULINS/FÉMININS + FLÛTES':'CHŒURS + FLÛTES'}:
+   • Balance: ${hasTooLowNotes?'Chœurs Masculins 35% / Chœurs Féminins 35% / Flûtes 30%':'Chœurs 70% / Flûtes 30%'} (ratio golden)
+
+   ${hasTooLowNotes?`• EQ CHŒURS MASCULINS (Ténor/Basse):
+     - High-pass:  60 Hz (12 dB/oct) - éliminer rumble profond
+     - Warmth:     150-200 Hz (+1.5 dB, Q=1) - chaleur poitrine
+     - Présence:   2-3 kHz (+1.5 dB, Q=1.5) - clarté consonnes
+     - Air:        8-10 kHz (+1 dB) - brillance subtile
+     - Cut:        400-600 Hz (-1.5 dB) - réduire nasalité
+
+   `:''}• EQ CHŒURS FÉMININS (Soprano/Alto):
+     - High-pass:  80 Hz (12 dB/oct) - éliminer rumble
+     - Boost:      2-4 kHz (+2 dB, Q=1.5) - présence vocale douce
+     - Air shelf:  10 kHz (+1.5 dB) - brillance naturelle
+     - Cut:        250-400 Hz (-1 dB) - réduire boxiness si besoin${hasTooLowNotes?'\n     - Cut:        150-200 Hz (-1 dB) - éviter conflit avec masculins':''}
+
+   • EQ FLÛTES:
+     - High-pass:  200 Hz (24 dB/oct) - nettoyer graves
+     - Cut:        500-800 Hz (-2 dB) - éviter conflit avec chœurs
+     - Boost:      6-8 kHz (+2.5 dB, Q=2) - air cristallin
+     - Presence:   3 kHz (+1 dB) - projection
+
+   • COMPRESSION DOUCE:
+     - Chœurs:     Ratio 2:1, Attack 30ms, Release 100ms, Threshold -15 dB
+     - Flûtes:     Ratio 1.5:1, Attack 10ms, Release 80ms, Threshold -12 dB
+     - Bus Master: Gentle glue (Ratio 1.3:1, Threshold -3 dB)
+
+   🎼 TUNING:
+   • Diapason: ${a4===429.62?'A4 = 429.62 Hz (h3O2 - réglage manuel dans Vienna)':'A4 = 440 Hz (standard)'}
+   ${a4===429.62?'  ⚠️  Astuce: Vienna > Settings > Tuning > Master Tune = -24 cents':''}
+
+   🌊 RÉVERB CATHEDRAL (Scoring Stage recommandé):
+   ${hasTooLowNotes?'• Chœurs Masculins: 30-35% Mix, Pre-delay 25ms, Decay 3.5s (plus spacieux)\n   ':''}• Chœurs${hasTooLowNotes?' Féminins':''}: 35-40% Mix, Pre-delay 20ms, Decay 3.2s
+   • Flûtes: 25-30% Mix, Pre-delay 15ms, Decay 2.8s
+   • Bus commun: Convolution Reverb (Synchron Stage A)
+`;
+
+  if(audioMode==='isochronic'){
+    template+=`
+4️⃣ EFFET ISOCHRONIC (${beatFreq} Hz)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   PLUGIN: Tremolo / Auto-Pan / LFO
+
+   Paramètres:
+   • Fréquence LFO:    ${beatFreq} Hz (${beatFreq} pulsations/seconde)
+   • Forme d'onde:     Sinus (smooth) ou Carré (sharp)
+   • Depth/Amount:     80-100%
+   • Stereo Mode:      Mono (même pulsation L+R)
+
+   💡 AUTOMATION RECOMMANDÉE:
+   • Fade in progressif du depth: 0% → 100% sur 10-15 secondes
+   • Maintenir à 100% pendant la lecture
+   • Fade out à la fin: 100% → 0% sur 5-10 secondes
+
+   🎚️ PLUGINS COMPATIBLES:
+   • Native Instruments: Transient Master (LFO mode)
+   • FabFilter: Pro-MB ou Pro-C (sidechain LFO)
+   • Waves: OneKnob Pumper
+   • Stock DAW: Tremolo / Auto-Pan
+
+   📊 FRÉQUENCE THÉRAPEUTIQUE:
+   ${beatFreq} Hz = ${
+     beatFreq<=4?'Delta (sommeil profond)':
+     beatFreq<=8?'Theta (méditation, régénération)':
+     beatFreq<=12?'Alpha (relaxation éveillée)':
+     'Beta (concentration active)'
+   }
+`;
+  }else if(audioMode==='binaural'){
+    template+=`
+4️⃣ EFFET BINAURAL (${beatFreq} Hz battement)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   MÉTHODE 1: Dupliquer la piste
+   • Dupliquer la piste Vienna en 2 pistes stéréo
+   • Piste L: Pan 100% gauche
+   • Piste R: Pan 100% droite
+   • Décaler légèrement le pitch de la piste R:
+     Tuning offset = +${(beatFreq*100/440).toFixed(3)} cents
+
+   MÉTHODE 2: Plugin binaural
+   • Plugin: Binaural Beat Generator
+   • Carrier frequency: Fréquence MIDI de base
+   • Beat frequency: ${beatFreq} Hz
+
+   ⚠️ IMPORTANT:
+   • Écoute au CASQUE obligatoire (pas enceintes)
+   • Le cerveau crée le battement ${beatFreq} Hz par différence L-R
+
+   📊 FRÉQUENCE THÉRAPEUTIQUE:
+   ${beatFreq} Hz = ${
+     beatFreq<=4?'Delta (sommeil profond)':
+     beatFreq<=8?'Theta (méditation, régénération)':
+     beatFreq<=12?'Alpha (relaxation éveillée)':
+     'Beta (concentration active)'
+   }
+`;
+  }
+
+  template+=`
+5️⃣ MIXAGE & EXPORT
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   • Volume: -6 dB à -3 dB (laisser headroom)
+   • Réverb: Type Hall/Cathedral, Decay 2-4s, Mix 25-35%
+   • EQ: Légère coupe <80 Hz (rumble), boost doux 2-5 kHz (présence)
+   • Compression: Douce, Ratio 2:1, Threshold -12 dB (optionnel)
+
+   FORMAT D'EXPORT:
+   • Format:      FLAC 24-bit 48kHz (ou WAV 24/48)
+   • Normalisation: -1 dBFS (True Peak)
+   • Dithering:   Activé si 16-bit
+
+   📁 NOMMAGE FICHIER SUGGÉRÉ:
+   • Chœurs seuls:     ${p.id}_Choir_${a4===429.62?'h3O2':'440Hz'}_${beatFreq}Hz.flac
+   • Chœurs+Flûtes:    ${p.id}_ChoirFlute_${a4===429.62?'h3O2':'440Hz'}_${beatFreq}Hz.flac
+   • Layer complet:    ${p.id}_Full_${a4===429.62?'h3O2':'440Hz'}_${beatFreq}Hz.flac
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 NOTES SCIENTIFIQUES
+${DESCRIPTIONS[p.id]?DESCRIPTIONS[p.id].substring(0,800)+'...':'Pas de description disponible.'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧬 Généré par Proteodies Player
+💧 La molé met l'eau - De la séquence à la santé
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+`;
+
+  return template;
+}
+
+function downloadBlob(blob,filename,mimeType){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=filename;
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  },100);
+}
+
 </script>
 </body>
 </html>
