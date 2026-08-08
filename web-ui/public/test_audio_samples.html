@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Audio Samples - Protéodies</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0f0f0f;
+  color: #e8e8e8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+h1 { color: #1D9E75; margin-bottom: 20px; }
+.section {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.section h2 {
+  font-size: 16px;
+  color: #1D9E75;
+  margin-bottom: 12px;
+}
+.test-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #252525;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.status {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #666;
+}
+.status.success { background: #1D9E75; }
+.status.error { background: #D85A30; }
+.status.loading { background: #F97316; animation: pulse 1s infinite; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid #1D9E75;
+  background: #1D9E7522;
+  color: #1D9E75;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+button:hover { background: #1D9E7533; border-color: #1D9E75; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.log {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+.log-entry {
+  padding: 4px 0;
+  border-bottom: 1px solid #222;
+}
+.log-entry:last-child { border-bottom: none; }
+.log-entry.info { color: #888; }
+.log-entry.success { color: #1D9E75; }
+.log-entry.error { color: #D85A30; }
+.log-entry.warn { color: #F97316; }
+select {
+  background: #252525;
+  color: #e8e8e8;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 14px;
+  margin-right: 10px;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+</style>
+</head>
+<body>
+
+<h1>🧬 Test Audio Samples - Protéodies</h1>
+
+<div class="section">
+  <h2>📊 Vérification bibliothèque audio</h2>
+  <div id="library-tests"></div>
+  <button onclick="runLibraryTests()">▶ Tester bibliothèque</button>
+</div>
+
+<div class="section">
+  <h2>🎵 Test lecteur audio</h2>
+  <div class="controls">
+    <label>Diapason:</label>
+    <select id="test-diapason">
+      <option value="h3o2" selected>h3O2 (429.62 Hz)</option>
+      <option value="standard">Standard (440 Hz)</option>
+    </select>
+
+    <label>Mode:</label>
+    <select id="test-mode">
+      <option value="stereo">Stéréo</option>
+      <option value="isochrone_4hz">Isochrone 4 Hz (Delta)</option>
+      <option value="isochrone_7hz" selected>Isochrone 7 Hz (Theta)</option>
+      <option value="isochrone_10hz">Isochrone 10 Hz (Alpha)</option>
+      <option value="isochrone_14hz">Isochrone 14 Hz (Beta)</option>
+    </select>
+
+    <label>Gamme:</label>
+    <select id="test-scale">
+      <option value="fa">Fa Lydien (stimulant)</option>
+      <option value="sib">Sib Lydien (équilibrant)</option>
+      <option value="mib" selected>Mib Lydien (calmant)</option>
+    </select>
+  </div>
+
+  <div style="margin-top: 15px;">
+    <button onclick="playTestSequence()">▶ Jouer DSIP (WAGGDASGE)</button>
+    <button onclick="playTestSequence('COL2A1')">▶ Jouer COL2A1 (arthrose)</button>
+    <button onclick="stopPlayer()">⏹ Stop</button>
+  </div>
+
+  <div id="player-status" style="margin-top: 10px; color: #666;"></div>
+</div>
+
+<div class="section">
+  <h2>📝 Console</h2>
+  <div id="log" class="log"></div>
+  <button onclick="clearLog()" style="margin-top: 10px;">Effacer console</button>
+</div>
+
+<script src="/proteodies/audio-player.js"></script>
+<script>
+let player = null;
+const logEl = document.getElementById('log');
+
+function log(message, type = 'info') {
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${type}`;
+  const timestamp = new Date().toLocaleTimeString();
+  entry.textContent = `[${timestamp}] ${message}`;
+  logEl.appendChild(entry);
+  logEl.scrollTop = logEl.scrollHeight;
+  console.log(message);
+}
+
+function clearLog() {
+  logEl.innerHTML = '';
+}
+
+async function runLibraryTests() {
+  const container = document.getElementById('library-tests');
+  container.innerHTML = '';
+
+  log('🔍 Démarrage tests bibliothèque...', 'info');
+
+  // Test 1: Manifest
+  const manifestTest = createTestItem('Chargement manifest.json');
+  container.appendChild(manifestTest);
+
+  try {
+    const response = await fetch('/proteodies/audio/building_blocks/manifest.json');
+    const manifest = await response.json();
+    setTestStatus(manifestTest, 'success');
+    log(`✅ Manifest chargé: ${manifest.total_samples} samples`, 'success');
+  } catch (error) {
+    setTestStatus(manifestTest, 'error');
+    log(`❌ Erreur manifest: ${error}`, 'error');
+    return;
+  }
+
+  // Test 2: Sample h3o2 isochrone 7Hz
+  const sampleTest1 = createTestItem('Sample A (h3o2_isochrone_7hz/mib)');
+  container.appendChild(sampleTest1);
+
+  try {
+    const response = await fetch('/proteodies/audio/building_blocks/h3o2_isochrone_7hz/mib/A.wav');
+    if (response.ok) {
+      setTestStatus(sampleTest1, 'success');
+      log('✅ Sample A chargé', 'success');
+    } else {
+      throw new Error(`HTTP ${response.status}`);
+    }
+  } catch (error) {
+    setTestStatus(sampleTest1, 'error');
+    log(`❌ Erreur sample A: ${error}`, 'error');
+  }
+
+  // Test 3: Sample standard stereo
+  const sampleTest2 = createTestItem('Sample G (standard_stereo/fa)');
+  container.appendChild(sampleTest2);
+
+  try {
+    const response = await fetch('/proteodies/audio/building_blocks/standard_stereo/fa/G.wav');
+    if (response.ok) {
+      setTestStatus(sampleTest2, 'success');
+      log('✅ Sample G chargé', 'success');
+    } else {
+      throw new Error(`HTTP ${response.status}`);
+    }
+  } catch (error) {
+    setTestStatus(sampleTest2, 'error');
+    log(`❌ Erreur sample G: ${error}`, 'error');
+  }
+
+  // Test 4: Init player
+  const playerTest = createTestItem('Initialisation ProteodiesAudioPlayer');
+  container.appendChild(playerTest);
+
+  try {
+    if (!player) {
+      player = new ProteodiesAudioPlayer();
+      const available = await player.init();
+      if (available) {
+        setTestStatus(playerTest, 'success');
+        log('✅ Player initialisé', 'success');
+      } else {
+        throw new Error('Samples non disponibles');
+      }
+    } else {
+      setTestStatus(playerTest, 'success');
+      log('✅ Player déjà initialisé', 'success');
+    }
+  } catch (error) {
+    setTestStatus(playerTest, 'error');
+    log(`❌ Erreur player: ${error}`, 'error');
+  }
+
+  log('✅ Tests terminés', 'success');
+}
+
+async function playTestSequence(type = 'DSIP') {
+  if (!player) {
+    player = new ProteodiesAudioPlayer();
+    await player.init();
+  }
+
+  const diapason = document.getElementById('test-diapason').value;
+  const mode = document.getElementById('test-mode').value;
+  const scale = document.getElementById('test-scale').value;
+
+  let sequence;
+  if (type === 'DSIP') {
+    sequence = 'WAGGDASGE';
+  } else if (type === 'COL2A1') {
+    // Prendre début séquence COL2A1 (trop long sinon)
+    sequence = 'QPGKDGVVGPSGPPGPPGKVGPSGAPGPQGFQGPAGEPGEPGQTGPAGARGPAG';
+  }
+
+  log(`🎵 Lecture: ${sequence.substring(0, 30)}...`, 'info');
+  log(`   Diapason: ${diapason}, Mode: ${mode}, Gamme: ${scale}`, 'info');
+
+  const statusEl = document.getElementById('player-status');
+  statusEl.textContent = '⏳ Chargement samples...';
+  statusEl.style.color = '#F97316';
+
+  try {
+    const loopDuration = sequence.length * 0.923; // BPM 65
+
+    await player.playProteody(sequence, {
+      diapason,
+      mode,
+      scale,
+      duration: loopDuration, // 1 boucle
+      masterVolume: 0.7,
+      reverbMix: 0.2,
+      onProgress: (progress) => {
+        statusEl.textContent = `▶️ Lecture en cours... ${Math.round(progress * 100)}%`;
+        statusEl.style.color = '#1D9E75';
+      },
+      onComplete: () => {
+        statusEl.textContent = '✅ Lecture terminée';
+        statusEl.style.color = '#1D9E75';
+        log('✅ Lecture terminée', 'success');
+      }
+    });
+
+    log('✅ Lecture démarrée', 'success');
+  } catch (error) {
+    statusEl.textContent = `❌ Erreur: ${error.message}`;
+    statusEl.style.color = '#D85A30';
+    log(`❌ Erreur lecture: ${error}`, 'error');
+  }
+}
+
+function stopPlayer() {
+  if (player) {
+    player.stop();
+    document.getElementById('player-status').textContent = '⏹ Arrêté';
+    document.getElementById('player-status').style.color = '#666';
+    log('⏹ Lecture arrêtée', 'info');
+  }
+}
+
+function createTestItem(label) {
+  const div = document.createElement('div');
+  div.className = 'test-item';
+  div.innerHTML = `
+    <div class="status loading"></div>
+    <span>${label}</span>
+  `;
+  return div;
+}
+
+function setTestStatus(item, status) {
+  const statusEl = item.querySelector('.status');
+  statusEl.className = `status ${status}`;
+}
+
+// Auto-init
+window.addEventListener('DOMContentLoaded', () => {
+  log('🧬 Page de test chargée', 'info');
+  log('💡 Cliquez sur "Tester bibliothèque" pour vérifier les samples', 'info');
+});
+</script>
+
+</body>
+</html>

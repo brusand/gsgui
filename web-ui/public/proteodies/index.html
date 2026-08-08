@@ -2021,6 +2021,147 @@ function downloadBlob(blob,filename,mimeType){
   },100);
 }
 
+// =============================================
+// AUDIO PLAYER INTEGRATION
+// =============================================
+let audioPlayer = null;
+let audioAvailable = false;
+
+async function initAudioPlayer() {
+  if (!audioPlayer) {
+    audioPlayer = new ProteodiesAudioPlayer();
+    audioAvailable = await audioPlayer.init();
+
+    if (audioAvailable) {
+      console.log('🎵 Lecteur audio protéodies initialisé');
+      updateAudioPlayButtons();
+    } else {
+      console.log('⚠️  Samples audio non disponibles - mode synthèse uniquement');
+    }
+  }
+}
+
+function updateAudioPlayButtons() {
+  // Ajouter bouton play audio sur chaque protéodie si samples disponibles
+  if (!audioAvailable) return;
+
+  document.querySelectorAll('.pl-item').forEach(item => {
+    const checkbox = item.querySelector('input[type=checkbox]');
+    if (!checkbox) return;
+
+    const protId = checkbox.id.replace('chk-', '');
+    const prot = PROTEODIES.find(p => p.id === protId);
+    if (!prot) return;
+
+    // Vérifier si bouton audio existe déjà
+    if (item.querySelector('.audio-play-btn')) return;
+
+    // Créer bouton play audio
+    const audioBtn = document.createElement('button');
+    audioBtn.className = 'audio-play-btn';
+    audioBtn.innerHTML = '🔊';
+    audioBtn.title = 'Écouter avec samples audio (1 boucle)';
+    audioBtn.style.cssText = 'width:28px;height:28px;border-radius:50%;border:1px solid #666;background:#333;color:#1D9E75;font-size:14px;cursor:pointer;margin-left:4px;flex-shrink:0;transition:all 0.15s';
+
+    audioBtn.onmouseenter = () => {
+      audioBtn.style.background = '#444';
+      audioBtn.style.borderColor = '#1D9E75';
+    };
+    audioBtn.onmouseleave = () => {
+      audioBtn.style.background = '#333';
+      audioBtn.style.borderColor = '#666';
+    };
+
+    audioBtn.onclick = async (e) => {
+      e.stopPropagation();
+      await playProteodyAudio(prot);
+    };
+
+    // Insérer avant bouton info
+    const infoBtn = item.querySelector('.pl-info-btn');
+    if (infoBtn) {
+      infoBtn.parentNode.insertBefore(audioBtn, infoBtn);
+    }
+  });
+}
+
+async function playProteodyAudio(proteody) {
+  if (!audioPlayer) await initAudioPlayer();
+  if (!audioAvailable) {
+    alert('⚠️ Samples audio non disponibles');
+    return;
+  }
+
+  // Déterminer paramètres selon protéodie
+  const diapason = document.getElementById('diapason-chk').checked ? 'h3o2' : 'standard';
+  const currentAudioMode = audioMode;
+  const scale = getScale();
+
+  // Mapper mode audio vers mode samples
+  let sampleMode = 'stereo';
+  if (currentAudioMode === 'isochrone') {
+    const beatFreq = BEAT_FREQS[proteody.cat] || 10;
+    // Trouver le mode le plus proche
+    if (beatFreq <= 5) sampleMode = 'isochrone_4hz';
+    else if (beatFreq <= 8) sampleMode = 'isochrone_7hz';
+    else if (beatFreq <= 12) sampleMode = 'isochrone_10hz';
+    else sampleMode = 'isochrone_14hz';
+  } else if (currentAudioMode === 'binaural') {
+    // Fallback binaural → isochrone
+    const beatFreq = BEAT_FREQS[proteody.cat] || 10;
+    if (beatFreq <= 5) sampleMode = 'isochrone_4hz';
+    else if (beatFreq <= 8) sampleMode = 'isochrone_7hz';
+    else if (beatFreq <= 12) sampleMode = 'isochrone_10hz';
+    else sampleMode = 'isochrone_14hz';
+  }
+
+  const reverbLevel = parseFloat(document.getElementById('reverb').value);
+
+  console.log(`🎵 Lecture audio: ${proteody.name}`);
+  console.log(`   Séquence: ${proteody.seq.substring(0, 30)}...`);
+  console.log(`   Diapason: ${diapason}, Mode: ${sampleMode}, Gamme: ${scale}`);
+
+  // Arrêter lecture précédente
+  if (audioPlayer.isPlaying) {
+    audioPlayer.stop();
+  }
+
+  try {
+    // Jouer 1 boucle pour test (~10 secondes max)
+    const loopDuration = proteody.seq.length * 0.923; // BPM 65
+
+    await audioPlayer.playProteody(proteody.seq, {
+      diapason,
+      mode: sampleMode,
+      scale,
+      duration: loopDuration, // 1 boucle
+      masterVolume: 0.7,
+      reverbMix: reverbLevel,
+      onProgress: (progress) => {
+        // Pas de UI pour preview courte
+      },
+      onComplete: () => {
+        console.log('✅ Lecture terminée');
+      }
+    });
+  } catch (error) {
+    console.error('❌ Erreur lecture audio:', error);
+    alert('Erreur lors de la lecture audio');
+  }
+}
+
+// Initialiser au chargement de la page
+window.addEventListener('DOMContentLoaded', async () => {
+  // Attendre un peu pour laisser le DOM se stabiliser
+  setTimeout(async () => {
+    await initAudioPlayer();
+  }, 1000);
+});
+
 </script>
+
+<!-- Charger module audio player -->
+<script src="/proteodies/audio-player.js"></script>
+
 </body>
 </html>

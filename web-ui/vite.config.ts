@@ -11,8 +11,16 @@ export default defineConfig({
       name: 'static-html-routes',
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
-          if (req.url?.startsWith('/proteodies')) {
+          // Route proteodies V1
+          if (req.url === '/proteodies' || req.url === '/proteodies/') {
             const filePath = path.resolve(__dirname, 'public/proteodies/index.html')
+            res.setHeader('Content-Type', 'text/html')
+            res.end(fs.readFileSync(filePath))
+            return
+          }
+          // Route proteodies V2
+          if (req.url === '/proteodies2' || req.url === '/proteodies2/') {
+            const filePath = path.resolve(__dirname, 'public/proteodies2/index.html')
             res.setHeader('Content-Type', 'text/html')
             res.end(fs.readFileSync(filePath))
             return
