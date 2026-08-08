@@ -136,10 +136,51 @@ def main():
         # Générer MIDI
         duration = pack_to_midi(pack_data['proteodies'], scale, filepath, duration_minutes)
 
+        # Générer fichier config pour Logic Pro
+        config_filename = f"{pack_id}_{scale}_{duration_minutes}min_config.txt"
+        config_filepath = output_dir / config_filename
+
+        # Extraire fréquence LFO du mode
+        lfo_freq = None
+        if 'isochrone_' in mode:
+            lfo_freq = mode.replace('isochrone_', '').replace('hz', '')
+
+        with open(config_filepath, 'w', encoding='utf-8') as f:
+            f.write(f"CONFIGURATION LOGIC PRO - {pack_name}\n")
+            f.write("=" * 60 + "\n\n")
+            f.write(f"📦 Pack: {pack_name}\n")
+            f.write(f"🎵 Gamme Lydienne: {scale.upper()}\n")
+            f.write(f"🎹 Diapason: h3O2 (-24 cents)\n")
+            f.write(f"🎚️  Mode: {mode}\n")
+            if lfo_freq:
+                f.write(f"🔊 Tremolo LFO: {lfo_freq} Hz\n")
+            else:
+                f.write(f"🔊 Mode: Stéréo (pas de Tremolo)\n")
+            f.write(f"⏱️  Durée: {duration/60:.1f} min\n")
+            f.write(f"📊 Protéodies: {len(pack_data['proteodies'])}\n\n")
+
+            f.write("ÉTAPES CONFIGURATION:\n")
+            f.write("-" * 60 + "\n")
+            f.write("1. Ouvrir Logic Pro\n")
+            f.write("2. Vienna Synchron Player:\n")
+            f.write("   - Charger preset: Celeste Ensemble\n")
+            f.write(f"   - Master Tune: -24 cents (h3O2)\n")
+            f.write("3. Effets:\n")
+            if lfo_freq:
+                f.write(f"   - Tremolo: Rate = {lfo_freq} Hz, Depth = 100%\n")
+            else:
+                f.write("   - Pas de Tremolo (mode stéréo)\n")
+            f.write("4. Importer MIDI:\n")
+            f.write(f"   - Fichier: {filename}\n")
+            f.write("5. Exporter Audio:\n")
+            f.write("   - Format: WAV 44.1kHz 16-bit\n")
+            f.write(f"   - Nom: {pack_id}_h3o2_{mode}_{scale}.wav\n")
+
         total_packs += 1
         total_duration += duration
 
         print(f"  ✅ {filename} ({duration/60:.1f} min)")
+        print(f"  📝 {config_filename}")
         print()
 
     print(f"✅ Génération terminée")
