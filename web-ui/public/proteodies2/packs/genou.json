@@ -1,0 +1,42 @@
+{
+  "id": "genou",
+  "name": "Genou",
+  "emoji": "🦵",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Régénération articulaire",
+  "desc": "Pack complet Genou : BPC-157, Collagène II, PDGF (PRP) + 2 autres",
+  "proteodies": [
+    {
+      "id": "bpc157",
+      "name": "Genou — BPC-157",
+      "seq": "GEPPPGKPADDAGLV",
+      "desc": "Réparation articulaire"
+    },
+    {
+      "id": "col2",
+      "name": "Genou — Collagène II",
+      "seq": "GPPGPQGLAGQRGIVGLPGQR",
+      "desc": "Cartilage articulaire"
+    },
+    {
+      "id": "pdgf",
+      "name": "Genou — PDGF (PRP)",
+      "seq": "TVEIHRQCPRRH",
+      "desc": "Facteur plasma PRP"
+    },
+    {
+      "id": "igf1",
+      "name": "Genou — IGF-1",
+      "seq": "GYGSSSRRAPQT",
+      "desc": "Stimule chondrocytes"
+    },
+    {
+      "id": "bmp7",
+      "name": "Genou — BMP-7",
+      "seq": "VFQQHIHI",
+      "desc": "Morphogène osseux"
+    }
+  ]
+}

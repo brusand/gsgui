@@ -1,0 +1,18 @@
+{
+  "id": "sommeil",
+  "name": "Sommeil",
+  "emoji": "😴",
+  "mode": "isochrone_4hz",
+  "scale": "mib",
+  "freq": "4 Hz",
+  "effect": "Sommeil profond (Delta)",
+  "desc": "Delta Sleep-Inducing Peptide",
+  "proteodies": [
+    {
+      "id": "dsip",
+      "name": "Sommeil — DSIP",
+      "seq": "WAGGDASGE",
+      "desc": "Delta Sleep-Inducing Peptide"
+    }
+  ]
+}

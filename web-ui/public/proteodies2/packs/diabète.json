@@ -1,0 +1,66 @@
+{
+  "id": "diabète",
+  "name": "Diabète",
+  "emoji": "💉",
+  "mode": "isochrone_8hz",
+  "scale": "sib",
+  "freq": "8 Hz",
+  "effect": "Équilibre glycémique",
+  "desc": "Pack complet Diabète : Insuline Chaîne A, C-Peptide, GIP Incrétine + 6 autres",
+  "proteodies": [
+    {
+      "id": "insulin_a",
+      "name": "Diabète — Insuline Chaîne A",
+      "seq": "GIVEQCCTSICSLYQLENYCN",
+      "desc": "Hormone hypoglycémiante — baisse glycémie, stocke glucose"
+    },
+    {
+      "id": "c_peptide",
+      "name": "Diabète — C-Peptide",
+      "seq": "EAEDLQVGQVELGGGPGAGSLQPLALEGSLQ",
+      "desc": "Marqueur production insuline — protège cellules β pancréas"
+    },
+    {
+      "id": "gip_incretin",
+      "name": "Diabète — GIP Incrétine",
+      "seq": "YAEGTFISDYSIAMDKIHQQDFVNWLLAQKGKKNDWKHNITQ",
+      "desc": "Glucose-dependent Insulinotropic Polypeptide — stimule sécrétion insuline"
+    },
+    {
+      "id": "pdx1",
+      "name": "Diabète — PDX1 Régénération",
+      "seq": "KRHKILTDQMQVNHMLHQC",
+      "desc": "Pancreatic Duodenal Homeobox 1 — régénère cellules β pancréas"
+    },
+    {
+      "id": "glut4",
+      "name": "Diabète — GLUT4 Transporteur",
+      "seq": "MYQQLGPRSPGLAAVIGWVLGSFGFTILTS",
+      "desc": "Glucose transporter 4 — capte glucose dans muscles/tissus"
+    },
+    {
+      "id": "adiponectin",
+      "name": "Diabète — Adiponectine",
+      "seq": "ECDVLQVQGLDDQGPQ",
+      "desc": "Hormone adipocytes — améliore sensibilité insuline, anti-inflammatoire"
+    },
+    {
+      "id": "ampk_alpha",
+      "name": "Diabète — AMPK Métabolisme",
+      "seq": "ELDKDVGRVNVSLTGHTKA",
+      "desc": "AMP-activated Protein Kinase — active métabolisme glucose"
+    },
+    {
+      "id": "glucagon_antag",
+      "name": "Diabète — Antagoniste Glucagon",
+      "seq": "HSQGTFTSDYSKYLDSRRAQDFVQWLMNT",
+      "desc": "Bloque glucagon — réduit production glucose hépatique"
+    },
+    {
+      "id": "gck",
+      "name": "Diabète — Glucokinase",
+      "seq": "MATQNLALMWPGWKANLQQGDDGRYQGPLTNYL",
+      "desc": "Sensor glucose cellules β — déclenche sécrétion insuline"
+    }
+  ]
+}

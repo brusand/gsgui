@@ -38,7 +38,7 @@ select{
 }
 select:hover{border-color:#555;background-color:#2a2a2a}
 select:focus{border-color:var(--teal);background-color:#2a2a2a}
-.pack-option{padding:10px;font-weight:500}
+select:disabled{opacity:0.5;cursor:not-allowed}
 .controls{display:flex;gap:12px;margin-top:25px}
 .btn{
   flex:1;padding:16px 20px;border-radius:10px;border:none;
@@ -89,6 +89,10 @@ select:focus{border-color:var(--teal);background-color:#2a2a2a}
 .footer{text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid var(--border)}
 .footer a{color:var(--teal);text-decoration:none;font-size:13px}
 .footer a:hover{text-decoration:underline}
+input[type=range]{
+  width:100%;height:8px;appearance:none;background:var(--bg3);
+  border-radius:4px;outline:none;cursor:pointer
+}
 input[type=range]::-webkit-slider-thumb{
   appearance:none;width:24px;height:24px;border-radius:50%;
   background:var(--teal);cursor:pointer;transition:all 0.15s;
@@ -111,19 +115,15 @@ input[type=range]::-moz-range-thumb:hover{
   <span>🧬</span>
   <span>Protéodies Player V2</span>
 </h1>
-<div class="subtitle">Lecture avec samples audio pré-générés • Nouvelle interface simplifiée</div>
+<div class="subtitle">Lecture avec samples audio pré-générés • Chargement à la demande</div>
 
 <div class="card">
   <div class="card-title">🎵 Configuration</div>
 
   <div class="select-group">
     <label class="select-label">Pack protéodies</label>
-    <select id="pack-select" onchange="onPackChange()">
-      <option value="">Choisir un pack...</option>
-      <option value="arthrose">🦴 Arthrose (8 protéodies)</option>
-      <option value="sommeil">😴 Sommeil (1 protéodie)</option>
-      <option value="peau_seche">💦 Peau Sèche (2 protéodies)</option>
-      <option value="diabete">💉 Diabète (2 protéodies)</option>
+    <select id="pack-select" onchange="onPackChange()" disabled>
+      <option value="">Chargement...</option>
     </select>
   </div>
 
@@ -160,12 +160,11 @@ input[type=range]::-moz-range-thumb:hover{
   <div class="select-group">
     <label class="select-label">Durée : <span id="duration-label">10</span> minutes</label>
     <input type="range" id="duration-slider" min="1" max="60" value="10" step="1"
-           oninput="updateDurationLabel()" onchange="updateLoopInfo()"
-           style="width:100%;height:8px;appearance:none;background:var(--bg3);border-radius:4px;outline:none;cursor:pointer">
+           oninput="updateDurationLabel()" onchange="updateLoopInfo()">
   </div>
 
   <div class="controls">
-    <button class="btn btn-play" id="play-btn" onclick="playPack()">▶ Jouer</button>
+    <button class="btn btn-play" id="play-btn" onclick="playPack()" disabled>▶ Jouer</button>
     <button class="btn btn-stop" id="stop-btn" onclick="stopPlayback()" disabled>⏹ Stop</button>
   </div>
 </div>
@@ -174,8 +173,8 @@ input[type=range]::-moz-range-thumb:hover{
   <div class="card-title">📊 État</div>
 
   <div id="status-card" class="status-card">
-    <div class="status-title">Prêt</div>
-    <div class="status-text">Sélectionnez un pack et cliquez sur ▶ Jouer</div>
+    <div class="status-title">Initialisation...</div>
+    <div class="status-text">Chargement de la liste des packs</div>
   </div>
 
   <div id="progress-container" style="display:none">
@@ -204,119 +203,98 @@ input[type=range]::-moz-range-thumb:hover{
 
 <script src="/proteodies/audio-player.js"></script>
 <script>
-// Base de données packs (ensembles de protéodies)
-const PROTEODIES = {
-  col2a1: { name: 'Collagène II Cartilage', seq: 'QPGKDGVVGPSGPPGPPGKVGPSGAPGPQGFQGPAGEPGEPGQTGPAGARGPAGPPGKAGEDGHPGKPGRPGERGPPGPQGARGLPGTAGLPGMKGHRGFSGLDGAKGDAGPAGPKGEPGSPGENGAPGQMGPRGLPGERGRPGAPGPAGARGNDGATGAAGPPGPTGPAGPPGFPGAVGAKGEAGPQGPRGSEGPQGVRGEPGPPGPAGAAGPAGNPGADGQPGAKGANGAPGIAGAPGFPGARGPSGPQGPSGPPGPKGNSGEPGAPGSKGDTGAKGEPGPVGVQGPPGPAGEEGKRGARGEPGPTGLPGPPGERGGPGSRGFPGADGVAGPKGPAGERGSPGPAGPKGSPGEAGRPGEAGLPGAKGLTGSPGSPGPDGKTGPPGPAGQDGRPGPPGPPGARGQPGVMGFPGPKGAAGEPGKAGERGVPGPPGAVGPAGKDGEAGAQGPPGPAGPAGERGEQGPAGSPGFQGLPGPAGPPGEAGKPGEQGVPGDLGAPGPSGARGERGFPGERGVQGPPGPAGPRGANGAPGNDGAKGDAGAPGAPGSQGAPGLQGMPGERGAAGLPGPKGDRGDAGPKGADGSPGKDGVRGLTGPIGPPGPAGAPGDKGESGPSGPAGPTGARGAPGDRGEPGPPGPAGFAGPPGADGQPGAKGEPGDAGAKGDAGPPGPAGPAGPPGPIGNVGAPGPKGARGSAGPPGATGFPGAAGRVGPPGPSGNAGPPGPPGPAGKEGGKGPRGETGPAGRPGEVGPPGPPGPAGEKGSPGADGPAGAPGTPGPQGIAGQRGVVGLPGQRGERGFPGLPGPSGEPGKQGPSGASGERGPPGPMGPPGLAGPPGESGREGAPGAEGSPGRDGSPGAKGDRGETGPAGPPGAPGAPGAPGPVGPAGKSGDRGETGPAGPAGPIGPVGARGPAGPQGPRGDKGETGEQGDRGIKGHRGFSGLQGPPGPPGSPGEQGPSGASGPAGPRGPPGSAGSPGKDGLNGLPGPIGPPGPRGRTGDAGPVGPPGPPGPPGPPGPPSAGFDFSFLPQPPQEKAHDGGRYYRA' },
-  acan: { name: 'Aggrécane Hydratation', seq: 'TAQEPPPEVPPPPVEVPTEPVGPGPVEVPAVPGVGPVEAPATPAKPEVPTEKPEVPTEVPVEVPVAEVPVEAPATPAKPEVPTEKPEVPTEVPVEVPVAEVPVEAPATPAKPEVPTEKPEVPTEVPVEVPVAEVPVEAPATPAKPEVPTE' },
-  sox9: { name: 'SOX9 Chondrogenèse', seq: 'MQSPQSQQQFHPGMDRSSSPPPRCPPACLSQGPGGAGSGAGSPGPGPPQPPPQSSPPAHPGGPRQQPDSVQGPGQPLPPQPAQPGGGPPQPHPPPPPQPPPPQPQPPPQPQPPPQPPPLPGQQPPPPPPPPPGPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPSGPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPGPGGPHQPPPPPPPPPPPPPPPPPPPPPPPPPPGRGAHPVTPTSLSPPPVSPQQPQPKDVTTGPPPQVDAQRRLHRPMNAFMVWSQIERRKFENPRMRNTDTEKRPFMCQYQCQRPMNHLKVILPQPPVSQQQQQQQLQQQQQQQQQQQQPAMAQVQDVQKLQRKLQQQENNNKHKASQHCHPDGCTKTYTYEKHHQAEPYCQYSHIDRVHGKVWAENYYQSLAQKYQQLLDSRN' },
-  prg4: { name: 'Lubricine PRG4', seq: 'EKDTTTTPKTAPTTPKTTPKAPTAPAATPAPATPAPATKTTTPKTTTPKTAAATPAAPKTTTPKTTTPKTAPTTPKTTTPKTAPTTPKTAPTTPKTTTPKTTTPKTAPTTPKTTTPKTTPKTTPKTTPKTTPKTTPKTTPKTTPKTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPKTAPTTPK' },
-  comp: { name: 'COMP Matrice', seq: 'GETGPQGPQGPQGPPGPPGPPGPPGPPGPQGPSGPPGPPGPPGPPGPPGPPGPQGPSGPQGPPGPPGPPGPPGPPGPPGPQGPPGPQGPPGPPGPPGPPGPPGPPGPQGPSGPQGPPGPPGPPGPPGPPGPPGPQGPSGPQGPPGPPGPPGPPGPPGPPGPPGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPQGPPGPPGPPGPPGPPGPPGPQ' },
-  il10: { name: 'IL-10 Anti-Inflammatoire', seq: 'SPGQGTQSENSCTHFPGNLPNMLRDLRDAFSRVKTFFQMKDQLDNLLLKESLLEDFKGYLGCQALSEMIQFYLEEVMPQAENQDPDIKAHVNSLGENLKTLRLRLRRCHRFLPCENKSKAVEQVKNAFNKLQEKGIYKAMSEFDIFINYIEAYMTMKIRN' },
-  tgfb1: { name: 'TGF-β1 Régénération', seq: 'ALDAAYCFRNVQDNCCLRPLYIDFKRDLGWKWIHEPKGYHANFCLGPCPYIWSLDTQYSKVLALYNQHNPGASAAPCCVPQALEPLPIVYYVGRKPKVEQLSNMIVRSCKCS' },
-  fmod: { name: 'Fibromoduline Collagène', seq: 'NNFTIENLRHNIQLVQKSLEEIKKHLQSIEKYNKSLESLETLDNNKIQTVFDFTNFLREDYGDLDFKRLVQWLQSVQKSLVSKLNNLTRLHLDGNNITSKVQDKTLLAFDSNFLKRPSIPKSAFVVQKLKENKNLGSKLWSKIRENKLKCFNIVPSGQFSQVSLAMLELFNLTHNRIQTEIQFYQKEELQDNVTD' },
-  dsip: { name: 'DSIP Delta Sleep', seq: 'WAGGDASGE' },
-  aqp3: { name: 'AQP3 Aquaporine', seq: 'MEKEIRKKLFWRAVVAEFLAMTLFVHYITPPPAVFEAVGCFVGKEQSSRKWIHKKQMLTTGGMVMDGDSVVMKGSWDVEFSGSVHTVFGAAHLMLCIMCCPGYASKNPPTKPPVVPAVGFLIQFTAIAVSKFEKDVVGGGILRIYCGFSDVAASKLEEKRSPEERQKLIGSSGHFKDPKPLLLETWEVLDWEVEMDPEYMDKLQNWIDEVKKVMEENGK' },
-  tip11: { name: 'TIP1;1 Canal Végétal', seq: 'CFNPAVTLGAHINPAV' },
-  ins: { name: 'Insuline', seq: 'FVNQHLCGSHLVEALYLVCGERGFFYTPKT' },
-  glp1: { name: 'GLP-1 Incrétine', seq: 'HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR' }
-};
-
-const PACKS = {
-  arthrose: {
-    name: 'Arthrose',
-    emoji: '🦴',
-    proteodies: ['col2a1', 'acan', 'sox9', 'prg4', 'comp', 'il10', 'tgfb1', 'fmod'],
-    mode: 'isochrone_7hz',
-    scale: 'mib',
-    desc: 'Pack complet pour arthrose : cartilage, hydratation, anti-inflammatoire, régénération',
-    freq: '7 Hz',
-    effect: 'Anti-inflammatoire + Régénération articulaire'
-  },
-  sommeil: {
-    name: 'Sommeil',
-    emoji: '😴',
-    proteodies: ['dsip'],
-    mode: 'isochrone_4hz',
-    scale: 'mib',
-    desc: 'Delta Sleep-Inducing Peptide pour sommeil profond',
-    freq: '4 Hz',
-    effect: 'Sommeil profond (ondes Delta)'
-  },
-  peau_seche: {
-    name: 'Peau Sèche',
-    emoji: '💦',
-    proteodies: ['aqp3', 'tip11'],
-    mode: 'isochrone_10hz',
-    scale: 'fa',
-    desc: 'Aquaporines pour hydratation cutanée optimale',
-    freq: '10 Hz',
-    effect: 'Hydratation + Transfert eau'
-  },
-  diabete: {
-    name: 'Diabète',
-    emoji: '💉',
-    proteodies: ['ins', 'glp1'],
-    mode: 'isochrone_8hz',
-    scale: 'sib',
-    desc: 'Insuline et GLP-1 pour équilibre glycémique',
-    freq: '8 Hz',
-    effect: 'Équilibre métabolique'
-  }
-};
-
+// État global
 let audioPlayer = null;
-let currentPack = null;
+let packsIndex = [];
+let currentPackData = null;
 let isPlaying = false;
 
-async function initPlayer() {
-  if (!audioPlayer) {
+// Initialisation
+async function init() {
+  try {
+    // Charger index des packs
+    const response = await fetch('/proteodies2/packs-index.json');
+    packsIndex = await response.json();
+
+    // Remplir sélecteur
+    const select = document.getElementById('pack-select');
+    select.innerHTML = '<option value="">Choisir un pack...</option>';
+
+    packsIndex.forEach(pack => {
+      const option = document.createElement('option');
+      option.value = pack.id;
+      option.textContent = `${pack.emoji} ${pack.name} (${pack.count} protéodies)`;
+      select.appendChild(option);
+    });
+
+    select.disabled = false;
+    setStatus('', 'Prêt', 'Sélectionnez un pack et cliquez sur ▶ Jouer');
+
+    // Init audio player
     audioPlayer = new ProteodiesAudioPlayer();
-    const available = await audioPlayer.init();
-    if (!available) {
-      setStatus('error', 'Erreur', 'Samples audio non disponibles. Vérifiez que la bibliothèque audio est générée.');
-    }
+    await audioPlayer.init();
+
+  } catch (error) {
+    console.error('Erreur init:', error);
+    setStatus('error', 'Erreur', `Impossible de charger les packs: ${error.message}`);
   }
 }
 
-function onPackChange() {
+async function onPackChange() {
   const packId = document.getElementById('pack-select').value;
   if (!packId) {
     document.getElementById('pack-details').style.display = 'none';
     document.getElementById('info-grid').style.display = 'none';
-    currentPack = null;
+    document.getElementById('play-btn').disabled = true;
+    currentPackData = null;
     return;
   }
 
-  currentPack = PACKS[packId];
+  setStatus('loading', 'Chargement...', `Chargement du pack ${packId}`);
+  document.getElementById('play-btn').disabled = true;
 
-  // Auto-sélectionner mode et gamme si "auto"
-  if (document.getElementById('mode-select').value === 'auto') {
-    document.getElementById('mode-select').value = currentPack.mode;
+  try {
+    // Charger données du pack
+    const response = await fetch(`/proteodies2/packs/${packId}.json`);
+    currentPackData = await response.json();
+
+    // Auto-sélectionner mode et gamme si "auto"
+    if (document.getElementById('mode-select').value === 'auto') {
+      document.getElementById('mode-select').value = currentPackData.mode;
+    }
+    if (document.getElementById('scale-select').value === 'auto') {
+      document.getElementById('scale-select').value = currentPackData.scale;
+    }
+
+    // Afficher détails
+    const detailsEl = document.getElementById('pack-details');
+    detailsEl.style.display = 'block';
+
+    const proteodiesNames = currentPackData.proteodies.map(p => p.name.split(' — ')[1] || p.name).join(', ');
+
+    detailsEl.innerHTML = `
+      <div><strong>${currentPackData.emoji} ${currentPackData.name}</strong> (${currentPackData.proteodies.length} protéodies)</div>
+      <div style="margin-top:8px">${currentPackData.desc}</div>
+      <div style="margin-top:8px">
+        <span class="badge freq">${currentPackData.freq}</span>
+        <span class="badge">${currentPackData.effect}</span>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:#666">
+        ${proteodiesNames}
+      </div>
+    `;
+
+    // Calculer info
+    updateLoopInfo();
+
+    document.getElementById('play-btn').disabled = false;
+    setStatus('', 'Prêt', `Pack ${currentPackData.name} chargé (${currentPackData.proteodies.length} protéodies)`);
+
+  } catch (error) {
+    console.error('Erreur chargement pack:', error);
+    setStatus('error', 'Erreur', `Impossible de charger le pack: ${error.message}`);
+    currentPackData = null;
   }
-  if (document.getElementById('scale-select').value === 'auto') {
-    document.getElementById('scale-select').value = currentPack.scale;
-  }
-
-  // Afficher détails
-  const detailsEl = document.getElementById('pack-details');
-  detailsEl.style.display = 'block';
-
-  const proteodiesNames = currentPack.proteodies.map(id => PROTEODIES[id].name).join(', ');
-
-  detailsEl.innerHTML = `
-    <div><strong>${currentPack.emoji} ${currentPack.name}</strong> (${currentPack.proteodies.length} protéodies)</div>
-    <div style="margin-top:8px">${currentPack.desc}</div>
-    <div style="margin-top:8px">
-      <span class="badge freq">${currentPack.freq}</span>
-      <span class="badge">${currentPack.effect}</span>
-    </div>
-    <div style="margin-top:8px;font-size:11px;color:#666">
-      ${proteodiesNames}
-    </div>
-  `;
-
-  // Calculer info
-  updateLoopInfo();
 }
 
 function updateDurationLabel() {
@@ -325,15 +303,15 @@ function updateDurationLabel() {
 }
 
 function updateLoopInfo() {
-  if (!currentPack) return;
+  if (!currentPackData) return;
 
   const durationMins = parseInt(document.getElementById('duration-slider').value);
   const durationSecs = durationMins * 60;
 
   // Calculer durée totale pack (toutes protéodies enchaînées)
   let totalSeqLength = 0;
-  currentPack.proteodies.forEach(id => {
-    totalSeqLength += PROTEODIES[id].seq.length;
+  currentPackData.proteodies.forEach(p => {
+    totalSeqLength += p.seq.length;
   });
 
   const packDuration = totalSeqLength * 0.923; // BPM 65
@@ -345,12 +323,10 @@ function updateLoopInfo() {
 }
 
 async function playPack() {
-  if (!currentPack) {
+  if (!currentPackData) {
     alert('⚠️ Sélectionnez d\'abord un pack');
     return;
   }
-
-  await initPlayer();
 
   const diapason = document.getElementById('diapason-select').value;
   let mode = document.getElementById('mode-select').value;
@@ -359,16 +335,16 @@ async function playPack() {
   const durationSecs = durationMins * 60;
 
   // Auto mode/scale
-  if (mode === 'auto') mode = currentPack.mode;
-  if (scale === 'auto') scale = currentPack.scale;
+  if (mode === 'auto') mode = currentPackData.mode;
+  if (scale === 'auto') scale = currentPackData.scale;
 
   // Concaténer toutes les séquences du pack
   let fullSequence = '';
-  currentPack.proteodies.forEach(id => {
-    fullSequence += PROTEODIES[id].seq;
+  currentPackData.proteodies.forEach(p => {
+    fullSequence += p.seq;
   });
 
-  setStatus('loading', 'Chargement...', `Préparation ${currentPack.proteodies.length} protéodies`);
+  setStatus('loading', 'Chargement...', `Préparation ${currentPackData.proteodies.length} protéodies`);
   document.getElementById('play-btn').disabled = true;
   document.getElementById('stop-btn').disabled = false;
   document.getElementById('progress-container').style.display = 'block';
@@ -434,10 +410,10 @@ function setStatus(state, title, text) {
 // Event listeners
 document.getElementById('duration-slider').addEventListener('change', updateLoopInfo);
 
-// Init
+// Init au chargement
 window.addEventListener('DOMContentLoaded', () => {
-  console.log('🧬 Protéodies Player V2 chargé');
-  initPlayer();
+  console.log('🧬 Protéodies Player V2 - Chargement à la demande');
+  init();
 });
 </script>
 

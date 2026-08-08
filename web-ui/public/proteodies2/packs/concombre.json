@@ -1,0 +1,54 @@
+{
+  "id": "concombre",
+  "name": "Concombre",
+  "emoji": "🥒",
+  "mode": "stereo",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Résistance pathogènes",
+  "desc": "Pack complet Concombre : PR-1 Résistance, Chitinase Antifongique, NPR1 SAR + 4 autres",
+  "proteodies": [
+    {
+      "id": "pr1",
+      "name": "Concombre — PR-1 Résistance",
+      "seq": "NQYRGVPSTGAKVDYR",
+      "desc": "Pathogenesis-Related 1 — résistance systémique"
+    },
+    {
+      "id": "chi",
+      "name": "Concombre — Chitinase Antifongique",
+      "seq": "SGQFNNYSNYY",
+      "desc": "Dégrade la paroi des champignons"
+    },
+    {
+      "id": "npr1",
+      "name": "Concombre — NPR1 SAR",
+      "seq": "DNEAKEKYF",
+      "desc": "Voie acide salicylique — immunité systémique"
+    },
+    {
+      "id": "pdf12",
+      "name": "Concombre — Défensine PDF1.2",
+      "seq": "KTCENLADKY",
+      "desc": "Peptide antimicrobien — défense fongique"
+    },
+    {
+      "id": "wrky30",
+      "name": "Concombre — WRKY30 Stress",
+      "seq": "WRKYGQK",
+      "desc": "Facteur transcription — réponse pathogènes"
+    },
+    {
+      "id": "flg22",
+      "name": "Concombre — Flg22 Immunité innée",
+      "seq": "QRLSTGSRINSAKDDAAGLQIA",
+      "desc": "Flagelline — immunité innée végétale"
+    },
+    {
+      "id": "csa",
+      "name": "Concombre — CsaMLO Oïdium",
+      "seq": "MGKDKLHEF",
+      "desc": "Gène résistance oïdium"
+    }
+  ]
+}

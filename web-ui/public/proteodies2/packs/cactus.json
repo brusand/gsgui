@@ -1,0 +1,30 @@
+{
+  "id": "cactus",
+  "name": "Cactus",
+  "emoji": "🌵",
+  "mode": "stereo",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Adaptation sécheresse",
+  "desc": "Pack complet Cactus : Cryptochrome CRY1, Aquaporine TIP1;1, PEPC Métabolisme CAM",
+  "proteodies": [
+    {
+      "id": "cry1",
+      "name": "Pedro — Cryptochrome CRY1",
+      "seq": "GKHINDMFH",
+      "desc": "Photorécepteur végétal"
+    },
+    {
+      "id": "aqptip",
+      "name": "Pedro — Aquaporine TIP1;1",
+      "seq": "CFNPAVTLGAHINPAV",
+      "desc": "Canal eau végétal"
+    },
+    {
+      "id": "pepc",
+      "name": "Pedro — PEPC Métabolisme CAM",
+      "seq": "SIDDQLRQA",
+      "desc": "PEP Carboxylase — cactus CAM"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "mianne",
+  "name": "Mianne",
+  "emoji": "💚",
+  "mode": "isochrone_7hz",
+  "scale": "fa",
+  "freq": "6 Hz",
+  "effect": "Cohérence cardiaque",
+  "desc": "Peptide natriurétique — rythme cardiaque harmonieux",
+  "proteodies": [
+    {
+      "id": "mianne_anp",
+      "name": "Mianne — ANP Cohérence Cardiaque",
+      "seq": "SLRRSSCFGGRMDRIGAQSGLGCNSFRY",
+      "desc": "Peptide natriurétique — rythme cardiaque harmonieux"
+    }
+  ]
+}

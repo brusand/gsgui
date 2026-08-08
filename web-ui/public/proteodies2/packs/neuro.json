@@ -1,0 +1,42 @@
+{
+  "id": "neuro",
+  "name": "Neuro",
+  "emoji": "🧠",
+  "mode": "isochrone_14hz",
+  "scale": "fa",
+  "freq": "14 Hz",
+  "effect": "Stimulation cognitive + dopamine",
+  "desc": "Pack complet Neuro : TH Dopamine, DBH Noradrénaline, Sémax + 2 autres",
+  "proteodies": [
+    {
+      "id": "th",
+      "name": "Neuro — TH Dopamine",
+      "seq": "ARQHAFAQLR",
+      "desc": "Tyrosine Hydroxylase — 34DOPAC 25%"
+    },
+    {
+      "id": "dbh",
+      "name": "Neuro — DBH Noradrénaline",
+      "seq": "HFHWHTLGM",
+      "desc": "Dopamine β-Hydroxylase"
+    },
+    {
+      "id": "semax",
+      "name": "Mémoire — Sémax",
+      "seq": "MEHFPGP",
+      "desc": "Nootropique BDNF + dopamine"
+    },
+    {
+      "id": "bdnf",
+      "name": "Mémoire — BDNF loop2",
+      "seq": "HSDPARRGELF",
+      "desc": "Facteur neurotrophique"
+    },
+    {
+      "id": "oxy",
+      "name": "Neuro — Ocytocine",
+      "seq": "CYIQNCPLG",
+      "desc": "Relaxation + lien social"
+    }
+  ]
+}

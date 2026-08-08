@@ -1,0 +1,18 @@
+{
+  "id": "piezo1",
+  "name": "PIEZO1",
+  "emoji": "🧬",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Activation canaux mécanosensibles",
+  "desc": "Inhibiteur canal mécano-sensible",
+  "proteodies": [
+    {
+      "id": "piezo1",
+      "name": "PIEZO1 — GsMTx4",
+      "seq": "GCLEFWWKCNPNDDKCCGPKLKCHAISYKECTK",
+      "desc": "Inhibiteur canal mécano-sensible"
+    }
+  ]
+}

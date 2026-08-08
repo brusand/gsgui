@@ -1,0 +1,332 @@
+[
+  {
+    "id": "neuro_douleur",
+    "name": "Neuro-Douleur",
+    "emoji": "⚡",
+    "count": 9,
+    "mode": "isochrone_7hz",
+    "scale": "fa",
+    "freq": "6 Hz",
+    "effect": "Analgésie neuropathique"
+  },
+  {
+    "id": "tension",
+    "name": "Tension",
+    "emoji": "❤️",
+    "count": 6,
+    "mode": "isochrone_8hz",
+    "scale": "mib",
+    "freq": "8 Hz",
+    "effect": "Vasodilatation + régulation"
+  },
+  {
+    "id": "conscience",
+    "name": "Conscience",
+    "emoji": "🌌",
+    "count": 2,
+    "mode": "isochrone_7hz",
+    "scale": "fa",
+    "freq": "6 Hz",
+    "effect": "États de conscience"
+  },
+  {
+    "id": "cactus",
+    "name": "Cactus",
+    "emoji": "🌵",
+    "count": 3,
+    "mode": "stereo",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Adaptation sécheresse"
+  },
+  {
+    "id": "orchidées",
+    "name": "Orchidées",
+    "emoji": "🌸",
+    "count": 7,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Floraison + croissance"
+  },
+  {
+    "id": "hibiscus_canicule",
+    "name": "Hibiscus Canicule",
+    "emoji": "🌺",
+    "count": 6,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "12 Hz",
+    "effect": "Thermorégulation"
+  },
+  {
+    "id": "plantes",
+    "name": "Plantes",
+    "emoji": "🌿",
+    "count": 8,
+    "mode": "stereo",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Croissance végétale"
+  },
+  {
+    "id": "tomate",
+    "name": "Tomate",
+    "emoji": "🍅",
+    "count": 8,
+    "mode": "stereo",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Défense végétale"
+  },
+  {
+    "id": "vigne",
+    "name": "Vigne",
+    "emoji": "🍇",
+    "count": 6,
+    "mode": "stereo",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Résistance esca"
+  },
+  {
+    "id": "altitude",
+    "name": "Altitude",
+    "emoji": "🏔️",
+    "count": 2,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "12 Hz",
+    "effect": "Adaptation hypoxie"
+  },
+  {
+    "id": "yeux",
+    "name": "Yeux",
+    "emoji": "👁️",
+    "count": 6,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Protection cristallin"
+  },
+  {
+    "id": "diabète",
+    "name": "Diabète",
+    "emoji": "💉",
+    "count": 9,
+    "mode": "isochrone_8hz",
+    "scale": "sib",
+    "freq": "8 Hz",
+    "effect": "Équilibre glycémique"
+  },
+  {
+    "id": "mianne",
+    "name": "Mianne",
+    "emoji": "💚",
+    "count": 1,
+    "mode": "isochrone_7hz",
+    "scale": "fa",
+    "freq": "6 Hz",
+    "effect": "Cohérence cardiaque"
+  },
+  {
+    "id": "peau_sèche",
+    "name": "Peau Sèche",
+    "emoji": "💦",
+    "count": 8,
+    "mode": "isochrone_8hz",
+    "scale": "fa",
+    "freq": "8 Hz",
+    "effect": "Hydratation cutanée"
+  },
+  {
+    "id": "eau",
+    "name": "Eau",
+    "emoji": "💧",
+    "count": 1,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Transport hydrique"
+  },
+  {
+    "id": "fibromyalgie",
+    "name": "Fibromyalgie",
+    "emoji": "💪",
+    "count": 9,
+    "mode": "isochrone_7hz",
+    "scale": "mib",
+    "freq": "7 Hz",
+    "effect": "Anti-douleur + énergie"
+  },
+  {
+    "id": "métabolisme",
+    "name": "Métabolisme",
+    "emoji": "🔥",
+    "count": 5,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "12 Hz",
+    "effect": "Lipolyse + énergie"
+  },
+  {
+    "id": "humeur",
+    "name": "Humeur",
+    "emoji": "😊",
+    "count": 5,
+    "mode": "isochrone_8hz",
+    "scale": "fa",
+    "freq": "8 Hz",
+    "effect": "Bien-être + anti-stress"
+  },
+  {
+    "id": "sommeil",
+    "name": "Sommeil",
+    "emoji": "😴",
+    "count": 1,
+    "mode": "isochrone_4hz",
+    "scale": "mib",
+    "freq": "4 Hz",
+    "effect": "Sommeil profond (Delta)"
+  },
+  {
+    "id": "concombre",
+    "name": "Concombre",
+    "emoji": "🥒",
+    "count": 7,
+    "mode": "stereo",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Résistance pathogènes"
+  },
+  {
+    "id": "anti_démangeaisons",
+    "name": "Anti-Démangeaisons",
+    "emoji": "🦟",
+    "count": 5,
+    "mode": "stereo",
+    "scale": "mib",
+    "freq": "10 Hz",
+    "effect": "Antiprurit"
+  },
+  {
+    "id": "arthrose",
+    "name": "Arthrose",
+    "emoji": "🦴",
+    "count": 8,
+    "mode": "isochrone_7hz",
+    "scale": "mib",
+    "freq": "7 Hz",
+    "effect": "Anti-inflammatoire + Régénération"
+  },
+  {
+    "id": "genou",
+    "name": "Genou",
+    "emoji": "🦵",
+    "count": 5,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Régénération articulaire"
+  },
+  {
+    "id": "ménière",
+    "name": "Ménière",
+    "emoji": "🦻",
+    "count": 11,
+    "mode": "isochrone_10hz",
+    "scale": "mib",
+    "freq": "10 Hz",
+    "effect": "Équilibre endolymphe"
+  },
+  {
+    "id": "jambes_sans_repos",
+    "name": "Jambes Sans Repos",
+    "emoji": "🦿",
+    "count": 5,
+    "mode": "isochrone_8hz",
+    "scale": "mib",
+    "freq": "8 Hz",
+    "effect": "Fer + dopamine"
+  },
+  {
+    "id": "neuro",
+    "name": "Neuro",
+    "emoji": "🧠",
+    "count": 5,
+    "mode": "isochrone_14hz",
+    "scale": "fa",
+    "freq": "14 Hz",
+    "effect": "Stimulation cognitive + dopamine"
+  },
+  {
+    "id": "protocol_h",
+    "name": "Protocol H",
+    "emoji": "🧪",
+    "count": 5,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Sérotonine TPH1"
+  },
+  {
+    "id": "piezo1",
+    "name": "PIEZO1",
+    "emoji": "🧬",
+    "count": 1,
+    "mode": "isochrone_10hz",
+    "scale": "fa",
+    "freq": "10 Hz",
+    "effect": "Activation canaux mécanosensibles"
+  },
+  {
+    "id": "sang",
+    "name": "Sang",
+    "emoji": "🩸",
+    "count": 4,
+    "mode": "isochrone_8hz",
+    "scale": "mib",
+    "freq": "8 Hz",
+    "effect": "Anticoagulation + fluidité"
+  },
+  {
+    "id": "anti_inflammatoire",
+    "name": "Anti-Inflammatoire",
+    "emoji": "🩹",
+    "count": 8,
+    "mode": "isochrone_10hz",
+    "scale": "mib",
+    "freq": "10 Hz",
+    "effect": "Réduction inflammation"
+  },
+  {
+    "id": "intestin",
+    "name": "Intestin",
+    "emoji": "🫃",
+    "count": 5,
+    "mode": "isochrone_7hz",
+    "scale": "fa",
+    "freq": "6 Hz",
+    "effect": "Réparation muqueuse"
+  },
+  {
+    "id": "foie",
+    "name": "Foie",
+    "emoji": "🫒",
+    "count": 5,
+    "mode": "isochrone_7hz",
+    "scale": "fa",
+    "freq": "7 Hz",
+    "effect": "Détox + anti-stéatose"
+  },
+  {
+    "id": "rénal_kplus_créatinine",
+    "name": "Rénal K+/Créatinine",
+    "emoji": "🫘",
+    "count": 8,
+    "mode": "isochrone_7hz",
+    "scale": "mib",
+    "freq": "6 Hz",
+    "effect": "Fonction rénale"
+  }
+]

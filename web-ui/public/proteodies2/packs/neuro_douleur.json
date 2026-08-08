@@ -1,0 +1,66 @@
+{
+  "id": "neuro_douleur",
+  "name": "Neuro-Douleur",
+  "emoji": "⚡",
+  "mode": "isochrone_7hz",
+  "scale": "fa",
+  "freq": "6 Hz",
+  "effect": "Analgésie neuropathique",
+  "desc": "Pack complet Neuro-Douleur : NGF Régénération, BDNF Anti-Hyperalgésie, ProTx-II Nav1.7 + 6 autres",
+  "proteodies": [
+    {
+      "id": "ngf",
+      "name": "Neuro-Douleur — NGF Régénération",
+      "seq": "SSSHPIFHRGEFSVCDSVSVWVGDKTTATDIKGKEVTVLAEVNINNSVFRQQYFFETKCRDPNPVDSGCRGIDSKHWNSYCTTTHTFVKALTMDGKQAAWRFIRIDTACVCVLSRKAVRRA",
+      "desc": "Nerve Growth Factor — régénère les fibres nerveuses lésées"
+    },
+    {
+      "id": "bdnf_pain",
+      "name": "Neuro-Douleur — BDNF Anti-Hyperalgésie",
+      "seq": "HSDPARRGELSVCDSISEWVTAADKKTAVDMSGGTVTVLEKVPVSKGQLKQYFYETKCNPMGYTKEGCRGIDKRHWNSQCRTTQSYVRALTMDSKKRIGWRFIRIDTSCVCTLTIKRGR",
+      "desc": "BDNF complet — réduit sensibilisation centrale et hyperalgésie"
+    },
+    {
+      "id": "nav17_block",
+      "name": "Neuro-Douleur — ProTx-II Nav1.7",
+      "seq": "ECLGFGKGCNPSNDQCCSGYCHNPRFHCICTSSRFGCAQKCRKKWCQVFVGFT",
+      "desc": "Bloqueur sélectif Nav1.7 — canaux sodiques douleur neuropathique"
+    },
+    {
+      "id": "nmda_mod",
+      "name": "Neuro-Douleur — Conantokin-G NMDA",
+      "seq": "GEYYLLQKGANKDAEFRKAMKKLIQS",
+      "desc": "Antagoniste NMDA — bloque sensibilisation centrale et wind-up"
+    },
+    {
+      "id": "met_enk",
+      "name": "Neuro-Douleur — Met-Enképhaline",
+      "seq": "YGGFM",
+      "desc": "Opioïde endogène — analgésie puissante via récepteurs μ et δ"
+    },
+    {
+      "id": "gabaa",
+      "name": "Neuro-Douleur — GABA-A α2 Sous-Unité",
+      "seq": "FQMTHHYQKDKIDMFILKFPAQMYHK",
+      "desc": "Sous-unité α2 — inhibe hyperexcitabilité neuronale (allodynie)"
+    },
+    {
+      "id": "sst14",
+      "name": "Neuro-Douleur — Somatostatine Spinale",
+      "seq": "AGCKNFFWKTFTSC",
+      "desc": "SST-14 — inhibe libération Substance P dans moelle (intrathécal)"
+    },
+    {
+      "id": "noci",
+      "name": "Neuro-Douleur — Nociceptine/OFQ",
+      "seq": "FGGFTGARKSARKLANQ",
+      "desc": "Orphanine FQ — opioïde atypique bloque transmission spinale"
+    },
+    {
+      "id": "endom1",
+      "name": "Neuro-Douleur — Endomorphine-1",
+      "seq": "YPWF",
+      "desc": "Opioïde μ-sélectif le plus puissant — analgésie spinale pure"
+    }
+  ]
+}

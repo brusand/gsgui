@@ -1,0 +1,24 @@
+{
+  "id": "conscience",
+  "name": "Conscience",
+  "emoji": "🌌",
+  "mode": "isochrone_7hz",
+  "scale": "fa",
+  "freq": "6 Hz",
+  "effect": "États de conscience",
+  "desc": "Pack complet Conscience : INMT DMT Endogène, 5-HT2A Psychédélique",
+  "proteodies": [
+    {
+      "id": "inmt",
+      "name": "Conscience — INMT DMT Endogène",
+      "seq": "LDVGCGTGLLASFL",
+      "desc": "DMT Synthase — molécule endogène de conscience"
+    },
+    {
+      "id": "5ht2a",
+      "name": "Conscience — 5-HT2A Psychédélique",
+      "seq": "KHSRRNYH",
+      "desc": "Récepteur sérotoninergique — états modifiés"
+    }
+  ]
+}

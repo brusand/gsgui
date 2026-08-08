@@ -1,0 +1,42 @@
+{
+  "id": "métabolisme",
+  "name": "Métabolisme",
+  "emoji": "🔥",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "12 Hz",
+  "effect": "Lipolyse + énergie",
+  "desc": "Pack complet Métabolisme : GH Fragment Lipolytique, Adiponectine, Irisin Browning + 2 autres",
+  "proteodies": [
+    {
+      "id": "gh_frag",
+      "name": "Métabolisme — GH Fragment Lipolytique",
+      "seq": "FPTIPLSRLFDNAMLRAHRLHQLAFDTYQEFEEAYIPKEQKYSFLQNPQTSLCFSESIPTPSNREETQQKSNLELLRISLLLIQSWLEPVQFLRSVFANSLVYGASDSNVYDLLKDLEEGIQTLMGRLEDGSPRTGQIFKQTYSKFDTNSHNDDALLKNYGLLYCFRKDMDKVETFLRIVQCRSVEGSCGF",
+      "desc": "Fragment hormone de croissance — lipolyse abdominale"
+    },
+    {
+      "id": "adiponectin",
+      "name": "Métabolisme — Adiponectine",
+      "seq": "ECDVLQVLGKGQREMPESDKGDQGQHGDKGDAGPPGPMGPPGLRGPPGRDGRDGTPGEGGKPG",
+      "desc": "Hormone anti-obésité — sensibilité insuline"
+    },
+    {
+      "id": "irisin",
+      "name": "Métabolisme — Irisin Browning",
+      "seq": "SDRFQHTDPPGKQPKDHPGDTQPPPRGFKRPQP",
+      "desc": "Hormone exercice — convertit graisse blanche en brune"
+    },
+    {
+      "id": "atgl",
+      "name": "Métabolisme — ATGL Lipolyse",
+      "seq": "GWSMGGFLARAKHSPLPLM",
+      "desc": "Enzyme clé — dégrade triglycérides abdominaux"
+    },
+    {
+      "id": "ucp1",
+      "name": "Métabolisme — UCP1 Thermogenèse",
+      "seq": "MGGTARPPDDKHNVPSSPVKPPMKYHILPPQPYPGWDLPCPRVRQLARQFGKVLNTANVLQGPDIAQERLHQLQQLAAELPRFQKLVMTGVFSTGVAGSALALGLLFRKVPPGTDLSRSFPPGLKDSTFYSFQAMAQNGGPWQGRVNTMVQVSHQVVQGAMVFGHLGLQGLLQLLQGFNPPDLALPRHLGQSMNAANQALSRFAFSGLAGLVVNGAGCAILVGIVPLALNFWFFRGTVPVFNLLWSPFTMTLPLVQMFGSALGILFGAGAPALQGGAMAGASIGEAEKLQELVEQHKEKGLDTYRKVQRMEVTGTKGDVLVIKWKTPRSARNYQAYISGMQFGYARGAHFTEDKCRKVTLVLDSTFTSKEVGSLVEVEDPFSTGAMQGLLYTKRTIVPPGAQTLKSVFAPVKHVGPEEYLTYIGWFMLITFLYVGIYAAYGLLVKEFTRSLRELSQLHTLLESTMHEGISLSESSNLGSLPSLEGNSLGSASP",
+      "desc": "Thermogenèse — brûle calories en chaleur"
+    }
+  ]
+}

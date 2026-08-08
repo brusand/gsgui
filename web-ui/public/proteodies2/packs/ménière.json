@@ -1,0 +1,78 @@
+{
+  "id": "ménière",
+  "name": "Ménière",
+  "emoji": "🦻",
+  "mode": "isochrone_10hz",
+  "scale": "mib",
+  "freq": "10 Hz",
+  "effect": "Équilibre endolymphe",
+  "desc": "Pack complet Ménière : AQP4 Oreille Interne, KCNQ4 Canal Potassique, ENaC-α Sodium Épithélial + 8 autres",
+  "proteodies": [
+    {
+      "id": "aqp4_inner",
+      "name": "Ménière — AQP4 Oreille Interne",
+      "seq": "MSDGAAARRWGKCGPLCTRENIMVAFKGVWTQAFWKAVTAEFLAMLIFVLLSVGSTINWGGSENPLPVDMVLISLCFGLSIATMVQCFGHISGGHINPAVTVAMVCTRKISIAKSVFYIAAQCLGAIIGAGILYLVTPPSVVGGLGVTMVHGNLTAGHGLLVELIITFQLVFTIFASCDSKRTDVTGSIALAIGFSY",
+      "desc": "Aquaporine — régule endolymphe, pression oreille interne"
+    },
+    {
+      "id": "kcnq4",
+      "name": "Ménière — KCNQ4 Canal Potassique",
+      "seq": "MRWWKCCPNCLQDGPRRLHQVLQPLVRCSPRLVSHPEPVPREAPGLQEGQEQELQAAGETPVLSLPPLQPGPPEEPQPPQPVPWPPSLPPVEQETRQRTQRLQRLQRQRERLERLERLQ",
+      "desc": "Canal K+ cellules ciliées — mutation = surdité + Ménière"
+    },
+    {
+      "id": "enac_alpha",
+      "name": "Ménière — ENaC-α Sodium Épithélial",
+      "seq": "CQADTLLYCKENGYLCRTTCPNFHGCCQTRLE",
+      "desc": "Canal sodium — contrôle volume endolymphe"
+    },
+    {
+      "id": "coch",
+      "name": "Ménière — Cochline COCH",
+      "seq": "CRQGVCLPIWVHCGECQVPGYTGHCYYRDGQCYCSKSGTEYYGYNCYNLPGRFYGPLTYLHKLTNYENQTD",
+      "desc": "Protéine matrice oreille interne — mutations = Ménière"
+    },
+    {
+      "id": "bdnf_cochlea",
+      "name": "Ménière — BDNF Neuroprotection",
+      "seq": "HSDPARRGELF",
+      "desc": "Protège neurones auditifs et vestibulaires"
+    },
+    {
+      "id": "nkcc1",
+      "name": "Ménière — NKCC1 Transport Ionique",
+      "seq": "RRDNFVAIGKKKAPN",
+      "desc": "Cotransporteur Na-K-Cl — homéostasie endolymphe"
+    },
+    {
+      "id": "nt3_auditory",
+      "name": "Nerf Auditif — NT-3 Neurotrophin-3",
+      "seq": "YAEHKSHRGEYSVCDSESLWVTDKSSAIDIRGHQVTVLGEIKTGNSPVKQYFYETRCKEARPVKNGCRGIDDKHWNSQCKTTSQTIVSAKMQKQVDKIKKNVKKMVKKGQRG",
+      "desc": "Neurotrophin-3 — régénération cellules ciliées et fibres du nerf auditif"
+    },
+    {
+      "id": "gdnf_spiral",
+      "name": "Nerf Auditif — GDNF Ganglion Spiral",
+      "seq": "MGLKVLSLLRLWLGLGLSTQRRSSLAALGARPPGAGSPPGGARPAAETGTARGLADGRLLAPPAAARALGAAARGDALDGRVRRAGRGGAARADDDALDVDPAGRAAPDALDPLPADALGGAARRARPARGGRAAGAA",
+      "desc": "Glial-Derived Neurotrophic Factor — régénère neurones ganglion spiral cochléaire"
+    },
+    {
+      "id": "ngf_auditory",
+      "name": "Nerf Auditif — NGF Régénération",
+      "seq": "SSSHPIFHRGEFSVCDSVSVWVGDKTTATDIKGKEVTVLAEVNINNSVFRQQYFFETKCRDPNPVDSGCRGIDSKHWNSYCTTTHTFVKALTMDGKQAAWRFIRIDTACVCVLSRKAVRRA",
+      "desc": "Nerve Growth Factor auditif — régénération et survie des fibres nerveuses cochléaires"
+    },
+    {
+      "id": "nrg1_myelin",
+      "name": "Nerf Auditif — Neuregulin-1 Myéline",
+      "seq": "SHLVKCAEKEKTFCVNGGECFMVKDLSNPSRYLCKCQAGFGHLCQGPNPCGSCKLKL",
+      "desc": "Neuregulin-1 Type III — myélinisation et protection des fibres du nerf auditif"
+    },
+    {
+      "id": "cntf_cochlear",
+      "name": "Nerf Auditif — CNTF Neuroprotection",
+      "seq": "MAFTEHSPLTPHRRDLCSRSIWLARKIRSDLTALTESYVKHQGLNKNINLDSADGMPVASTDQWSELTEYLENKFRRGHSRGS",
+      "desc": "Ciliary Neurotrophic Factor — protège neurones auditifs de la dégénérescence"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "anti_démangeaisons",
+  "name": "Anti-Démangeaisons",
+  "emoji": "🦟",
+  "mode": "stereo",
+  "scale": "mib",
+  "freq": "10 Hz",
+  "effect": "Antiprurit",
+  "desc": "Pack complet Anti-Démangeaisons : H1R Antagoniste, IL-31RA Bloqueur, PAR2 Antagoniste + 2 autres",
+  "proteodies": [
+    {
+      "id": "h1r_block",
+      "name": "Anti-Démangeaisons — H1R Antagoniste",
+      "seq": "PMGYNVSALTLQTPDGAVL",
+      "desc": "Bloque récepteur H1 histamine — coupe démangeaisons piqûres"
+    },
+    {
+      "id": "il31ra_block",
+      "name": "Anti-Démangeaisons — IL-31RA Bloqueur",
+      "seq": "WSEWSPAAVQCCR",
+      "desc": "Bloque IL-31 — cytokine majeure du prurit chronique"
+    },
+    {
+      "id": "par2_antag",
+      "name": "Anti-Démangeaisons — PAR2 Antagoniste",
+      "seq": "SLIGKV",
+      "desc": "Protease-Activated Receptor 2 — réduit prurit inflammatoire"
+    },
+    {
+      "id": "trpv1_mod",
+      "name": "Anti-Démangeaisons — TRPV1 Modulateur",
+      "seq": "AAVALLPAVLLALLAP",
+      "desc": "Canal TRP — bloque sensation brûlure et démangeaison"
+    },
+    {
+      "id": "tslp_block",
+      "name": "Anti-Démangeaisons — TSLP Bloqueur",
+      "seq": "KCMGLNTDKQAFEEVLG",
+      "desc": "Thymic Stromal Lymphopoietin — coupe allergies piqûres"
+    }
+  ]
+}

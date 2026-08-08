@@ -1,0 +1,48 @@
+{
+  "id": "vigne",
+  "name": "Vigne",
+  "emoji": "🍇",
+  "mode": "stereo",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Résistance esca",
+  "desc": "Pack complet Vigne : Vvitisin Défensine, Stilbène Synthase Resvératrol, PR-10 Anti-Esca + 3 autres",
+  "proteodies": [
+    {
+      "id": "vv_def",
+      "name": "Vigne — Vvitisin Défensine",
+      "seq": "GFCTKWGCRNRAYCRSRCFQTERCDQYKGDDQ",
+      "desc": "Défensine anti-fongique — active contre champignons esca"
+    },
+    {
+      "id": "vv_sts",
+      "name": "Vigne — Stilbène Synthase Resvératrol",
+      "seq": "MAPVTSDYQLDTPQFEVTLKGDKPIPKSSSGKFWLHPSGVGPVIVPKLMEKYGVSATVATHLISVGAEDTLSSDPQFKKHQEVVMQESTQDLILHPNGGDYILDSLVPSTHPTVEIFPRLRKVAAMLGAPAAGRDAEARLHSVFADVGMTQECSKELEVGATYVDNTESLAKAEAVRVVNLTSGCAGTVFTKNLPALDGVDQVKILIGVAGLGGTHAVPIAYSLMAGGFDGFNSAVLDTAWTQDGSKPFDVWHSCYHQPQVGMQELKKVDGQRISIPVPGHNWFSTGQATYASANNGRQILSELADVGVDAFHLHVSTPDRVFTELQQSLMAQCPSIKQGILFPGGVGVCIGRMVRAYTAEGGLDVCGGLGVNELQSQGYTPMGSTIGDMITPAGCEVLGRLLARQNRDIGRVELDHYVLGNK",
+      "desc": "Produit le resvératrol — puissant antifongique naturel"
+    },
+    {
+      "id": "vv_pr10",
+      "name": "Vigne — PR-10 Anti-Esca",
+      "seq": "SFGDKYTKIGQFKAGSSNFDSKGKTIEIYAKKGGQLKVELENFKALGYDSEDGIKVDIHKKGPAAEKQIVEGDGVVSKSDVLLPKGQTVTI",
+      "desc": "Pathogenesis-Related 10 — résistance spécifique esca"
+    },
+    {
+      "id": "vv_chi",
+      "name": "Vigne — Chitinase Antifongique",
+      "seq": "QCGRQAGGKLCPNNLCCSQYGWCGSTDYYGNSSGCQSQFRGGGNCQTFPYGGGPASLRDAACAKCSGAACLNNQRCNFSSYIGGGRNCSPTGCGAPTPT",
+      "desc": "Classe IV chitinase — dégrade paroi champignons esca"
+    },
+    {
+      "id": "vv_tlp",
+      "name": "Vigne — Thaumatine-Like Protein",
+      "seq": "QTGCRGLGNQLCSKSFQVTSSLQGGNTLFVNFIDAEVTKGGKVGGLNTSKRFCRTCDGSVQPRPTGTVQQGGGICGGNYSGPTLAAFEAQCPADKPTQTCVDLVTSTLLKQSGPFYVIDSSTTAAKDRTACNGISADCKPIDWKYYTAGDPANSGQLWNGSQVPGFSVDGGSFQSYQAWQANWTNV",
+      "desc": "TLP — très active contre Phaeomoniella (agent esca)"
+    },
+    {
+      "id": "vv_lac",
+      "name": "Vigne — Laccase Défense Vasculaire",
+      "seq": "GWHGFFQNQSDNSPGYYTPGPTCAGQVNVDFGHQNGQIVNVNGTSHRSIPWHLAFHDVGAWNIHGQPVTGGHEGTTGALVRGLNSTLDQVQNTVTFWAQNYSRDNWYQNGWRFHLSYDVVAGAAP",
+      "desc": "Laccase — défense vasculaire contre pathogènes esca"
+    }
+  ]
+}

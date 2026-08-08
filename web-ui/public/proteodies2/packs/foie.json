@@ -1,0 +1,42 @@
+{
+  "id": "foie",
+  "name": "Foie",
+  "emoji": "🫒",
+  "mode": "isochrone_7hz",
+  "scale": "fa",
+  "freq": "7 Hz",
+  "effect": "Détox + anti-stéatose",
+  "desc": "Pack complet Foie : FGF21 Anti-Stéatose, PPARα Oxydation Lipides, AMPK Régulation Énergie + 2 autres",
+  "proteodies": [
+    {
+      "id": "fgf21",
+      "name": "Foie — FGF21 Anti-Stéatose",
+      "seq": "HPIPDSSPLLQFGGQVRQRYLYTDDAQQTEAHLEIREDGTVGGAADQSPESLLQLKALKPGVIQILGVKTSRFLCQRPDGALYGSLHFDPEACSFRELLLEDGYNVYQSEAHGLPLHLPGNKSPHRDPAPRGPARFLPLPGLPPALPEPPGILAPQPPDVGSSDPLSMVGPSQGRSPSYAS",
+      "desc": "Hormone anti-stéatose — inverse le foie gras"
+    },
+    {
+      "id": "ppara",
+      "name": "Foie — PPARα Oxydation Lipides",
+      "seq": "KVDGGQGGEQQPPPPPPPQDLLEVMEKDSAPGDLPPPLGDTNAPASGPLPAGLQADAGPQGAQAQQHPQQQQQQQQQHLQQQQQQQQQQQQQQQPQQQLLQPQQPQPAQQQFPQLQQP",
+      "desc": "Facteur transcription — brûle les graisses hépatiques"
+    },
+    {
+      "id": "ampk",
+      "name": "Foie — AMPK Régulation Énergie",
+      "seq": "SGGEGSCSQRTVAQLKLEHPRGDNKWVQSLDALKQFEFKCNQVHKSSKVRKVLGDVISIQPCPDVKYGKRVDLQFVRLTGTNPKATYEEIDKSLVGYAEYDSGSSVQRGCDSPNAVLKLAFEKFDQIDNAGYIDPTQNPLKNKLNKLQKILQAKGMKGHMEEYSNYLNEKISSALVDEAQRWGWKDHKDHIDNRGKIRQLVLDYAMDTEKSRKSTSLSAVSRGVHGHDCAPSFSSEDYSESLFSEVVSLPPRTGGLRQKGTPPPRPPLRLAAGGPPPALPSRPPPPAAASGSAGNRTSSTTPTFSRSLAAPSLQRGNSRMPSTAGAANGLRMPP",
+      "desc": "Enzyme maîtresse — restaure métabolisme hépatique"
+    },
+    {
+      "id": "adipoq_liver",
+      "name": "Foie — Adiponectine Hépatique",
+      "seq": "ECDVLQVLGKGQREMPESDKGDQGQHGDKGDAGPPGPMGPPGLRGPPGRDGRDGTPGEGGKPG",
+      "desc": "Réduit inflammation et fibrose hépatique"
+    },
+    {
+      "id": "gsh_synth",
+      "name": "Foie — Glutathion Synthase Détox",
+      "seq": "MRRLRLELQGPRCLVHVPVSNSLPGRPPTPLRWQPSRLPRLLDPSLPGLPRARVARLGRS",
+      "desc": "Antioxydant majeur — détoxification hépatique"
+    }
+  ]
+}

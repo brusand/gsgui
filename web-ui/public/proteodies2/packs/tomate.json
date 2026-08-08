@@ -1,0 +1,60 @@
+{
+  "id": "tomate",
+  "name": "Tomate",
+  "emoji": "🍅",
+  "mode": "stereo",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Défense végétale",
+  "desc": "Pack complet Tomate : PR-1 Résistance, Rcr3 Cladosporium, Pto Mildiou Bactérien + 5 autres",
+  "proteodies": [
+    {
+      "id": "t_pr1",
+      "name": "Tomate — PR-1 Résistance",
+      "seq": "NQYRGVPSAGAKIDYR",
+      "desc": "Pathogenesis-Related 1 — immunité tomate"
+    },
+    {
+      "id": "t_rcr3",
+      "name": "Tomate — Rcr3 Cladosporium",
+      "seq": "GHGSCWAFSAVANQ",
+      "desc": "Protéase — résistance Cladosporium"
+    },
+    {
+      "id": "t_pto",
+      "name": "Tomate — Pto Mildiou Bactérien",
+      "seq": "MGKKSSSEGKL",
+      "desc": "Kinase Pto — résistance Pseudomonas"
+    },
+    {
+      "id": "t_i3",
+      "name": "Tomate — Inhibiteur Protéase I-II",
+      "seq": "RCLSYPGPCHRDDMC",
+      "desc": "Défense insectes + pathogènes"
+    },
+    {
+      "id": "t_ver",
+      "name": "Tomate — VER2 Verticillium",
+      "seq": "DGYSHFHPLG",
+      "desc": "Résistance Verticillium dahliae"
+    },
+    {
+      "id": "t_syst",
+      "name": "Tomate — Systémine Défense",
+      "seq": "AVQSKPPSKRDPPKMQTD",
+      "desc": "Hormone peptidique — cascade défense"
+    },
+    {
+      "id": "t_lox",
+      "name": "Tomate — LOX Acide Jasmonique",
+      "seq": "MAPSNKL",
+      "desc": "Lipoxygénase — voie jasmonique"
+    },
+    {
+      "id": "t_cf9",
+      "name": "Tomate — Cf-9 Récepteur",
+      "seq": "CGFQCENFP",
+      "desc": "Récepteur LRR — reconnaissance Cladosporium"
+    }
+  ]
+}

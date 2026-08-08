@@ -1,0 +1,54 @@
+{
+  "id": "orchidées",
+  "name": "Orchidées",
+  "emoji": "🌸",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Floraison + croissance",
+  "desc": "Pack complet Orchidées : FT Florigen, CONSTANS Photopériode, GA20ox Gibbérellines + 4 autres",
+  "proteodies": [
+    {
+      "id": "ft_florigen",
+      "name": "Orchidées — FT Florigen",
+      "seq": "RYTDVPPPYRHDDEHSSD",
+      "desc": "Flowering locus T — LA protéine qui déclenche la floraison"
+    },
+    {
+      "id": "constans",
+      "name": "Orchidées — CONSTANS Photopériode",
+      "seq": "CKYCERCGHIACQKYFHD",
+      "desc": "Protéine photopériode — détecte durée du jour pour initier floraison"
+    },
+    {
+      "id": "ga20ox",
+      "name": "Orchidées — GA20ox Gibbérellines",
+      "seq": "WDYPLFHKDHPMSAPVID",
+      "desc": "Gibberellin 20-oxidase — synthétise hormones de croissance florale"
+    },
+    {
+      "id": "ipt_cytok",
+      "name": "Orchidées — IPT Cytokinines",
+      "seq": "HLETAELARGGADVIAVA",
+      "desc": "Isopentenyl transferase — synthétise cytokinines (division cellules bourgeons)"
+    },
+    {
+      "id": "leafy",
+      "name": "Orchidées — LEAFY Identité Florale",
+      "seq": "KRMKVLTRESIKRQADQL",
+      "desc": "Facteur transcription — transforme bourgeon végétatif en bourgeon floral"
+    },
+    {
+      "id": "apetala1",
+      "name": "Orchidées — APETALA1 Pétales",
+      "seq": "MGRGKIEIKRIENKTNRQ",
+      "desc": "MADS-box — initie formation des pétales et sépales"
+    },
+    {
+      "id": "soc1",
+      "name": "Orchidées — SOC1 Intégrateur",
+      "seq": "RIKLENIRAQWSSRKRLK",
+      "desc": "Suppressor of Overexpression of CO1 — intègre tous signaux floraison"
+    }
+  ]
+}

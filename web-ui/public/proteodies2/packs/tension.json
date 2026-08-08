@@ -1,0 +1,48 @@
+{
+  "id": "tension",
+  "name": "Tension",
+  "emoji": "❤️",
+  "mode": "isochrone_8hz",
+  "scale": "mib",
+  "freq": "8 Hz",
+  "effect": "Vasodilatation + régulation",
+  "desc": "Pack complet Tension : Apelin-13, eNOS Oxyde Nitrique, BNP Diastolique + 3 autres",
+  "proteodies": [
+    {
+      "id": "apelin",
+      "name": "Tension — Apelin-13",
+      "seq": "QRPRLSHKGPMPF",
+      "desc": "Vasodilatateur endogène"
+    },
+    {
+      "id": "enos",
+      "name": "Tension — eNOS Oxyde Nitrique",
+      "seq": "RRKRKKSRGG",
+      "desc": "Enzyme NO — dilate artérioles (diastolique)"
+    },
+    {
+      "id": "bnp",
+      "name": "Tension — BNP Diastolique",
+      "seq": "SPKMVQGSGCFGRKMDRISSSSGLGCKVLRRH",
+      "desc": "Brain Natriuretic Peptide — baisse résistance périphérique"
+    },
+    {
+      "id": "adrm",
+      "name": "Tension — Adrénomédulline",
+      "seq": "YRQSMNNFQGLRSFGCRFGTCTVQKLAHQIYQFTDKDKDNVAPRSKISPQGY",
+      "desc": "Vasodilatateur puissant — cible diastolique"
+    },
+    {
+      "id": "cgrp",
+      "name": "Tension — CGRP Artérioles",
+      "seq": "ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF",
+      "desc": "Calcitonin Gene-Related Peptide — détend artérioles"
+    },
+    {
+      "id": "aqp2",
+      "name": "Tension — AQP2 Rénale",
+      "seq": "MGKEVEFKDTDWDHRSFQKKVSLAAVTFKLFVLGFGLDDHSGKGNFKGATAAVQVAWDGWKASTPSHNLW",
+      "desc": "Aquaporine rein — régule volume sanguin et diastolique"
+    }
+  ]
+}

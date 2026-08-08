@@ -1,0 +1,66 @@
+{
+  "id": "fibromyalgie",
+  "name": "Fibromyalgie",
+  "emoji": "💪",
+  "mode": "isochrone_7hz",
+  "scale": "mib",
+  "freq": "7 Hz",
+  "effect": "Anti-douleur + énergie",
+  "desc": "Pack complet Fibromyalgie : Antagoniste Substance P, Dynorphine A, α-MSH Anti-Inflammatoire + 6 autres",
+  "proteodies": [
+    {
+      "id": "sp_block",
+      "name": "Fibromyalgie — Antagoniste Substance P",
+      "seq": "RPKPQQFFGLM",
+      "desc": "Bloque récepteur NK1 — réduit douleur centrale"
+    },
+    {
+      "id": "dyn_a",
+      "name": "Fibromyalgie — Dynorphine A",
+      "seq": "YGGFLRRIRPKLKWDNQ",
+      "desc": "Opioïde κ — analgésie douleur chronique"
+    },
+    {
+      "id": "alpha_msh",
+      "name": "Fibromyalgie — α-MSH Anti-Inflammatoire",
+      "seq": "SYSMEHFRWGKPV",
+      "desc": "Melanocortin — réduit inflammation centrale"
+    },
+    {
+      "id": "cgrp_block",
+      "name": "Fibromyalgie — Antagoniste CGRP",
+      "seq": "ACDTATCVTHRLAGLLSRSGGVVKNNFVPTNVGSKAF",
+      "desc": "Réduit migraines et sensibilisation périphérique"
+    },
+    {
+      "id": "galanin_fibro",
+      "name": "Fibromyalgie — Galanine Inhibitrice",
+      "seq": "GWTLNSAGYLLGPHAVGNHRSFSDKHGLT",
+      "desc": "Inhibe transmission nociceptive spinale"
+    },
+    {
+      "id": "sst28",
+      "name": "Fibromyalgie — Somatostatine-28",
+      "seq": "SANSNPAMAPRERKAGCKNFFWKTFTSC",
+      "desc": "SST-28 — inhibe libération glutamate et Substance P"
+    },
+    {
+      "id": "beta_end",
+      "name": "Fibromyalgie — β-Endorphine",
+      "seq": "YGGFMTSEKSQTPLVTLFKNAIIKNAHKKGQ",
+      "desc": "Opioïde endogène complet — analgésie puissante"
+    },
+    {
+      "id": "agmatin",
+      "name": "Fibromyalgie — Agmatine NMDA",
+      "seq": "CNNRRRV",
+      "desc": "Bloque récepteurs NMDA — réduit wind-up central"
+    },
+    {
+      "id": "npy",
+      "name": "Fibromyalgie — Neuropeptide Y",
+      "seq": "YPSKPDNPGEDAPAEDMARYYSALRHYINLITRQRY",
+      "desc": "Anxiolytique + analgésique — fatigue chronique"
+    }
+  ]
+}

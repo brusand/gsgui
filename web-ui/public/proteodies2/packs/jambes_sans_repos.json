@@ -1,0 +1,42 @@
+{
+  "id": "jambes_sans_repos",
+  "name": "Jambes Sans Repos",
+  "emoji": "🦿",
+  "mode": "isochrone_8hz",
+  "scale": "mib",
+  "freq": "8 Hz",
+  "effect": "Fer + dopamine",
+  "desc": "Pack complet Jambes Sans Repos : Ferritine H, Récepteur D3 Dopamine, α2δ-1 Canaux Calciques + 2 autres",
+  "proteodies": [
+    {
+      "id": "ferritin",
+      "name": "Jambes Sans Repos — Ferritine H",
+      "seq": "TTASTSQVRQNYHQDSEAAINRQINLELYASYVYLSMSYYFDRDDVALKNFAKYFLHQSHEEREHAEKLMKLQNQRGGRIFLQDIKKPDCDDWESGLNAMECALHLEKNVNQSLLELHKLATDKNDPHLCDFIETHYLNEQVKAIKELGDHVTNLRKMGAPESGLAEYLFDKHTLGDSDNES",
+      "desc": "Stockage fer cérébral — déficit = cause #1 du SJSR"
+    },
+    {
+      "id": "drd3",
+      "name": "Jambes Sans Repos — Récepteur D3 Dopamine",
+      "seq": "MAPLSQLSSHINSTCGAENSTGASQARPHAYYALSYCALILAIVFGNGLVCMAVLKERALQTTTNYLVVSLAVADLLVATLVMPWVVYLEVTGGWNFSRICCDVFVTLDVMMCTASILNLCAISIDRYTAVVMPVHYQHGTGQSSCRRVALMITAVWVLAFAVSCPLLFGFNTTGDPTVCSISNPDFVIYSSVVSFYLPFGVTVLVYARIYVVLKQRRRKRILTRQNSQCNSVRPGFPQQTLSPDPAHLELKRYYSICQDTALGGPGFQERGGELKREEKTRNSLSPTIAPKLSLEVRKLSNGRLSTSLKLGPLQPRGVPLREKKATQMVAIVLGAFIVCWLPFFLTHVLNTHCQTCHVSPELYSATTWLGYVNSALNPVIYTTFNIEFRKAFLKILSC",
+      "desc": "Circuit dopamine nigrostrié — dysfonction centrale du SJSR"
+    },
+    {
+      "id": "cacna2d1",
+      "name": "Jambes Sans Repos — α2δ-1 Canaux Calciques",
+      "seq": "MGAGAVLLLLLGSCQGSLLLQEAAEERLQAEALAEQAATAAEARAAAEERERRLEAEIERRAQEVRAAAEEMRAREEELRAAEEERRAAQEVRAAAEEMRARELELRAAEEERRAAQEVRAAAEEMRAREEELRAAEEERRAAQEVRAAAEEMRARDEKLRAAEEERRLAQEVRAAAEEMRAREEELRAAEEERRAA",
+      "desc": "Cible gabapentine/prégabaline — réduit hyperexcitabilité spinale"
+    },
+    {
+      "id": "btbd9",
+      "name": "Jambes Sans Repos — BTBD9 Fer-Dopamine",
+      "seq": "MSEAQDREQLRQELEQKRNELEQKRRELEQNREQEVQDLEEQREKLEQEVRAQEQELEEKVRDQERELEEKVRELEEQREKLELEVRELEEQREQLELELEEQREKLEREVRDQEKELEQEV",
+      "desc": "Gène de susceptibilité SJSR — lie fer et dopamine"
+    },
+    {
+      "id": "meis1",
+      "name": "Jambes Sans Repos — MEIS1 Homéodomaine",
+      "seq": "KRPKKRPRTAYTRYQTLELEKEFHFNRYLTRRRRIEIAHALCLTERQIKIWFQNRRMKWKKEN",
+      "desc": "Principal gène SJSR — développement circuits moteurs"
+    }
+  ]
+}

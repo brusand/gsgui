@@ -1,0 +1,18 @@
+{
+  "id": "eau",
+  "name": "Eau",
+  "emoji": "💧",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Transport hydrique",
+  "desc": "Canal eau — pression artérielle",
+  "proteodies": [
+    {
+      "id": "aqp1",
+      "name": "Aquaporine AQP1",
+      "seq": "CFNPAVTLGAHINPAV",
+      "desc": "Canal eau — pression artérielle"
+    }
+  ]
+}

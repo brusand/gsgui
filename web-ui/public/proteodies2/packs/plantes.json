@@ -1,0 +1,60 @@
+{
+  "id": "plantes",
+  "name": "Plantes",
+  "emoji": "🌿",
+  "mode": "stereo",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Croissance végétale",
+  "desc": "Pack complet Plantes : PSK-α Croissance, CLV3 Méristème, Systemin + 5 autres",
+  "proteodies": [
+    {
+      "id": "psk",
+      "name": "Plantes — PSK-α Croissance",
+      "seq": "YIYTQ",
+      "desc": "Phytosulfokine — prolifération cellulaire"
+    },
+    {
+      "id": "clv3",
+      "name": "Plantes — CLV3 Méristème",
+      "seq": "HEVPSGP",
+      "desc": "Cellules souches — pousse apicale"
+    },
+    {
+      "id": "systemin",
+      "name": "Plantes — Systemin",
+      "seq": "AVQSKPPSKRDPPKMQTD",
+      "desc": "Signalisation croissance + défense"
+    },
+    {
+      "id": "ralf",
+      "name": "Plantes — RALF1 Racines",
+      "seq": "YISYGALQKN",
+      "desc": "Rapid Alkalinization Factor"
+    },
+    {
+      "id": "rubisco",
+      "name": "Plantes — Rubisco Photosynthèse",
+      "seq": "GKDNKLNELR",
+      "desc": "Activase Rubisco — fixation CO₂"
+    },
+    {
+      "id": "expansin",
+      "name": "Plantes — Expansine Paroi",
+      "seq": "CDPYGGQNRS",
+      "desc": "Extension paroi cellulaire"
+    },
+    {
+      "id": "kin1",
+      "name": "Plantes — Cytokinines CKX",
+      "seq": "MTGDNKLHEF",
+      "desc": "Division cellulaire — ramification"
+    },
+    {
+      "id": "auxin_tir1",
+      "name": "Plantes — Auxine TIR1 Croissance",
+      "seq": "MGSSHHHHHHSSGLVPRGSHMKEDKKAFFLKAVSKGLWKQVFTSQLLPRYLEYVVLDDDEPFIEALRDAIRSGEAQVYVKSFNFSLDALSIIAKVDTKQVNTLEFKVAKTTGLQILQCLRPSSEAVFVHLENDITIGQTQLNMASGLIYPWGLLFQKLL",
+      "desc": "Récepteur auxine — croissance et tropisme"
+    }
+  ]
+}

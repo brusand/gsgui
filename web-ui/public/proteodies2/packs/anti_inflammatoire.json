@@ -1,0 +1,60 @@
+{
+  "id": "anti_inflammatoire",
+  "name": "Anti-Inflammatoire",
+  "emoji": "🩹",
+  "mode": "isochrone_10hz",
+  "scale": "mib",
+  "freq": "10 Hz",
+  "effect": "Réduction inflammation",
+  "desc": "Pack complet Anti-Inflammatoire : COX-2 Site Actif, Annexine A1 Anti-Inflammatoire, IL-10 Cytokine + 5 autres",
+  "proteodies": [
+    {
+      "id": "cox2_inhib",
+      "name": "AINS — COX-2 Site Actif",
+      "seq": "FAEDEGLPNSS",
+      "desc": "Cyclo-oxygénase 2 — cible du diclofénac/Voltarène"
+    },
+    {
+      "id": "anxa1",
+      "name": "AINS — Annexine A1 Anti-Inflammatoire",
+      "seq": "AMVSEFLKQAWFIENEEQEYVQTVKSSKGGPGSAVSPYPTFNPSSDVAALHKAIMVKGVDEATIIDILTKSRNEQQ",
+      "desc": "Peptide endogène mimant corticostéroïdes — résolution inflammation"
+    },
+    {
+      "id": "il10",
+      "name": "AINS — IL-10 Cytokine",
+      "seq": "SPGQGTQSENSCTHFPGNLPNMLRDLRDAFSRVKTFFQMKDQLDNLLLKESLLEDFKGYLGCQALSEMIQFYLEEVMPQAENQDPDIKAHVNSLGENLKTLRLRLRRCHRFLPCENKSKAVEQVKNAFNKLQEKGIYKAMSEFDIFINYIEAYMTMKIRN",
+      "desc": "Interleukine-10 — cytokine anti-inflammatoire majeure"
+    },
+    {
+      "id": "tgfb1",
+      "name": "AINS — TGF-β1 Immunorégulateur",
+      "seq": "ALDAAYCFRNVQDNCCLRPLYIDFKRDLGWKWIHEPKGYHANFCLGPCPYIWSLDTQYSKVLALYNQHNPGASAAPCCVPQALEPLPIVYYVGRKPKVEQLSNMIVRSCKCS",
+      "desc": "Transforming Growth Factor — bloque cascades inflammatoires"
+    },
+    {
+      "id": "sod_anti",
+      "name": "AINS — SOD Superoxyde Dismutase",
+      "seq": "ATKAVCVLKGDGPVQGIINFEQKESNGPVKVWGSIKGLTEGLHGFHVHEFGDNTAGCTSAGPHFNPLSRKHGGPKDEERHVGDLGNVTADKDGVADVSIEDSVISLSGDHCIIGRTLVVHEKADDLGKGGNEESTKTGNAGSRLACGVIGIAQ",
+      "desc": "Antioxydant puissant — neutralise radicaux libres inflammatoires"
+    },
+    {
+      "id": "a2m",
+      "name": "AINS — α2-Macroglobuline",
+      "seq": "GFAEQQAKTPHTKGGVVK",
+      "desc": "Inhibe MMP et protéases — stoppe destruction tissulaire"
+    },
+    {
+      "id": "hsp70",
+      "name": "AINS — HSP70 Cytoprotectrice",
+      "seq": "GIDLGTTYSCVGVFQHGKVEIIANDQGNRTTPSYVAFTDTERLIGDAAKNQVALNPQNTVFDAKRLIGRKFGDPVVQSDMKHWPFQVINDGDKPKVQVSYKGETKAFYPEEISSMVLTKMKEIAEAYLGYPVTNAVITVPAYFNDSQRQATKDAGVIAGLNVLRIINEPTAAAIAYGLDKKVGAERNVLIFDLGGGTFDVSILTIDDGIFEVKATAGDTHLGGEDFDNRLVNHFVEEFKRKHKKDISQNKRAVRRLRTACERAKRTLSSSTQASLEIDSLFEGIDFYTSITRARFEELCSDLFRSTLEPVEKALRDAKLDKAQIHDLVLVGGSTRIPKVQKLLQDFFNGRDLNKSINPDEAVAYGAAVQAAILMGDKSENVQDLLLLDVAPLSLGLETAGGVMTALIKRNSTIPTKQTQIFTTYSDNQPGVLIQVYEGERAMTKDNNLLGRFELSGIPPAPRGVPQIEVTFDIDANGILNVTATDKSTGKANKITITNDKGRLSKEEIERMVQEAEKYKAEDEVQRERVSAKNALESYAFNMKSAVEDEGLKGKISEADKKKVLDKCQEVISWLDANTLAEKDEFEHKRKELEQVCNPIISGLYQGAGGPGPGGFGAQGPKGGSGSGPTIEEVD",
+      "desc": "Heat Shock Protein 70 — protège cellules du stress inflammatoire"
+    },
+    {
+      "id": "resolvin_d1",
+      "name": "AINS — Résolvine D1 Récepteur",
+      "seq": "ELFFKNMARDL",
+      "desc": "Médiateur spécialisé pro-résolution — termine inflammation sans immunosuppression"
+    }
+  ]
+}

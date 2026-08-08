@@ -1,0 +1,42 @@
+{
+  "id": "humeur",
+  "name": "Humeur",
+  "emoji": "😊",
+  "mode": "isochrone_8hz",
+  "scale": "fa",
+  "freq": "8 Hz",
+  "effect": "Bien-être + anti-stress",
+  "desc": "Pack complet Humeur : β-Endorphine, Anandamide FAAH, Galanine Anxiolytique + 2 autres",
+  "proteodies": [
+    {
+      "id": "endorphin",
+      "name": "Humeur — β-Endorphine",
+      "seq": "YGGFMTSEKSQTPLVT",
+      "desc": "Opioïde endogène — euphorie naturelle"
+    },
+    {
+      "id": "ananda",
+      "name": "Humeur — Anandamide FAAH",
+      "seq": "GKVITAFYNRPEDIS",
+      "desc": "Endocannabinoïde — sérénité, bliss"
+    },
+    {
+      "id": "galanin",
+      "name": "Humeur — Galanine Anxiolytique",
+      "seq": "GWTLNSAGYLLGPHAVGNHRSFSDKHGLT",
+      "desc": "Neuropeptide anxiolytique — anti-stress"
+    },
+    {
+      "id": "vip",
+      "name": "Humeur — VIP Anti-dépresseur",
+      "seq": "HSDAVFTDNYTRLRKQMAVKKYLNSILN",
+      "desc": "VIP — neuroprotection, anti-dépression"
+    },
+    {
+      "id": "subp",
+      "name": "Humeur — Substance P Antagoniste",
+      "seq": "RPKPQQFFGLM",
+      "desc": "Bloque douleur émotionnelle — NK1"
+    }
+  ]
+}

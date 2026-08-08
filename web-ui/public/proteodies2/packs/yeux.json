@@ -1,0 +1,48 @@
+{
+  "id": "yeux",
+  "name": "Yeux",
+  "emoji": "👁️",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Protection cristallin",
+  "desc": "Pack complet Yeux : αA-Crystallin, αB-Crystallin HSP20, γD-Crystallin + 3 autres",
+  "proteodies": [
+    {
+      "id": "cryaa",
+      "name": "Yeux — αA-Crystallin",
+      "seq": "MDIAIHHPWIRRPFFPFHSP",
+      "desc": "Chaperon moléculaire — prévient cataracte"
+    },
+    {
+      "id": "cryab",
+      "name": "Yeux — αB-Crystallin HSP20",
+      "seq": "HEERQDEHGFISR",
+      "desc": "Heat Shock Protein — anti-agrégation"
+    },
+    {
+      "id": "crygd",
+      "name": "Yeux — γD-Crystallin",
+      "seq": "GCEWQFSC",
+      "desc": "Protéine structurelle — transparence cristallin"
+    },
+    {
+      "id": "gpx",
+      "name": "Yeux — Glutathion Peroxydase",
+      "seq": "WNFEKFLVGP",
+      "desc": "Antioxydant majeur du cristallin"
+    },
+    {
+      "id": "lano",
+      "name": "Yeux — Lanosterol Synthase",
+      "seq": "DCTAEAMK",
+      "desc": "Réduit agrégation crystallins — découverte 2015"
+    },
+    {
+      "id": "sod",
+      "name": "Yeux — SOD1 Antioxydante",
+      "seq": "HVGDLGNVTADKDGVADVSIED",
+      "desc": "Superoxyde Dismutase — protection rétine"
+    }
+  ]
+}

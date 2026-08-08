@@ -1,0 +1,24 @@
+{
+  "id": "altitude",
+  "name": "Altitude",
+  "emoji": "🏔️",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "12 Hz",
+  "effect": "Adaptation hypoxie",
+  "desc": "Pack complet Altitude : EPO mimetic, HIF-1α",
+  "proteodies": [
+    {
+      "id": "epo",
+      "name": "Bolivie — EPO mimetic",
+      "seq": "GGTYSCHFGPLTWVCK",
+      "desc": "Adaptation altitude"
+    },
+    {
+      "id": "hif",
+      "name": "Bolivie — HIF-1α",
+      "seq": "DLDLEMLAPF",
+      "desc": "Capteur hypoxie"
+    }
+  ]
+}

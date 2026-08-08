@@ -1,0 +1,42 @@
+{
+  "id": "intestin",
+  "name": "Intestin",
+  "emoji": "🫃",
+  "mode": "isochrone_7hz",
+  "scale": "fa",
+  "freq": "6 Hz",
+  "effect": "Réparation muqueuse",
+  "desc": "Pack complet Intestin : Larazotide AT1001, GLP-2 Muqueuse, Motiline + 2 autres",
+  "proteodies": [
+    {
+      "id": "larazotide",
+      "name": "Intestin — Larazotide AT1001",
+      "seq": "GGVLVQPG",
+      "desc": "Jonctions serrées — répare leaky gut (ZOT analog)"
+    },
+    {
+      "id": "glp2",
+      "name": "Intestin — GLP-2 Muqueuse",
+      "seq": "HADGSFSDEMNTILDNLAARDFINWLIQTKITD",
+      "desc": "Régénère épithélium intestinal"
+    },
+    {
+      "id": "motiline",
+      "name": "Intestin — Motiline",
+      "seq": "FVPIFTYGELQRMQEKERNKGQ",
+      "desc": "Motilité — réduit ballonnements"
+    },
+    {
+      "id": "tff3",
+      "name": "Intestin — TFF3 Mucus",
+      "seq": "DPAPLQEAKDCPGETHFYK",
+      "desc": "Répare et protège la paroi intestinale"
+    },
+    {
+      "id": "bdef1",
+      "name": "Intestin — β-Défensine 1",
+      "seq": "GNRQCVSQGRALLTCCYRNGRCATRQPGH",
+      "desc": "Équilibre flore — anti-dysbiose"
+    }
+  ]
+}

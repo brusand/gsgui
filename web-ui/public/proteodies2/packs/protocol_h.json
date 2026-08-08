@@ -1,0 +1,42 @@
+{
+  "id": "protocol_h",
+  "name": "Protocol H",
+  "emoji": "🧪",
+  "mode": "isochrone_10hz",
+  "scale": "fa",
+  "freq": "10 Hz",
+  "effect": "Sérotonine TPH1",
+  "desc": "Pack complet Protocol H : Signal Départ, Pause 5min, TPH1 Sérotonine + 2 autres",
+  "proteodies": [
+    {
+      "id": "ph_start",
+      "name": "Protocol H — Signal Départ",
+      "seq": "G",
+      "desc": "1 note de départ — marque le début du protocole"
+    },
+    {
+      "id": "ph_silence1",
+      "name": "Protocol H — Pause 5min",
+      "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+      "desc": "Silence 5 minutes — pause entre signaux"
+    },
+    {
+      "id": "tph1",
+      "name": "Protocol H — TPH1 Sérotonine",
+      "seq": "WFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHERWFLSQQHER",
+      "desc": "Tryptophane Hydroxylase — SEROT 40% — session principale"
+    },
+    {
+      "id": "ph_silence2",
+      "name": "Protocol H — Pause 5min",
+      "seq": "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+      "desc": "Silence 5 minutes — pause avant fin"
+    },
+    {
+      "id": "ph_end",
+      "name": "Protocol H — Signal Fin",
+      "seq": "GG",
+      "desc": "2 notes de fin — marque la fin du protocole"
+    }
+  ]
+}
