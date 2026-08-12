@@ -19,8 +19,8 @@ export default defineConfig({
             return
           }
           // Route proteodies V2
-          if (req.url === '/proteodies2' || req.url === '/proteodies2/') {
-            const filePath = path.resolve(__dirname, 'public/proteodies2/index.html')
+          if (req.url === '/proteodies_audio' || req.url === '/proteodies_audio/') {
+            const filePath = path.resolve(__dirname, 'public/proteodies_audio/index.html')
             res.setHeader('Content-Type', 'text/html')
             res.end(fs.readFileSync(filePath))
             return

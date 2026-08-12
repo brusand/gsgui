@@ -6,23 +6,26 @@ Basé sur le code de l'application proteodies
 
 import struct
 
-# Configuration
-ORD = 'ACDEFGHIKLMNPQRSTVWY'
-SCALES = {
-    'mib': [51,53,55,57,58,60,62,63,65,67,69,70,72,74,75,77,79,81,82,84],  # Mib Lydien - calmant
+# Table Sternheimer/Borla (JS v1) : note fixe par acide aminé, colonnes
+# stimulante (STIM) et inhibante (INH). U (Sec) et O (Pyl) n'ont pas de note.
+AA_TO_NOTE = {
+    'G': (57, 77), 'A': (60, 62), 'S': (64, 70), 'P': (65, 69),
+    'V': (65, 69), 'T': (65, 69), 'C': (65, 69), 'I': (67, 67),
+    'L': (67, 67), 'N': (67, 67), 'D': (67, 67), 'Q': (69, 65),
+    'K': (69, 65), 'E': (69, 65), 'M': (69, 65), 'H': (70, 64),
+    'F': (71, 63), 'R': (72, 62), 'Y': (72, 62), 'W': (74, 60),
 }
 
 DSIP_SEQ = 'WAGGDASGE'
 BPM = 65
-SCALE = 'mib'
+SCALE = 'mib'  # calmant -> colonne INH
 
 def midi_for_aa(aa):
-    """Calcule la note MIDI pour un acide aminé"""
-    i = ORD.index(aa) if aa in ORD else -1
-    if i < 0:
+    """Calcule la note MIDI Borla pour un acide aminé (colonne INH, gamme mib=calmant)"""
+    if aa not in AA_TO_NOTE:
         return 51  # Note par défaut
-    scale = SCALES[SCALE]
-    return scale[i % len(scale)]
+    stim, inh = AA_TO_NOTE[aa]
+    return inh if SCALE == 'mib' else stim
 
 def var_length(value):
     """Encode un entier en variable-length quantity (MIDI standard)"""

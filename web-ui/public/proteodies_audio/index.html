@@ -213,7 +213,7 @@ let isPlaying = false;
 async function init() {
   try {
     // Charger index des packs
-    const response = await fetch('/proteodies2/packs-index.json');
+    const response = await fetch('/proteodies_audio/packs-index.json');
     packsIndex = await response.json();
 
     // Remplir sélecteur
@@ -255,7 +255,7 @@ async function onPackChange() {
 
   try {
     // Charger données du pack
-    const response = await fetch(`/proteodies2/packs/${packId}.json`);
+    const response = await fetch(`/proteodies_audio/packs/${packId}.json`);
     currentPackData = await response.json();
 
     // Auto-sélectionner mode et gamme si "auto"

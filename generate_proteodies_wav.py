@@ -15,20 +15,27 @@ SAMPLE_RATE = 44100
 BPM = 65
 BEAT_DURATION = 60.0 / BPM  # ~0.923s
 
-# Mapping acides aminés -> MIDI notes
-AA_TO_MIDI = {
-    'A': 57, 'C': 60, 'D': 62, 'E': 64, 'F': 65, 'G': 67,
-    'H': 69, 'I': 71, 'K': 72, 'L': 74, 'M': 76, 'N': 77,
-    'P': 79, 'Q': 81, 'R': 83, 'S': 84, 'T': 86, 'V': 88,
-    'W': 89, 'Y': 91
+# Table Sternheimer/Borla (JS v1) : note fixe par acide aminé, colonnes
+# stimulante (STIM) et inhibante (INH). U (Sec) et O (Pyl) n'ont pas de note.
+AA_TO_NOTE = {
+    'G': (57, 77), 'A': (60, 62), 'S': (64, 70), 'P': (65, 69),
+    'V': (65, 69), 'T': (65, 69), 'C': (65, 69), 'I': (67, 67),
+    'L': (67, 67), 'N': (67, 67), 'D': (67, 67), 'Q': (69, 65),
+    'K': (69, 65), 'E': (69, 65), 'M': (69, 65), 'H': (70, 64),
+    'F': (71, 63), 'R': (72, 62), 'Y': (72, 62), 'W': (74, 60),
 }
 
-# Gammes Lydiennes
-SCALES = {
-    'fa': [41, 43, 45, 47, 48, 50, 52],   # F Lydian
-    'sib': [46, 48, 50, 52, 53, 55, 57],  # Bb Lydian
-    'mib': [51, 53, 55, 57, 58, 60, 62]   # Eb Lydian
-}
+def note_for_aa(aa, scale):
+    """Note MIDI Borla pour un acide aminé selon la gamme du pack
+    (fa=stimulant, mib=inhibant, sib=équilibrant = moyenne des deux)"""
+    if aa not in AA_TO_NOTE:
+        return None
+    stim, inh = AA_TO_NOTE[aa]
+    if scale == 'fa':
+        return stim
+    if scale == 'mib':
+        return inh
+    return round((stim + inh) / 2)
 
 # Diapasons (cents)
 DIAPASONS = {
@@ -85,7 +92,6 @@ def apply_isochronic(audio, freq_hz, sample_rate=44100):
 def sequence_to_audio(sequence, scale='fa', diapason='h3o2', mode='isochrone_10hz'):
     """Convertit une séquence AA en audio"""
 
-    scale_notes = SCALES[scale]
     cents = DIAPASONS[diapason]
 
     # Extraire fréquence LFO du mode
@@ -96,17 +102,10 @@ def sequence_to_audio(sequence, scale='fa', diapason='h3o2', mode='isochrone_10h
     audio_parts = []
 
     for aa in sequence:
-        if aa not in AA_TO_MIDI:
+        # Mapper AA -> note Borla (STIM/INH) selon la gamme du pack
+        final_midi = note_for_aa(aa, scale)
+        if final_midi is None:
             continue
-
-        # Mapper AA -> note de la gamme
-        aa_midi = AA_TO_MIDI[aa]
-        scale_index = aa_midi % len(scale_notes)
-        final_midi = scale_notes[scale_index]
-
-        # Transposer à l'octave appropriée
-        octave = (aa_midi - 57) // 7
-        final_midi += octave * 12
 
         # Convertir en fréquence
         freq = midi_to_freq(final_midi, cents)
@@ -154,7 +153,7 @@ def generate_proteody_wav(proteody, pack_id, output_dir):
     print(f"  🧬 {proteody_id} ({len(sequence)} AA)")
 
     # Charger config pack pour mode/scale par défaut
-    pack_file = f'web-ui/public/proteodies2/packs/{pack_id}.json'
+    pack_file = f'web-ui/public/proteodies_audio/packs/{pack_id}.json'
     with open(pack_file, 'r') as f:
         pack_data = json.load(f)
 
@@ -198,7 +197,7 @@ def main():
     print("🎵 Génération des fichiers WAV des protéodies\n")
 
     # Charger l'index des packs
-    packs_index_file = 'web-ui/public/proteodies2/packs-index.json'
+    packs_index_file = 'web-ui/public/proteodies_audio/packs-index.json'
     with open(packs_index_file, 'r') as f:
         packs_index = json.load(f)
 
@@ -213,7 +212,7 @@ def main():
         print(f"📦 {pack_name} ({pack['count']} protéodies)")
 
         # Charger pack complet
-        pack_file = f'web-ui/public/proteodies2/packs/{pack_id}.json'
+        pack_file = f'web-ui/public/proteodies_audio/packs/{pack_id}.json'
         with open(pack_file, 'r') as f:
             pack_data = json.load(f)
 

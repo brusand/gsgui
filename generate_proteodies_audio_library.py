@@ -26,16 +26,33 @@ SAMPLE_RATE = 44100
 BPM = 65
 BEAT_DURATION = 60.0 / BPM  # ~0.923 secondes
 
-# Gammes
-SCALES = {
-    'fa': [41,43,45,47,48,50,52,53,55,57,59,60,62,64,65,67,69,71,72,74],  # Fa Lydien
-    'sib': [46,48,50,52,53,55,57,58,60,62,64,65,67,69,70,72,74,76,77,79], # Sib Lydien
-    'mib': [51,53,55,57,58,60,62,63,65,67,69,70,72,74,75,77,79,81,82,84], # Mib Lydien
+# Gammes (fa=stimulant, mib=inhibant, sib=équilibrant)
+SCALES = ['fa', 'sib', 'mib']
+
+# Table Sternheimer/Borla (JS v1) : note fixe par acide aminé, colonnes
+# stimulante (STIM) et inhibante (INH). U (Sec) et O (Pyl) n'ont pas de note.
+AA_TO_NOTE = {
+    'G': (57, 77), 'A': (60, 62), 'S': (64, 70), 'P': (65, 69),
+    'V': (65, 69), 'T': (65, 69), 'C': (65, 69), 'I': (67, 67),
+    'L': (67, 67), 'N': (67, 67), 'D': (67, 67), 'Q': (69, 65),
+    'K': (69, 65), 'E': (69, 65), 'M': (69, 65), 'H': (70, 64),
+    'F': (71, 63), 'R': (72, 62), 'Y': (72, 62), 'W': (74, 60),
 }
+
+def note_for_aa(aa, scale):
+    """Note MIDI Borla pour un acide aminé selon la gamme
+    (fa=stimulant, mib=inhibant, sib=équilibrant = moyenne des deux)"""
+    if aa not in AA_TO_NOTE:
+        return None
+    stim, inh = AA_TO_NOTE[aa]
+    if scale == 'fa':
+        return stim
+    if scale == 'mib':
+        return inh
+    return round((stim + inh) / 2)
 
 # Mapping acides aminés
 AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVWY"
-AA_MAP = {aa: i for i, aa in enumerate(AMINO_ACIDS)}
 
 # Diapasons (Master Tune offset en cents)
 DIAPASONS = {
@@ -141,14 +158,16 @@ def generate_with_dawdreamer(vst_path, output_dir):
             mode_dir = output_dir / f"{diapason_name}_{mode_name}"
             mode_dir.mkdir(parents=True, exist_ok=True)
 
-            for scale_name, scale_notes in SCALES.items():
+            for scale_name in SCALES:
                 print(f"    🎶 Gamme: {scale_name}")
 
                 scale_dir = mode_dir / scale_name
                 scale_dir.mkdir(exist_ok=True)
 
-                for i, aa in enumerate(AMINO_ACIDS):
-                    midi_note = scale_notes[i]
+                for aa in AMINO_ACIDS:
+                    midi_note = note_for_aa(aa, scale_name)
+                    if midi_note is None:
+                        continue
 
                     # Render note
                     engine.load_graph([(synth, [])])
@@ -185,14 +204,16 @@ def generate_with_synthesis(output_dir):
             mode_dir = output_dir / f"{diapason_name}_{mode_name}"
             mode_dir.mkdir(parents=True, exist_ok=True)
 
-            for scale_name, scale_notes in SCALES.items():
+            for scale_name in SCALES:
                 print(f"    🎶 Gamme: {scale_name}")
 
                 scale_dir = mode_dir / scale_name
                 scale_dir.mkdir(exist_ok=True)
 
-                for i, aa in enumerate(AMINO_ACIDS):
-                    midi_note = scale_notes[i]
+                for aa in AMINO_ACIDS:
+                    midi_note = note_for_aa(aa, scale_name)
+                    if midi_note is None:
+                        continue
                     freq = midi_to_freq(midi_note, tune_cents)
 
                     # Générer son

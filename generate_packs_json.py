@@ -104,14 +104,14 @@ for cat, prots in sorted(packs.items()):
     })
 
 # Sauvegarder index
-with open('web-ui/public/proteodies2/packs-index.json', 'w', encoding='utf-8') as f:
+with open('web-ui/public/proteodies_audio/packs-index.json', 'w', encoding='utf-8') as f:
     json.dump(packs_index, f, indent=2, ensure_ascii=False)
 
 print(f"✅ Index packs sauvegardé: {len(packs_index)} packs")
 
 # 2. Générer fichier JSON pour chaque pack (détails + séquences)
 import os
-os.makedirs('web-ui/public/proteodies2/packs', exist_ok=True)
+os.makedirs('web-ui/public/proteodies_audio/packs', exist_ok=True)
 
 for cat, prots in packs.items():
     if cat not in CAT_CONFIG:
@@ -152,8 +152,8 @@ for cat, prots in packs.items():
     }
 
     # Sauvegarder
-    with open(f'web-ui/public/proteodies2/packs/{pack_id}.json', 'w', encoding='utf-8') as f:
+    with open(f'web-ui/public/proteodies_audio/packs/{pack_id}.json', 'w', encoding='utf-8') as f:
         json.dump(pack_data, f, indent=2, ensure_ascii=False)
 
-print(f"✅ {len(packs)} fichiers packs générés dans web-ui/public/proteodies2/packs/")
+print(f"✅ {len(packs)} fichiers packs générés dans web-ui/public/proteodies_audio/packs/")
 print(f"📊 Total: {sum(len(p) for p in packs.values())} protéodies")
