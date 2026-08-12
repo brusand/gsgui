@@ -680,7 +680,23 @@ async function toggleDiapason(btn){
   btn.innerHTML='&#9646;'; btn.style.background='#BA751722'; btn.style.color='#BA7517'; btn.style.borderColor='#BA7517';
 }
 function getScale(){return SCALES[document.getElementById('gamme').value]||SCALES.fa;}
-function midiFor(aa){let i=ORD.indexOf(aa);return i<0?51:getScale()[i%getScale().length];}
+// Table Sternheimer/Borla (JS v1) : note fixe par acide aminé, colonnes stimulante (STIM) et inhibante (INH)
+const AA_TO_NOTE={G:[57,77],A:[60,62],S:[64,70],P:[65,69],V:[65,69],T:[65,69],C:[65,69],I:[67,67],L:[67,67],N:[67,67],D:[67,67],Q:[69,65],K:[69,65],E:[69,65],M:[69,65],H:[70,64],F:[71,63],R:[72,62],Y:[72,62],W:[74,60]};
+function noteForAa(aa,scale){
+  const pair=AA_TO_NOTE[aa];
+  if(!pair)return null;
+  const stim=pair[0],inh=pair[1];
+  if(scale==='fa')return stim;
+  if(scale==='mib')return inh;
+  if(scale==='sib')return Math.round((stim+inh)/2);
+  return null; // gammes hors protocole Borla (reel/sol/la/ab) -> ancien algo
+}
+function midiFor(aa){
+  const scale=document.getElementById('gamme').value;
+  const borlaNote=noteForAa(aa,scale);
+  if(borlaNote!==null)return borlaNote;
+  let i=ORD.indexOf(aa);return i<0?51:getScale()[i%getScale().length];
+}
 function freqFor(midi){return getA4()*Math.pow(2,(midi-69)/12);}
 function noteName(midi){return NOTE_N[(midi-45+120)%12];}
 function massFor(aa){return MASS[aa]||110;}
