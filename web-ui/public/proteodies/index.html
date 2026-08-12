@@ -172,11 +172,12 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label" data-i18n="audioMode">Mode audio</span>
-    <select id="audio-mode" onchange="audioMode=this.value;audioModeManuallyChanged=true">
+    <select id="audio-mode" onchange="audioMode=this.value;audioModeManuallyChanged=true;updateAudioModeFreqBadge()">
       <option value="stereo" data-i18n="stereo">Stéréo (classique)</option>
       <option value="binaural" data-i18n="binaural">Binaural 🎧 (casque requis)</option>
       <option value="isochrone" data-i18n="isochrone">Isochrone (pulsations)</option>
     </select>
+    <span id="audio-mode-freq" style="display:none;font-size:12px;color:var(--text2);white-space:nowrap"></span>
   </div>
   <div class="ctrl-row" style="margin-top:4px">
     <span class="ctrl-label">Boucle</span>
@@ -412,6 +413,10 @@ const PROTEODIES=[
   {id:'nephrin', name:'Rénal K+/Créat — Néphrine Barrière', seq:'MWKLLGAFGLGVLGVWTEGGLVFPRSGPRGPQGPQEQEQEAQPVTPEGPASSSPPNVTWMRTACEVLNKEEVLVPGPPVSWKKGDTVMLGGVGSEYGWQAEVDGTPGGELRFRIRNKTGELDSGTYKCVALGEGQEAPSRYKVQVGPKRFEYNKTPDLGWNVHGQIIQEDSNLTIPCNVKSISAESQKVMLQNGTFSALQRIRIQVTGLEDQGNYSCLASNSLGFQTGNVRVLYKGKKPVPMKNQKEYLSGLKFSCKAQGEKRDGYWQEACAGYTDQSTIFLKRVVQSNQVLENGQTVEVLTAPRPLRIYSKDPSLGWTCHAEGGTGQGTILVRFDSDQIDGVNPDTVFKCLAKSPHSQSATTYQVTFTQPRFLDNINLELGWNEDQTVHPCDVPPAPKPAPKPTWDKIWPRNLQVLTQEPPLVPSPPKPLRIRKTKPDRYTGWRGQNHSCAANLHCNDGRAQAVTCNISGKTCPPDVNFSFTDSCTFNALGTPDGQNITLRIRDCDGDYGRTYECLAINRQGTVSKHFRVFPSNSQKYLHVTLRFKHVNDISGFWLCKAVLGVKGKQSLIIKVVKDSKDVHLYDAEIVIRFDSQGEDEGNYTCLAVAKPEDGVTSVRITEVQTVEITATSNLQGRDTPPGDLSLNHSWSKNCVVSSKLNCIGRQNVHVKCEVLGQDCEEDDVTEVCEEGKGIRCQVDYEYRAGRSLTLFIRNIQLTDTKLQGNYSCLVVDKGALRTGQHTLVQGPAKTVQIRATQNVEDAQNPSTGTDGTATVSPEQPDLPLGKTYIWKPRLLAQAKEDKNNYEWMSQFQTCNETNIECLSLAEIVCLSRVRVVNSIQEDQVLTIIPDAVVPSANVSLQVTYQAQGQPGRYSIEVNAVSASEGFMCKAKEGQGDKPSLLRVTVHRLKGAAGGAAAGGGMALAVGLLVGGLLWRYRRKKERKGRTANREKKQEYDIYKRLEEENPYTKFNETKIGSMPASEEKLLRSQETNMEMEKQQLEEQIKKLQDQHMEIQDKLRQKEQEIDYQIVNTEAKSLNMELQESTQSLKKEKMVLEEQLAKAENKLQEDMNEYRLRRAEDGLQAAEEELEDKNGRYRDIQDKLHLEQEQQQNLEEKSQEVLRQRSEQEEGYSLIQQEHNLLKNLKQQQDQALQRMEQEKQRILEEIEDSKRKLEAELSSVSENKRRLAEARADIESLAKDIKKMKDEMDLMMQKQLSSAEASMSKLEAAKERKNQVFELYRTLMTTQSELEQAKQNRKKLEAELMAMARQKLMQKDAQVEQPNSMAEYAEQFKKLMKELSDYRGRQAAELSQRKKLEAEVHKAVDKKQQLLKEKRTLDQQLKKIEKESQLYHEQQKLQERLAVLDETKHKVEAELHQSRTNVRNKAESIEALAQRLQQKDSSIQDKERSRGKMEDEVEQLKNQMNLLESQYKSAEQEQDSMQAMQREAVSLAAEVEKLQNNVTELSTQVQSVEKEKSRMLVELLLEQEKKTQELLLDQVDTYRMTVDALDQVAQQLEAELGDVTQDRAKVHAQVEQLKQEVEEARRRKEESQTTYEQKIVEMQELMRVLHGDYAAQKAEMKALAGRLKMEKEAKALANEKQRLNQDVDLASKAAQELDREVEQGIRSLAQAMATLEKDMEAYQKKMHEMAELVEKVEAQLDNARQNELKIQEIEKAREAFEQTEEKRQVLLEQLNAVNQKLEAELQHIGRKVNAQLEELDAKVQENEKEVQAELAALAKERSQLMQDMDLAEQALKKMSDRSEAQKGDLQAAAKEMNKEVDAYQEKLEAEVESLTKVKQILEKSAELKAELEAVDAKQELAAEMVVTEEAVKAGSNQV', cat:'🫘', desc:'Protéine barrière fente de filtration — filtre protéines hors urine'},
   {id:'renalase', name:'Rénal K+/Créat — Rénalase Protection', seq:'MGPLRTLSLPLLLLSWAGPLSAQRTFNVDKAEKESGGDWEVIEKLFNAYGAVSWRQTRFEAMDFKFEEVDYRLRKAGEAAGRQLGEGGFWMLDKSKPSNYDLMAAIYKRWFTDHPGFVQSVDSKGKKLVWCNTHRGAKLTYYEKGLFRGVLFPDKHSKQKWKDPNVTNAEPVIILVSGGPPLRRVTVDLLKDPRVQDLTGGPFGNYLHGRWTGLLSDKEWPVWVDLPDGQSKGDAQRRLDLAAWQKLGRSLYGNIPDKDANVKDAAEKGGGGQGIRPAINVGLSANSDAIRFEDMKLNELRRRFSVDESLRPGIKQRLWDSLQGGYREAFGAFLDQEVTEKKKTSKMQAFRSLPLPTSASQNL', cat:'🫘', desc:'Enzyme protectrice rénale — réduit stress oxydatif et créatinine'},
   {id:'uromodulin', name:'Rénal K+/Créat — Uromoduline Tubules', seq:'MGPWKKLVFLVLLLHGQVQAQSLLVQPPAKPEVCDLLIQNLTCESVKACPDGFVLCERDEGVCNWYPCLGRGCRQVEGTSSYAFPGATCPPDVQCVAGMSCESAHFPSVYCLSYGLCGDGWNSSASPKPAEKCAPGKQQCVANGWSGLGCFPGATCYPSVRCVPHASCQRMRLQCESSLGCDQLLCDDGFSLSPGVPRAQCPALQEFSRVKDQCRVGWSGQGCTPFATLCKPVVDCEAWATCRSVLSCESSLTCEPGRCSSGWGLAPCVPVPPCLPHLRCGLPALCQRLLPCESSLSCGQTPCPDGWGLGTCQPHGRCLPSARCPPPGTCGSVLPCQSSLQCVGGRTCSPGFGLPGCPPVKQCKPHVSCERPVVCQEAAACEGGLECPPSQCDRGFSLSGGAPVGQCAPRPSEQCRSGWSGLGCTPEALCPPHLDCEPGQSCLTVLGCNRQLQCLAGETCSPGWGLPHCTPHVHCPPHLHCQGGASCQAVLMCERVLYCEGSLDCPSAACVGGLGLPGCSRKQCPRLVSCERDGHCRTALTCESSYGCRPLHCEPGWGLAKCVPSVQCRSHVNCQPALACEAIAQCQNVQSGNGTVTTVTSISGSPGAGSIAAPAATPSPQRLCSVSSSFSPLAPPFSRLNSSSTTTIQAPPTVSNIGSSSFPGPSITPRRVNSNSIMSLPSPQFPSSSTQPLLGGNFGHTTNRSIGLAAGSRVIHSCTSSSVAGLGSSSIDQSTSTVNVSSNIVASPQRLPSQPTQPFSTISTSEQTTPVSSGKLTVQSQTSALVTSTLLSSDTSTGFWSPGLVNSLRPPQKSNSPQSLTSRAFRGHVSAVVTVQGGSPVQTSTVSSNIQSSNQFSTLAGQVGPGSLPKPFIGLFSNSRPQSITTPWTQLHTLRATNSPQHFVGTSTFEDVKPTFTATSPGAASTFLTPQIVNFQELRAGPHKPIDGRLQSLDQEVLKELLGGSGGACFWGSCQYCGDGWLAGLCIKQVCPPWENCSEPLTCLSSSRRLSVQLGSIKGWGKGEENQQEELLAEVMSLDLELQDIYTLNEKKFFLPLALSSATQLDTLLFSSGLSSYGLSALQLLVSPLLLAIAGGVVLMLGIGLALLWKKKTRMSRHKVGSVLNFLGRLGSASSGSQRPSQSAPAQPPVGSARVPPHRSHRSASRTPRYRSVVRGRTSRSLVRVQPRPQRSPCTVHLPSQPDNPLGFPGLMLYQDGFSRSSEAVGREASGREASGRAASGRVASERPPSRPVASQPPSREPSSEPASGRALSGRLASFRPPSELSGSQPSSQGSSGTLHLASSSLHLYQDGLPRPPGFSRSSGPVASGRQPPGRGPPGRTLSRRSPPPQTLLSPQPSPDPPGLGFPRLIHSQPGPMTGPAVGGRLPSSLSFRPPSETSPSLSGSRSASQGSSRGALASGSLHIYQDGLPGLG', cat:'🫘', desc:'Protège tubules rénaux — module excrétion électrolytes'},
+  {id:'romk_compact', name:'Rénal Compact — ROMK Excrétion K+', seq:'MGSASCGRELCQDPGPPPGSPARHSPFLHHLQPQVPWVLVATVVIFLGSLLATALVFQPEFQRHFFTLILFLVSTALVIFLLFDVIGVMFATLGLKFKHYSSYSHWATVIGLTPLVQLTVFEVCLETLPELQSGGARCRRMKVVHNTQVEDCCRCCYHVDCPCPWVPDQQPCCDEDCEQDHAHHNSPARPLLSAPAPSPPPPAAAGTPPPSRPPKPVSSV', cat:'🫛', desc:'Canal potassique ROMK — excrète potassium en excès, contrôle kaliémie'},
+  {id:'renalase_compact', name:'Rénal Compact — Rénalase Protection', seq:'MGPLRTLSLPLLLLSWAGPLSAQRTFNVDKAEKESGGDWEVIEKLFNAYGAVSWRQTRFEAMDFKFEEVDYRLRKAGEAAGRQLGEGGFWMLDKSKPSNYDLMAAIYKRWFTDHPGFVQSVDSKGKKLVWCNTHRGAKLTYYEKGLFRGVLFPDKHSKQKWKDPNVTNAEPVIILVSGGPPLRRVTVDLLKDPRVQDLTGGPFGNYLHGRWTGLLSDKEWPVWVDLPDGQSKGDAQRRLDLAAWQKLGRSLYGNIPDKDANVKDAAEKGGGGQGIRPAINVGLSANSDAIRFEDMKLNELRRRFSVDESLRPGIKQRLWDSLQGGYREAFGAFLDQEVTEKKKTSKMQAFRSLPLPTSASQNL', cat:'🫛', desc:'Enzyme rénalase — réduit stress oxydatif tubulaire, abaisse créatinine'},
+  {id:'podocin_compact', name:'Rénal Compact — Podocin Filtre', seq:'MAQETWQRVGEDQKGTQMKKNLKAMNEIPVDQKKRDRKVAVILGLFCLFCFLFCSLVFRGSSKQVPLGASANATEELPSGVSMIVGRTTRNAMAGGDNQAQQRLLDELANVSEHMLREQERRLREQEVQELQNQVRELQNEAEGDLSFLPRLEELLATYKNRVKPLQKAHQAQKQGLSEKSPQKGAKQLQAELQETQKEAEKLKKQNEILQSQLSMAEEKSLQESSVTLEMDKFKEEEESLMQKQSEYLRLQHVNTSLSELEDAQKEGGDGKQTVKVLQETQEKLKDAEERLKRESELSMESQQVEEVSAQLQESQLELKAEDEDEAKGLEDLCREVGVLCDEVAALRLCCAEVGGAFRTFYEDPALQRHCVDAGYWGQANMKCCESGGLECSLGPSWCQHSDPCCARGMQTGKQYKCVQKSYVKGADYLEKDNCQKVYDSCNEGFYLNGRQICLSTKKL', cat:'🫛', desc:'Podocine — protéine podocytes, maintient filtre glomérulaire, prévient protéinurie'},
+  {id:'nak_atpase_compact', name:'Rénal Compact — Na-K-ATPase Pompe', seq:'MGKGVGMDERAAARNEQVGLIIIGVAVFLGVSFFILSLILGEYSTVPTKDNLKKIMVELGNDLTKPVQKAAKDQAEGSKSLEKLFVFIIMVVMTIFLFMF', cat:'🫛', desc:'Domaine Na-K-ATPase — pompe ionique fondamentale, régule sodium/potassium'},
   {id:'aqp3', name:'Peau Sèche — AQP3 Hydratation', seq:'MEKEKSEFFRRTKQFLTLVLVLAVIGSTGIIN', cat:'💦', desc:'Aquaporine-3 — canal à eau + glycérol épidermique'},
   {id:'filaggrin', name:'Peau Sèche — Filaggrine NMF', seq:'SHQSQVQGSRRHSDRGRSRGRSGRSGSRHSVRGS', cat:'💦', desc:'Protéine NMF — retient eau dans cornéocytes'},
   {id:'loricrin', name:'Peau Sèche — Loricrine Barrière', seq:'SQHSVQGQGQSHSQSQGQSQQQGQGQSQSQSQGQSQGQSQGQSQSQGQSHSSQGQSQGQ', cat:'💦', desc:'Protéine majeure barrière cornée — imperméabilisation'},
@@ -496,6 +501,10 @@ const DESCRIPTIONS={
 "involucrin": "Involucrine (IVL, 585 aa) est LA première protéine déposée lors de la formation de l'enveloppe cornée — le précurseur structural qui sert d'échafaudage pour le recrutement de loricrine et autres protéines. Involucrine est exprimée dans les kératinocytes suprabasaux et induite massivement par le calcium extracellulaire (le signal de différenciation épidermique). Elle est constituée de répétitions riches en glutamine-proline-lysine qui sont des substrats IDÉAUX pour la transglutaminase. Dès que le calcium intracellulaire monte (lors de la rupture de la membrane plasmique en fin de différenciation), la TGase1 et TGase3 réticulé l'involucrine à elle-même et aux protéines membranaires (SPR, loricrin, envoplakin, periplakin), formant un réseau insoluble de 12-15 nm d'épaisseur sous la membrane. Cette enveloppe protéique est ensuite liée de manière covalente aux lipides extracellulaires (céramides) par l'action de la TGase1, créant une barrière protéine-lipide IMPERMÉABLE qui empêche la perte d'eau transépidermique. Les souris involucrine-knockout ont une barrière cutanée normale (compensation par envoplakin/periplakin), mais l'involucrine reste un marqueur essentiel de la différenciation épidermique terminale. Dans la peau sèche et atopique, l'expression d'involucrine est souvent réduite. Cette séquence de 70 aa encode le domaine N-terminal et une répétition centrale riche en glutamine — l'échafaudage de l'enveloppe cornée imperméable.",
 "ceramide_synth": "Céramide Synthase (CerS, famille de 6 isoformes CerS1-6, ~350-400 aa chacune) catalyse l'étape LIMITANTE de la synthèse des céramides — les lipides sphingolipidiques qui composent 50% des lipides du stratum corneum et sont ESSENTIELS à la fonction barrière cutanée. Les céramides forment avec le cholestérol et les acides gras libres des lamelles lipidiques multicouches organisées dans l'espace intercellulaire du stratum corneum — créant un labyrinthe tortueux imperméable qui empêche la perte d'eau transépidermique (TEWL). Les CerS catalysent l'acylation N de la sphingosine (ou sphinganine) avec un acyl-CoA à chaîne longue (C14-C26) pour former les céramides. Chaque isoforme CerS a une spécificité de chaîne : CerS3 produit les céramides ultra-longues (C22-C26) spécifiques de l'épiderme, essentiels à la formation des lamelles. Les mutations de CerS3 causent l'ichtyose congénitale autosomique récessive de type 9 — peau TRÈS sèche, squameuse et TEWL massif. La peau atopique a des niveaux de céramides RÉDUITS de 30-60% — expliquant la sécheresse, la perméabilité aux allergènes et l'inflammation. Les céramides topiques (crèmes) améliorent modestement la barrière, mais stimuler la synthèse endogène est plus efficace. Cette séquence encode un domaine conservé de céramide synthase humaine — l'enzyme qui produit les lipides barrière imperméables.",
 "has2": "Hyaluronan Synthase 2 (HAS2, 552 aa) est L'ENZYME majeure qui synthétise l'acide hyaluronique (HA) de haut poids moléculaire dans le derme et l'épiderme — le glycosaminoglycane qui retient jusqu'à 1000 fois son poids en eau. HAS2 est une glycosyltransférase intégrale de membrane qui polymérise alternativement l'acide glucuronique (GlcUA) et la N-acétylglucosamine (GlcNAc) pour former des chaînes de HA de 0.5 à 2 millions de Daltons (2000-20000 disaccharides). Le HA synthétisé par HAS2 est extrudé directement dans l'espace extracellulaire où il forme un gel hygroscopique qui maintient l'hydratation dermique, la turgescence cutanée, l'élasticité et facilite la migration cellulaire lors de la cicatrisation. Le HA de haut PM (>1 MDa, produit par HAS2) est ANTI-INFLAMMATOIRE et hydratant. Le HA de bas PM (<500 kDa, produit par dégradation) est PRO-INFLAMMATOIRE et pro-angiogénique. Avec l'âge, l'activité de HAS2 CHUTE et les hyaluronidases augmentent → réduction drastique du HA dermique (peau de 80 ans a 75% moins de HA que peau de 20 ans) → sécheresse, rides, perte d'élasticité. Les injections de HA (fillers) et le HA topical (crèmes/sérums) compensent partiellement, mais l'activation endogène de HAS2 est la clé. L'acide rétinoïque, la vitamine C, l'estradiol et le TGF-β stimulent HAS2. Cette séquence encode le domaine N-terminal et la première région transmembranaire de HAS2 — l'enzyme qui produit le réservoir d'eau dermique.",
+"romk_compact": "ROMK Compact — Canal potassique ROMK (220 aa) du pack Rénal Compact. Canal K+ du tubule collecteur cortical rénal — excrète le potassium en excès dans l'urine et protège contre l'hyperkaliémie (dangereuse pour le cœur). Version compacte pour contrôle quotidien de la kaliémie (3.6 min/boucle). Voir 'romk' pour description complète.",
+"renalase_compact": "Rénalase Compact — Enzyme rénalase (363 aa) du pack Rénal Compact. Monoamine oxydase sécrétée exclusivement par le rein, dégrade les catécholamines circulantes et protège les tubules rénaux du stress oxydatif — abaisse la créatinine. Version compacte pour protection tubulaire quotidienne (6.1 min/boucle). Voir 'renalase' pour description complète.",
+"podocin_compact": "Podocine Compact — Protéine podocine (482 aa) du pack Rénal Compact. La podocine est essentielle au filtre glomérulaire — elle forme le diaphragme de fente qui empêche les protéines de fuir dans l'urine. Les mutations de podocine causent protéinurie massive et IRC terminale. Version compacte pour maintien quotidien de la barrière de filtration (18 min/boucle). Voir 'podocin' pour description complète.",
+"nak_atpase_compact": "Na-K-ATPase domaine N-terminal (100 aa) — fragment du domaine transmembranaire M1-M2 de la pompe sodium-potassium. La Na-K-ATPase complète (ATP1A1, 1023 aa) est LA pompe ionique fondamentale de TOUTES les cellules animales — elle consomme 20-40% de l'ATP total pour maintenir les gradients Na+/K+ essentiels à la vie. Cette ATPase de type P expulse 3 Na+ vers l'extérieur et importe 2 K+ vers l'intérieur contre leurs gradients de concentration, créant un potentiel de membrane négatif (-70 mV) indispensable aux neurones, muscles et fonction rénale. Dans le REIN, la Na-K-ATPase est LE moteur énergétique de la réabsorption tubulaire : elle est massivement exprimée dans la membrane basolatérale des cellules tubulaires proximales et de la branche ascendante large de Henle. Elle pompe activement le Na+ hors de la cellule vers le sang, créant un gradient qui permet la réabsorption passive de Na+ depuis l'urine (via canaux apicaux ENaC, cotransporteurs Na-glucose SGLT2, etc.). 99% du sodium filtré (25000 mmol/jour !) est ainsi réabsorbé. Les mutations de Na-K-ATPase causent hypomagnésémie rénale, hypokaliémie et alcalose. Les inhibiteurs (digoxine, ouabaïne) bloquent la pompe → accumulation Na+ intracellulaire → effet inotrope positif (insuffisance cardiaque) mais toxicité rénale. Ce domaine N-terminal de 100 aa encode les hélices transmembranaires M1-M2 et le début du site de liaison ATP — le cœur structural de la pompe qui traverse la membrane et initie le cycle catalytique Na+/K+.",
 "claudin1": "Claudine-1 (CLDN1, 211 aa) est LA protéine majeure des jonctions serrées (tight junctions) épidermiques — les sceaux moléculaires qui imperméabilisent l'espace paracellulaire entre les kératinocytes et empêchent la perte d'eau transépidermique (TEWL). Les jonctions serrées de l'épiderme forment une barrière continue dans la couche granuleuse (stratum granulosum), juste sous le stratum corneum. Claudine-1 est une protéine tétraspanine qui forme des homodimères et hétérodimères (avec claudine-4, -7, -12) créant des pores paracellulaires sélectifs de taille et charge. Dans l'épiderme, claudine-1 SCELLE l'espace intercellulaire, bloquant la diffusion d'eau, d'ions et de molécules. Les souris claudine-1-knockout meurent dans les 24h après la naissance par DÉSHYDRATATION MASSIVE — TEWL augmenté de 7 fois, incapacité totale à retenir l'eau. Chez l'humain, les mutations hypomorphiques de claudine-1 causent le syndrome néonatal sclérosant de l'ichtyose et de la cholangite (NISCH) — peau très sèche, squameuse et maladie hépatique. La claudine-1 est aussi LA porte d'entrée du virus de l'hépatite C (HCV) — paradoxalement, bloquer claudine-1 prévient l'infection HCV. Dans la dermatite atopique, l'expression de claudine-1 est RÉDUITE, augmentant la perméabilité cutanée aux allergènes. Cette séquence de 211 aa encode claudine-1 humaine complète — le sceau qui imperméabilise l'épiderme.",
 "occludin": "Occludine (OCLN, 522 aa) est une protéine transmembranaire majeure des jonctions serrées épidermiques qui régule la perméabilité paracellulaire et l'intégrité de la barrière cutanée. Occludine a 4 domaines transmembranaires, 2 boucles extracellulaires qui interagissent en trans avec l'occludine des cellules adjacentes, et un domaine C-terminal cytoplasmique qui se lie aux protéines d'échafaudage ZO-1, ZO-2, ZO-3 et au cytosquelette d'actine. L'occludine régule la taille des pores des jonctions serrées par un mécanisme dynamique : sa phosphorylation par des kinases (PKC, MAPK) augmente la perméabilité, sa déphosphorylation resserre les jonctions. Dans l'épiderme, occludine co-localise avec claudine-1 dans la couche granuleuse où elles forment la barrière paracellulaire qui empêche la perte d'eau transépidermique (TEWL). Les souris occludine-knockout ont une barrière épidermique partiellement altérée mais survivent (compensation par tricelluline et claudines), contrairement aux souris claudine-1-KO qui meurent. Mais l'occludine reste essentielle : elle régule l'homéostasie calcique épidermique, la différenciation kératinocytaire et la signalisation inflammatoire. Dans la peau atopique et psoriasique, l'expression et la localisation d'occludine sont ALTÉRÉES, contribuant à la perméabilité excessive et l'inflammation. L'occludine est aussi modulée par les conditions environnementales : l'air sec et froid RÉDUIT son expression → augmentation TEWL → peau sèche hivernale. Cette séquence de 522 aa encode occludine humaine complète — le régulateur dynamique de l'imperméabilisation paracellulaire."};
 
@@ -519,21 +528,21 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6','💉':'#E91E63','🌺':'#FF6B9D','🫘':'#A0522D','💦':'#00CED1','🦴':'#CD853F'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6','💉':'#E91E63','🌺':'#FF6B9D','🫘':'#A0522D','💦':'#00CED1','🦴':'#CD853F','🫛':'#4A7C3C'
 };
 const CAT_NAMES_FR={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées','💉':'Diabète','🌺':'Hibiscus Canicule','🫘':'Rénal K+/Créatinine','💦':'Peau Sèche','🦴':'Arthrose'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées','💉':'Diabète','🌺':'Hibiscus Canicule','🫘':'Rénal K+/Créatinine','💦':'Peau Sèche','🦴':'Arthrose','🫛':'Rénal Compact'
 };
 const CAT_NAMES_EN={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Knee',
   '😴':'Sleep','🍴':'Binge Eating','❤️':'Blood Pressure',
   '💧':'Water','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plants','🥒':'Cucumber','🍅':'Tomato','😊':'Mood',
-  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids','💉':'Diabetes','🌺':'Hibiscus Heat Wave','🫘':'Renal K+/Creatinine','💦':'Dry Skin','🦴':'Arthritis'
+  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids','💉':'Diabetes','🌺':'Hibiscus Heat Wave','🫘':'Renal K+/Creatinine','💦':'Dry Skin','🦴':'Arthritis','🫛':'Renal Compact'
 };
 let CAT_NAMES=CAT_NAMES_FR;
 
@@ -635,16 +644,16 @@ let audioMode='stereo';
 let audioModeManuallyChanged=false;
 let scaleManuallyChanged=false;
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10,'💉':8,'🌺':12,'🫘':6,'💦':8,'🦴':7};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10,'💉':8,'🌺':12,'🫘':6,'💦':8,'🦴':7,'🫛':6};
 const CAT_AUDIO_MODE={
   '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo','🦟':'stereo',
   '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
   '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
-  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic','💉':'isochronic','🌺':'isochronic','🫘':'isochronic','💦':'isochronic','🦴':'isochronic'
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic','💉':'isochronic','🌺':'isochronic','🫘':'isochronic','💦':'isochronic','🦴':'isochronic','🫛':'isochronic'
 };
 const CAT_DEFAULT_SCALE={
   // Mib Lydien (effet INHIBANT/CALMANT) - calmer, apaiser, relaxer
-  '😴':'mib','❤️':'mib','🦿':'mib','💪':'mib','🩹':'mib','🦟':'mib','🩸':'mib','🦻':'mib','🫘':'mib','🦴':'mib',
+  '😴':'mib','❤️':'mib','🦿':'mib','💪':'mib','🩹':'mib','🦟':'mib','🩸':'mib','🦻':'mib','🫘':'mib','🦴':'mib','🫛':'mib',
   // Sib Lydien (effet ÉQUILIBRANT) - équilibre, harmonise
   '💉':'sib',
   // Fa Lydien (effet STIMULANT/ÉNERGISANT) - activer, stimuler, régénérer
@@ -1014,26 +1023,41 @@ async function playOne(prot){
 
 function autoSelectAudioMode(){
   // Ne pas changer si l'utilisateur a fait un choix manuel
-  if(audioModeManuallyChanged)return;
+  if(audioModeManuallyChanged){updateAudioModeFreqBadge();return;}
 
   const queue=getQueue();
   if(!queue.length){
     // Si aucune protéodie cochée, regarder les catégories filtrées
     const filtered=PROTEODIES.filter(p=>activeFilters.has(p.cat));
-    if(!filtered.length)return;
+    if(!filtered.length){updateAudioModeFreqBadge();return;}
     const categories=[...new Set(filtered.map(p=>p.cat))];
     const hasNeuroCat=categories.some(cat=>CAT_AUDIO_MODE[cat]==='isochronic');
-    const recommendedMode=hasNeuroCat?'isochronic':'stereo';
+    const recommendedMode=hasNeuroCat?'isochrone':'stereo';
     audioMode=recommendedMode;
     document.getElementById('audio-mode').value=recommendedMode;
+    updateAudioModeFreqBadge();
     return;
   }
 
   const categories=queue.map(p=>p.cat);
   const hasNeuroCat=categories.some(cat=>CAT_AUDIO_MODE[cat]==='isochronic');
-  const recommendedMode=hasNeuroCat?'isochronic':'stereo';
+  const recommendedMode=hasNeuroCat?'isochrone':'stereo';
   audioMode=recommendedMode;
   document.getElementById('audio-mode').value=recommendedMode;
+  updateAudioModeFreqBadge();
+}
+function updateAudioModeFreqBadge(){
+  const badge=document.getElementById('audio-mode-freq');
+  if(!badge)return;
+  if(audioMode==='stereo'){badge.style.display='none';badge.textContent='';return;}
+
+  const queue=getQueue();
+  const categories=queue.length?queue.map(p=>p.cat):[...new Set(PROTEODIES.filter(p=>activeFilters.has(p.cat)).map(p=>p.cat))];
+  const freqs=[...new Set(categories.map(cat=>BEAT_FREQS[cat]||10))];
+
+  if(!freqs.length){badge.style.display='none';badge.textContent='';return;}
+  badge.textContent=freqs.length===1?`${freqs[0]} Hz`:`${Math.min(...freqs)}–${Math.max(...freqs)} Hz`;
+  badge.style.display='inline';
 }
 function autoSelectScale(){
   // Ne pas changer si l'utilisateur a fait un choix manuel

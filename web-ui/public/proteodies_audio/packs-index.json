@@ -328,5 +328,15 @@
     "scale": "mib",
     "freq": "6 Hz",
     "effect": "Fonction rénale"
+  },
+  {
+    "id": "renal_compact",
+    "name": "Rénal Compact",
+    "emoji": "🫛",
+    "count": 4,
+    "mode": "isochrone_7hz",
+    "scale": "mib",
+    "freq": "6 Hz",
+    "effect": "Fonction rénale (version compacte)"
   }
 ]
