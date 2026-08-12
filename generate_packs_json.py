@@ -72,7 +72,6 @@ CAT_CONFIG = {
     '🌸': {'scale': 'fa', 'freq': 10, 'mode': 'isochrone_10hz', 'name': 'Orchidées', 'effect': 'Floraison + croissance'},
     '💉': {'scale': 'sib', 'freq': 8, 'mode': 'isochrone_8hz', 'name': 'Diabète', 'effect': 'Équilibre glycémique'},
     '🌺': {'scale': 'fa', 'freq': 12, 'mode': 'isochrone_10hz', 'name': 'Hibiscus Canicule', 'effect': 'Thermorégulation'},
-    '🫘': {'scale': 'mib', 'freq': 6, 'mode': 'isochrone_7hz', 'name': 'Rénal K+/Créatinine', 'effect': 'Fonction rénale'},
     '💦': {'scale': 'fa', 'freq': 8, 'mode': 'isochrone_8hz', 'name': 'Peau Sèche', 'effect': 'Hydratation cutanée'},
     '🦴': {'scale': 'mib', 'freq': 7, 'mode': 'isochrone_7hz', 'name': 'Arthrose', 'effect': 'Anti-inflammatoire + Régénération'},
     '🫛': {'scale': 'mib', 'freq': 6, 'mode': 'isochrone_7hz', 'name': 'Rénal Compact', 'effect': 'Fonction rénale (version compacte)'}

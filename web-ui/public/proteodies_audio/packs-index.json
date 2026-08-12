@@ -320,16 +320,6 @@
     "effect": "Détox + anti-stéatose"
   },
   {
-    "id": "renal_kplus_creatinine",
-    "name": "Rénal K+/Créatinine",
-    "emoji": "🫘",
-    "count": 8,
-    "mode": "isochrone_7hz",
-    "scale": "mib",
-    "freq": "6 Hz",
-    "effect": "Fonction rénale"
-  },
-  {
     "id": "renal_compact",
     "name": "Rénal Compact",
     "emoji": "🫛",
