@@ -88,6 +88,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <button onclick="skipNext()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #333;background:#252525;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">&#9654;&#9654;</button>
   <button id="t-loop" onclick="toggleLoop()" style="width:60px;height:60px;border-radius:50%;border:1.5px solid #1D9E75;background:#1D9E7522;color:#1D9E75;font-size:24px;cursor:pointer;flex-shrink:0;" title="Boucle active">&#8734;</button>
   <button id="protocol-h" onclick="startProtocolH()" style="width:60px;height:60px;border-radius:50%;border:2px solid #8B5CF6;background:#8B5CF622;color:#8B5CF6;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;letter-spacing:-0.5px;" title="Protocole Humain (TPH1/Sérotonine)">P-H</button>
+  <button onclick="openJournal()" style="width:60px;height:60px;border-radius:50%;border:2px solid #3B82F6;background:#3B82F622;color:#3B82F6;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;line-height:1.2;" title="Journal d'utilisation (suivi médical)">📊<br>LOG</button>
   <button onclick="exportMIDITemplate()" style="width:60px;height:60px;border-radius:50%;border:2px solid #F97316;background:#F9731622;color:#F97316;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;line-height:1.2;" title="Export MIDI + Template DAW">MIDI<br>+DAW</button>
   <div style="flex:1;min-width:0;padding-left:4px;">
     <div id="t-name" style="font-size:13px;font-weight:500;color:#1D9E75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Pret</div>
@@ -103,7 +104,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     <button class="lang-btn" onclick="setLang('en')">EN</button>
   </div>
 </div>
-<p class="sub" data-i18n="subtitle">La molé met l'eau ! &middot; 100 proteodies</p>
+<p class="sub" data-i18n="subtitle">La molé met l'eau ! &middot; 189 proteodies</p>
 <p class="sub" style="font-size:11px;margin-top:-14px;color:#666" data-i18n="tagline">De la molécule à la mélodie, de la séquence à la santé</p>
 
 <div class="now" id="now-box" style="display:none">
@@ -193,6 +194,13 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
       <span style="font-size:13px;color:var(--text2)">🎲 Jouer les notes de façon aleatoire (test)</span>
     </label>
   </div>
+  <div class="ctrl-row" style="margin-top:4px">
+    <span class="ctrl-label">Mapping</span>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <input type="checkbox" id="borla-chk" style="width:20px;height:20px;accent-color:#1D9E75" onchange="onMappingChange()">
+      <span style="font-size:13px;color:var(--text2)">🎼 Sternheimer/Borla (table scientifique AA→notes)</span>
+    </label>
+  </div>
   <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.2s;display:flex;align-items:center;gap:10px" id="diapason-box">
     <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1">
       <input type="checkbox" id="diapason-chk" style="width:20px;height:20px;accent-color:#BA7517" onchange="onDiapasonChange()" checked>
@@ -233,6 +241,24 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     <div class="modal-body" id="modal-body">&#8212;</div>
     <div class="modal-seq" id="modal-seq">&#8212;</div>
     <div class="modal-meta" id="modal-meta"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="journal-modal" onclick="if(event.target===this)closeJournal()">
+  <div class="modal-box" style="max-width:900px;max-height:90vh;overflow:auto">
+    <div class="modal-header">
+      <div class="modal-title">📊 Journal d'utilisation</div>
+      <button class="modal-close" onclick="closeJournal()">&#10005;</button>
+    </div>
+    <div style="padding:20px">
+      <div style="display:flex;gap:10px;margin-bottom:20px">
+        <button onclick="exportJournalCSV()" style="flex:1;padding:12px;background:#1D9E75;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer">📥 Exporter CSV (pour médecin)</button>
+        <button onclick="exportJournalPDF()" style="flex:1;padding:12px;background:#3B82F6;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer">📄 Fiche technique PDF</button>
+        <button onclick="clearJournal()" style="padding:12px 20px;background:#D85A30;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer">🗑️ Effacer</button>
+      </div>
+      <div id="journal-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px"></div>
+      <div id="journal-entries" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
   </div>
 </div>
 
@@ -357,6 +383,7 @@ const PROTEODIES=[
   {id:'ngf_auditory', name:'Nerf Auditif — NGF Régénération', seq:'SSSHPIFHRGEFSVCDSVSVWVGDKTTATDIKGKEVTVLAEVNINNSVFRQQYFFETKCRDPNPVDSGCRGIDSKHWNSYCTTTHTFVKALTMDGKQAAWRFIRIDTACVCVLSRKAVRRA', cat:'🦻', desc:'Nerve Growth Factor auditif — régénération et survie des fibres nerveuses cochléaires'},
   {id:'nrg1_myelin', name:'Nerf Auditif — Neuregulin-1 Myéline', seq:'SHLVKCAEKEKTFCVNGGECFMVKDLSNPSRYLCKCQAGFGHLCQGPNPCGSCKLKL', cat:'🦻', desc:'Neuregulin-1 Type III — myélinisation et protection des fibres du nerf auditif'},
   {id:'cntf_cochlear', name:'Nerf Auditif — CNTF Neuroprotection', seq:'MAFTEHSPLTPHRRDLCSRSIWLARKIRSDLTALTESYVKHQGLNKNINLDSADGMPVASTDQWSELTEYLENKFRRGHSRGS', cat:'🦻', desc:'Ciliary Neurotrophic Factor — protège neurones auditifs de la dégénérescence'},
+  {id:'otof', name:'Nerf Auditif — OTOF Otoferline', seq:'MALLIHLKTVSELRGRGDRIAKVTFRGQSFYSRVLENCEDVADFDETFRWPVASSIDRNEMLEIQVFNYSKVFSNKLIGTFRMVLQKVVEESHVEVTDTLIDDNNAIIKTSLCVEVRYQATDGTVGSWDDGDFLGDESLQEEEKDSQETDGLLPGSRPSSRPPGEKSFRRAGRSVFSAMKLGKNRSHKEEPQRPDEPAVLEMEDLDHLAIRLGDGLDPDSVSLASVTALTTNVSNKRSKPDIKMEPSAGRPMDYQVSITVIEARQLVGLNMDPVVCVEVGDDKKYTSMKESTNCPYYNEYFVFDFHVSPDVMFDKIIKISVIHSKNLLRSGTLVGSFKMDVGTVYSQPEHQFHHKWAILSDPDDISSGLKGYVKCDVAVVGKGDNIKTPHKANETDEDDIEGNLLLPEGVPPERQWARFYVKIYRAEGLPRMNTSLMANVKKAFIGENKDLVDPYVQVFFAGQKGKTSVQKSSYEPLWNEQVVFTDLFPPLCKRMKVQIRDSDKVNDVAIGTHFIDLRKISNDGDKGFLPTLGPAWVNMYGSTRNYTLLDEHQDLNEGLGEGVSFRARLLLGLAVEIVDTSNPELTSSTEVQVEQATPISESCAGKMEEFFLFGAFLEASMIDRRNGDKPITFEVTIGNYGNEVDGLSRPQRPRPRKEPGDEEEVDLIQNASDDEAGDAGDLASVSSTPPMRPQVTDRNYFHLPYLERKPCIYIKSWWPDQRRRLYNANIMDHIADKLEEGLNDIQEMIKTEKSYPERRLRGVLEELSCGCCRFLSLADKDQGHSSRTRLDRERLKSCMRELENMGQQARMLRAQVKRHTVRDKLRLCQNFLQKLRFLADEPQHSIPDIFIWMMSNNKRVAYARVPSKDLLFSIVEEETGKDCAKVKTLFLKLPGKRGFGSAGWTVQAKVELYLWLGLSKQRKEFLCGLPCGFQEVKAAQGLGLHAFPPVSLVYTKKQAFQLRAHMYQARSLFAADSSGLSDPFARVFFINQSQCTEVLNETLCPTWDQMLVFDNLELYGEAHELRDDPPIIVIEIYDQDSMGKADFMGRTFAKPLVKMADEAYCPPRFPPQLEYYQIYRGNATAGDLLAAFELLQIGPAGKADLPPINGPVDVDRGPIMPVPMGIRPVLSKYRVEVLFWGLRDLKRVNLAQVDRPRVDIECAGKGVQSSLIHNYKKNPNFNTLVKWFEVDLPENELLHPPLNIRVVDCRAFGRYTLVGSHAVSSLRRFIYRPPDRSAPSWNTTVRLLRRCRVLCNGGSSSHSTGEVVVTMEPEVPIKKLETMVKLDATSEAVVKVDVAEEEKEKKKKKKGTAEEPEEEEPDESMLDWWSKYFASIDTMKEQLRQQEPSGIDLEEKEEVDNTEGLKGSMKGKEKARAAKEEKKKKTQSSGSGQGSEAPEKKKPKIDELKVYPKELESEFDNFEDWLHTFNLLRGKTGDDEDGSTEEERIVGRFKGSLCVYKVPLPEDVSREAGYDSTYGMFQGIPSNDPINVLVRVYVVRATDLHPADINGKADPYIAIRLGKTDIRDKENYISKQLNPVFGKSFDIEASFPMESMLTVAVYDWDLVGTDDLIGETKIDLENRFYSKHRATCGIAQTYSTHGYNIWRDPMKPSQILTRLCKDGKVDGPHFGPPGRVKVANRVFTGPSEIEDENGQRKPTDEHVALLALRHWEDIPRAGCRLVPEHVETRPLLNPDKPGIEQGRLELWVDMFPMDMPAPGTPLDISPRKPKKYELRVIIWNTDEVVLEDDDFFTGEKSSDIFVRGWLKGQQEDKQDTDVHYHSLTGEGNFNWRYLFPFDYLAAEEKIVISKKESMFSWDETEYKIPARLTLQIWDADHFSADDFLGAIELDLNRFPRGAKTAKQCTMEMATGEVDVPLVSIFKQKRVKGWWPLLARNENDEFELTGKVEAELHLLTAEEAEKNPVGLARNEPDPLEKPNRPDTSFIWFLNPLKSARYFLWHTYRWLLLKLLLLLLLLLLLALFLYSVPGYLVKKILGA', cat:'🦻', desc:'Otoferline — transmission signal cellules ciliées vers nerf auditif, cible thérapie génique DB-OTO'},
   {id:'sp_block', name:'Fibromyalgie — Antagoniste Substance P', seq:'RPKPQQFFGLM', cat:'💪', desc:'Bloque récepteur NK1 — réduit douleur centrale'},
   {id:'dyn_a', name:'Fibromyalgie — Dynorphine A', seq:'YGGFLRRIRPKLKWDNQ', cat:'💪', desc:'Opioïde κ — analgésie douleur chronique'},
   {id:'alpha_msh', name:'Fibromyalgie — α-MSH Anti-Inflammatoire', seq:'SYSMEHFRWGKPV', cat:'💪', desc:'Melanocortin — réduit inflammation centrale'},
@@ -686,9 +713,29 @@ function noteForAa(aa,scale){
 }
 function midiFor(aa){
   const scale=document.getElementById('gamme').value;
-  const borlaNote=noteForAa(aa,scale);
-  if(borlaNote!==null)return borlaNote;
+  const useBorla=document.getElementById('borla-chk')?.checked===true; // default false (legacy mapping)
+  // Use Borla mapping if checkbox is checked AND scale is fa/mib/sib
+  if(useBorla){
+    const borlaNote=noteForAa(aa,scale);
+    if(borlaNote!==null)return borlaNote;
+  }
+  // Fallback: use legacy algorithmic mapping (index modulo scale)
   let i=ORD.indexOf(aa);return i<0?51:getScale()[i%getScale().length];
+}
+function onMappingChange(){
+  const checked=document.getElementById('borla-chk').checked;
+  localStorage.setItem('proteodies-borla-mapping',checked);
+  // Refresh display if sequence is shown
+  const nowBox=document.getElementById('now-box');
+  if(nowBox.style.display!=='none'){
+    const items=document.querySelectorAll('.pl-item input:checked');
+    if(items.length>0){
+      const firstChecked=Array.from(items)[0];
+      const protId=firstChecked.id.replace('chk-','');
+      const prot=PROTEODIES.find(p=>p.id===protId);
+      if(prot)showSeq(prot);
+    }
+  }
 }
 function freqFor(midi){return getA4()*Math.pow(2,(midi-69)/12);}
 function noteName(midi){return NOTE_N[(midi-45+120)%12];}
@@ -1077,6 +1124,7 @@ async function startSession(){
   }
   autoSelectAudioMode();
   playing=true;stopFlag=false;
+  startSessionLog(); // Start logging session
   await initAudio();
   if(audioCtx.state==='suspended')await audioCtx.resume();
   const isInfinite=document.getElementById('infinite-chk').checked;
@@ -1117,6 +1165,7 @@ async function startSession(){
     if(!loop)break;
     if(!isInfinite&&(Date.now()-sessionStart)/1000>=dur)break;
   }
+  endSessionLog(); // End logging session and prompt for symptoms
   playing=false;stopFlag=false;skipFlag=false;
   clearInterval(timerInterval);
   document.getElementById('prog-loop').textContent='Session terminee';
@@ -1145,6 +1194,326 @@ function showDesc(id){
 }
 function closeModal(){document.getElementById('desc-modal').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ========== SYSTÈME DE JOURNALISATION ==========
+let currentSessionLog=null;
+
+function openJournal(){
+  document.getElementById('journal-modal').classList.add('open');
+  refreshJournal();
+}
+function closeJournal(){document.getElementById('journal-modal').classList.remove('open');}
+
+function startSessionLog(){
+  const queue=getQueue();
+  if(!queue.length)return;
+
+  const proteodyNames=queue.map(p=>p.name).join(', ');
+  const categories=[...new Set(queue.map(p=>p.cat))].join('');
+
+  currentSessionLog={
+    id:Date.now(),
+    startTime:new Date().toISOString(),
+    endTime:null,
+    proteodies:proteodyNames,
+    categories:categories,
+    params:{
+      bpm:parseInt(document.getElementById('bpm').value),
+      diapason:document.getElementById('diapason-chk').checked?'h3O2 (429.62Hz)':'440Hz',
+      gamme:document.getElementById('gamme').value,
+      audioMode:audioMode,
+      mapping:document.getElementById('borla-chk')?.checked?'Sternheimer/Borla':'Legacy',
+      duration:document.getElementById('infinite-chk').checked?'∞':parseInt(document.getElementById('dur').value)+'min'
+    },
+    symptoms:{before:null,after:null,notes:''}
+  };
+}
+
+function endSessionLog(){
+  if(!currentSessionLog)return;
+
+  currentSessionLog.endTime=new Date().toISOString();
+  const start=new Date(currentSessionLog.startTime);
+  const end=new Date(currentSessionLog.endTime);
+  currentSessionLog.actualDuration=Math.round((end-start)/1000/60); // minutes
+
+  // Prompt for symptom rating
+  promptSymptoms(currentSessionLog);
+}
+
+function promptSymptoms(log){
+  const before=prompt(`📊 Évaluation AVANT l'écoute\n\nSymptômes (0=aucun, 10=maximal):\n- Intensité générale (0-10)`);
+  if(before!==null){
+    log.symptoms.before=parseInt(before)||0;
+    const after=prompt(`📊 Évaluation APRÈS l'écoute\n\nSymptômes (0=aucun, 10=maximal):\n- Intensité générale (0-10)`);
+    if(after!==null){
+      log.symptoms.after=parseInt(after)||0;
+      const notes=prompt(`💬 Commentaires/observations (optionnel):`);
+      if(notes)log.symptoms.notes=notes;
+    }
+  }
+
+  // Save to localStorage
+  const logs=JSON.parse(localStorage.getItem('proteodies-journal')||'[]');
+  logs.push(log);
+  localStorage.setItem('proteodies-journal',JSON.stringify(logs));
+
+  currentSessionLog=null;
+}
+
+function refreshJournal(){
+  const logs=JSON.parse(localStorage.getItem('proteodies-journal')||'[]');
+
+  // Stats
+  const stats=document.getElementById('journal-stats');
+  const totalSessions=logs.length;
+  const totalDuration=logs.reduce((sum,l)=>sum+(l.actualDuration||0),0);
+  const avgImprovement=logs.filter(l=>l.symptoms.before!==null&&l.symptoms.after!==null)
+    .map(l=>l.symptoms.before-l.symptoms.after)
+    .reduce((sum,diff,_,arr)=>sum+diff/arr.length,0);
+
+  stats.innerHTML=`
+    <div style="background:var(--bg3);padding:15px;border-radius:8px;border:0.5px solid var(--border)">
+      <div style="font-size:24px;font-weight:700;color:#1D9E75">${totalSessions}</div>
+      <div style="font-size:12px;color:var(--text2)">Sessions totales</div>
+    </div>
+    <div style="background:var(--bg3);padding:15px;border-radius:8px;border:0.5px solid var(--border)">
+      <div style="font-size:24px;font-weight:700;color:#3B82F6">${totalDuration} min</div>
+      <div style="font-size:12px;color:var(--text2)">Durée cumulée</div>
+    </div>
+    <div style="background:var(--bg3);padding:15px;border-radius:8px;border:0.5px solid var(--border)">
+      <div style="font-size:24px;font-weight:700;color:${avgImprovement>0?'#1D9E75':'#999'}">${avgImprovement>0?'-':''}${Math.abs(avgImprovement).toFixed(1)}</div>
+      <div style="font-size:12px;color:var(--text2)">Amélioration moyenne</div>
+    </div>
+  `;
+
+  // Entries
+  const entries=document.getElementById('journal-entries');
+  if(!logs.length){
+    entries.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2)">Aucune session enregistrée</div>';
+    return;
+  }
+
+  entries.innerHTML=logs.slice().reverse().map(log=>{
+    const date=new Date(log.startTime);
+    const improvement=log.symptoms.before!==null&&log.symptoms.after!==null?log.symptoms.before-log.symptoms.after:null;
+    return`
+      <div style="background:var(--bg3);padding:15px;border-radius:8px;border:0.5px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">
+          <div>
+            <div style="font-weight:600;color:var(--text)">${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
+            <div style="font-size:13px;color:var(--text2);margin-top:4px">${log.proteodies}</div>
+          </div>
+          <div style="font-size:20px">${log.categories}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;font-size:12px;color:var(--text2)">
+          <div><strong>Durée:</strong> ${log.actualDuration||'?'} min</div>
+          <div><strong>BPM:</strong> ${log.params.bpm}</div>
+          <div><strong>Gamme:</strong> ${log.params.gamme}</div>
+          <div><strong>Diapason:</strong> ${log.params.diapason}</div>
+          <div><strong>Mode:</strong> ${log.params.audioMode}</div>
+          <div><strong>Mapping:</strong> ${log.params.mapping}</div>
+        </div>
+        ${improvement!==null?`
+          <div style="display:flex;gap:15px;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)">
+            <div style="font-size:12px"><strong>Avant:</strong> ${log.symptoms.before}/10</div>
+            <div style="font-size:12px"><strong>Après:</strong> ${log.symptoms.after}/10</div>
+            <div style="font-size:12px;color:${improvement>0?'#1D9E75':improvement<0?'#D85A30':'#999'}">
+              <strong>Évolution:</strong> ${improvement>0?'-':''}${Math.abs(improvement)} pts
+            </div>
+          </div>
+        `:''}
+        ${log.symptoms.notes?`<div style="margin-top:8px;font-size:12px;font-style:italic;color:var(--text2)">"${log.symptoms.notes}"</div>`:''}
+      </div>
+    `;
+  }).join('');
+}
+
+function exportJournalCSV(){
+  const logs=JSON.parse(localStorage.getItem('proteodies-journal')||'[]');
+  if(!logs.length){alert('Aucune donnée à exporter');return;}
+
+  let csv='Date,Heure,Protéodies,Catégories,Durée (min),BPM,Diapason,Gamme,Mode Audio,Mapping,Symptômes Avant,Symptômes Après,Amélioration,Notes\n';
+  logs.forEach(log=>{
+    const date=new Date(log.startTime);
+    const improvement=log.symptoms.before!==null&&log.symptoms.after!==null?log.symptoms.before-log.symptoms.after:'';
+    csv+=`"${date.toLocaleDateString('fr-FR')}","${date.toLocaleTimeString('fr-FR')}","${log.proteodies}","${log.categories}",${log.actualDuration||''},${log.params.bpm},"${log.params.diapason}","${log.params.gamme}","${log.params.audioMode}","${log.params.mapping}",${log.symptoms.before||''},${log.symptoms.after||''},${improvement},"${log.symptoms.notes||''}"\n`;
+  });
+
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`proteodies_journal_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportJournalPDF(){
+  const win=window.open('','_blank');
+  win.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Protéodies - Fiche Technique</title>
+  <style>
+    @media print{@page{margin:2cm}}
+    body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:20px;line-height:1.6}
+    h1{color:#1D9E75;border-bottom:3px solid #1D9E75;padding-bottom:10px}
+    h2{color:#3B82F6;margin-top:30px;border-bottom:2px solid #3B82F622;padding-bottom:5px}
+    .section{margin:20px 0;padding:15px;background:#f5f5f5;border-radius:8px}
+    .protein{margin:10px 0;padding:10px;background:white;border-left:3px solid #1D9E75}
+    table{width:100%;border-collapse:collapse;margin:15px 0}
+    th,td{border:1px solid #ddd;padding:8px;text-align:left}
+    th{background:#1D9E75;color:white}
+    .ref{font-size:11px;color:#666;margin-top:5px}
+    .note{background:#FFF4E6;border-left:3px solid #F97316;padding:10px;margin:15px 0}
+  </style>
+</head>
+<body>
+  <h1>🧬 Protéodies - Fiche Technique Médicale</h1>
+  <p><strong>Date:</strong> ${new Date().toLocaleDateString('fr-FR')}</p>
+
+  <div class="note">
+    <strong>⚕️ Cadre d'utilisation:</strong> Les protéodies sont une approche <strong>complémentaire</strong> ne remplaçant en aucun cas un diagnostic ou traitement médical. Cette fiche documente la méthode pour évaluation par le corps médical.
+  </div>
+
+  <h2>1. Principe Scientifique</h2>
+  <div class="section">
+    <p><strong>Méthode:</strong> Sonification de séquences protéiques selon le protocole Sternheimer/Borla</p>
+    <p><strong>Base:</strong> Conversion d'acides aminés en notes musicales via table de correspondance fixe</p>
+    <p><strong>Objectif:</strong> Transmission d'information moléculaire via ondes sonores (fréquences spécifiques)</p>
+  </div>
+
+  <h2>2. Méthodologie de Conversion</h2>
+  <div class="section">
+    <h3>Table Sternheimer/Borla (AA → Notes MIDI)</h3>
+    <table>
+      <tr><th>Acide Aminé</th><th>Colonne Stimulante (Fa Lydien)</th><th>Colonne Inhibante (Mib Lydien)</th></tr>
+      <tr><td>Glycine (G)</td><td>MIDI 57 (A3, 220 Hz)</td><td>MIDI 77 (F5, 698 Hz)</td></tr>
+      <tr><td>Alanine (A)</td><td>MIDI 60 (C4, 262 Hz)</td><td>MIDI 62 (D4, 294 Hz)</td></tr>
+      <tr><td>Sérine (S)</td><td>MIDI 64 (E4, 330 Hz)</td><td>MIDI 70 (A#4, 466 Hz)</td></tr>
+      <tr><td>Tryptophane (W)</td><td>MIDI 74 (D5, 587 Hz)</td><td>MIDI 60 (C4, 262 Hz)</td></tr>
+      <tr><td colspan="3" style="text-align:center;font-size:11px">Autres AA: cf. table complète en annexe</td></tr>
+    </table>
+
+    <p><strong>Paramètres audio:</strong></p>
+    <ul>
+      <li><strong>BPM:</strong> 65 (rythme cardiaque au repos)</li>
+      <li><strong>Diapason h3O2:</strong> 429.62 Hz (-24 cents vs 440 Hz standard)</li>
+      <li><strong>Gammes:</strong>
+        <ul>
+          <li>Fa Lydien (stimulant) - colonne STIM</li>
+          <li>Mib Lydien (calmant) - colonne INH</li>
+          <li>Sib Lydien (équilibrant) - moyenne STIM/INH</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <h2>3. Exemple: Pack Ménière 🌀</h2>
+  <div class="section">
+    <div class="protein">
+      <strong>Aquaporine-2 (AQP2)</strong><br>
+      <em>Rôle:</em> Canal aqueux oreille interne - régulation endolymphe<br>
+      <em>Séquence:</em> MWELQKKAGAEGGAPPDTEQDVKSA... (271 AA)<br>
+      <em>Cible:</em> Équilibre hydrique cochlée
+    </div>
+    <div class="protein">
+      <strong>Pendrine (SLC26A4)</strong><br>
+      <em>Rôle:</em> Échangeur Cl-/HCO3- - équilibre endolymphe<br>
+      <em>Séquence:</em> MWGSLSLLFLLLGAVLTGLGNSYFD... (780 AA)<br>
+      <em>Cible:</em> pH et composition ionique
+    </div>
+    <div class="protein">
+      <strong>KCNQ4</strong><br>
+      <em>Rôle:</em> Canal potassique cochlée<br>
+      <em>Cible:</em> Excitabilité cellules ciliées
+    </div>
+    <div class="protein">
+      <strong>TRPV4</strong><br>
+      <em>Rôle:</em> Mécano-senseur osmotique<br>
+      <em>Cible:</em> Adaptation pression osmotique
+    </div>
+  </div>
+
+  <h2>4. Protocole d'Évaluation</h2>
+  <div class="section">
+    <p><strong>Mesures objectives:</strong></p>
+    <ul>
+      <li>Échelle symptômes avant/après (0-10)</li>
+      <li>Durée d'écoute (minutes)</li>
+      <li>Paramètres techniques (BPM, gamme, diapason, mode audio)</li>
+      <li>Évolution sur période prolongée (données CSV)</li>
+    </ul>
+
+    <p><strong>Critères d'amélioration:</strong></p>
+    <ul>
+      <li>Réduction score symptômes ≥2 pts</li>
+      <li>Constance sur ≥3 sessions</li>
+      <li>Absence d'effets secondaires</li>
+    </ul>
+  </div>
+
+  <h2>5. Bases Théoriques</h2>
+  <div class="section">
+    <p><strong>Hypothèses:</strong></p>
+    <ul>
+      <li>Résonnance moléculaire: fréquences spécifiques influencent conformation protéique</li>
+      <li>Information vibratoire: transmission d'un "signal" moléculaire via ondes sonores</li>
+      <li>Protocole Sternheimer (années 1960-1990): travaux pionniers sur sonification protéique</li>
+    </ul>
+
+    <p class="ref"><strong>Note:</strong> Approche non validée par essais cliniques randomisés. Données empiriques uniquement. Nécessite recherches complémentaires pour validation scientifique.</p>
+  </div>
+
+  <h2>6. Limitations et Précautions</h2>
+  <div class="section">
+    <ul>
+      <li>❌ <strong>NE PAS</strong> remplacer traitement médical établi</li>
+      <li>❌ <strong>NE PAS</strong> retarder consultation médicale</li>
+      <li>✅ Usage <strong>complémentaire</strong> uniquement</li>
+      <li>✅ Suivi médical régulier maintenu</li>
+      <li>✅ Documentation rigoureuse des résultats</li>
+    </ul>
+  </div>
+
+  <h2>7. Données Patients (Export CSV)</h2>
+  <div class="section">
+    <p>Les données d'utilisation sont exportables en format CSV pour analyse:</p>
+    <ul>
+      <li>Historique complet des sessions</li>
+      <li>Paramètres techniques détaillés</li>
+      <li>Évolution symptômes (échelle 0-10)</li>
+      <li>Commentaires patients</li>
+    </ul>
+    <p><em>→ Fichier CSV joint à transmettre au médecin</em></p>
+  </div>
+
+  <hr style="margin:30px 0">
+  <p style="font-size:11px;color:#666">
+    <strong>Document généré par:</strong> Protéodies Player v1.0<br>
+    <strong>Contact développeur:</strong> Application médicale expérimentale<br>
+    <strong>Licence:</strong> Usage médical/recherche uniquement
+  </p>
+
+  <div style="margin-top:30px;text-align:center">
+    <button onclick="window.print()" style="background:#1D9E75;color:white;border:none;padding:15px 30px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer">
+      🖨️ Imprimer / Enregistrer PDF
+    </button>
+  </div>
+</body>
+</html>
+  `);
+  win.document.close();
+}
+
+function clearJournal(){
+  if(!confirm('⚠️ Supprimer tout l\'historique ?\n\nCette action est irréversible.\n\nConseil : exportez d\'abord en CSV pour sauvegarder.'))return;
+  localStorage.removeItem('proteodies-journal');
+  refreshJournal();
+}
 
 function setLang(lang){
   currentLang=lang;
@@ -1426,6 +1795,11 @@ if(storedInfinite==='true'){
   onInfiniteChange();
 }else{
   document.getElementById('t-timer').textContent='0:00 / '+fmtTime(initDur);
+}
+// Restore Borla mapping preference from localStorage (default: false/unchecked = legacy mapping)
+const storedBorla=localStorage.getItem('proteodies-borla-mapping');
+if(storedBorla==='true'){
+  document.getElementById('borla-chk').checked=true;
 }
 
 // Enregistrement du Service Worker pour fonctionnement hors ligne
