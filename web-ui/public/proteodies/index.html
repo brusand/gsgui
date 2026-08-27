@@ -241,6 +241,14 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   </div>
 </div>
 
+<div class="card" id="protocols-card">
+  <div class="card-title">🩺 Protocoles Thérapeutiques <span style="color:var(--text2);font-weight:400;font-size:10px;text-transform:none;letter-spacing:0">(enchaînement automatique)</span></div>
+  <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">
+    Protocoles prédéfinis pour rééducation auditive · Les séances s'enchaînent automatiquement avec les bons réglages
+  </div>
+  <div id="protocols-list" style="display:flex;flex-direction:column;gap:10px"></div>
+</div>
+
 <div class="card">
   <div class="card-title"><span data-i18n="filtersTitle">Filtres par categorie</span> <span style="color:var(--text2);font-weight:400;font-size:10px;text-transform:none;letter-spacing:0" data-i18n="multiSelect">(selection multiple)</span></div>
   <div class="filter-wrap" id="filter-wrap"></div>
@@ -486,6 +494,92 @@ const PROTEODIES=[
   {id:'fmod', name:'Arthrose — Fibromoduline Collagène', seq:'NNFTIENLRHNIQLVQKSLEEIKKHLQSIEKYNKSLESLETLDNNKIQTVFDFTNFLREDYGDLDFKRLVQWLQSVQKSLVSKLNNLTRLHLDGNNITSKVQDKTLLAFDSNFLKRPSIPKSAFVVQKLKENKNLGSKLWSKIRENKLKCFNIVPSGQFSQVSLAMLELFNLTHNRIQTEIQFYQKEELQDNVTD', cat:'🦴', desc:'Fibromoduline — régule assemblage fibrilles de collagène'},
 
 ];
+
+// Protocoles thérapeutiques pour rééducation auditive
+const THERAPEUTIC_PROTOCOLS=[
+  {
+    id:'test_rapide',
+    name:'Test Diagnostic Rapide',
+    emoji:'🔍',
+    duration:15,
+    description:'Identifier quel mode fonctionne le mieux pour ton oreille (15 min)',
+    sessions:[
+      {proteody:'reeducation_nrg1',mode:'canal_left',duration:5,name:'Canal gauche (NRG1)'},
+      {proteody:'reeducation_nrg1',mode:'canal_right',duration:5,name:'Canal droit (NRG1)'},
+      {proteody:'reeducation_aqp4',mode:'binaural_therapeutic',duration:5,name:'Binaural thérapeutique (AQP4)'}
+    ]
+  },
+  {
+    id:'session_courte',
+    name:'Session Courte Optimale',
+    emoji:'⚡',
+    duration:20,
+    description:'Enchaînement optimal pour rééducation quotidienne (20 min)',
+    sessions:[
+      {proteody:'reeducation_nrg1',mode:'canal_left',duration:5,name:'Entraînement oreille gauche'},
+      {proteody:'reeducation_aqp4',mode:'isochrone_asymmetric',duration:10,name:'Correction temporelle asymétrique'},
+      {proteody:'reeducation_nrg1',mode:'binaural_therapeutic',duration:5,name:'Régénération binaural 8 Hz'}
+    ]
+  },
+  {
+    id:'session_complete',
+    name:'Session Complète Thérapeutique',
+    emoji:'🩺',
+    duration:30,
+    description:'Protocole complet de rééducation (30 min)',
+    sessions:[
+      {proteody:'reeducation_nrg1',mode:'canal_left',duration:7,name:'Isolation oreille gauche'},
+      {proteody:'reeducation_aqp4',mode:'isochrone_asymmetric',duration:10,name:'Recalibration temporelle'},
+      {proteody:'reeducation_nrg1',mode:'canal_alternate',duration:8,name:'Intégration bilatérale'},
+      {proteody:'reeducation_aqp4',mode:'binaural_therapeutic',duration:5,name:'Consolidation régénérative'}
+    ]
+  },
+  {
+    id:'week1_training',
+    name:'Semaine 1 : Entraînement Gauche',
+    emoji:'🎯',
+    duration:15,
+    description:'Protocole semaine 1 : entraîner l\'oreille faible isolément',
+    sessions:[
+      {proteody:'reeducation_nrg1',mode:'canal_left',duration:10,name:'Entraînement intensif gauche (NRG1)'},
+      {proteody:'reeducation_aqp4',mode:'canal_left',duration:5,name:'Régulation endolymphe gauche (AQP4)'}
+    ]
+  },
+  {
+    id:'week2_correction',
+    name:'Semaine 2 : Correction Temporelle',
+    emoji:'⚖️',
+    duration:20,
+    description:'Protocole semaine 2 : recalibrer la perception temporelle',
+    sessions:[
+      {proteody:'reeducation_aqp4',mode:'isochrone_asymmetric',duration:15,name:'Asymétrique intensif (AQP4)'},
+      {proteody:'reeducation_nrg1',mode:'isochrone_asymmetric',duration:5,name:'Myéline temporelle (NRG1)'}
+    ]
+  },
+  {
+    id:'week3_integration',
+    name:'Semaine 3 : Intégration Bilatérale',
+    emoji:'🔄',
+    duration:20,
+    description:'Protocole semaine 3 : réintégration progressive des deux oreilles',
+    sessions:[
+      {proteody:'reeducation_nrg1',mode:'canal_alternate',duration:10,name:'Alternance progressive (NRG1)'},
+      {proteody:'reeducation_aqp4',mode:'canal_alternate',duration:10,name:'Équilibre fluides (AQP4)'}
+    ]
+  },
+  {
+    id:'week4_regeneration',
+    name:'Semaine 4 : Régénération',
+    emoji:'🌟',
+    duration:25,
+    description:'Protocole semaine 4 : consolidation régénérative neuronale',
+    sessions:[
+      {proteody:'reeducation_nrg1',mode:'binaural_therapeutic',duration:15,name:'Myélinisation intensive (NRG1)'},
+      {proteody:'reeducation_aqp4',mode:'binaural_therapeutic',duration:10,name:'Régulation finale (AQP4)'}
+    ]
+  }
+];
+
 const DESCRIPTIONS={
 "vv_def": "Vvitisin (GFCTKWGCRNRAYCRSRCFQTERCDQYKGDDQ, 32 aa) est une défensine antifongique de classe I isolée de Vitis vinifera (raisin). C'est un peptide cationique stabilisé par 4 ponts disulfure (structure en cystine-knot) qui perméabilise les membranes fongiques. Les défensines végétales se lient aux sphingolipides des champignons et créent des pores membranaires → fuite cellulaire et mort. Vvitisin est TRÈS ACTIVE contre les champignons pathogènes de la vigne : Botrytis cinerea (pourriture grise), Plasmopara viticola (mildiou) et surtout le complexe de champignons responsables de l'ESCA (Phaeomoniella chlamydospora, Phaeoacremonium aleophilum, Fomitiporia mediterranea). L'esca est la maladie vasculaire la plus dévastatrice de la viticulture — elle provoque l'apoplexy (mort subite) et le déclin lent des ceps. AUCUN traitement efficace n'existe. Vvitisin est naturellement surexprimée dans les cépages résistants. Cette séquence encode la défensine mature — le bouclier peptidique de la vigne.",
 "vv_sts": "La Stilbène Synthase (STS, 392 aa) est L'ENZYME SIGNATURE de la vigne qui produit le RESVÉRATROL — le polyphénol antifongique le plus puissant du raisin. La STS catalyse la condensation de 3 malonyl-CoA + 1 coumaroyl-CoA → resvératrol (trans-3,5,4'-trihydroxystilbène). Le resvératrol est LA molécule de défense de la vigne : il inhibe la germination des spores fongiques, bloque la croissance mycélienne et tue les champignons de l'esca. Il se concentre dans les baies, les feuilles et surtout le BOIS — là où l'esca attaque. Les cépages résistants (Regent, Solaris) surexpriment la STS. Le resvératrol est aussi célèbre pour ses effets sur la santé humaine : antioxydant, activateur de sirtuines (longévité), cardioprotecteur (French Paradox). Paradoxalement, le stress fongique BOOSTE la production de resvératrol — c'est une réponse de défense induite. Le vin rouge contient 0.5-10 mg/L de resvératrol selon le cépage. Cette séquence de 392 aa encode la stilbène synthase complète de Vitis vinifera — l'usine à resvératrol.",
@@ -1146,7 +1240,7 @@ function shuffleArray(array){
   }
   return arr;
 }
-async function playOne(prot){
+async function playOne(prot, isProtocolMode=false){
   let seq=prot.seq.split('');
   const isRandom=document.getElementById('random-chk').checked;
   if(isRandom){seq=shuffleArray(seq);}
@@ -1161,12 +1255,12 @@ async function playOne(prot){
   const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
   showSeq(prot);
 
-  // Retirer les classes précédentes et ajouter "playing"
-  document.querySelectorAll('.pl-item').forEach(e=>{
-    e.classList.remove('active-item','playing');
-  });
-  const pli=document.getElementById('pl-'+prot.id);
-  if(pli){
+  // Retirer les classes précédentes et ajouter "playing" (seulement si pas en mode protocole)
+  const pli=isProtocolMode?null:document.getElementById('pl-'+prot.id);
+  if(!isProtocolMode && pli){
+    document.querySelectorAll('.pl-item').forEach(e=>{
+      e.classList.remove('active-item','playing');
+    });
     pli.classList.add('active-item','playing');
     pli.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
@@ -2840,11 +2934,227 @@ async function playProteodyAudio(proteody) {
   }
 }
 
+// ==================== PROTOCOLES THÉRAPEUTIQUES ====================
+
+let protocolRunning = false;
+let currentProtocolSession = 0;
+
+function buildProtocols(){
+  const list = document.getElementById('protocols-list');
+  if(!list) return;
+
+  list.innerHTML = '';
+
+  THERAPEUTIC_PROTOCOLS.forEach(protocol => {
+    const card = document.createElement('div');
+    card.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s';
+
+    // Sessions list
+    const sessionsList = protocol.sessions.map((s,i) =>
+      `<div style="font-size:11px;color:var(--text2);margin-left:20px">• ${s.name} (${s.duration} min)</div>`
+    ).join('');
+
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:20px">${protocol.emoji}</span>
+          <div>
+            <div style="font-size:14px;font-weight:500;color:var(--text)">${protocol.name}</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">${protocol.description}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--teal);font-weight:500">${protocol.duration} min</span>
+          <button onclick="launchProtocol('${protocol.id}')" style="padding:6px 12px;background:var(--teal);color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-weight:500">▶ Lancer</button>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+        ${sessionsList}
+      </div>
+    `;
+
+    card.onmouseenter = () => card.style.borderColor = 'var(--teal)';
+    card.onmouseleave = () => card.style.borderColor = 'var(--border)';
+
+    list.appendChild(card);
+  });
+}
+
+async function launchProtocol(protocolId){
+  if(protocolRunning){
+    if(!confirm('Un protocole est déjà en cours. Arrêter et lancer le nouveau ?'))return;
+    stopFlag=true;
+    await new Promise(r=>setTimeout(r,500));
+  }
+
+  const protocol = THERAPEUTIC_PROTOCOLS.find(p=>p.id===protocolId);
+  if(!protocol)return;
+
+  protocolRunning = true;
+  currentProtocolSession = 0;
+  stopFlag = false;
+
+  console.log(`🩺 Lancement protocole: ${protocol.name}`);
+
+  // Masquer les autres sections pendant le protocole
+  const playlistCard = document.querySelector('.card:has(#playlist)');
+  const filtersCard = document.querySelector('.card:has(#filter-wrap)');
+  if(playlistCard) playlistCard.style.display = 'none';
+  if(filtersCard) filtersCard.style.display = 'none';
+
+  // Afficher progression protocole
+  showProtocolProgress(protocol);
+
+  // Enchaîner les séances
+  for(let i=0;i<protocol.sessions.length;i++){
+    if(stopFlag)break;
+
+    currentProtocolSession = i;
+    const session = protocol.sessions[i];
+
+    console.log(`  📍 Séance ${i+1}/${protocol.sessions.length}: ${session.name}`);
+
+    // Mettre à jour UI progression
+    updateProtocolProgress(protocol, i);
+
+    // Configurer les réglages pour cette séance
+    document.getElementById('audio-mode').value = session.mode;
+    audioMode = session.mode;
+    audioModeManuallyChanged = true;
+    updateAudioModeFreqBadge();
+
+    // Trouver la protéodie
+    const proteody = PROTEODIES.find(p=>p.id===session.proteody);
+    if(!proteody){
+      console.error(`❌ Protéodie ${session.proteody} non trouvée`);
+      continue;
+    }
+
+    // Configurer durée pour cette séance
+    const sessionDurationSeconds = session.duration * 60;
+
+    // Jouer la séance
+    await playProtocolSession(proteody, sessionDurationSeconds, session.name);
+
+    if(stopFlag)break;
+
+    // Pause de 2s entre séances
+    if(i < protocol.sessions.length - 1){
+      console.log('  ⏸️  Pause 2s...');
+      await new Promise(r=>setTimeout(r,2000));
+    }
+  }
+
+  // Fin du protocole
+  protocolRunning = false;
+  console.log(`✅ Protocole ${protocol.name} terminé`);
+
+  // Restaurer l'affichage normal
+  if(playlistCard) playlistCard.style.display = '';
+  if(filtersCard) filtersCard.style.display = '';
+  hideProtocolProgress();
+}
+
+async function playProtocolSession(proteody, durationSeconds, sessionName){
+  return new Promise(async (resolve) => {
+    // Mettre à jour l'affichage "Now playing"
+    document.getElementById('now-title').textContent = sessionName;
+    document.getElementById('now-meta').innerHTML = `${proteody.name} <span style="color:var(--text2)">· ${proteody.seq.length} aa</span>`;
+    document.getElementById('now-box').style.display = 'flex';
+
+    const sessionStart = Date.now();
+    let loopCount = 0;
+
+    // Boucler jusqu'à la durée cible
+    while((Date.now() - sessionStart)/1000 < durationSeconds && !stopFlag){
+      loopCount++;
+
+      // Jouer une fois la protéodie
+      await playOne(proteody, true); // true = mode protocole (pas de UI de playlist)
+
+      if(skipFlag){
+        skipFlag = false;
+        break;
+      }
+    }
+
+    resolve();
+  });
+}
+
+function showProtocolProgress(protocol){
+  const nowBox = document.getElementById('now-box');
+  if(nowBox){
+    nowBox.style.display = 'flex';
+    nowBox.style.borderColor = 'var(--teal)';
+  }
+
+  // Créer élément progression protocole
+  const existing = document.getElementById('protocol-progress');
+  if(existing) existing.remove();
+
+  const progressEl = document.createElement('div');
+  progressEl.id = 'protocol-progress';
+  progressEl.style.cssText = 'margin-top:10px;padding:12px;background:#1D9E7515;border:1px solid var(--teal);border-radius:8px';
+  progressEl.innerHTML = `
+    <div style="font-size:13px;font-weight:500;color:var(--teal);margin-bottom:8px">
+      ${protocol.emoji} ${protocol.name} — En cours
+    </div>
+    <div id="protocol-progress-sessions"></div>
+  `;
+
+  const nowBox2 = document.getElementById('now-box');
+  if(nowBox2){
+    nowBox2.insertAdjacentElement('afterend', progressEl);
+  }
+}
+
+function updateProtocolProgress(protocol, currentIndex){
+  const sessionsEl = document.getElementById('protocol-progress-sessions');
+  if(!sessionsEl) return;
+
+  sessionsEl.innerHTML = protocol.sessions.map((s,i) => {
+    let icon = '';
+    let color = 'var(--text2)';
+    let weight = '400';
+
+    if(i < currentIndex){
+      icon = '✅';
+      color = '#4ade80';
+    }else if(i === currentIndex){
+      icon = '▶️';
+      color = 'var(--teal)';
+      weight = '500';
+    }else{
+      icon = '⏳';
+      color = 'var(--text2)';
+    }
+
+    return `
+      <div style="font-size:11px;color:${color};font-weight:${weight};margin-top:4px">
+        ${icon} ${s.name} (${s.duration} min)
+      </div>
+    `;
+  }).join('');
+}
+
+function hideProtocolProgress(){
+  const progressEl = document.getElementById('protocol-progress');
+  if(progressEl) progressEl.remove();
+
+  const nowBox = document.getElementById('now-box');
+  if(nowBox){
+    nowBox.style.display = 'none';
+    nowBox.style.borderColor = '';
+  }
+}
+
 // Initialiser au chargement de la page
 window.addEventListener('DOMContentLoaded', async () => {
   // Attendre un peu pour laisser le DOM se stabiliser
   setTimeout(async () => {
     await initAudioPlayer();
+    buildProtocols(); // Construire la liste des protocoles thérapeutiques
   }, 1000);
 });
 
