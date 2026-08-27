@@ -183,6 +183,11 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
       <option value="stereo" data-i18n="stereo">Stéréo (classique)</option>
       <option value="binaural" data-i18n="binaural">Binaural 🎧 (casque requis)</option>
       <option value="isochrone" data-i18n="isochrone">Isochrone (pulsations)</option>
+      <option value="binaural_therapeutic" data-i18n="binaural_therapeutic">🩺 Binaural thérapeutique (8 Hz)</option>
+      <option value="canal_left" data-i18n="canal_left">🔊 Canal gauche seul</option>
+      <option value="canal_right" data-i18n="canal_right">🔊 Canal droit seul</option>
+      <option value="canal_alternate" data-i18n="canal_alternate">🔄 Canaux alternés (10s)</option>
+      <option value="isochrone_asymmetric" data-i18n="isochrone_asymmetric">⚖️ Isochrone asymétrique</option>
     </select>
     <span id="audio-mode-freq" style="display:none;font-size:12px;color:var(--text2);white-space:nowrap"></span>
   </div>
@@ -406,6 +411,8 @@ const PROTEODIES=[
   {id:'nrg1_myelin', name:'Nerf Auditif — Neuregulin-1 Myéline', seq:'SHLVKCAEKEKTFCVNGGECFMVKDLSNPSRYLCKCQAGFGHLCQGPNPCGSCKLKL', cat:'🦻', desc:'Neuregulin-1 Type III — myélinisation et protection des fibres du nerf auditif'},
   {id:'cntf_cochlear', name:'Nerf Auditif — CNTF Neuroprotection', seq:'MAFTEHSPLTPHRRDLCSRSIWLARKIRSDLTALTESYVKHQGLNKNINLDSADGMPVASTDQWSELTEYLENKFRRGHSRGS', cat:'🦻', desc:'Ciliary Neurotrophic Factor — protège neurones auditifs de la dégénérescence'},
   {id:'otof', name:'Nerf Auditif — OTOF Otoferline', seq:'MALLIHLKTVSELRGRGDRIAKVTFRGQSFYSRVLENCEDVADFDETFRWPVASSIDRNEMLEIQVFNYSKVFSNKLIGTFRMVLQKVVEESHVEVTDTLIDDNNAIIKTSLCVEVRYQATDGTVGSWDDGDFLGDESLQEEEKDSQETDGLLPGSRPSSRPPGEKSFRRAGRSVFSAMKLGKNRSHKEEPQRPDEPAVLEMEDLDHLAIRLGDGLDPDSVSLASVTALTTNVSNKRSKPDIKMEPSAGRPMDYQVSITVIEARQLVGLNMDPVVCVEVGDDKKYTSMKESTNCPYYNEYFVFDFHVSPDVMFDKIIKISVIHSKNLLRSGTLVGSFKMDVGTVYSQPEHQFHHKWAILSDPDDISSGLKGYVKCDVAVVGKGDNIKTPHKANETDEDDIEGNLLLPEGVPPERQWARFYVKIYRAEGLPRMNTSLMANVKKAFIGENKDLVDPYVQVFFAGQKGKTSVQKSSYEPLWNEQVVFTDLFPPLCKRMKVQIRDSDKVNDVAIGTHFIDLRKISNDGDKGFLPTLGPAWVNMYGSTRNYTLLDEHQDLNEGLGEGVSFRARLLLGLAVEIVDTSNPELTSSTEVQVEQATPISESCAGKMEEFFLFGAFLEASMIDRRNGDKPITFEVTIGNYGNEVDGLSRPQRPRPRKEPGDEEEVDLIQNASDDEAGDAGDLASVSSTPPMRPQVTDRNYFHLPYLERKPCIYIKSWWPDQRRRLYNANIMDHIADKLEEGLNDIQEMIKTEKSYPERRLRGVLEELSCGCCRFLSLADKDQGHSSRTRLDRERLKSCMRELENMGQQARMLRAQVKRHTVRDKLRLCQNFLQKLRFLADEPQHSIPDIFIWMMSNNKRVAYARVPSKDLLFSIVEEETGKDCAKVKTLFLKLPGKRGFGSAGWTVQAKVELYLWLGLSKQRKEFLCGLPCGFQEVKAAQGLGLHAFPPVSLVYTKKQAFQLRAHMYQARSLFAADSSGLSDPFARVFFINQSQCTEVLNETLCPTWDQMLVFDNLELYGEAHELRDDPPIIVIEIYDQDSMGKADFMGRTFAKPLVKMADEAYCPPRFPPQLEYYQIYRGNATAGDLLAAFELLQIGPAGKADLPPINGPVDVDRGPIMPVPMGIRPVLSKYRVEVLFWGLRDLKRVNLAQVDRPRVDIECAGKGVQSSLIHNYKKNPNFNTLVKWFEVDLPENELLHPPLNIRVVDCRAFGRYTLVGSHAVSSLRRFIYRPPDRSAPSWNTTVRLLRRCRVLCNGGSSSHSTGEVVVTMEPEVPIKKLETMVKLDATSEAVVKVDVAEEEKEKKKKKKGTAEEPEEEEPDESMLDWWSKYFASIDTMKEQLRQQEPSGIDLEEKEEVDNTEGLKGSMKGKEKARAAKEEKKKKTQSSGSGQGSEAPEKKKPKIDELKVYPKELESEFDNFEDWLHTFNLLRGKTGDDEDGSTEEERIVGRFKGSLCVYKVPLPEDVSREAGYDSTYGMFQGIPSNDPINVLVRVYVVRATDLHPADINGKADPYIAIRLGKTDIRDKENYISKQLNPVFGKSFDIEASFPMESMLTVAVYDWDLVGTDDLIGETKIDLENRFYSKHRATCGIAQTYSTHGYNIWRDPMKPSQILTRLCKDGKVDGPHFGPPGRVKVANRVFTGPSEIEDENGQRKPTDEHVALLALRHWEDIPRAGCRLVPEHVETRPLLNPDKPGIEQGRLELWVDMFPMDMPAPGTPLDISPRKPKKYELRVIIWNTDEVVLEDDDFFTGEKSSDIFVRGWLKGQQEDKQDTDVHYHSLTGEGNFNWRYLFPFDYLAAEEKIVISKKESMFSWDETEYKIPARLTLQIWDADHFSADDFLGAIELDLNRFPRGAKTAKQCTMEMATGEVDVPLVSIFKQKRVKGWWPLLARNENDEFELTGKVEAELHLLTAEEAEKNPVGLARNEPDPLEKPNRPDTSFIWFLNPLKSARYFLWHTYRWLLLKLLLLLLLLLLLALFLYSVPGYLVKKILGA', cat:'🦻', desc:'Otoferline — transmission signal cellules ciliées vers nerf auditif, cible thérapie génique DB-OTO'},
+  {id:'reeducation_aqp4', name:'Rééducation Auditive — AQP4 Endolymphe', seq:'MSDGAAARRWGKCGPLCTRENIMVAFKGVWTQAFWKAVTAEFLAMLIFVLLSVGSTINWGGSENPLPVDMVLISLCFGLSIATMVQCFGHISGGHINPAVTVAMVCTRKISIAKSVFYIAAQCLGAIIGAGILYLVTPPSVVGGLGVTMVHGNLTAGHGLLVELIITFQLVFTIFASCDSKRTDVTGSIALAIGFSY', cat:'👂', desc:'Aquaporine 4 — régule pression endolymphe, équilibre fluides oreille interne'},
+  {id:'reeducation_nrg1', name:'Rééducation Auditive — NRG1 Myéline', seq:'SHLVKCAEKEKTFCVNGGECFMVKDLSNPSRYLCKCQAGFGHLCQGPNPCGSCKLKL', cat:'👂', desc:'Neuregulin-1 Type III — myélinisation nerf auditif, synchronisation temporelle'},
   {id:'sp_block', name:'Fibromyalgie — Antagoniste Substance P', seq:'RPKPQQFFGLM', cat:'💪', desc:'Bloque récepteur NK1 — réduit douleur centrale'},
   {id:'dyn_a', name:'Fibromyalgie — Dynorphine A', seq:'YGGFLRRIRPKLKWDNQ', cat:'💪', desc:'Opioïde κ — analgésie douleur chronique'},
   {id:'alpha_msh', name:'Fibromyalgie — α-MSH Anti-Inflammatoire', seq:'SYSMEHFRWGKPV', cat:'💪', desc:'Melanocortin — réduit inflammation centrale'},
@@ -561,28 +568,28 @@ const CAT_COLORS={
   '😴':'#185FA5','🍴':'#D85A30','❤️':'#993556',
   '💧':'#0F6E56','🏔️':'#639922','🌵':'#3B6D11',
   '🌿':'#639922','🥒':'#3B8A2A','🍅':'#D85A30','😊':'#993556',
-  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6','💉':'#E91E63','🌺':'#FF6B9D','💦':'#00CED1','🦴':'#CD853F','🫛':'#4A7C3C'
+  '👁️':'#3B9FBF','🌌':'#8B5CF6','🫃':'#2A9D8F','💚':'#10B981','🔥':'#F97316','🫒':'#84CC16','🍇':'#8B5A99','⚡':'#DC2626','🦿':'#7C3AED','🦻':'#0EA5E9','👂':'#06B6D4','💪':'#EC4899','🩹':'#10B981','🦟':'#E07B39','🩸':'#DC143C','🧪':'#8B5CF6','🌸':'#DA70D6','💉':'#E91E63','🌺':'#FF6B9D','💦':'#00CED1','🦴':'#CD853F','🫛':'#4A7C3C'
 };
 const CAT_NAMES_FR={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Genou',
   '😴':'Sommeil','🍴':'Boulimie','❤️':'Tension',
   '💧':'Eau','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plantes','🥒':'Concombre','🍅':'Tomate','😊':'Humeur',
-  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées','💉':'Diabète','🌺':'Hibiscus Canicule','💦':'Peau Sèche','🦴':'Arthrose','🫛':'Rénal Compact'
+  '👁️':'Yeux','🌌':'Conscience','🫃':'Intestin','💚':'Mianne','🔥':'Métabolisme','🫒':'Foie','🍇':'Vigne','⚡':'Neuro-Douleur','🦿':'Jambes Sans Repos','🦻':'Ménière','👂':'Rééducation Auditive','💪':'Fibromyalgie','🩹':'Anti-Inflammatoire','🦟':'Anti-Démangeaisons','🩸':'Sang','🧪':'Protocol H','🌸':'Orchidées','💉':'Diabète','🌺':'Hibiscus Canicule','💦':'Peau Sèche','🦴':'Arthrose','🫛':'Rénal Compact'
 };
 const CAT_NAMES_EN={
   '🧬':'PIEZO1','🧠':'Neuro','🦵':'Knee',
   '😴':'Sleep','🍴':'Binge Eating','❤️':'Blood Pressure',
   '💧':'Water','🏔️':'Altitude','🌵':'Cactus',
   '🌿':'Plants','🥒':'Cucumber','🍅':'Tomato','😊':'Mood',
-  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids','💉':'Diabetes','🌺':'Hibiscus Heat Wave','💦':'Dry Skin','🦴':'Arthritis','🫛':'Renal Compact'
+  '👁️':'Eyes','🌌':'Consciousness','🫃':'Gut','💚':'Mianne','🔥':'Metabolism','🫒':'Liver','🍇':'Vine','⚡':'Neuro-Pain','🦿':'Restless Legs','🦻':'Ménière','👂':'Auditory Rehabilitation','💪':'Fibromyalgia','🩹':'Anti-Inflammatory','🦟':'Anti-Itch','🩸':'Blood','🧪':'Protocol H','🌸':'Orchids','💉':'Diabetes','🌺':'Hibiscus Heat Wave','💦':'Dry Skin','🦴':'Arthritis','🫛':'Renal Compact'
 };
 let CAT_NAMES=CAT_NAMES_FR;
 
 const I18N={
   fr:{
     title:'Proteodies Player',
-    subtitle:'La molé met l\'eau ! · 167 proteodies',
+    subtitle:'La molé met l\'eau ! · 191 proteodies',
     tagline:'De la molécule à la mélodie, de la séquence à la santé',
     tempo:'Tempo',
     duration:'Duree',
@@ -677,16 +684,16 @@ let audioMode='stereo';
 let audioModeManuallyChanged=false;
 let scaleManuallyChanged=false;
 let diapasonOsc=null,diapasonGain=null;
-const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10,'💉':8,'🌺':12,'💦':8,'🦴':7,'🫛':6};
+const BEAT_FREQS={'🧬':10,'🧠':14,'🦵':10,'😴':4,'🍴':10,'❤️':8,'💧':10,'🏔️':12,'🌵':10,'🌿':10,'🥒':10,'🍅':10,'😊':8,'👁️':10,'🌌':6,'🫃':6,'💚':6,'🔥':12,'🫒':7,'🍇':10,'⚡':6,'🦿':8,'🦻':10,'👂':8,'💪':7,'🩹':10,'🦟':10,'🩸':8,'🧪':10,'🌸':10,'💉':8,'🌺':12,'💦':8,'🦴':7,'🫛':6};
 const CAT_AUDIO_MODE={
   '🌿':'stereo','🥒':'stereo','🍅':'stereo','🍇':'stereo','🌵':'stereo','🦟':'stereo',
   '🧬':'isochronic','🧠':'isochronic','🦵':'isochronic','😴':'isochronic','🍴':'isochronic',
   '❤️':'isochronic','🏔️':'isochronic','😊':'isochronic','👁️':'isochronic','🌌':'isochronic',
-  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic','💉':'isochronic','🌺':'isochronic','💦':'isochronic','🦴':'isochronic','🫛':'isochronic'
+  '🫃':'isochronic','💚':'isochronic','🔥':'isochronic','🫒':'isochronic','⚡':'isochronic','🦿':'isochronic','🦻':'isochronic','👂':'binaural_therapeutic','💪':'isochronic','🩹':'isochronic','🩸':'isochronic','🧪':'isochronic','🌸':'isochronic','💉':'isochronic','🌺':'isochronic','💦':'isochronic','🦴':'isochronic','🫛':'isochronic'
 };
 const CAT_DEFAULT_SCALE={
   // Mib Lydien (effet INHIBANT/CALMANT) - calmer, apaiser, relaxer
-  '😴':'mib','❤️':'mib','🦿':'mib','💪':'mib','🩹':'mib','🦟':'mib','🩸':'mib','🦻':'mib','🦴':'mib','🫛':'mib',
+  '😴':'mib','❤️':'mib','🦿':'mib','💪':'mib','🩹':'mib','🦟':'mib','🩸':'mib','🦻':'mib','👂':'mib','🦴':'mib','🫛':'mib',
   // Sib Lydien (effet ÉQUILIBRANT) - équilibre, harmonise
   '💉':'sib',
   // Fa Lydien (effet STIMULANT/ÉNERGISANT) - activer, stimuler, régénérer
@@ -976,6 +983,26 @@ function playNote(freq,dur,vel,cat='🧬'){
     const freqL=freq-halfBeat;
     const freqR=freq+halfBeat;
     playBinauralNote(freqL,freqR,dur,vel);
+  }else if(audioMode==='binaural_therapeutic'){
+    // Binaural thérapeutique : 8 Hz battement (4 Hz offset)
+    const freqL=freq-4;
+    const freqR=freq+4;
+    playBinauralNote(freqL,freqR,dur,vel);
+  }else if(audioMode==='canal_left'){
+    // Canal gauche uniquement (entraînement oreille faible)
+    playMonauralNote(freq,dur,vel,-1); // -1 = gauche
+  }else if(audioMode==='canal_right'){
+    // Canal droit uniquement (référence)
+    playMonauralNote(freq,dur,vel,1); // 1 = droite
+  }else if(audioMode==='canal_alternate'){
+    // Canaux alternés tous les 10s
+    const currentTime=Date.now()/1000;
+    const cyclePosition=currentTime%20; // Cycle de 20s
+    const channel=cyclePosition<10?-1:1; // Gauche pendant 10s, puis droite
+    playMonauralNote(freq,dur,vel,channel);
+  }else if(audioMode==='isochrone_asymmetric'){
+    // Isochrone asymétrique : gauche 2 Hz, droite 10 Hz
+    playIsochroneAsymmetric(freq,dur,vel);
   }else if(audioMode==='isochrone'){
     playIsochroneNote(freq,dur,vel,beatFreq);
   }else{
@@ -1019,6 +1046,57 @@ function playIsochroneNote(freq,dur,vel,beatFreq){
   lfo.connect(lg);lg.connect(g.gain);
   o.connect(g);g.connect(masterGain);
   o.start(t);o.stop(t+dur);lfo.start(t);lfo.stop(t+dur);
+}
+
+function playMonauralNote(freq,dur,vel,panValue){
+  // panValue: -1 = gauche, 1 = droite
+  const t=audioCtx.currentTime;
+  const pan=audioCtx.createStereoPanner();
+  pan.pan.value=panValue;
+  const g=audioCtx.createGain();
+  const o=audioCtx.createOscillator();
+  o.type='sine';
+  o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vel*0.6,t+0.05);
+  g.gain.setValueAtTime(vel*0.6,t+dur*0.7);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.95);
+  o.connect(g);
+  g.connect(pan);
+  pan.connect(masterGain);
+  o.start(t);
+  o.stop(t+dur);
+}
+
+function playIsochroneAsymmetric(freq,dur,vel){
+  // Gauche: modulation lente 0.5 Hz, Droite: modulation rapide 10 Hz
+  const t=audioCtx.currentTime;
+
+  // Canal gauche (lent pour "étirer" la perception)
+  const panL=audioCtx.createStereoPanner();panL.pan.value=-1;
+  const gL=audioCtx.createGain();
+  const oL=audioCtx.createOscillator();
+  const lfoL=audioCtx.createOscillator(),lgL=audioCtx.createGain();
+  oL.type='sine';oL.frequency.value=freq;
+  lfoL.type='sine';lfoL.frequency.value=0.5; // Modulation lente
+  lgL.gain.value=vel*0.25;
+  gL.gain.setValueAtTime(vel*0.4,t);
+  lfoL.connect(lgL);lgL.connect(gL.gain);
+  oL.connect(gL);gL.connect(panL);panL.connect(masterGain);
+  oL.start(t);oL.stop(t+dur);lfoL.start(t);lfoL.stop(t+dur);
+
+  // Canal droit (rapide, référence)
+  const panR=audioCtx.createStereoPanner();panR.pan.value=1;
+  const gR=audioCtx.createGain();
+  const oR=audioCtx.createOscillator();
+  const lfoR=audioCtx.createOscillator(),lgR=audioCtx.createGain();
+  oR.type='sine';oR.frequency.value=freq;
+  lfoR.type='square';lfoR.frequency.value=10; // Modulation rapide
+  lgR.gain.value=vel*0.3;
+  gR.gain.setValueAtTime(vel*0.4,t);
+  lfoR.connect(lgR);lgR.connect(gR.gain);
+  oR.connect(gR);gR.connect(panR);panR.connect(masterGain);
+  oR.start(t);oR.stop(t+dur);lfoR.start(t);lfoR.stop(t+dur);
 }
 
 function showSeq(prot){
