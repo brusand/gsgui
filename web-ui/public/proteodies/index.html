@@ -75,6 +75,8 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 .filter-btn.active{border-color:var(--teal);background:#1D9E7515;color:var(--teal);font-weight:500;border-width:1.5px}
 .filter-count{font-size:11px;background:#33333388;padding:2px 6px;border-radius:4px;font-weight:500}
 .filter-info{font-size:12px;color:var(--text2);margin-bottom:10px}
+.duration-estimate{padding:10px 14px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);margin-bottom:14px;font-size:13px;color:var(--text)}
+.duration-estimate.warning{border-color:#D85A30;background:#D85A3015}
 .lang-switch{display:flex;gap:6px;margin-bottom:16px}
 .lang-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;transition:all 0.15s;font-weight:500}
 .lang-btn:hover{border-color:#555;background:var(--bg2)}
@@ -225,6 +227,9 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <div class="card-title"><span data-i18n="filtersTitle">Filtres par categorie</span> <span style="color:var(--text2);font-weight:400;font-size:10px;text-transform:none;letter-spacing:0" data-i18n="multiSelect">(selection multiple)</span></div>
   <div class="filter-wrap" id="filter-wrap"></div>
   <div class="filter-info" id="filter-info">Aucune proteodie - Selectionne au moins une categorie</div>
+  <div class="duration-estimate" id="duration-estimate" style="display:none">
+    <span id="duration-estimate-text"></span>
+  </div>
 </div>
 
 <div class="card">
@@ -761,6 +766,7 @@ function onDurChange(){
     }
   }
   buildPlaylist();
+  updateEstimatedDuration();
 }
 function onInfiniteChange(){
   const isInfinite=document.getElementById('infinite-chk').checked;
@@ -787,6 +793,7 @@ function onInfiniteChange(){
       document.getElementById('t-timer').style.color='#1D9E75';
     }
   }
+  updateEstimatedDuration();
 }
 function togglePause(){
   if(!playing)return; paused=!paused;
@@ -1792,6 +1799,7 @@ function buildPlaylist(){
   // Auto-sélectionner le mode audio et la gamme selon les catégories affichées
   autoSelectAudioMode();
   autoSelectScale();
+  updateEstimatedDuration();
 }
 
 function saveCheckedProteodies(){
@@ -1801,6 +1809,58 @@ function saveCheckedProteodies(){
     checked.push(id);
   });
   localStorage.setItem('proteodies-checked',JSON.stringify(checked));
+  updateEstimatedDuration();
+}
+
+function updateEstimatedDuration(){
+  const queue=getQueue();
+  const estimateEl=document.getElementById('duration-estimate');
+  const estimateText=document.getElementById('duration-estimate-text');
+
+  if(!queue.length){
+    estimateEl.style.display='none';
+    return;
+  }
+
+  // Calculer durée totale d'une boucle
+  const bpm=parseInt(document.getElementById('bpm').value);
+  const beat=60/bpm;
+  let totalSeconds=0;
+
+  queue.forEach(p=>{
+    const seq=p.seq.split('');
+    seq.forEach(aa=>{
+      totalSeconds+=ticksFor(aa)*beat;
+    });
+  });
+
+  const totalMinutes=totalSeconds/60;
+  const isInfinite=document.getElementById('infinite-chk').checked;
+  const targetDuration=isInfinite?Infinity:parseInt(document.getElementById('dur').value);
+
+  // Formater durée boucle
+  const loopDurStr=totalMinutes<1?Math.round(totalSeconds)+'s':totalMinutes.toFixed(1)+'min';
+
+  // Calculer nombre de boucles
+  let message='';
+  if(isInfinite){
+    message=`📊 Durée d'une boucle : ${loopDurStr} · Répétition infinie ∞`;
+    estimateEl.classList.remove('warning');
+  }else{
+    const numLoops=Math.floor(targetDuration/totalMinutes);
+    const exceeds=totalMinutes>targetDuration;
+
+    if(exceeds){
+      message=`⚠️ Durée d'une boucle : ${loopDurStr} · Dépasse la durée cible (${targetDuration} min)`;
+      estimateEl.classList.add('warning');
+    }else{
+      message=`📊 Durée d'une boucle : ${loopDurStr} · ~${numLoops} boucle${numLoops>1?'s':''} en ${targetDuration} min`;
+      estimateEl.classList.remove('warning');
+    }
+  }
+
+  estimateText.textContent=message;
+  estimateEl.style.display='block';
 }
 
 // Load language from localStorage (default: fr)
