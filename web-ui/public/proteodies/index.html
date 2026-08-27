@@ -1983,21 +1983,23 @@ function buildPlaylist(){
   const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
   const filtered=PROTEODIES.filter(p=>activeFilters.has(p.cat));
 
-  // Restaurer les protéodies cochées depuis localStorage
-  const storedChecked=JSON.parse(localStorage.getItem('proteodies-checked')||'[]');
+  // Vérifier si localStorage existe pour proteodies-checked
+  const storedCheckedRaw=localStorage.getItem('proteodies-checked');
+  const hasStoredData=storedCheckedRaw!==null;
 
-  // Déterminer quelles catégories n'ont aucune protéodie cochée (nouvelles catégories)
-  const categoriesWithChecked=new Set();
-  storedChecked.forEach(id=>{
-    const p=PROTEODIES.find(prot=>prot.id===id);
-    if(p)categoriesWithChecked.add(p.cat);
-  });
+  // Si aucune donnée sauvegardée, cocher toutes les protéodies filtrées par défaut
+  // Sinon, utiliser exactement la valeur sauvegardée
+  let checkedIds;
+  if(!hasStoredData){
+    checkedIds=filtered.map(p=>p.id);
+    // Sauvegarder immédiatement
+    localStorage.setItem('proteodies-checked',JSON.stringify(checkedIds));
+  }else{
+    checkedIds=JSON.parse(storedCheckedRaw);
+  }
 
   const limitEnabled=document.getElementById('limit-chk').checked;
   const maxNotes=limitEnabled?parseInt(document.getElementById('limit-max').value):Infinity;
-
-  let needsSave=false;
-  const newChecked=[...storedChecked];
 
   filtered.forEach(p=>{
     let seq=p.seq.split('');
@@ -2010,14 +2012,8 @@ function buildPlaylist(){
     const col=CAT_COLORS[p.cat]||'#1D9E75';
     const div=document.createElement('div');div.className='pl-item';div.id='pl-'+p.id;
 
-    // Si la catégorie n'a aucune protéodie cochée, cocher toutes par défaut
-    const isNewCategory=!categoriesWithChecked.has(p.cat);
-    let isChecked=storedChecked.includes(p.id);
-    if(isNewCategory&&!isChecked){
-      isChecked=true;
-      newChecked.push(p.id);
-      needsSave=true;
-    }
+    // Utiliser checkedIds (soit toutes si première visite, soit valeur sauvegardée)
+    const isChecked=checkedIds.includes(p.id);
     const lengthBadge=limitEnabled&&originalLength>maxNotes
       ?`<span class="pl-badge" style="background:${col}22;color:${col};border:0.5px solid ${col}">${seq.length}/${originalLength}aa ✂️</span>`
       :`<span class="pl-badge" style="background:${col}22;color:${col};border:0.5px solid ${col}">${originalLength}aa</span>`;
@@ -2040,11 +2036,6 @@ function buildPlaylist(){
   }
   const infoText=filtered.length>0?filtered.length+' '+I18N[currentLang].proteodiesShown+' · '+catText:I18N[currentLang].noCategory;
   document.getElementById('filter-info').textContent=infoText;
-
-  // Sauvegarder les nouvelles protéodies cochées si des catégories nouvelles ont été détectées
-  if(needsSave){
-    localStorage.setItem('proteodies-checked',JSON.stringify(newChecked));
-  }
 
   // Auto-sélectionner le mode audio et la gamme selon les catégories affichées
   autoSelectAudioMode();
