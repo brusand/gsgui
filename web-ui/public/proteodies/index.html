@@ -24,8 +24,11 @@ h1{font-size:18px;font-weight:500;color:var(--teal);margin-bottom:4px}
 .card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
 .card-title{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text2);margin-bottom:10px}
 .playlist{display:flex;flex-direction:column;gap:6px}
-.pl-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:border-color 0.15s}
-.pl-item.active-item{border-color:var(--teal)}
+.pl-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:0.5px solid var(--border);transition:all 0.3s}
+.pl-item.active-item{border-color:var(--teal);background:#1D9E7515}
+.pl-item.played{opacity:0.4;background:var(--bg2)}
+.pl-item.playing{border-color:var(--teal);border-width:2px;background:#1D9E7522;transform:scale(1.01)}
+.pl-item.playing::before{content:'▶️';margin-right:6px;animation:pulse 1.5s infinite}
 .pl-item input[type=checkbox]{width:20px;height:20px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
 .pl-label{flex:1}
 .pl-name{font-size:14px;font-weight:500;color:var(--text)}
@@ -76,6 +79,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
 .lang-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;transition:all 0.15s;font-weight:500}
 .lang-btn:hover{border-color:#555;background:var(--bg2)}
 .lang-btn.active{border-color:var(--teal);background:#1D9E7515;color:var(--teal)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 </style>
 </head>
 <body>
@@ -140,7 +144,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <div class="card-title" data-i18n="settingsTitle">Reglages</div>
   <div class="ctrl-row">
     <span class="ctrl-label" data-i18n="tempo">Tempo</span>
-    <input type="range" id="bpm" min="25" max="180" value="65" step="1" oninput="document.getElementById('bpm-val').textContent=this.value;buildPlaylist()">
+    <input type="range" id="bpm" min="25" max="180" value="65" step="1" oninput="document.getElementById('bpm-val').textContent=this.value;localStorage.setItem('proteodies-bpm',this.value);buildPlaylist()">
     <span class="ctrl-val" id="bpm-val">65</span>
     <span style="font-size:12px;color:var(--text2)">BPM</span>
   </div>
@@ -156,12 +160,12 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label" data-i18n="reverb">Reverb</span>
-    <input type="range" id="rvb" min="0" max="1" value="0.45" step="0.01">
+    <input type="range" id="rvb" min="0" max="1" value="0.45" step="0.01" oninput="localStorage.setItem('proteodies-reverb',this.value)">
     <span style="font-size:12px;color:var(--text2)" data-i18n="space">espace</span>
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label">Gamme</span>
-    <select id="gamme" onchange="scaleManuallyChanged=true">
+    <select id="gamme" onchange="scaleManuallyChanged=true;localStorage.setItem('proteodies-scale',this.value)">
       <option value="reel">🧬 Fréquence réelle (signature moléculaire)</option>
       <option value="fa">⚡ Fa Lydien (stimulant)</option>
       <option value="sib">⚖️ Sib Lydien (équilibrant)</option>
@@ -173,7 +177,7 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   </div>
   <div class="ctrl-row">
     <span class="ctrl-label" data-i18n="audioMode">Mode audio</span>
-    <select id="audio-mode" onchange="audioMode=this.value;audioModeManuallyChanged=true;updateAudioModeFreqBadge()">
+    <select id="audio-mode" onchange="audioMode=this.value;audioModeManuallyChanged=true;localStorage.setItem('proteodies-audiomode',this.value);updateAudioModeFreqBadge()">
       <option value="stereo" data-i18n="stereo">Stéréo (classique)</option>
       <option value="binaural" data-i18n="binaural">Binaural 🎧 (casque requis)</option>
       <option value="isochrone" data-i18n="isochrone">Isochrone (pulsations)</option>
@@ -183,14 +187,14 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
   <div class="ctrl-row" style="margin-top:4px">
     <span class="ctrl-label">Boucle</span>
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-      <input type="checkbox" id="loop-chk" style="width:20px;height:20px;accent-color:var(--teal)" checked onchange="syncLoopButton()">
+      <input type="checkbox" id="loop-chk" style="width:20px;height:20px;accent-color:var(--teal)" checked onchange="syncLoopButton();localStorage.setItem('proteodies-loop',this.checked)">
       <span style="font-size:13px;color:var(--text2)">Repeter jusqu'a la duree cible</span>
     </label>
   </div>
   <div class="ctrl-row" style="margin-top:4px">
     <span class="ctrl-label">Random</span>
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-      <input type="checkbox" id="random-chk" style="width:20px;height:20px;accent-color:#BA7517">
+      <input type="checkbox" id="random-chk" style="width:20px;height:20px;accent-color:#BA7517" onchange="localStorage.setItem('proteodies-random',this.checked)">
       <span style="font-size:13px;color:var(--text2)">🎲 Jouer les notes de façon aleatoire (test)</span>
     </label>
   </div>
@@ -676,6 +680,7 @@ function onDiapasonChange(){
   const freq=document.getElementById('diapason-chk').checked?'429.62':'440.00';
   document.getElementById('diapason-freq').textContent=freq;
   document.getElementById('diapason-box').style.borderColor=document.getElementById('diapason-chk').checked?'#BA7517':'var(--border)';
+  localStorage.setItem('proteodies-diapason',document.getElementById('diapason-chk').checked);
   if(diapasonOsc)diapasonOsc.frequency.setTargetAtTime(parseFloat(freq),audioCtx.currentTime,0.05);
 }
 async function toggleDiapason(btn){
@@ -747,6 +752,7 @@ function setInstr(id,btn){currentInstr=id;document.querySelectorAll('.instr-btn'
 function onDurChange(){
   const durVal=parseInt(document.getElementById('dur').value);
   document.getElementById('dur-val').textContent=durVal;
+  localStorage.setItem('proteodies-duration',durVal);
   const durSec=durVal*60;
   if(!document.getElementById('infinite-chk').checked){
     document.getElementById('prog-total').textContent=fmtTime(durSec);
@@ -1030,11 +1036,23 @@ async function playOne(prot){
   if(isRandom){seq=shuffleArray(seq);}
   const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
   showSeq(prot);
-  document.querySelectorAll('.pl-item').forEach(e=>e.classList.remove('active-item'));
+
+  // Retirer les classes précédentes et ajouter "playing"
+  document.querySelectorAll('.pl-item').forEach(e=>{
+    e.classList.remove('active-item','playing');
+  });
   const pli=document.getElementById('pl-'+prot.id);
-  if(pli){pli.classList.add('active-item');pli.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  if(pli){
+    pli.classList.add('active-item','playing');
+    pli.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
   for(let i=0;i<seq.length;i++){
-    if(stopFlag||skipFlag)return false;
+    if(stopFlag||skipFlag){
+      // Marquer comme "played" même si interrompu
+      if(pli){pli.classList.remove('playing','active-item');pli.classList.add('played');}
+      return false;
+    }
     const aa=seq[i],dur=ticksFor(aa)*beat;
     // Silent mode for Protocol H silence proteodies
     const isSilent=prot.id==='ph_silence1'||prot.id==='ph_silence2';
@@ -1049,6 +1067,13 @@ async function playOne(prot){
   }
   document.querySelectorAll('.aa-cell').forEach(e=>e.classList.remove('lit'));
   document.getElementById('prog-bar').style.width='0';
+
+  // Marquer comme "played" après avoir fini
+  if(pli){
+    pli.classList.remove('playing','active-item');
+    pli.classList.add('played');
+  }
+
   return true;
 }
 
@@ -1124,6 +1149,10 @@ async function startSession(){
   }
   autoSelectAudioMode();
   playing=true;stopFlag=false;
+  // Réinitialiser les états visuels de la liste
+  document.querySelectorAll('.pl-item').forEach(e=>{
+    e.classList.remove('playing','played','active-item');
+  });
   startSessionLog(); // Start logging session
   await initAudio();
   if(audioCtx.state==='suspended')await audioCtx.resume();
@@ -1157,10 +1186,13 @@ async function startSession(){
     for(let i=0;i<queue.length;i++){
       if(stopFlag)break outer;
       skipFlag=false;
+      // Test dépassement durée AVANT de commencer chaque protéodie
       if(!isInfinite&&(Date.now()-sessionStart)/1000>=dur)break outer;
       document.getElementById('prog-loop').textContent=(isInfinite?'∞ ':'')+' Boucle '+loopCount+' · '+(i+1)+'/'+queue.length;
       await playOne(queue[i]);
       if(skipFlag){skipFlag=false;continue;}
+      // Re-test après chaque protéodie pour éviter d'en démarrer une nouvelle si durée dépassée
+      if(!isInfinite&&(Date.now()-sessionStart)/1000>=dur)break outer;
     }
     if(!loop)break;
     if(!isInfinite&&(Date.now()-sessionStart)/1000>=dur)break;
@@ -1172,7 +1204,9 @@ async function startSession(){
   resetTransport();
   document.getElementById('now-box').style.display='none';
   document.getElementById('seq-wrap').innerHTML='';
-  document.querySelectorAll('.pl-item').forEach(e=>e.classList.remove('active-item'));
+  document.querySelectorAll('.pl-item').forEach(e=>{
+    e.classList.remove('active-item','playing','played');
+  });
 }
 
 function showDesc(id){
@@ -1725,12 +1759,17 @@ function buildPlaylist(){
   const pl=document.getElementById('playlist');pl.innerHTML='';
   const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
   const filtered=PROTEODIES.filter(p=>activeFilters.has(p.cat));
+
+  // Restaurer les protéodies cochées depuis localStorage
+  const storedChecked=JSON.parse(localStorage.getItem('proteodies-checked')||'[]');
+
   filtered.forEach(p=>{
     const durS=p.seq.split('').reduce((s,a)=>s+ticksFor(a)*beat,0);
     const durStr=durS<60?Math.round(durS)+'s':(durS/60).toFixed(1)+'min';
     const col=CAT_COLORS[p.cat]||'#1D9E75';
     const div=document.createElement('div');div.className='pl-item';div.id='pl-'+p.id;
-    div.innerHTML='<input type="checkbox" id="chk-'+p.id+'" checked onchange="autoSelectAudioMode();autoSelectScale()">'
+    const isChecked=storedChecked.includes(p.id);
+    div.innerHTML='<input type="checkbox" id="chk-'+p.id+'"'+(isChecked?' checked':'')+' onchange="saveCheckedProteodies();autoSelectAudioMode();autoSelectScale()">'
       +'<div class="pl-label"><div class="pl-name"><span style="margin-right:4px">'+p.cat+'</span>'+p.name
       +'<span class="pl-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+'aa</span></div>'
       +'<div class="pl-meta">'+p.desc+' · '+durStr+'/'+I18N[currentLang].loop+'</div></div>'
@@ -1753,6 +1792,15 @@ function buildPlaylist(){
   // Auto-sélectionner le mode audio et la gamme selon les catégories affichées
   autoSelectAudioMode();
   autoSelectScale();
+}
+
+function saveCheckedProteodies(){
+  const checked=[];
+  document.querySelectorAll('[id^="chk-"]:checked').forEach(chk=>{
+    const id=chk.id.replace('chk-','');
+    checked.push(id);
+  });
+  localStorage.setItem('proteodies-checked',JSON.stringify(checked));
 }
 
 // Load language from localStorage (default: fr)
@@ -1800,6 +1848,46 @@ if(storedInfinite==='true'){
 const storedBorla=localStorage.getItem('proteodies-borla-mapping');
 if(storedBorla==='true'){
   document.getElementById('borla-chk').checked=true;
+}
+
+// Restore all settings from localStorage
+const storedBpm=localStorage.getItem('proteodies-bpm');
+if(storedBpm){
+  document.getElementById('bpm').value=storedBpm;
+  document.getElementById('bpm-val').textContent=storedBpm;
+}
+const storedDuration=localStorage.getItem('proteodies-duration');
+if(storedDuration){
+  document.getElementById('dur').value=storedDuration;
+  document.getElementById('dur-val').textContent=storedDuration;
+}
+const storedScale=localStorage.getItem('proteodies-scale');
+if(storedScale){
+  document.getElementById('gamme').value=storedScale;
+}
+const storedAudioMode=localStorage.getItem('proteodies-audiomode');
+if(storedAudioMode){
+  audioMode=storedAudioMode;
+  document.getElementById('audio-mode').value=storedAudioMode;
+  updateAudioModeFreqBadge();
+}
+const storedDiapason=localStorage.getItem('proteodies-diapason');
+if(storedDiapason==='true'){
+  document.getElementById('diapason-chk').checked=true;
+  onDiapasonChange();
+}
+const storedLoop=localStorage.getItem('proteodies-loop');
+if(storedLoop==='false'){
+  document.getElementById('loop-chk').checked=false;
+  syncLoopButton();
+}
+const storedRandom=localStorage.getItem('proteodies-random');
+if(storedRandom==='true'){
+  document.getElementById('random-chk').checked=true;
+}
+const storedReverb=localStorage.getItem('proteodies-reverb');
+if(storedReverb){
+  document.getElementById('rvb').value=storedReverb;
 }
 
 // Enregistrement du Service Worker pour fonctionnement hors ligne
