@@ -247,6 +247,10 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     Protocoles prédéfinis pour rééducation auditive · Les séances s'enchaînent automatiquement avec les bons réglages
   </div>
   <div id="protocols-list" style="display:flex;flex-direction:column;gap:10px"></div>
+  <div style="display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+    <button onclick="exportTherapeuticFeedback()" style="flex:1;padding:10px;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer">📥 Exporter feedbacks CSV</button>
+    <button onclick="clearTherapeuticFeedback()" style="padding:10px 16px;background:var(--bg3);color:#D85A30;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer" title="Supprimer tous les feedbacks">🗑️</button>
+  </div>
 </div>
 
 <div class="card">
@@ -293,6 +297,104 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
       </div>
       <div id="journal-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px"></div>
       <div id="journal-entries" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal" onclick="if(event.target===this&&!feedbackInProgress)closeFeedbackModal()">
+  <div class="modal-box" style="max-width:700px;max-height:90vh;overflow:auto">
+    <div class="modal-header">
+      <div class="modal-title">📋 Feedback Protocole Thérapeutique</div>
+      <button class="modal-close" onclick="closeFeedbackModal()">&#10005;</button>
+    </div>
+    <div style="padding:20px">
+      <div style="font-size:14px;color:var(--text);margin-bottom:20px;background:var(--bg3);padding:12px;border-radius:8px">
+        <div style="font-weight:600;margin-bottom:4px" id="feedback-protocol-name"></div>
+        <div style="font-size:12px;color:var(--text2)" id="feedback-session-info"></div>
+      </div>
+
+      <div id="feedback-form">
+        <!-- Questions for Test Diagnostic -->
+        <div class="feedback-section" id="feedback-diagnostic" style="display:none">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">🎯 Quel mode a le mieux fonctionné ?</div>
+
+          <div style="margin-bottom:16px">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Meilleure amélioration de la spatialisation à gauche :</label>
+            <select id="feedback-best-spatial" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);font-size:13px">
+              <option value="">-- Sélectionner --</option>
+              <option value="canal_left">Canal gauche seul</option>
+              <option value="canal_right">Canal droit seul</option>
+              <option value="binaural_therapeutic">Binaural thérapeutique 8 Hz</option>
+              <option value="equal">Tous équivalents</option>
+              <option value="none">Aucune amélioration</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Meilleure réduction du caractère "métallique" :</label>
+            <select id="feedback-best-metallic" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);font-size:13px">
+              <option value="">-- Sélectionner --</option>
+              <option value="canal_left">Canal gauche seul</option>
+              <option value="canal_right">Canal droit seul</option>
+              <option value="binaural_therapeutic">Binaural thérapeutique 8 Hz</option>
+              <option value="equal">Tous équivalents</option>
+              <option value="none">Aucune réduction</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Mode préféré pour utilisation quotidienne :</label>
+            <select id="feedback-preferred" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);font-size:13px">
+              <option value="">-- Sélectionner --</option>
+              <option value="canal_left">Canal gauche seul</option>
+              <option value="canal_right">Canal droit seul</option>
+              <option value="binaural_therapeutic">Binaural thérapeutique 8 Hz</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Questions générales pour tous les protocoles -->
+        <div class="feedback-section">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">📊 Évaluation</div>
+
+          <div style="margin-bottom:16px">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Perception oreille GAUCHE (/10) :</label>
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="range" id="feedback-perception" min="0" max="10" value="5" style="flex:1" oninput="document.getElementById('feedback-perception-val').textContent=this.value">
+              <span id="feedback-perception-val" style="font-size:18px;font-weight:600;color:var(--teal);min-width:30px">5</span>
+            </div>
+            <div style="font-size:11px;color:var(--text2);margin-top:4px">0 = pire / 10 = excellente spatialisation, son clair</div>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Confort général (/10) :</label>
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="range" id="feedback-comfort" min="0" max="10" value="5" style="flex:1" oninput="document.getElementById('feedback-comfort-val').textContent=this.value">
+              <span id="feedback-comfort-val" style="font-size:18px;font-weight:600;color:var(--teal);min-width:30px">5</span>
+            </div>
+            <div style="font-size:11px;color:var(--text2);margin-top:4px">0 = très inconfortable / 10 = très agréable</div>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:6px">Effets notables (optionnel) :</label>
+            <textarea id="feedback-notes" rows="3" placeholder="Ex: Moins métallique, plus de spatialisation, léger acouphène après..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);font-size:13px;font-family:inherit;resize:vertical"></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button onclick="submitFeedback()" style="flex:1;padding:12px;background:var(--teal);color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px">✅ Enregistrer</button>
+          <button onclick="skipFeedback()" style="padding:12px 20px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-weight:500;cursor:pointer;font-size:14px">⏭️ Passer</button>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;padding:12px;background:#1D9E7515;border:1px solid var(--teal);border-radius:8px">
+        <div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:4px">💡 Tes feedbacks m'aident à :</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5">
+          • Identifier le mode optimal pour ton cas<br>
+          • Ajuster les protocoles selon tes besoins<br>
+          • Suivre l'évolution de ta perception auditive
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -3072,6 +3174,11 @@ async function launchProtocol(protocolId){
   if(playlistCard) playlistCard.style.display = '';
   if(filtersCard) filtersCard.style.display = '';
   hideProtocolProgress();
+
+  // Afficher le formulaire de feedback si le protocole a été complété (pas interrompu)
+  if(!stopFlag){
+    showFeedbackModal(protocol);
+  }
 }
 
 async function playProtocolSession(proteody, durationSeconds, sessionName){
@@ -3165,6 +3272,150 @@ function hideProtocolProgress(){
   if(nowBox){
     nowBox.style.display = 'none';
     nowBox.style.borderColor = '';
+  }
+}
+
+// ==================== FEEDBACK PROTOCOLES THÉRAPEUTIQUES ====================
+
+let currentFeedbackProtocol = null;
+let feedbackInProgress = false;
+
+function showFeedbackModal(protocol){
+  currentFeedbackProtocol = protocol;
+  feedbackInProgress = true;
+
+  // Remplir les infos du protocole
+  document.getElementById('feedback-protocol-name').textContent = `${protocol.emoji} ${protocol.name}`;
+  document.getElementById('feedback-session-info').textContent = `${protocol.sessions.length} séances · ${protocol.duration} min total`;
+
+  // Afficher section diagnostic uniquement pour le protocole de test
+  const diagnosticSection = document.getElementById('feedback-diagnostic');
+  if(protocol.id === 'test_rapide'){
+    diagnosticSection.style.display = 'block';
+  }else{
+    diagnosticSection.style.display = 'none';
+  }
+
+  // Réinitialiser le formulaire
+  document.getElementById('feedback-perception').value = 5;
+  document.getElementById('feedback-perception-val').textContent = '5';
+  document.getElementById('feedback-comfort').value = 5;
+  document.getElementById('feedback-comfort-val').textContent = '5';
+  document.getElementById('feedback-notes').value = '';
+
+  if(protocol.id === 'test_rapide'){
+    document.getElementById('feedback-best-spatial').value = '';
+    document.getElementById('feedback-best-metallic').value = '';
+    document.getElementById('feedback-preferred').value = '';
+  }
+
+  // Afficher le modal
+  document.getElementById('feedback-modal').style.display = 'flex';
+}
+
+function closeFeedbackModal(){
+  if(feedbackInProgress && !confirm('Fermer sans enregistrer le feedback ?')) return;
+  document.getElementById('feedback-modal').style.display = 'none';
+  currentFeedbackProtocol = null;
+  feedbackInProgress = false;
+}
+
+function submitFeedback(){
+  if(!currentFeedbackProtocol) return;
+
+  const protocol = currentFeedbackProtocol;
+
+  // Collecter les données du formulaire
+  const feedbackData = {
+    timestamp: new Date().toISOString(),
+    protocol_id: protocol.id,
+    protocol_name: protocol.name,
+    protocol_duration: protocol.duration,
+    perception_gauche: parseInt(document.getElementById('feedback-perception').value),
+    confort: parseInt(document.getElementById('feedback-comfort').value),
+    notes: document.getElementById('feedback-notes').value.trim()
+  };
+
+  // Données spécifiques au test diagnostic
+  if(protocol.id === 'test_rapide'){
+    feedbackData.best_spatial = document.getElementById('feedback-best-spatial').value;
+    feedbackData.best_metallic = document.getElementById('feedback-best-metallic').value;
+    feedbackData.preferred_mode = document.getElementById('feedback-preferred').value;
+  }
+
+  // Sauvegarder dans localStorage
+  const feedbackLogs = JSON.parse(localStorage.getItem('therapeutic-feedback') || '[]');
+  feedbackLogs.push(feedbackData);
+  localStorage.setItem('therapeutic-feedback', JSON.stringify(feedbackLogs));
+
+  console.log('✅ Feedback enregistré:', feedbackData);
+
+  // Fermer le modal
+  feedbackInProgress = false;
+  document.getElementById('feedback-modal').style.display = 'none';
+  currentFeedbackProtocol = null;
+
+  // Notification
+  alert('✅ Feedback enregistré ! Merci pour tes retours.');
+}
+
+function skipFeedback(){
+  if(confirm('Sauter le feedback pour cette séance ?')){
+    feedbackInProgress = false;
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentFeedbackProtocol = null;
+  }
+}
+
+function exportTherapeuticFeedback(){
+  const feedbackLogs = JSON.parse(localStorage.getItem('therapeutic-feedback') || '[]');
+
+  if(feedbackLogs.length === 0){
+    alert('Aucun feedback enregistré pour le moment.');
+    return;
+  }
+
+  console.log('=== FEEDBACKS PROTOCOLES THÉRAPEUTIQUES ===');
+  console.log(`Total: ${feedbackLogs.length} feedbacks`);
+  console.table(feedbackLogs);
+
+  // Créer CSV
+  const headers = ['Date', 'Heure', 'Protocole', 'Durée (min)', 'Perception Gauche (/10)', 'Confort (/10)', 'Meilleur Spatial', 'Meilleur Métallique', 'Mode Préféré', 'Notes'];
+  const rows = feedbackLogs.map(f => {
+    const date = new Date(f.timestamp);
+    return [
+      date.toLocaleDateString('fr-FR'),
+      date.toLocaleTimeString('fr-FR'),
+      f.protocol_name,
+      f.protocol_duration,
+      f.perception_gauche,
+      f.confort,
+      f.best_spatial || '-',
+      f.best_metallic || '-',
+      f.preferred_mode || '-',
+      `"${f.notes.replace(/"/g, '""')}"`
+    ].join(',');
+  });
+
+  const csv = [headers.join(','), ...rows].join('\n');
+
+  // Télécharger
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `proteodies_feedback_therapeutique_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+
+  console.log('📥 CSV exporté');
+}
+
+function clearTherapeuticFeedback(){
+  if(confirm('⚠️ Supprimer tous les feedbacks thérapeutiques enregistrés ?')){
+    localStorage.removeItem('therapeutic-feedback');
+    console.log('🗑️ Feedbacks thérapeutiques supprimés');
+    alert('Feedbacks thérapeutiques supprimés.');
   }
 }
 
