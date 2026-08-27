@@ -201,6 +201,19 @@ canvas.wave{width:100%;height:40px;border-radius:6px;background:var(--bg3);margi
     </label>
   </div>
   <div class="ctrl-row" style="margin-top:4px">
+    <span class="ctrl-label">Limite</span>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <input type="checkbox" id="limit-chk" style="width:20px;height:20px;accent-color:#BA7517" onchange="onLimitChange()">
+      <span style="font-size:13px;color:var(--text2)">✂️ Limiter longueur protéodies</span>
+    </label>
+  </div>
+  <div class="ctrl-row" id="limit-slider-row" style="display:none;margin-left:70px;margin-top:4px">
+    <span class="ctrl-label" style="min-width:80px;font-size:12px">Max notes</span>
+    <input type="range" id="limit-max" min="9" max="500" value="50" step="1" oninput="document.getElementById('limit-val').textContent=this.value;localStorage.setItem('proteodies-limit-max',this.value);updateEstimatedDuration()">
+    <span class="ctrl-val" id="limit-val">50</span>
+    <span style="font-size:12px;color:var(--text2)">notes</span>
+  </div>
+  <div class="ctrl-row" style="margin-top:4px">
     <span class="ctrl-label">Mapping</span>
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
       <input type="checkbox" id="borla-chk" style="width:20px;height:20px;accent-color:#1D9E75" onchange="onMappingChange()">
@@ -732,6 +745,13 @@ function midiFor(aa){
   // Fallback: use legacy algorithmic mapping (index modulo scale)
   let i=ORD.indexOf(aa);return i<0?51:getScale()[i%getScale().length];
 }
+function onLimitChange(){
+  const checked=document.getElementById('limit-chk').checked;
+  const sliderRow=document.getElementById('limit-slider-row');
+  localStorage.setItem('proteodies-limit-enabled',checked);
+  sliderRow.style.display=checked?'flex':'none';
+  updateEstimatedDuration();
+}
 function onMappingChange(){
   const checked=document.getElementById('borla-chk').checked;
   localStorage.setItem('proteodies-borla-mapping',checked);
@@ -1003,17 +1023,28 @@ function playIsochroneNote(freq,dur,vel,beatFreq){
 
 function showSeq(prot){
   const wrap=document.getElementById('seq-wrap'); wrap.innerHTML='';
-  prot.seq.split('').forEach((aa,i)=>{
+  let seq=prot.seq.split('');
+  const originalLength=seq.length;
+
+  // Appliquer la limite si activée
+  const limitEnabled=document.getElementById('limit-chk').checked;
+  if(limitEnabled){
+    const maxNotes=parseInt(document.getElementById('limit-max').value);
+    seq=seq.slice(0,maxNotes);
+  }
+
+  seq.forEach((aa,i)=>{
     const idx=ORD.indexOf(aa),col=COLS[idx%COLS.length];
     const d=document.createElement('div'); d.className='aa-cell'; d.id='aa'+i;
     d.style.borderColor=col;
     d.innerHTML='<span style="color:'+col+'">'+aa+'</span><span class="nn">'+noteName(midiFor(aa))+'</span>';
     wrap.appendChild(d);
   });
-  drawWave(prot.seq.split(''));
+  drawWave(seq);
   document.getElementById('now-box').style.display='block';
   document.getElementById('now-title').textContent=prot.cat+' '+prot.name;
-  document.getElementById('now-meta').textContent=prot.desc+' · '+prot.seq.length+' aa';
+  const lengthText=limitEnabled&&seq.length<originalLength?`${seq.length}/${originalLength} aa ✂️`:`${originalLength} aa`;
+  document.getElementById('now-meta').textContent=prot.desc+' · '+lengthText;
   updateTransport(prot.cat+' '+prot.name, prot.desc);
 }
 
@@ -1041,6 +1072,14 @@ async function playOne(prot){
   let seq=prot.seq.split('');
   const isRandom=document.getElementById('random-chk').checked;
   if(isRandom){seq=shuffleArray(seq);}
+
+  // Appliquer la limite de longueur si activée
+  const limitEnabled=document.getElementById('limit-chk').checked;
+  if(limitEnabled){
+    const maxNotes=parseInt(document.getElementById('limit-max').value);
+    seq=seq.slice(0,maxNotes);
+  }
+
   const bpm=parseInt(document.getElementById('bpm').value),beat=60/bpm;
   showSeq(prot);
 
@@ -1770,15 +1809,26 @@ function buildPlaylist(){
   // Restaurer les protéodies cochées depuis localStorage
   const storedChecked=JSON.parse(localStorage.getItem('proteodies-checked')||'[]');
 
+  const limitEnabled=document.getElementById('limit-chk').checked;
+  const maxNotes=limitEnabled?parseInt(document.getElementById('limit-max').value):Infinity;
+
   filtered.forEach(p=>{
-    const durS=p.seq.split('').reduce((s,a)=>s+ticksFor(a)*beat,0);
+    let seq=p.seq.split('');
+    const originalLength=seq.length;
+    if(limitEnabled&&seq.length>maxNotes){
+      seq=seq.slice(0,maxNotes);
+    }
+    const durS=seq.reduce((s,a)=>s+ticksFor(a)*beat,0);
     const durStr=durS<60?Math.round(durS)+'s':(durS/60).toFixed(1)+'min';
     const col=CAT_COLORS[p.cat]||'#1D9E75';
     const div=document.createElement('div');div.className='pl-item';div.id='pl-'+p.id;
     const isChecked=storedChecked.includes(p.id);
+    const lengthBadge=limitEnabled&&originalLength>maxNotes
+      ?`<span class="pl-badge" style="background:${col}22;color:${col};border:0.5px solid ${col}">${seq.length}/${originalLength}aa ✂️</span>`
+      :`<span class="pl-badge" style="background:${col}22;color:${col};border:0.5px solid ${col}">${originalLength}aa</span>`;
     div.innerHTML='<input type="checkbox" id="chk-'+p.id+'"'+(isChecked?' checked':'')+' onchange="saveCheckedProteodies();autoSelectAudioMode();autoSelectScale()">'
       +'<div class="pl-label"><div class="pl-name"><span style="margin-right:4px">'+p.cat+'</span>'+p.name
-      +'<span class="pl-badge" style="background:'+col+'22;color:'+col+';border:0.5px solid '+col+'">'+p.seq.length+'aa</span></div>'
+      +lengthBadge+'</div>'
       +'<div class="pl-meta">'+p.desc+' · '+durStr+'/'+I18N[currentLang].loop+'</div></div>'
       +'<button class="pl-info-btn" onclick="showDesc(\'' + p.id + '\')" title="Description">&#x24D8;</button>';
     pl.appendChild(div);
@@ -1825,10 +1875,16 @@ function updateEstimatedDuration(){
   // Calculer durée totale d'une boucle
   const bpm=parseInt(document.getElementById('bpm').value);
   const beat=60/bpm;
+  const limitEnabled=document.getElementById('limit-chk').checked;
+  const maxNotes=limitEnabled?parseInt(document.getElementById('limit-max').value):Infinity;
   let totalSeconds=0;
 
   queue.forEach(p=>{
-    const seq=p.seq.split('');
+    let seq=p.seq.split('');
+    // Appliquer la limite si activée
+    if(limitEnabled){
+      seq=seq.slice(0,maxNotes);
+    }
     seq.forEach(aa=>{
       totalSeconds+=ticksFor(aa)*beat;
     });
@@ -1948,6 +2004,16 @@ if(storedRandom==='true'){
 const storedReverb=localStorage.getItem('proteodies-reverb');
 if(storedReverb){
   document.getElementById('rvb').value=storedReverb;
+}
+const storedLimitEnabled=localStorage.getItem('proteodies-limit-enabled');
+if(storedLimitEnabled==='true'){
+  document.getElementById('limit-chk').checked=true;
+  document.getElementById('limit-slider-row').style.display='flex';
+}
+const storedLimitMax=localStorage.getItem('proteodies-limit-max');
+if(storedLimitMax){
+  document.getElementById('limit-max').value=storedLimitMax;
+  document.getElementById('limit-val').textContent=storedLimitMax;
 }
 
 // Enregistrement du Service Worker pour fonctionnement hors ligne
