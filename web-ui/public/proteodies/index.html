@@ -3117,6 +3117,10 @@ async function launchProtocol(protocolId){
 
   console.log(`🩺 Lancement protocole: ${protocol.name}`);
 
+  // Initialiser le contexte audio
+  await initAudio();
+  if(audioCtx.state==='suspended')await audioCtx.resume();
+
   // Masquer les autres sections pendant le protocole
   const playlistEl = document.getElementById('playlist');
   const filtersEl = document.getElementById('filter-wrap');
