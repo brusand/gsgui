@@ -3478,32 +3478,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   setTimeout(async () => {
     await initAudioPlayer();
     buildProtocols(); // Construire la liste des protocoles thérapeutiques
-
-    // Détecter les changements de périphérique audio (casque branché/débranché)
-    // Sur iOS/Safari, cela aide à router correctement vers le casque
-    if(navigator.mediaDevices && navigator.mediaDevices.addEventListener){
-      navigator.mediaDevices.addEventListener('devicechange', async () => {
-        console.log('🎧 Changement de périphérique audio détecté');
-
-        // Si un contexte audio existe déjà, proposer de le réinitialiser
-        if(audioCtx && !playing){
-          const shouldReset = confirm('Changement de périphérique audio détecté (casque branché/débranché).\n\nRéinitialiser la sortie audio ?');
-          if(shouldReset){
-            await resetAudioContext();
-          }
-        }
-      });
-      console.log('✓ Détection automatique des changements de périphérique audio activée');
-    }
-
-    // Sur iOS, ajouter aussi un écouteur pour la visibilité de la page
-    // Cela aide à réactiver le contexte audio quand on revient à l'app
-    document.addEventListener('visibilitychange', async () => {
-      if(!document.hidden && audioCtx && audioCtx.state==='suspended'){
-        console.log('🔄 Page visible, réactivation contexte audio...');
-        await audioCtx.resume();
-      }
-    });
   }, 1000);
 });
 
