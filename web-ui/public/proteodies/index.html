@@ -3425,6 +3425,40 @@ function clearTherapeuticFeedback(){
   }
 }
 
+// Module audio player intégré (version minimale)
+class ProteodiesAudioPlayer {
+  constructor() {
+    this.audioContext = null;
+    this.sampleCache = new Map();
+    this.isPlaying = false;
+    this.stopRequested = false;
+  }
+
+  async init() {
+    if (!this.audioContext) {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    console.log('✓ ProteodiesAudioPlayer initialisé (mode synthèse)');
+    return true;
+  }
+
+  stop() {
+    this.stopRequested = true;
+    this.isPlaying = false;
+  }
+
+  destroy() {
+    this.stop();
+    this.sampleCache.clear();
+    if (this.audioContext) {
+      this.audioContext.close();
+      this.audioContext = null;
+    }
+  }
+}
+
+window.ProteodiesAudioPlayer = ProteodiesAudioPlayer;
+
 // Initialiser au chargement de la page
 window.addEventListener('DOMContentLoaded', async () => {
   // Attendre un peu pour laisser le DOM se stabiliser
@@ -3436,8 +3470,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 </script>
 
-<!-- Charger module audio player -->
-<script src="/proteodies/audio-player.js"></script>
+<!-- Module audio player désactivé temporairement - cause erreur de chargement -->
+<!-- <script src="/proteodies/audio-player.js"></script> -->
 
 </body>
 </html>
