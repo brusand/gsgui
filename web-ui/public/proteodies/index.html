@@ -3118,8 +3118,10 @@ async function launchProtocol(protocolId){
   console.log(`🩺 Lancement protocole: ${protocol.name}`);
 
   // Masquer les autres sections pendant le protocole
-  const playlistCard = document.querySelector('.card:has(#playlist)');
-  const filtersCard = document.querySelector('.card:has(#filter-wrap)');
+  const playlistEl = document.getElementById('playlist');
+  const filtersEl = document.getElementById('filter-wrap');
+  const playlistCard = playlistEl ? playlistEl.closest('.card') : null;
+  const filtersCard = filtersEl ? filtersEl.closest('.card') : null;
   if(playlistCard) playlistCard.style.display = 'none';
   if(filtersCard) filtersCard.style.display = 'none';
 
